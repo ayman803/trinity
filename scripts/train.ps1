@@ -35,11 +35,10 @@ try {
     }
 
     if (-not ($SkipShuffle -and (Test-Path $shuffled))) {
-        $files = Get-ChildItem -Path $dataDir -Recurse -Filter "*.data" |
-            Where-Object { $_.FullName -notlike "$prepared*" -and $_.Length -gt 0 } |
-            ForEach-Object { $_.FullName }
+        $files = @(Find-Files $dataDir "*.data" |
+            Where-Object { $_ -notlike "$prepared*" -and (Get-Item -LiteralPath $_).Length -gt 0 })
         if (-not $files) { Stop-WithMessage "No training data found in data\. Run 3-Generate-Training-Data.bat first." }
-        $total = ($files | ForEach-Object { (Get-Item $_).Length } | Measure-Object -Sum).Sum
+        $total = ($files | ForEach-Object { (Get-Item -LiteralPath $_).Length } | Measure-Object -Sum).Sum
         Write-Step ("Preparing {0:N0} positions from {1} files" -f ($total / 32), @($files).Count)
         $combined = Join-Path $prepared "combined.data"
         Invoke-Native $utils (@("interleave") + $files + @("--output", $combined))
