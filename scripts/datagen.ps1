@@ -29,7 +29,7 @@ try {
     Write-Host ""
     Write-Good "Done. Next: double-click 4-Train-Network.bat"
 } catch {
-    if ($_.Exception.Message -ne "stopped") { Write-Host "Unexpected error: $($_.Exception.Message)" -ForegroundColor Red }
+    Write-UnexpectedError $_
     exit 1
 } finally {
     Stop-KeepAwake $keepAwake

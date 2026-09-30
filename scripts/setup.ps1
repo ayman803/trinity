@@ -73,6 +73,6 @@ try {
     Write-Good "Setup finished successfully."
     Write-Host "Next: double-click 2-Run-SPRT-Test.bat when Claude asks you to test a change."
 } catch {
-    if ($_.Exception.Message -ne "stopped") { Write-Host "Unexpected error: $($_.Exception.Message)" -ForegroundColor Red }
+    Write-UnexpectedError $_
     exit 1
 }

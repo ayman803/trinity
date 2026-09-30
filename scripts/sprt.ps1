@@ -124,7 +124,7 @@ try {
     Write-Host "Copy the lines above and paste them to Claude."
     Write-Host "(They are also saved in sprt\results\LATEST-RESULT.txt)"
 } catch {
-    if ($_.Exception.Message -ne "stopped") { Write-Host "Unexpected error: $($_.Exception.Message)" -ForegroundColor Red }
+    Write-UnexpectedError $_
     exit 1
 } finally {
     Stop-KeepAwake $keepAwake
