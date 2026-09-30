@@ -135,7 +135,16 @@ impl AccPair {
 
     /// Compute the accumulators after `m` (played on `before`) from the
     /// parent's accumulators by adding/removing only the changed features.
+    #[cfg(test)]
     pub fn update(&self, net: &Network, before: &Board, m: Move) -> AccPair {
+        let mut out = *self;
+        self.update_into(&mut out, net, before, m);
+        out
+    }
+
+    /// Like `update`, but writes into `out` (no temporary copy).
+    #[inline(always)]
+    pub fn update_into(&self, out: &mut AccPair, net: &Network, before: &Board, m: Move) {
         let us = before.stm;
         let moved = before.piece_at(m.from());
         let mut adds: [(Piece, Square); 2] = [(NO_PIECE, 0); 2];
@@ -161,23 +170,32 @@ impl AccPair {
             na += 1;
         }
 
-        let mut out = *self;
         for persp in [WHITE, BLACK] {
-            let acc = &mut out.acc[persp].vals;
-            for &(p, sq) in &adds[..na] {
-                let col = &net.feature_weights[feature(persp, p, sq)].vals;
-                for (a, w) in acc.iter_mut().zip(col) {
-                    *a += *w;
+            let src = &self.acc[persp].vals;
+            let dst = &mut out.acc[persp].vals;
+            let col = |(p, sq): (Piece, Square)| &net.feature_weights[feature(persp, p, sq)].vals;
+            // One fused pass per case: dst = src + adds - subs.
+            match (na, ns) {
+                (1, 1) => {
+                    let (a0, s0) = (col(adds[0]), col(subs[0]));
+                    for i in 0..HIDDEN {
+                        dst[i] = src[i] + a0[i] - s0[i];
+                    }
                 }
-            }
-            for &(p, sq) in &subs[..ns] {
-                let col = &net.feature_weights[feature(persp, p, sq)].vals;
-                for (a, w) in acc.iter_mut().zip(col) {
-                    *a -= *w;
+                (1, 2) => {
+                    let (a0, s0, s1) = (col(adds[0]), col(subs[0]), col(subs[1]));
+                    for i in 0..HIDDEN {
+                        dst[i] = src[i] + a0[i] - s0[i] - s1[i];
+                    }
+                }
+                _ => {
+                    let (a0, a1, s0, s1) = (col(adds[0]), col(adds[1]), col(subs[0]), col(subs[1]));
+                    for i in 0..HIDDEN {
+                        dst[i] = src[i] + a0[i] + a1[i] - s0[i] - s1[i];
+                    }
                 }
             }
         }
-        out
     }
 }
 

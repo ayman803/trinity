@@ -177,7 +177,8 @@ pub struct Searcher {
     pv: Box<[[Move; MAX_PLY + 1]; MAX_PLY + 1]>,
     pv_len: [usize; MAX_PLY + 1],
     net: Option<&'static Network>,
-    acc: Vec<AccPair>,
+    /// Accumulators for each ply of the current search path.
+    acc: Box<[AccPair; MAX_PLY + 2]>,
     lmr: Box<[[[i32; 64]; 64]; 2]>,
 }
 
@@ -214,7 +215,7 @@ impl Searcher {
             pv: zeroed_box(),
             pv_len: [0; MAX_PLY + 1],
             net,
-            acc: if net.is_some() { Vec::with_capacity(MAX_PLY + 2) } else { Vec::new() },
+            acc: zeroed_box(),
             lmr,
         }
     }
@@ -310,9 +311,8 @@ impl Searcher {
         self.frames[ply].mv = m;
         self.frames[ply].piece = b.piece_at(m.from());
         if let Some(net) = self.net {
-            let next = self.acc[ply].update(net, b, m);
-            self.acc.truncate(ply + 1);
-            self.acc.push(next);
+            let (done, rest) = self.acc.split_at_mut(ply + 1);
+            done[ply].update_into(&mut rest[0], net, b, m);
         }
         b.make_move(m)
     }
@@ -532,9 +532,7 @@ impl Searcher {
                 self.frames[ply].mv = Move::NONE;
                 self.frames[ply].piece = NO_PIECE;
                 if self.net.is_some() {
-                    let same = self.acc[ply];
-                    self.acc.truncate(ply + 1);
-                    self.acc.push(same);
+                    self.acc[ply + 1] = self.acc[ply];
                 }
                 let score = -self.negamax(&nb, -beta, -beta + 1, depth - r, ply + 1, !cut_node, Move::NONE);
                 self.keys.pop();
@@ -847,8 +845,7 @@ impl Searcher {
         self.keys.extend_from_slice(history);
         self.frames = [Frame::default(); MAX_PLY + 2];
         if let Some(net) = self.net {
-            self.acc.clear();
-            self.acc.push(AccPair::from_board(net, root));
+            self.acc[0] = AccPair::from_board(net, root);
         }
 
         let legal = movegen::legal_moves(root);
