@@ -18,14 +18,14 @@ $keepAwake = $null
 try {
     Assert-Tools
     if (-not $NoUpdate) { Update-Repository }
-    $exe = Build-Trinity "origin/main"
+    $enginePath = Build-Trinity "origin/main"
 
     $stamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
     $out = Join-Path (Join-Path $script:Root "data") "gen_$stamp"
     Write-Step "Generating $Positions positions with $Threads threads into data\gen_$stamp"
     Write-Host "You can stop at any time with Ctrl+C; everything written so far is kept."
     $keepAwake = Start-KeepAwake
-    Invoke-Native $exe @("datagen", "threads=$Threads", "positions=$Positions", "nodes=$Nodes", "out=$out")
+    Invoke-Native $enginePath @("datagen", "threads=$Threads", "positions=$Positions", "nodes=$Nodes", "out=$out")
     Write-Host ""
     Write-Good "Done. Next: double-click 4-Train-Network.bat"
 } catch {

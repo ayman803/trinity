@@ -4,7 +4,9 @@
 
 $ErrorActionPreference = "Stop"
 $script:OnWindows = ($env:OS -eq "Windows_NT")
-$script:Exe = if ($script:OnWindows) { ".exe" } else { "" }
+# Note: PowerShell variable names ignore case, so never name another
+# script-level variable $exesuffix / $root / $work.
+$script:ExeSuffix = if ($script:OnWindows) { ".exe" } else { "" }
 $script:Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $script:Work = Join-Path $script:Root "sprt"   # all downloads and builds live here (ignored by git)
 
@@ -154,10 +156,10 @@ function Build-Trinity {
     $safe = ($Ref -replace "^origin/", "") -replace "[^A-Za-z0-9._-]", "_"
     $engines = Join-Path $script:Work "engines"
     New-Item -ItemType Directory -Force -Path $engines | Out-Null
-    $exe = Join-Path $engines "trinity-$safe-$sha$($script:Exe)"
-    if (Test-Path $exe) {
+    $enginePath = Join-Path $engines "trinity-$safe-$sha$($script:ExeSuffix)"
+    if (Test-Path $enginePath) {
         Write-Host "Using cached build of $Ref ($sha)."
-        return $exe
+        return $enginePath
     }
     Write-Step "Building $Ref ($sha)"
     $tree = Join-Path $script:Work "build-$safe"
@@ -174,10 +176,10 @@ function Build-Trinity {
     } finally {
         $env:RUSTFLAGS = $oldFlags
     }
-    $built = Join-Path (Join-Path (Join-Path $script:Work "target") "release") "trinity$($script:Exe)"
-    Copy-Item $built $exe -Force
+    $built = Join-Path (Join-Path (Join-Path $script:Work "target") "release") "trinity$($script:ExeSuffix)"
+    Copy-Item $built $enginePath -Force
     Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree)
-    return $exe
+    return $enginePath
 }
 
 # Run `bench` and return the node count (the build's "fingerprint").
@@ -190,8 +192,7 @@ function Get-BenchNodes([string]$ExePath) {
 # ---------------------------------------------------------------------------
 # Downloads used for testing.
 # ---------------------------------------------------------------------------
-# Find files by name below a folder. Uses .NET directly: PowerShell's own
-# recursive search (Get-ChildItem -Recurse) fails on some Windows 10 PCs.
+# Find files by name below a folder.
 function Find-Files([string]$Dir, [string]$Pattern) {
     if (-not [IO.Directory]::Exists($Dir)) { return @() }
     try {
@@ -210,11 +211,10 @@ function Find-File([string]$Dir, [string]$Name) {
 function Get-Fastchess {
     $dir = Join-Path $script:Work "tools"
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
-    # Look only at the exact places the release zip unpacks to (no folder
-    # searching: that fails on some PCs).
+    # The places the release zip unpacks to.
     $candidates = @(
-        (Join-Path (Join-Path $dir "fastchess-windows-x86-64") "fastchess$($script:Exe)"),
-        (Join-Path $dir "fastchess$($script:Exe)")
+        (Join-Path (Join-Path $dir "fastchess-windows-x86-64") "fastchess$($script:ExeSuffix)"),
+        (Join-Path $dir "fastchess$($script:ExeSuffix)")
     )
     foreach ($c in $candidates) { if (Test-Path -LiteralPath $c) { return $c } }
     if (-not $script:OnWindows) { Stop-WithMessage "Put a fastchess binary in $dir (automatic download is Windows-only)." }
