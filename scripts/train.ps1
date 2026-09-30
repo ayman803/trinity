@@ -83,13 +83,19 @@ try {
     Write-Step "Publishing the network on GitHub as branch '$branch'"
     $tree = Join-Path $script:Work "publish-$stamp"
     Invoke-Native git @("-C", $script:Root, "fetch", "origin")
-    Invoke-Native git @("-C", $script:Root, "worktree", "add", "-b", $branch, $tree, "origin/main")
+    # -B: reuse the branch name if an earlier attempt left it behind locally.
+    Invoke-Native git @("-C", $script:Root, "worktree", "add", "-B", $branch, $tree, "origin/main")
     try {
         $nets = Join-Path $tree "nets"
         New-Item -ItemType Directory -Force -Path $nets | Out-Null
         Copy-Item $final (Join-Path $nets "default.nnue") -Force
         $identity = @()
-        if (-not (Get-NativeOutput git @("-C", $tree, "config", "--default", "", "user.email"))) {
+        # Is a git identity configured? (`git config` exits with 1 when not.)
+        # Note: Windows PowerShell 5.1 drops empty-string arguments to programs.
+        $old = $ErrorActionPreference; $ErrorActionPreference = "Continue"
+        $email = & git -C $tree config user.email 2>$null
+        $ErrorActionPreference = $old
+        if (-not $email) {
             $identity = @("-c", "user.name=Trinity trainer", "-c", "user.email=trainer@trinity.invalid")
         }
         Invoke-Native git @("-C", $tree, "add", "nets/default.nnue")
