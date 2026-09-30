@@ -40,8 +40,7 @@ static KNIGHT_ATTACKS: [Bitboard; 64] =
     leaper_table(&[(1, 2), (2, 1), (2, -1), (1, -2), (-1, -2), (-2, -1), (-2, 1), (-1, 2)]);
 static KING_ATTACKS: [Bitboard; 64] =
     leaper_table(&[(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]);
-static PAWN_ATTACKS: [[Bitboard; 64]; 2] =
-    [leaper_table(&[(-1, 1), (1, 1)]), leaper_table(&[(-1, -1), (1, -1)])];
+static PAWN_ATTACKS: [[Bitboard; 64]; 2] = [leaper_table(&[(-1, 1), (1, 1)]), leaper_table(&[(-1, -1), (1, -1)])];
 
 /// Squares strictly between two squares on a shared line (empty otherwise),
 /// and the full board-spanning line through both.

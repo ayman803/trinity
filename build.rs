@@ -158,12 +158,12 @@ fn main() {
     let bytes: Vec<u8> = table.iter().flat_map(|x| x.to_le_bytes()).collect();
     fs::write(Path::new(&out_dir).join("slider_attacks.bin"), bytes).unwrap();
 
-    // Neural network: embed `EVALFILE` (or `trinity.nnue` in the repo root)
-    // if present. Without one the engine falls back to its hand-written eval.
+    // Neural network: embed `EVALFILE` (default: `nets/default.nnue`) if it
+    // exists. Without one the engine uses its hand-written evaluation.
     let manifest = env::var("CARGO_MANIFEST_DIR").unwrap();
     let net_path = env::var("EVALFILE")
         .map(|p| Path::new(&p).to_path_buf())
-        .unwrap_or_else(|_| Path::new(&manifest).join("trinity.nnue"));
+        .unwrap_or_else(|_| Path::new(&manifest).join("nets").join("default.nnue"));
     println!("cargo:rerun-if-changed={}", net_path.display());
     if net_path.is_file() {
         fs::copy(&net_path, Path::new(&out_dir).join("net.bin")).unwrap();

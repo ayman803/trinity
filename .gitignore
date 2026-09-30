@@ -3,6 +3,5 @@
 /checkpoints
 /data
 *.bin
-*.nnue
-!/nets/*.nnue
+/*.nnue
 /sprt/
