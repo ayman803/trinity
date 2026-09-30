@@ -27,7 +27,7 @@ try {
 
     # bullet-utils: bullet's data tools (shuffle, interleave, validate).
     $toolsRoot = Join-Path (Join-Path $script:Work "tools") "bullet"
-    $utils = Join-Path (Join-Path $toolsRoot "bin") "bullet-utils$($script:Exe)"
+    $utils = Join-Path (Join-Path $toolsRoot "bin") "bullet-utils$($script:ExeSuffix)"
     if (-not (Test-Path $utils)) {
         Write-Step "Building bullet's data tools (one time)"
         Invoke-Native cargo @("install", "--locked", "--git", "https://github.com/jw1912/bullet", "--rev", $script:BulletRev,
@@ -51,7 +51,7 @@ try {
     Write-Step "Building the trainer (first time takes a few minutes)"
     $features = if ($script:OnWindows) { @("--features", "cuda") } else { @() }
     Invoke-Native cargo (@("build", "--release", "--manifest-path", (Join-Path (Join-Path $script:Root "trainer") "Cargo.toml")) + $features)
-    $trainer = Join-Path (Join-Path (Join-Path (Join-Path $script:Root "trainer") "target") "release") "trinity-trainer$($script:Exe)"
+    $trainer = Join-Path (Join-Path (Join-Path (Join-Path $script:Root "trainer") "target") "release") "trinity-trainer$($script:ExeSuffix)"
 
     $stamp = Get-Date -Format "yyyyMMdd-HHmm"
     $netId = "trinity-$stamp"

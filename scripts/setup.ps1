@@ -60,8 +60,8 @@ try {
 
     Write-Step "Building Trinity and running its self-tests"
     Invoke-Native cargo @("test", "--release", "--manifest-path", (Join-Path $script:Root "Cargo.toml"))
-    $exe = Build-Trinity "HEAD"
-    $bench = Get-NativeOutput $exe @("bench")
+    $enginePath = Build-Trinity "HEAD"
+    $bench = Get-NativeOutput $enginePath @("bench")
     Write-Good "Trinity works. Bench: $bench"
 
     if ($script:OnWindows) {
