@@ -190,20 +190,37 @@ function Get-BenchNodes([string]$ExePath) {
 # ---------------------------------------------------------------------------
 # Downloads used for testing.
 # ---------------------------------------------------------------------------
+# Find files by name below a folder. Uses .NET directly: PowerShell's own
+# recursive search (Get-ChildItem -Recurse) fails on some Windows 10 PCs.
+function Find-Files([string]$Dir, [string]$Pattern) {
+    if (-not [IO.Directory]::Exists($Dir)) { return @() }
+    try {
+        return [IO.Directory]::GetFiles($Dir, $Pattern, [IO.SearchOption]::AllDirectories)
+    } catch {
+        Stop-WithMessage "Could not search the folder '$Dir': $($_.Exception.Message)"
+    }
+}
+
+function Find-File([string]$Dir, [string]$Name) {
+    $all = @(Find-Files $Dir $Name)
+    if ($all.Count -gt 0) { return $all[0] }
+    return $null
+}
+
 function Get-Fastchess {
     $dir = Join-Path $script:Work "tools"
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
-    $found = Get-ChildItem -Path $dir -Recurse -Filter "fastchess$($script:Exe)" -ErrorAction SilentlyContinue | Select-Object -First 1
-    if ($found) { return $found.FullName }
+    $found = Find-File $dir "fastchess$($script:Exe)"
+    if ($found) { return $found }
     if (-not $script:OnWindows) { Stop-WithMessage "Put a fastchess binary in $dir (automatic download is Windows-only)." }
     Write-Step "Downloading fastchess (the program that runs test matches)"
     $zip = Join-Path $dir "fastchess.zip"
     Save-Download $script:FastchessUrl $zip
     Expand-Archive -Path $zip -DestinationPath $dir -Force
     Remove-Item $zip
-    $found = Get-ChildItem -Path $dir -Recurse -Filter "fastchess.exe" | Select-Object -First 1
+    $found = Find-File $dir "fastchess.exe"
     if (-not $found) { Stop-WithMessage "fastchess.exe not found after download." }
-    return $found.FullName
+    return $found
 }
 
 function Get-OpeningBook {
