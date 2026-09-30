@@ -210,17 +210,21 @@ function Find-File([string]$Dir, [string]$Name) {
 function Get-Fastchess {
     $dir = Join-Path $script:Work "tools"
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
-    $found = Find-File $dir "fastchess$($script:Exe)"
-    if ($found) { return $found }
+    # Look only at the exact places the release zip unpacks to (no folder
+    # searching: that fails on some PCs).
+    $candidates = @(
+        (Join-Path (Join-Path $dir "fastchess-windows-x86-64") "fastchess$($script:Exe)"),
+        (Join-Path $dir "fastchess$($script:Exe)")
+    )
+    foreach ($c in $candidates) { if (Test-Path -LiteralPath $c) { return $c } }
     if (-not $script:OnWindows) { Stop-WithMessage "Put a fastchess binary in $dir (automatic download is Windows-only)." }
     Write-Step "Downloading fastchess (the program that runs test matches)"
     $zip = Join-Path $dir "fastchess.zip"
     Save-Download $script:FastchessUrl $zip
     Expand-Archive -Path $zip -DestinationPath $dir -Force
     Remove-Item $zip
-    $found = Find-File $dir "fastchess.exe"
-    if (-not $found) { Stop-WithMessage "fastchess.exe not found after download." }
-    return $found
+    foreach ($c in $candidates) { if (Test-Path -LiteralPath $c) { return $c } }
+    Stop-WithMessage "fastchess.exe not found after download (looked in $($candidates -join ', '))."
 }
 
 function Get-OpeningBook {
