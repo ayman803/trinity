@@ -46,7 +46,8 @@ function Invoke-Native {
     $old = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
     try {
-        & $Program @Arguments
+        # Out-Host: show the output, but never return it as a function result.
+        & $Program @Arguments | Out-Host
         $code = $LASTEXITCODE
     } finally {
         $ErrorActionPreference = $old
