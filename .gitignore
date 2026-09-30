@@ -1,0 +1,8 @@
+/target
+/trainer/target
+/checkpoints
+/data
+*.bin
+*.nnue
+!/nets/*.nnue
+/sprt/
