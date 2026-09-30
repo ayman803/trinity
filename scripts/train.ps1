@@ -34,9 +34,18 @@ try {
             "bullet-utils", "--root", $toolsRoot)
     }
 
-    if (-not ($SkipShuffle -and (Test-Path $shuffled))) {
-        $files = @(Find-Files $dataDir "*.data" |
-            Where-Object { $_ -notlike "$prepared*" -and (Get-Item -LiteralPath $_).Length -gt 0 })
+    $files = @(Find-Files $dataDir "*.data" |
+        Where-Object { $_ -notlike "$prepared*" -and (Get-Item -LiteralPath $_).Length -gt 0 })
+    # Reuse the shuffled file from a previous attempt if no data changed since.
+    $upToDate = $false
+    if (Test-Path -LiteralPath $shuffled) {
+        $shuffledTime = (Get-Item -LiteralPath $shuffled).LastWriteTime
+        $newest = $files | ForEach-Object { (Get-Item -LiteralPath $_).LastWriteTime } | Sort-Object | Select-Object -Last 1
+        $upToDate = ($null -eq $newest) -or ($newest -lt $shuffledTime)
+    }
+    if ($upToDate -or ($SkipShuffle -and (Test-Path -LiteralPath $shuffled))) {
+        Write-Host "Reusing the already shuffled data (no new data since last time)."
+    } else {
         if (-not $files) { Stop-WithMessage "No training data found in data\. Run 3-Generate-Training-Data.bat first." }
         $total = ($files | ForEach-Object { (Get-Item -LiteralPath $_).Length } | Measure-Object -Sum).Sum
         Write-Step ("Preparing {0:N0} positions from {1} files" -f ($total / 32), @($files).Count)
