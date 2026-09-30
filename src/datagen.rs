@@ -178,7 +178,27 @@ fn play_game(searcher: &mut Searcher, rng: &mut Rng, cfg: &Config, out: &mut Vec
     n
 }
 
+/// Ask Windows not to sleep while this process runs. The request belongs to
+/// the calling thread and is released automatically when the process exits.
+#[cfg(windows)]
+fn keep_system_awake() {
+    const ES_CONTINUOUS: u32 = 0x8000_0000;
+    const ES_SYSTEM_REQUIRED: u32 = 0x0000_0001;
+    #[link(name = "kernel32")]
+    unsafe extern "system" {
+        fn SetThreadExecutionState(flags: u32) -> u32;
+    }
+    // SAFETY: plain Win32 call with constant flags.
+    if unsafe { SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED) } == 0 {
+        eprintln!("warning: could not ask Windows to stay awake");
+    }
+}
+
+#[cfg(not(windows))]
+fn keep_system_awake() {}
+
 pub fn run(cfg: Config) {
+    keep_system_awake();
     std::fs::create_dir_all(&cfg.out).expect("cannot create output directory");
     let stamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
     let total = Arc::new(AtomicU64::new(0));

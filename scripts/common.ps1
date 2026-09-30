@@ -111,35 +111,68 @@ function Save-Download([string]$Url, [string]$Path) {
 # ---------------------------------------------------------------------------
 # Keeping the PC awake.
 #
-# While a long job runs, a background thread tells Windows every 30 seconds
-# that the system is busy (SetThreadExecutionState with ES_SYSTEM_REQUIRED).
-# Each call only resets the idle-sleep countdown; nothing is changed
-# permanently. When the job ends - or the window is closed - the calls
-# stop, and Windows goes back to its normal sleep timer by itself. The
-# screen is still allowed to turn off.
+# Two layers, both using Windows' standard SetThreadExecutionState call:
+#  1. This window's own thread tells Windows "the system is required"
+#     (ES_CONTINUOUS | ES_SYSTEM_REQUIRED) for as long as the job runs.
+#  2. A background thread repeats a one-off "system is busy" signal every
+#     30 seconds, which resets the idle-sleep countdown.
+# (The engine itself also does (1) while generating data.)
+# Nothing is changed permanently: when the job ends, or the window is
+# closed, Windows automatically drops these requests and its normal sleep
+# timer applies again. The screen may still turn off.
+#
+# This prevents *sleep*. It cannot stop a Windows Update restart, so we warn
+# when an update restart is already pending.
 # ---------------------------------------------------------------------------
-function Start-KeepAwake {
-    if (-not $script:OnWindows) { return $null }
-    $ps = [PowerShell]::Create()
-    [void]$ps.AddScript({
-        Add-Type -Namespace TrinityPower -Name Native -MemberDefinition @"
+$script:ES_CONTINUOUS = [uint32]"0x80000000"
+$script:ES_SYSTEM_REQUIRED = [uint32]1
+if ($script:OnWindows) {
+    Add-Type -Namespace TrinityPower -Name Native -MemberDefinition @"
 [System.Runtime.InteropServices.DllImport("kernel32.dll")]
 public static extern uint SetThreadExecutionState(uint esFlags);
 "@
-        $ES_SYSTEM_REQUIRED = [uint32]1
-        while ($true) {
-            [void][TrinityPower.Native]::SetThreadExecutionState($ES_SYSTEM_REQUIRED)
-            Start-Sleep -Seconds 30
+}
+
+function Test-RestartPending {
+    if (-not $script:OnWindows) { return $false }
+    return (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") -or
+        (Test-Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending")
+}
+
+function Start-KeepAwake {
+    if (-not $script:OnWindows) { return $null }
+    if (Test-RestartPending) {
+        Write-Warn "WARNING: Windows has installed updates and is waiting to restart."
+        Write-Warn "It may restart the PC during this job. To be safe: close this window, restart"
+        Write-Warn "the PC, then start again. (Or pause updates: Settings > Update & Security.)"
+        $answer = Read-Host "Type C and press Enter to continue anyway, or just press Enter to stop"
+        if ($answer -ne "C" -and $answer -ne "c") { throw "stopped" }
+    }
+    $prev = [TrinityPower.Native]::SetThreadExecutionState($script:ES_CONTINUOUS -bor $script:ES_SYSTEM_REQUIRED)
+    if ($prev -eq 0) { Write-Warn "Windows refused the keep-awake request; the PC might sleep." }
+
+    $log = Join-Path $script:Work "keep-awake-error.txt"
+    $ps = [PowerShell]::Create()
+    [void]$ps.AddScript({
+        param($LogFile)
+        try {
+            while ($true) {
+                [void][TrinityPower.Native]::SetThreadExecutionState([uint32]1)
+                Start-Sleep -Seconds 30
+            }
+        } catch {
+            Set-Content -Path $LogFile -Value $_.Exception.Message
         }
-    })
+    }).AddArgument($log)
     [void]$ps.BeginInvoke()
-    Write-Host "(Sleep is paused while this runs; it resumes automatically when finished.)" -ForegroundColor DarkGray
+    Write-Host "(Sleep is blocked while this runs; normal sleep resumes automatically when finished.)" -ForegroundColor DarkGray
     return $ps
 }
 
 function Stop-KeepAwake($Handle) {
     if ($null -ne $Handle) {
         try { $Handle.Stop(); $Handle.Dispose() } catch { }
+        try { [void][TrinityPower.Native]::SetThreadExecutionState($script:ES_CONTINUOUS) } catch { }
         Write-Host "(Normal sleep settings are active again.)" -ForegroundColor DarkGray
     }
 }
