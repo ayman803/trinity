@@ -108,15 +108,27 @@ fn history_bonus(depth: i32) -> i32 {
 
 /// The moves of one node with their ordering scores. Scores are only
 /// written for existing moves, so nothing is cleared up front.
+///
+/// If the hash-table move is legal it is tried first, before any other
+/// move is scored: it often causes a cut-off, making the scoring unneeded.
 struct ScoredMoves {
     list: MoveList,
     scores: [std::mem::MaybeUninit<i32>; 256],
+    tt_first: bool,
+    scored: bool,
 }
 
 impl ScoredMoves {
     #[inline(always)]
-    fn new(list: MoveList) -> Self {
-        ScoredMoves { list, scores: [std::mem::MaybeUninit::uninit(); 256] }
+    fn new(mut list: MoveList, tt_move: Move) -> Self {
+        let tt_first = match list.iter().position(|&m| m == tt_move) {
+            Some(k) if !tt_move.is_none() => {
+                list.swap(0, k);
+                true
+            }
+            _ => false,
+        };
+        ScoredMoves { list, scores: [std::mem::MaybeUninit::uninit(); 256], tt_first, scored: false }
     }
 
     #[inline(always)]
@@ -375,18 +387,30 @@ impl Searcher {
     }
 
     /// Assign every move an ordering score (higher = searched earlier).
-    fn score_moves(&self, b: &Board, moves: &mut ScoredMoves, tt_move: Move, ply: usize) {
+    /// The `i`-th move to search (moves are handed out in order).
+    #[inline(always)]
+    fn next_move(&self, b: &Board, moves: &mut ScoredMoves, i: usize, ply: usize) -> Move {
+        if i == 0 && moves.tt_first {
+            return moves.list[0];
+        }
+        if !moves.scored {
+            self.score_moves(b, moves, usize::from(moves.tt_first), ply);
+            moves.scored = true;
+        }
+        moves.pick(i)
+    }
+
+    /// Score moves `start..` of the list.
+    fn score_moves(&self, b: &Board, moves: &mut ScoredMoves, start: usize, ply: usize) {
         let counter = if ply > 0 {
             let f = self.frames[ply - 1];
             if f.piece != NO_PIECE { self.counters[f.piece as usize][f.mv.to()] } else { Move::NONE }
         } else {
             Move::NONE
         };
-        for i in 0..moves.len() {
+        for i in start..moves.len() {
             let m = moves.list[i];
-            let score = if m == tt_move {
-                2_000_000_000
-            } else if m.is_noisy() {
+            let score = if m.is_noisy() {
                 let cap = b.captured_piece(m);
                 let victim = if cap == NO_PIECE { 0 } else { crate::board::SEE_VALUES[piece_type(cap)] };
                 let piece = b.piece_at(m.from()) as usize;
@@ -556,8 +580,7 @@ impl Searcher {
         if list.is_empty() {
             return if in_check { -MATE + ply as i32 } else { 0 };
         }
-        let mut moves = ScoredMoves::new(list);
-        self.score_moves(b, &mut moves, tt_move, ply);
+        let mut moves = ScoredMoves::new(list, tt_move);
 
         let orig_alpha = alpha;
         let mut best_score = -INF;
@@ -568,7 +591,7 @@ impl Searcher {
         let mut noisies_tried = MoveList::new();
 
         for i in 0..moves.len() {
-            let m = moves.pick(i);
+            let m = self.next_move(b, &mut moves, i, ply);
             if m == excluded {
                 continue;
             }
@@ -778,13 +801,12 @@ impl Searcher {
         let mut list = MoveList::new();
         movegen::generate(b, &mut list, !in_check);
         let tt_move = tt_entry.map_or(Move::NONE, |e| e.mv);
-        let mut moves = ScoredMoves::new(list);
-        self.score_moves(b, &mut moves, tt_move, ply);
+        let mut moves = ScoredMoves::new(list, tt_move);
 
         let mut best_move = Move::NONE;
         let mut searched = 0;
         for i in 0..moves.len() {
-            let m = moves.pick(i);
+            let m = self.next_move(b, &mut moves, i, ply);
 
             if !in_check {
                 // Skip captures that lose material or can't reach alpha.
