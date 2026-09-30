@@ -185,21 +185,22 @@ impl fmt::Debug for Move {
 }
 
 /// Fixed-capacity move list (no heap allocation). 218 is the most legal
-/// moves known in any chess position.
+/// moves known in any chess position. The storage is left uninitialised
+/// until written, so creating a list costs nothing.
 pub struct MoveList {
-    moves: [Move; 256],
+    moves: [std::mem::MaybeUninit<Move>; 256],
     len: usize,
 }
 
 impl MoveList {
     #[inline(always)]
     pub fn new() -> Self {
-        MoveList { moves: [Move::NONE; 256], len: 0 }
+        MoveList { moves: [std::mem::MaybeUninit::uninit(); 256], len: 0 }
     }
 
     #[inline(always)]
     pub fn push(&mut self, m: Move) {
-        self.moves[self.len] = m;
+        self.moves[self.len].write(m);
         self.len += 1;
     }
 
@@ -215,7 +216,8 @@ impl MoveList {
 
     #[inline(always)]
     pub fn as_slice(&self) -> &[Move] {
-        &self.moves[..self.len]
+        // SAFETY: the first `len` entries have been written by `push`.
+        unsafe { std::slice::from_raw_parts(self.moves.as_ptr() as *const Move, self.len) }
     }
 
     pub fn iter(&self) -> std::slice::Iter<'_, Move> {
@@ -224,6 +226,7 @@ impl MoveList {
 
     #[inline(always)]
     pub fn swap(&mut self, i: usize, j: usize) {
+        assert!(i < self.len && j < self.len);
         self.moves.swap(i, j);
     }
 
@@ -243,7 +246,7 @@ impl std::ops::Index<usize> for MoveList {
     type Output = Move;
     #[inline(always)]
     fn index(&self, i: usize) -> &Move {
-        &self.moves[i]
+        &self.as_slice()[i]
     }
 }
 

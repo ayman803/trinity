@@ -106,6 +106,46 @@ fn history_bonus(depth: i32) -> i32 {
     (170 * depth - 80).min(1700)
 }
 
+/// The moves of one node with their ordering scores. Scores are only
+/// written for existing moves, so nothing is cleared up front.
+struct ScoredMoves {
+    list: MoveList,
+    scores: [std::mem::MaybeUninit<i32>; 256],
+}
+
+impl ScoredMoves {
+    #[inline(always)]
+    fn new(list: MoveList) -> Self {
+        ScoredMoves { list, scores: [std::mem::MaybeUninit::uninit(); 256] }
+    }
+
+    #[inline(always)]
+    fn len(&self) -> usize {
+        self.list.len()
+    }
+
+    #[inline(always)]
+    fn score(&self, i: usize) -> i32 {
+        debug_assert!(i < self.len());
+        // SAFETY: `score_moves` writes a score for every move in the list.
+        unsafe { self.scores[i].assume_init() }
+    }
+
+    /// Selection sort step: bring the best remaining move to position `i`.
+    #[inline(always)]
+    fn pick(&mut self, i: usize) -> Move {
+        let mut best_i = i;
+        for j in i + 1..self.len() {
+            if self.score(j) > self.score(best_i) {
+                best_i = j;
+            }
+        }
+        self.scores.swap(i, best_i);
+        self.list.swap(i, best_i);
+        self.list[i]
+    }
+}
+
 pub struct SearchResult {
     pub best_move: Move,
     pub score: i32,
@@ -335,15 +375,16 @@ impl Searcher {
     }
 
     /// Assign every move an ordering score (higher = searched earlier).
-    fn score_moves(&self, b: &Board, list: &MoveList, tt_move: Move, ply: usize, scores: &mut [i32; 256]) {
+    fn score_moves(&self, b: &Board, moves: &mut ScoredMoves, tt_move: Move, ply: usize) {
         let counter = if ply > 0 {
             let f = self.frames[ply - 1];
             if f.piece != NO_PIECE { self.counters[f.piece as usize][f.mv.to()] } else { Move::NONE }
         } else {
             Move::NONE
         };
-        for (i, &m) in list.iter().enumerate() {
-            scores[i] = if m == tt_move {
+        for i in 0..moves.len() {
+            let m = moves.list[i];
+            let score = if m == tt_move {
                 2_000_000_000
             } else if m.is_noisy() {
                 let cap = b.captured_piece(m);
@@ -363,6 +404,7 @@ impl Searcher {
             } else {
                 self.quiet_score(b, m, ply)
             };
+            moves.scores[i].write(score);
         }
     }
 
@@ -516,8 +558,8 @@ impl Searcher {
         if list.is_empty() {
             return if in_check { -MATE + ply as i32 } else { 0 };
         }
-        let mut scores = [0i32; 256];
-        self.score_moves(b, &list, tt_move, ply, &mut scores);
+        let mut moves = ScoredMoves::new(list);
+        self.score_moves(b, &mut moves, tt_move, ply);
 
         let orig_alpha = alpha;
         let mut best_score = -INF;
@@ -527,17 +569,8 @@ impl Searcher {
         let mut quiets_tried = MoveList::new();
         let mut noisies_tried = MoveList::new();
 
-        for i in 0..list.len() {
-            // Selection sort: bring the best remaining move to position i.
-            let mut best_i = i;
-            for j in i + 1..list.len() {
-                if scores[j] > scores[best_i] {
-                    best_i = j;
-                }
-            }
-            scores.swap(i, best_i);
-            list.swap(i, best_i);
-            let m = list[i];
+        for i in 0..moves.len() {
+            let m = moves.pick(i);
             if m == excluded {
                 continue;
             }
@@ -545,7 +578,6 @@ impl Searcher {
             if quiet && skip_quiets {
                 continue;
             }
-            let hist = if quiet { self.quiet_score(b, m, ply) } else { 0 };
 
             if !root && best_score > -MATE_BOUND {
                 let lmr_depth =
@@ -616,7 +648,7 @@ impl Searcher {
                     r += i32::from(!improving);
                     r -= i32::from(child.in_check());
                     if quiet {
-                        r -= hist / 8192;
+                        r -= self.quiet_score(b, m, ply) / 8192;
                         if m == self.killers[ply][0] || m == self.killers[ply][1] {
                             r -= 1;
                         }
@@ -748,21 +780,13 @@ impl Searcher {
         let mut list = MoveList::new();
         movegen::generate(b, &mut list, !in_check);
         let tt_move = tt_entry.map_or(Move::NONE, |e| e.mv);
-        let mut scores = [0i32; 256];
-        self.score_moves(b, &list, tt_move, ply, &mut scores);
+        let mut moves = ScoredMoves::new(list);
+        self.score_moves(b, &mut moves, tt_move, ply);
 
         let mut best_move = Move::NONE;
         let mut searched = 0;
-        for i in 0..list.len() {
-            let mut best_i = i;
-            for j in i + 1..list.len() {
-                if scores[j] > scores[best_i] {
-                    best_i = j;
-                }
-            }
-            scores.swap(i, best_i);
-            list.swap(i, best_i);
-            let m = list[i];
+        for i in 0..moves.len() {
+            let m = moves.pick(i);
 
             if !in_check {
                 // Skip captures that lose material or can't reach alpha.
