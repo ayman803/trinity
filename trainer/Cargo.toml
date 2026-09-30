@@ -1,0 +1,19 @@
+[package]
+name = "trinity-trainer"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+# Standalone project (not part of the engine build).
+[workspace]
+
+[dependencies]
+# Pinned to a known-good commit of the bullet trainer. Update deliberately.
+bullet_lib = { git = "https://github.com/jw1912/bullet", rev = "c004ebf04025edf91c6ccac47e72d561062a46b5" }
+
+[features]
+# Build with `--features cuda` for NVIDIA GPUs (needs the CUDA Toolkit).
+cuda = ["bullet_lib/cuda"]
+
+[profile.release]
+debug = false
