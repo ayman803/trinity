@@ -93,7 +93,7 @@ try {
     Write-Host ""
     Write-Good "Done. Now double-click 2-Run-SPRT-Test.bat and choose '$branch'."
 } catch {
-    if ($_.Exception.Message -ne "stopped") { Write-Host "Unexpected error: $($_.Exception.Message)" -ForegroundColor Red }
+    Write-UnexpectedError $_
     exit 1
 } finally {
     Stop-KeepAwake $keepAwake

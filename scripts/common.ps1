@@ -74,6 +74,15 @@ function Get-NativeOutput {
     return ($out -join "`n").Trim()
 }
 
+# Report an unexpected error with enough detail to find its cause.
+function Write-UnexpectedError($ErrorRecord) {
+    if ($ErrorRecord.Exception.Message -eq "stopped") { return }
+    Write-Host "Unexpected error: $($ErrorRecord.Exception.Message)" -ForegroundColor Red
+    Write-Host "Where: $($ErrorRecord.InvocationInfo.PositionMessage)" -ForegroundColor Red
+    Write-Host "Trace: $($ErrorRecord.ScriptStackTrace)" -ForegroundColor DarkGray
+    Write-Host "Please send a screenshot of this window to Claude." -ForegroundColor Yellow
+}
+
 function Test-Command([string]$Name) {
     return [bool](Get-Command $Name -ErrorAction SilentlyContinue)
 }
