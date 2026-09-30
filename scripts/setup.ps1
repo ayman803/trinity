@@ -22,19 +22,26 @@ try {
         Write-Step "Checking the Microsoft C++ build tools (Rust needs them on Windows)"
         if (Test-MsvcInstalled) {
             Write-Good "C++ build tools are installed."
-        } elseif (Test-Command "winget") {
-            Write-Host "Installing 'Build Tools for Visual Studio 2022' (C++ workload)."
-            Write-Host "Windows will ask for permission - click Yes. This takes 5-15 minutes."
-            $old = $ErrorActionPreference; $ErrorActionPreference = "Continue"
-            & winget install --id Microsoft.VisualStudio.2022.BuildTools -e --accept-package-agreements --accept-source-agreements `
-                --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended" | Out-Host
-            $ErrorActionPreference = $old
-            if (-not (Test-MsvcInstalled)) {
-                Stop-WithMessage "The C++ build tools did not install. Install them by hand from https://visualstudio.microsoft.com/visual-cpp-build-tools/ (tick 'Desktop development with C++'), then run this again."
+        } else {
+            # Use Microsoft's official installer directly (winget is often
+            # missing or not on PATH on Windows 10).
+            Write-Host "Installing 'Build Tools for Visual Studio 2022' (C++ part only)."
+            Write-Host "Windows will ask for permission - click Yes. A progress window appears; this takes 5-20 minutes."
+            $installer = Join-Path $env:TEMP "vs_BuildTools.exe"
+            Save-Download "https://aka.ms/vs/17/release/vs_BuildTools.exe" $installer
+            $p = Start-Process -FilePath $installer -Wait -PassThru -ArgumentList @(
+                "--passive", "--wait", "--norestart",
+                "--add", "Microsoft.VisualStudio.Workload.VCTools", "--includeRecommended")
+            # 0 = done, 3010 = done but Windows wants a restart.
+            if (($p.ExitCode -ne 0 -and $p.ExitCode -ne 3010) -or -not (Test-MsvcInstalled)) {
+                Stop-WithMessage ("The C++ build tools did not install (code $($p.ExitCode)). Install them by hand from " +
+                    "https://visualstudio.microsoft.com/visual-cpp-build-tools/ (tick 'Desktop development with C++'), then run this again.")
+            }
+            if ($p.ExitCode -eq 3010) {
+                Write-Warn "The build tools are installed, but Windows needs a restart. Restart the PC, then double-click 1-Setup.bat again."
+                throw "stopped"
             }
             Write-Good "C++ build tools installed."
-        } else {
-            Stop-WithMessage "Please install the C++ build tools from https://visualstudio.microsoft.com/visual-cpp-build-tools/ (tick 'Desktop development with C++'), then run this again."
         }
     }
 
