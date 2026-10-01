@@ -26,6 +26,13 @@ function Select-Branch {
         $parts = $l -split "\|", 3
         $name = $parts[0] -replace "^origin/", ""
         if ($name -eq "HEAD" -or $name -eq "origin" -or $name -eq $Base) { continue }
+        # Hide branches already merged into the base: testing them would
+        # compare two identical engines.
+        $old = $ErrorActionPreference; $ErrorActionPreference = "Continue"
+        & git -C $script:Root merge-base --is-ancestor "origin/$name" "origin/$Base" 2>$null
+        $merged = ($LASTEXITCODE -eq 0)
+        $ErrorActionPreference = $old
+        if ($merged) { continue }
         $branches += , @($name, $parts[1], $parts[2])
     }
     if ($branches.Count -eq 0) { Stop-WithMessage "There are no branches to test besides '$Base'." }
