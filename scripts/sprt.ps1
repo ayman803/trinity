@@ -7,7 +7,7 @@
 param(
     [string]$Dev = "",            # branch to test (asked interactively if empty)
     [string]$Base = "main",       # version to compare against
-    [int]$Concurrency = 14,       # games played at the same time (= CPU threads used)
+    [int]$Concurrency = 0,        # games at the same time; 0 = automatic (14 on the main PC)
     [string]$TC = "8+0.08",       # time control: 8 seconds + 0.08 seconds per move
     [int]$Hash = 16,
     [double]$Elo0 = 0,            # SPRT bounds (normalized Elo). [0, 5] tests a
@@ -60,6 +60,7 @@ try {
         Write-Warn "Both versions search identically (same bench). That is expected only for pure speed-ups."
     }
 
+    if ($Concurrency -le 0) { $Concurrency = Get-DefaultConcurrency }
     $fastchess = Get-Fastchess
     $book = Get-OpeningBook
     $results = Join-Path $script:Work "results"
@@ -109,6 +110,7 @@ try {
 
     $summary = @(
         "SPRT RESULT: $verdict",
+        "Machine: $([Environment]::MachineName) ($Concurrency games at a time)",
         "Test: $Dev (bench $devBench) vs $Base (bench $baseBench), tc $TC, bounds [$Elo0, $Elo1]",
         "$gamesLine".Trim(), "$eloLine".Trim(), "$llrLine".Trim(),
         "Duration: $hours hours. Full log: sprt\results\$name.log"

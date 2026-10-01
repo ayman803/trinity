@@ -7,7 +7,7 @@
 
 param(
     [long]$Positions = 30000000,
-    [int]$Threads = 14,
+    [int]$Threads = 0,           # 0 = automatic (14 on the main PC)
     [int]$Nodes = 5000,          # search effort per move (higher = better data, slower)
     [switch]$NoUpdate
 )
@@ -19,6 +19,7 @@ try {
     Assert-Tools
     if (-not $NoUpdate) { Update-Repository }
     $enginePath = Build-Trinity "origin/main"
+    if ($Threads -le 0) { $Threads = Get-DefaultConcurrency }
 
     $stamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
     $out = Join-Path (Join-Path $script:Root "data") "gen_$stamp"

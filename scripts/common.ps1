@@ -85,6 +85,21 @@ function Write-UnexpectedError($ErrorRecord) {
     Write-Host "Please send a screenshot of this window to Claude." -ForegroundColor Yellow
 }
 
+# How many games / worker threads to run at once on this machine.
+# The main 20-thread desktop uses 14 (leaves room for normal use); smaller
+# machines such as laptops use one less than their number of physical cores,
+# so engines never fight over a core (which would cause losses on time).
+function Get-DefaultConcurrency {
+    $logical = [Environment]::ProcessorCount
+    if ($logical -ge 20) { return 14 }
+    $physical = $null
+    try {
+        $physical = (Get-CimInstance Win32_Processor -ErrorAction Stop | Measure-Object -Property NumberOfCores -Sum).Sum
+    } catch { }
+    if (-not $physical) { $physical = [Math]::Max(1, [int]($logical / 2)) }
+    return [Math]::Max(1, $physical - 1)
+}
+
 function Test-Command([string]$Name) {
     return [bool](Get-Command $Name -ErrorAction SilentlyContinue)
 }
