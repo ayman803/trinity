@@ -189,6 +189,8 @@ pub struct Searcher {
     /// Accumulators for each ply of the current search path.
     acc: Box<[AccPair; MAX_PLY + 2]>,
     lmr: Box<[[[i32; 64]; 64]; 2]>,
+    /// Nodes spent below each root move (by from/to), for time management.
+    root_nodes: Box<[[u64; 64]; 64]>,
 }
 
 impl Searcher {
@@ -227,6 +229,7 @@ impl Searcher {
             net,
             acc: zeroed_box(),
             lmr,
+            root_nodes: zeroed_box(),
         }
     }
 
@@ -660,6 +663,7 @@ impl Searcher {
             }
 
             let child = self.make(b, m, ply);
+            let nodes_before = self.nodes;
             moves_searched += 1;
             let new_depth = depth - 1 + extension;
             let mut score;
@@ -691,6 +695,9 @@ impl Searcher {
                 }
             }
             self.unmake();
+            if root {
+                self.root_nodes[m.from()][m.to()] += self.nodes - nodes_before;
+            }
             if self.stopped() {
                 return 0;
             }
@@ -885,6 +892,7 @@ impl Searcher {
         self.keys.clear();
         self.keys.extend_from_slice(history);
         self.frames = [Frame::default(); MAX_PLY + 2];
+        *self.root_nodes = [[0; 64]; 64];
         if let Some(net) = self.net {
             self.acc[0] = AccPair::from_board(net, root);
         }
@@ -925,6 +933,7 @@ impl Searcher {
 
             let best = if self.pv_len[0] > 0 { self.pv[0][0] } else { result.best_move };
             stability = if best == result.best_move { stability + 1 } else { 0 };
+            let score_drop = if depth > 1 { prev_score - score } else { 0 };
             result = SearchResult { best_move: best, score };
             prev_score = score;
 
@@ -934,7 +943,19 @@ impl Searcher {
                     self.print_info(depth, score);
                 }
                 // Soft limits: don't start an iteration we can't finish.
-                let scale = [2.0, 1.4, 1.1, 0.9, 0.8][stability.min(4)];
+                // Think longer when the best move keeps changing, when the
+                // search effort is spread over several moves, or when the
+                // score just dropped; stop sooner when all signs agree.
+                let stability_scale = [2.0, 1.4, 1.1, 0.9, 0.8][stability.min(4)];
+                let node_scale = if depth >= 6 {
+                    let best_nodes = self.root_nodes[best.from()][best.to()] as f64;
+                    let fraction = best_nodes / self.nodes.max(1) as f64;
+                    (1.5 - fraction) * 1.35
+                } else {
+                    1.0
+                };
+                let score_scale = (1.0 + f64::from(score_drop) * 0.01).clamp(0.75, 1.5);
+                let scale = stability_scale * node_scale * score_scale;
                 if !limits.infinite && self.elapsed_ms() as f64 >= self.soft_ms as f64 * scale * 0.6 {
                     break;
                 }
