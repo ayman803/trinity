@@ -94,6 +94,14 @@ fn zeroed_box<T>() -> Box<T> {
 
 const HISTORY_MAX: i32 = 16_384;
 
+/// Correction history: per side to move and pawn structure, a running
+/// average of how far the search result differed from the static eval.
+/// Values are stored in units of 1/CORR_GRAIN centipawns.
+const CORR_SIZE: usize = 16_384;
+const CORR_GRAIN: i32 = 256;
+const CORR_WEIGHT_SCALE: i32 = 256;
+const CORR_MAX: i32 = CORR_GRAIN * 32;
+
 /// Nudge a history value towards `bonus` while keeping it in range.
 #[inline(always)]
 fn apply_bonus(entry: &mut i16, bonus: i32) {
@@ -169,6 +177,7 @@ pub struct Searcher {
     history: Box<History>,
     cont_hist: Box<ContHistory>,
     capt_hist: Box<CaptHistory>,
+    corr_hist: Box<[[i32; CORR_SIZE]; 2]>,
     killers: [[Move; 2]; MAX_PLY + 2],
     counters: Box<[[Move; 64]; 12]>,
     frames: [Frame; MAX_PLY + 2],
@@ -208,6 +217,7 @@ impl Searcher {
             history: zeroed_box(),
             cont_hist: zeroed_box(),
             capt_hist: zeroed_box(),
+            corr_hist: zeroed_box(),
             killers: [[Move::NONE; 2]; MAX_PLY + 2],
             counters: zeroed_box(),
             frames: [Frame::default(); MAX_PLY + 2],
@@ -225,6 +235,7 @@ impl Searcher {
         self.history = zeroed_box();
         self.cont_hist = zeroed_box();
         self.capt_hist = zeroed_box();
+        self.corr_hist = zeroed_box();
         self.counters = zeroed_box();
         self.killers = [[Move::NONE; 2]; MAX_PLY + 2];
     }
@@ -289,6 +300,20 @@ impl Searcher {
         // Drift towards a draw as the fifty-move counter grows.
         let scaled = raw * (200 - i32::from(b.halfmove)) / 200;
         scaled.clamp(-MATE_BOUND + 1, MATE_BOUND - 1)
+    }
+
+    /// Static eval adjusted by the correction history for this pawn structure.
+    #[inline(always)]
+    fn corrected_eval(&self, b: &Board, raw: i32) -> i32 {
+        let c = self.corr_hist[b.stm][b.pawn_key as usize & (CORR_SIZE - 1)];
+        (raw + c / CORR_GRAIN).clamp(-MATE_BOUND + 1, MATE_BOUND - 1)
+    }
+
+    fn update_correction(&mut self, b: &Board, depth: i32, diff: i32) {
+        let entry = &mut self.corr_hist[b.stm][b.pawn_key as usize & (CORR_SIZE - 1)];
+        let weight = (depth + 1).min(16);
+        let target = diff * CORR_GRAIN;
+        *entry = ((*entry * (CORR_WEIGHT_SCALE - weight) + target * weight) / CORR_WEIGHT_SCALE).clamp(-CORR_MAX, CORR_MAX);
     }
 
     fn is_repetition(&self, b: &Board) -> bool {
@@ -474,7 +499,10 @@ impl Searcher {
             }
         }
 
+        // `raw_eval` (what the TT stores) is the network's opinion;
+        // `static_eval` adds the learned correction for this pawn structure.
         let static_eval;
+        let mut raw_eval = -INF;
         let mut eval;
         if in_check {
             static_eval = -INF;
@@ -483,10 +511,11 @@ impl Searcher {
             static_eval = self.frames[ply].static_eval;
             eval = static_eval;
         } else {
-            static_eval = match tt_entry {
+            raw_eval = match tt_entry {
                 Some(e) => i32::from(e.eval),
                 None => self.evaluate(b, ply),
             };
+            static_eval = self.corrected_eval(b, raw_eval);
             eval = static_eval;
             if let Some(e) = tt_entry {
                 let s = score_from_tt(i32::from(e.score), ply);
@@ -719,7 +748,17 @@ impl Searcher {
             } else {
                 BOUND_UPPER
             };
-            self.shared.tt.store(b.hash, best_move, score_to_tt(best_score, ply), static_eval, depth, bound);
+            // Learn how wrong the static eval was, when the search result is
+            // trustworthy in that direction (quiet best move, bound agrees).
+            if !in_check
+                && !best_move.is_noisy()
+                && best_score.abs() < MATE_BOUND
+                && !(bound == BOUND_LOWER && best_score <= static_eval)
+                && !(bound == BOUND_UPPER && best_score >= static_eval)
+            {
+                self.update_correction(b, depth, best_score - static_eval);
+            }
+            self.shared.tt.store(b.hash, best_move, score_to_tt(best_score, ply), raw_eval, depth, bound);
         }
         best_score
     }
@@ -750,14 +789,16 @@ impl Searcher {
 
         let mut best;
         let static_eval;
+        let mut raw_eval = -INF;
         if in_check {
             static_eval = -INF;
             best = -MATE + ply as i32;
         } else {
-            static_eval = match tt_entry {
+            raw_eval = match tt_entry {
                 Some(e) => i32::from(e.eval),
                 None => self.evaluate(b, ply),
             };
+            static_eval = self.corrected_eval(b, raw_eval);
             best = static_eval;
             if let Some(e) = tt_entry {
                 let s = score_from_tt(i32::from(e.score), ply);
@@ -828,7 +869,7 @@ impl Searcher {
         }
 
         let bound = if best >= beta { BOUND_LOWER } else { BOUND_UPPER };
-        self.shared.tt.store(b.hash, best_move, score_to_tt(best, ply), static_eval.max(-MATE_BOUND), 0, bound);
+        self.shared.tt.store(b.hash, best_move, score_to_tt(best, ply), raw_eval.max(-MATE_BOUND), 0, bound);
         best
     }
 
