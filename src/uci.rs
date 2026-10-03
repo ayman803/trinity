@@ -108,10 +108,7 @@ impl Engine {
                 println!("static eval (hand-crafted, side to move): {} cp", crate::eval::evaluate(&self.board));
                 if let Some(net) = crate::nnue::network() {
                     let acc = crate::nnue::AccPair::from_board(net, &self.board);
-                    println!(
-                        "static eval (NNUE, side to move): {} cp",
-                        crate::nnue::evaluate(net, &acc, self.board.stm)
-                    );
+                    println!("static eval (NNUE, side to move): {} cp", crate::nnue::evaluate(net, &acc, &self.board));
                 }
             }
             Some("bench") => {

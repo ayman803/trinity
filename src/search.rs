@@ -297,7 +297,7 @@ impl Searcher {
 
     fn evaluate(&self, b: &Board, ply: usize) -> i32 {
         let raw = match self.net {
-            Some(net) => nnue::evaluate(net, &self.acc[ply], b.stm),
+            Some(net) => nnue::evaluate(net, &self.acc[ply], b),
             None => eval::evaluate(b),
         };
         // Drift towards a draw as the fifty-move counter grows.
