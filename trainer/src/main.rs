@@ -1,13 +1,14 @@
 //! Trains Trinity's NNUE with the bullet library.
 //!
-//! Network: (768 -> 256)x2 -> 1 with SCReLU. The sizes and quantisation
-//! constants below MUST match `src/nnue.rs` in the engine.
+//! Network: (768 -> 512)x2 -> 1 with SCReLU and 8 output buckets chosen by
+//! piece count. The sizes and quantisation constants below MUST match
+//! `src/nnue.rs` in the engine.
 //!
 //! Usage: trinity-trainer <shuffled data file> [superbatches] [name]
 //! Output: checkpoints/<name>-<N>/quantised.bin  (copy it to nets/default.nnue)
 
 use bullet_lib::{
-    game::inputs::Chess768,
+    game::{inputs::Chess768, outputs::MaterialCount},
     nn::optimiser::AdamW,
     trainer::{
         save::SavedFormat,
@@ -17,7 +18,8 @@ use bullet_lib::{
     value::{ValueTrainerBuilder, loader},
 };
 
-const HIDDEN_SIZE: usize = 256;
+const HIDDEN_SIZE: usize = 512;
+const OUTPUT_BUCKETS: usize = 8;
 const SCALE: i32 = 400;
 const QA: i16 = 255;
 const QB: i16 = 64;
@@ -35,19 +37,21 @@ fn main() {
         .dual_perspective()
         .optimiser(AdamW)
         .inputs(Chess768)
+        .output_buckets(MaterialCount::<OUTPUT_BUCKETS>)
         .save_format(&[
             SavedFormat::id("l0w").round().quantise::<i16>(QA),
             SavedFormat::id("l0b").round().quantise::<i16>(QA),
-            SavedFormat::id("l1w").round().quantise::<i16>(QB),
+            // Transposed: all weights of one bucket are stored together.
+            SavedFormat::id("l1w").round().quantise::<i16>(QB).transpose(),
             SavedFormat::id("l1b").round().quantise::<i16>(QA * QB),
         ])
         .loss_fn(|output, target| output.sigmoid().squared_error(target))
-        .build(|builder, stm_inputs, ntm_inputs| {
+        .build(|builder, stm_inputs, ntm_inputs, output_buckets| {
             let l0 = builder.new_affine("l0", 768, HIDDEN_SIZE);
-            let l1 = builder.new_affine("l1", 2 * HIDDEN_SIZE, 1);
+            let l1 = builder.new_affine("l1", 2 * HIDDEN_SIZE, OUTPUT_BUCKETS);
             let stm_hidden = l0.forward(stm_inputs).screlu();
             let ntm_hidden = l0.forward(ntm_inputs).screlu();
-            l1.forward(stm_hidden.concat(ntm_hidden))
+            l1.forward(stm_hidden.concat(ntm_hidden)).select(output_buckets)
         });
 
     let schedule = TrainingSchedule {

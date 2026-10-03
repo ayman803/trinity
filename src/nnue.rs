@@ -1,6 +1,7 @@
 //! NNUE evaluation: a `(768 -> HIDDEN)x2 -> 1` network with SCReLU
-//! activation, matching the layout that the bullet trainer writes
-//! (see `trainer/src/main.rs`).
+//! activation and output buckets (one set of output weights per material
+//! range), matching the layout that the bullet trainer writes (see
+//! `trainer/src/main.rs`).
 //!
 //! The first layer ("accumulator") is updated incrementally as moves are
 //! made, which is what makes NNUE fast enough for alpha-beta search.
@@ -8,7 +9,9 @@
 use crate::board::Board;
 use crate::types::*;
 
-pub const HIDDEN: usize = 256;
+pub const HIDDEN: usize = 512;
+/// Output buckets by number of pieces on the board: (pieces - 2) / 4.
+pub const OUTPUT_BUCKETS: usize = 8;
 pub const QA: i32 = 255;
 pub const QB: i32 = 64;
 pub const SCALE: i32 = 400;
@@ -25,34 +28,42 @@ pub struct Network {
     /// One column of `HIDDEN` weights per input feature (quantised by QA).
     feature_weights: [Accumulator; INPUTS],
     feature_bias: Accumulator,
-    /// First `HIDDEN` weights apply to the side to move, the rest to the
-    /// other side (quantised by QB).
-    output_weights: [i16; 2 * HIDDEN],
-    output_bias: i16,
+    /// Per bucket: the first `HIDDEN` weights apply to the side to move,
+    /// the rest to the other side (quantised by QB).
+    output_weights: [[i16; 2 * HIDDEN]; OUTPUT_BUCKETS],
+    output_bias: [i16; OUTPUT_BUCKETS],
 }
 
 /// Size in bytes of a network file without bullet's trailing padding.
 #[cfg_attr(not(trinity_net), allow(dead_code))]
-pub const NET_BYTES: usize = 2 * (INPUTS * HIDDEN + HIDDEN + 2 * HIDDEN + 1);
+pub const NET_BYTES: usize = 2 * (INPUTS * HIDDEN + HIDDEN + OUTPUT_BUCKETS * (2 * HIDDEN + 1));
+
+/// The earlier architecture (256 hidden, no output buckets). Such files are
+/// still accepted: they convert exactly into the current layout by giving
+/// the extra neurons zero weights and every bucket the same output weights.
+const LEGACY_HIDDEN: usize = 256;
+#[cfg_attr(not(trinity_net), allow(dead_code))]
+const LEGACY_BYTES: usize = 2 * (INPUTS * LEGACY_HIDDEN + LEGACY_HIDDEN + 2 * LEGACY_HIDDEN + 1);
 
 impl Network {
     #[cfg_attr(not(trinity_net), allow(dead_code))]
     /// Parse a network from the raw little-endian i16 layout that bullet
     /// writes to `quantised.bin`. Trailing padding is ignored.
     pub fn from_bytes(bytes: &[u8]) -> Result<Box<Network>, String> {
-        if bytes.len() < NET_BYTES {
+        // bullet pads files to a multiple of 64 bytes.
+        let fits = |size: usize| (size..size + 64).contains(&bytes.len());
+        let (hidden, buckets, size) = if fits(NET_BYTES) {
+            (HIDDEN, OUTPUT_BUCKETS, NET_BYTES)
+        } else if fits(LEGACY_BYTES) {
+            (LEGACY_HIDDEN, 1, LEGACY_BYTES)
+        } else {
             return Err(format!(
-                "network file is {} bytes, expected at least {NET_BYTES} (hidden size {HIDDEN})",
+                "network file is {} bytes, expected {NET_BYTES} (hidden size {HIDDEN}, {OUTPUT_BUCKETS} output \
+                 buckets) or {LEGACY_BYTES} (hidden size {LEGACY_HIDDEN}), plus padding",
                 bytes.len()
             ));
-        }
-        if bytes.len() >= NET_BYTES + 64 {
-            return Err(format!(
-                "network file is {} bytes, expected {NET_BYTES} plus padding: hidden size mismatch?",
-                bytes.len()
-            ));
-        }
-        let mut vals = bytes[..NET_BYTES].chunks_exact(2).map(|c| i16::from_le_bytes([c[0], c[1]]));
+        };
+        let mut vals = bytes[..size].chunks_exact(2).map(|c| i16::from_le_bytes([c[0], c[1]]));
         // Allocate zeroed on the heap: the struct is too large for the stack.
         let mut net: Box<Network> = unsafe {
             let layout = std::alloc::Layout::new::<Network>();
@@ -62,18 +73,30 @@ impl Network {
             }
             Box::from_raw(ptr)
         };
+        // Anything not read stays zero (unused neurons of a legacy net).
         for col in net.feature_weights.iter_mut() {
-            for v in col.vals.iter_mut() {
+            for v in col.vals[..hidden].iter_mut() {
                 *v = vals.next().unwrap();
             }
         }
-        for v in net.feature_bias.vals.iter_mut() {
+        for v in net.feature_bias.vals[..hidden].iter_mut() {
             *v = vals.next().unwrap();
         }
-        for v in net.output_weights.iter_mut() {
-            *v = vals.next().unwrap();
+        for bucket in 0..buckets {
+            for half in 0..2 {
+                for v in net.output_weights[bucket][half * HIDDEN..half * HIDDEN + hidden].iter_mut() {
+                    *v = vals.next().unwrap();
+                }
+            }
         }
-        net.output_bias = vals.next().unwrap();
+        for b in net.output_bias[..buckets].iter_mut() {
+            *b = vals.next().unwrap();
+        }
+        // A single-bucket net uses the same output layer for every bucket.
+        for bucket in buckets..OUTPUT_BUCKETS {
+            net.output_weights[bucket] = net.output_weights[0];
+            net.output_bias[bucket] = net.output_bias[0];
+        }
         Ok(net)
     }
 }
@@ -212,11 +235,19 @@ fn screlu_dot(acc: &[i16; HIDDEN], weights: &[i16]) -> i32 {
     sum
 }
 
-pub fn evaluate(net: &Network, pair: &AccPair, stm: usize) -> i32 {
-    let mut out = screlu_dot(&pair.acc[stm].vals, &net.output_weights[..HIDDEN])
-        + screlu_dot(&pair.acc[stm ^ 1].vals, &net.output_weights[HIDDEN..]);
+#[inline(always)]
+fn output_bucket(b: &Board) -> usize {
+    (b.occupied().count_ones() as usize - 2) / 32usize.div_ceil(OUTPUT_BUCKETS)
+}
+
+/// Evaluation of `b` (whose accumulators are `pair`) for the side to move.
+pub fn evaluate(net: &Network, pair: &AccPair, b: &Board) -> i32 {
+    let bucket = output_bucket(b);
+    let weights = &net.output_weights[bucket];
+    let mut out = screlu_dot(&pair.acc[b.stm].vals, &weights[..HIDDEN])
+        + screlu_dot(&pair.acc[b.stm ^ 1].vals, &weights[HIDDEN..]);
     out /= QA;
-    out += i32::from(net.output_bias);
+    out += i32::from(net.output_bias[bucket]);
     out * SCALE / (QA * QB)
 }
 
@@ -227,6 +258,10 @@ pub mod tests {
 
     /// A random network in the bullet file layout, for testing.
     pub fn random_net_bytes(seed: u64) -> Vec<u8> {
+        random_bytes(seed, NET_BYTES, INPUTS * HIDDEN + HIDDEN)
+    }
+
+    fn random_bytes(seed: u64, size: usize, out_start: usize) -> Vec<u8> {
         let mut s = seed;
         let mut next = || {
             s ^= s << 13;
@@ -234,15 +269,14 @@ pub mod tests {
             s ^= s << 17;
             s
         };
-        let n = NET_BYTES / 2;
-        let out_start = INPUTS * HIDDEN + HIDDEN;
-        let mut bytes = Vec::with_capacity(NET_BYTES + 64);
+        let n = size / 2;
+        let mut bytes = Vec::with_capacity(size + 64);
         for i in 0..n {
             // Keep output weights within |w| < 128 as the trainer's clipping does.
             let v: i16 = if i >= out_start { (next() % 255) as i16 - 127 } else { (next() % 101) as i16 - 50 };
             bytes.extend_from_slice(&v.to_le_bytes());
         }
-        bytes.resize(NET_BYTES.div_ceil(64) * 64, 0);
+        bytes.resize(size.div_ceil(64) * 64, 0);
         bytes
     }
 
@@ -260,11 +294,12 @@ pub mod tests {
                 }
             }
         }
-        let mut out = f64::from(net.output_bias) / (QA * QB) as f64;
+        let bucket = (b.occupied().count_ones() as usize - 2) / 4;
+        let mut out = f64::from(net.output_bias[bucket]) / (QA * QB) as f64;
         for (k, persp) in [b.stm, b.stm ^ 1].into_iter().enumerate() {
             for i in 0..HIDDEN {
                 let v = hidden[persp][i].clamp(0.0, 1.0);
-                out += v * v * f64::from(net.output_weights[k * HIDDEN + i]) / QB as f64;
+                out += v * v * f64::from(net.output_weights[bucket][k * HIDDEN + i]) / QB as f64;
             }
         }
         out * SCALE as f64
@@ -286,10 +321,52 @@ pub mod tests {
                 let inc = pair.update(&net, &b, m);
                 let fresh = AccPair::from_board(&net, &child);
                 assert!(inc.acc[0].vals == fresh.acc[0].vals && inc.acc[1].vals == fresh.acc[1].vals, "{fen} {m}");
-                let q = evaluate(&net, &inc, child.stm) as f64;
+                let q = evaluate(&net, &inc, &child) as f64;
                 let r = reference_eval(&net, &child);
                 assert!((q - r).abs() <= 2.0 + r.abs() * 0.01, "quantised {q} vs reference {r}");
             }
+        }
+    }
+
+    /// A legacy (256 hidden, single output) network must evaluate exactly
+    /// as the old engine did.
+    #[test]
+    fn legacy_network_converts_exactly() {
+        let bytes = random_bytes(0xbeef, LEGACY_BYTES, INPUTS * LEGACY_HIDDEN + LEGACY_HIDDEN);
+        let raw: Vec<i32> = bytes.chunks_exact(2).map(|c| i32::from(i16::from_le_bytes([c[0], c[1]]))).collect();
+        let net = Network::from_bytes(&bytes).unwrap();
+        let fens = [
+            "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+            "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1",
+            "8/8/8/2k5/3Pp3/8/8/4K2R b K d3 0 1",
+        ];
+        for fen in fens {
+            let b = Board::from_fen(fen).unwrap();
+            // The old engine's integer arithmetic, straight from the file.
+            let h = LEGACY_HIDDEN;
+            let mut acc = [[0i32; LEGACY_HIDDEN]; 2];
+            for persp in [WHITE, BLACK] {
+                for i in 0..h {
+                    acc[persp][i] = raw[INPUTS * h + i];
+                }
+                for sq in Bits(b.occupied()) {
+                    let f = feature(persp, b.piece_at(sq), sq);
+                    for i in 0..h {
+                        acc[persp][i] += raw[f * h + i];
+                    }
+                }
+            }
+            let out_w = &raw[INPUTS * h + h..];
+            let mut sum = 0;
+            for (k, persp) in [b.stm, b.stm ^ 1].into_iter().enumerate() {
+                for i in 0..h {
+                    let v = acc[persp][i].clamp(0, QA);
+                    sum += v * v * out_w[k * h + i];
+                }
+            }
+            let expected = (sum / QA + out_w[2 * h]) * SCALE / (QA * QB);
+            let pair = AccPair::from_board(&net, &b);
+            assert_eq!(evaluate(&net, &pair, &b), expected, "{fen}");
         }
     }
 
