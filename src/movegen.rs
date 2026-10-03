@@ -253,6 +253,7 @@ mod tests {
     fn incremental_hash_matches_full_recompute() {
         fn walk(b: &Board, depth: u32) {
             assert_eq!(b.hash, b.compute_hash(), "hash mismatch at {}", b.to_fen());
+            assert_eq!(b.pawn_key, b.compute_pawn_key(), "pawn key mismatch at {}", b.to_fen());
             let fen_round_trip = Board::from_fen(&b.to_fen()).unwrap();
             assert_eq!(fen_round_trip.hash, b.hash, "FEN round trip changed hash at {}", b.to_fen());
             if depth == 0 {
