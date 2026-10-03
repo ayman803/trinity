@@ -14,7 +14,6 @@ $script:Work = Join-Path $script:Root "sprt"   # all downloads and builds live h
 $script:FastchessVersion = "v1.8.2-alpha"
 $script:FastchessUrl = "https://github.com/Disservin/fastchess/releases/download/$($script:FastchessVersion)/fastchess-windows-x86-64.zip"
 $script:BookName = "UHO_Lichess_4852_v1.epd"
-$script:BookUrl = "https://github.com/official-stockfish/books/raw/master/$($script:BookName).zip"
 $script:BulletRev = "c004ebf04025edf91c6ccac47e72d561062a46b5"
 
 # Older Windows PowerShell defaults to TLS 1.0, which GitHub refuses.
@@ -275,14 +274,15 @@ function Get-Fastchess {
     Stop-WithMessage "fastchess.exe not found after download (looked in $($candidates -join ', '))."
 }
 
-function Get-OpeningBook {
+# Books come from the official Stockfish book collection.
+function Get-OpeningBook([string]$BookFile = $script:BookName) {
     $dir = Join-Path $script:Work "books"
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
-    $book = Join-Path $dir $script:BookName
+    $book = Join-Path $dir $BookFile
     if (Test-Path $book) { return $book }
-    Write-Step "Downloading the opening book"
+    Write-Step "Downloading the opening book $BookFile"
     $zip = "$book.zip"
-    Save-Download $script:BookUrl $zip
+    Save-Download "https://github.com/official-stockfish/books/raw/master/$BookFile.zip" $zip
     Expand-Archive -Path $zip -DestinationPath $dir -Force
     Remove-Item $zip
     if (-not (Test-Path $book)) { Stop-WithMessage "Opening book not found after download." }

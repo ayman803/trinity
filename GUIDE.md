@@ -140,13 +140,22 @@ to Claude, who will merge the network into `main` if it passed.
 Later networks are trained the same way: more data plus a better previous
 network gives a better next network.
 
+### Step D: measure the real rating (after each new network)
+
+Double-click **`5-Calibrate.bat`** when nothing else is running. Trinity
+plays 1,000 games against each of three engines with a known CCRL rating
+(akimbo 3474, Simbelmyne 3193, Inanis 3046). It takes about 2 hours and
+ends with an estimated CCRL rating. Paste the result to Claude.
+The first run also builds the three opponents from their source code
+(a few minutes).
+
 ---
 
 ## 4. Where things are
 
 | Folder / file            | What it is                                          |
 |--------------------------|-----------------------------------------------------|
-| `1-Setup.bat` … `4-…bat` | The four buttons you use                            |
+| `1-Setup.bat` … `5-…bat` | The five buttons you use                            |
 | `sprt\results\`          | Test results and game records (PGN)                 |
 | `data\`                  | Training data                                       |
 | `checkpoints\`           | Networks produced by training                       |

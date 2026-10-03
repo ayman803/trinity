@@ -5,3 +5,4 @@
 *.bin
 /*.nnue
 /sprt/
+/config.json
