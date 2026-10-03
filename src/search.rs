@@ -624,6 +624,11 @@ impl Searcher {
                         skip_quiets = true;
                         continue;
                     }
+                    // History pruning: at low depth, skip quiet moves that
+                    // have consistently failed in similar positions.
+                    if depth <= 4 && self.quiet_score(b, m, ply) < -2500 * depth {
+                        continue;
+                    }
                     // SEE pruning: the move hangs material.
                     if lmr_depth <= 8 && !b.see_ge(m, -30 * lmr_depth * lmr_depth) {
                         continue;
