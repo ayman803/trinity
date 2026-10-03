@@ -7,6 +7,8 @@
 param(
     [string]$Branch = "",        # engine code the network is for (asked if empty)
     [int]$Superbatches = 40,     # length of training (1 superbatch = ~100M positions)
+    [int]$LeelaSuperbatches = 40, # length of stage 2 on data\leela\*.binpack, if present
+    [switch]$NoLeela,            # skip stage 2 even if Leela data is present
     [int]$MemoryMB = 8000,       # RAM used for shuffling
     [switch]$SkipShuffle,        # reuse data\prepared\shuffled.data from last time
     [switch]$NoPublish           # don't create a GitHub branch at the end
@@ -113,9 +115,29 @@ try {
         Pop-Location
     }
 
-    $final = Join-Path (Join-Path (Join-Path $script:Root "checkpoints") "$netId-$Superbatches") "quantised.bin"
+    $checkpoints = Join-Path $script:Root "checkpoints"
+    $stage1 = Join-Path $checkpoints "$netId-$Superbatches"
+    $final = Join-Path $stage1 "quantised.bin"
     if (-not (Test-Path $final)) { Stop-WithMessage "Training finished but $final was not found." }
     Write-Good "Network trained: $final"
+
+    # Stage 2: refine the network on Leela-derived data, if any was added
+    # to data\leela (Stockfish .binpack files).
+    $binpacks = @(Find-Files (Join-Path $dataDir "leela") "*.binpack")
+    $description = "$Superbatches superbatches"
+    if ($binpacks.Count -gt 0 -and -not $NoLeela) {
+        Write-Step "Stage 2: refining on Leela data ($($binpacks.Count) file(s), $LeelaSuperbatches superbatches)"
+        Push-Location $script:Root
+        try {
+            Invoke-Native $trainer (@("finetune", $stage1, "$LeelaSuperbatches", "$netId-leela") + $binpacks)
+        } finally {
+            Pop-Location
+        }
+        $final = Join-Path (Join-Path $checkpoints "$netId-leela-$LeelaSuperbatches") "quantised.bin"
+        if (-not (Test-Path $final)) { Stop-WithMessage "Stage 2 finished but $final was not found." }
+        Write-Good "Network refined on Leela data: $final"
+        $description += " + $LeelaSuperbatches on Leela data"
+    }
 
     if ($NoPublish) { return }
 
@@ -140,7 +162,7 @@ try {
             $identity = @("-c", "user.name=Trinity trainer", "-c", "user.email=trainer@trinity.invalid")
         }
         Invoke-Native git @("-C", $tree, "add", "nets/default.nnue")
-        Invoke-Native git ($identity + @("-C", $tree, "commit", "-m", "New network $netId ($Superbatches superbatches, for $Branch)"))
+        Invoke-Native git ($identity + @("-C", $tree, "commit", "-m", "New network $netId ($description, for $Branch)"))
         Invoke-Native git @("-C", $tree, "push", "-u", "origin", $netBranch)
     } finally {
         Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree)
