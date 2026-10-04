@@ -7,11 +7,25 @@
 //! Usage:
 //!   trinity-trainer <shuffled data file> [superbatches] [name]
 //!       Train from scratch on our own self-play data (bulletformat).
-//!   trinity-trainer finetune <checkpoint dir> <superbatches> <name> <file.binpack>...
-//!       Continue training a finished network on Stockfish-format binpacks
-//!       (such as the Lc0-derived datasets), as the Stockfish team advises:
-//!       first learn from our own data, then refine on the stronger data.
+//!   trinity-trainer convert <file.binpack> <out.data> [max positions]
+//!       Convert a Stockfish-format binpack (such as the Lc0-derived
+//!       datasets) to bulletformat, keeping only useful positions.
+//!   trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file>
+//!       Continue training a finished network on other data (the converted
+//!       Lc0 data), as the Stockfish team advises: first learn from our own
+//!       data, then refine on the stronger data.
 //! Output: checkpoints/<name>-<N>/quantised.bin  (copy it to nets/default.nnue)
+
+use std::{
+    fs::File,
+    io::{BufReader, BufWriter, Write},
+};
+
+use bulletformat::{BulletFormat, ChessBoard};
+use sfbinpack::{
+    CompressedTrainingDataEntryReader, TrainingDataEntry,
+    chess::{color::Color, r#move::MoveType, piecetype::PieceType},
+};
 
 use bullet_lib::{
     game::{inputs::Chess768, outputs::MaterialCount},
@@ -21,10 +35,7 @@ use bullet_lib::{
         schedule::{TrainingSchedule, TrainingSteps, lr, wdl},
         settings::LocalSettings,
     },
-    value::{
-        ValueTrainerBuilder, loader,
-        loader::sfbinpack::{MoveType, PieceType, SfBinpackLoader, TrainingDataEntry},
-    },
+    value::{ValueTrainerBuilder, loader},
 };
 
 const HIDDEN_SIZE: usize = 512;
@@ -35,7 +46,8 @@ const QB: i16 = 64;
 
 fn usage() -> ! {
     eprintln!("usage: trinity-trainer <shuffled data file> [superbatches] [name]");
-    eprintln!("       trinity-trainer finetune <checkpoint dir> <superbatches> <name> <file.binpack>...");
+    eprintln!("       trinity-trainer convert <file.binpack> <out.data> [max positions]");
+    eprintln!("       trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file>");
     std::process::exit(1);
 }
 
@@ -50,9 +62,80 @@ fn binpack_filter(entry: &TrainingDataEntry) -> bool {
         && entry.pos.piece_at(entry.mv.to()).piece_type() == PieceType::None
 }
 
+/// Stockfish's internal score units per pawn in these datasets; scores are
+/// rescaled to centipawns so they match our own data.
+const SF_PAWN: i32 = 208;
+
+/// Convert one binpack entry to bulletformat (white-relative score and
+/// result), or None if it can't be represented.
+fn convert_entry(entry: &TrainingDataEntry) -> Option<ChessBoard> {
+    let pos = &entry.pos;
+    let both = |pt| pos.pieces_bb_color(Color::White, pt).bits() | pos.pieces_bb_color(Color::Black, pt).bits();
+    let bbs = [
+        pos.pieces_bb(Color::White).bits(),
+        pos.pieces_bb(Color::Black).bits(),
+        both(PieceType::Pawn),
+        both(PieceType::Knight),
+        both(PieceType::Bishop),
+        both(PieceType::Rook),
+        both(PieceType::Queen),
+        both(PieceType::King),
+    ];
+    let stm = usize::from(pos.side_to_move().ordinal());
+    let mut score = i32::from(entry.score) * 100 / SF_PAWN;
+    let mut result = f32::from(1 + entry.result) / 2.0;
+    if stm == 1 {
+        score = -score;
+        result = 1.0 - result;
+    }
+    ChessBoard::from_raw(bbs, stm, score as i16, result).ok()
+}
+
+fn convert(input: &str, output: &str, max: u64) {
+    let file = File::open(input).unwrap_or_else(|e| panic!("cannot open {input}: {e}"));
+    let total = file.metadata().map(|m| m.len()).unwrap_or(0).max(1);
+    let mut reader = CompressedTrainingDataEntryReader::new(BufReader::with_capacity(1 << 20, file))
+        .unwrap_or_else(|e| panic!("{input} is not a valid binpack: {e:?}"));
+    let mut writer = BufWriter::with_capacity(1 << 22, File::create(output).expect("cannot create output"));
+    let (mut seen, mut kept) = (0u64, 0u64);
+    let mut buffer = Vec::with_capacity(1 << 16);
+    while reader.has_next() && kept < max {
+        let entry = reader.next();
+        seen += 1;
+        if binpack_filter(&entry) {
+            if let Some(board) = convert_entry(&entry) {
+                buffer.push(board);
+                kept += 1;
+            }
+        }
+        if buffer.len() == buffer.capacity() {
+            ChessBoard::write_to_bin(&mut writer, &buffer).expect("write failed");
+            buffer.clear();
+        }
+        if seen % 50_000_000 == 0 {
+            println!(
+                "read {seen} positions ({:.1}% of the file), kept {kept}",
+                100.0 * reader.read_bytes() as f64 / total as f64
+            );
+        }
+    }
+    ChessBoard::write_to_bin(&mut writer, &buffer).expect("write failed");
+    writer.flush().expect("write failed");
+    println!("done: read {seen} positions, kept {kept}");
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let finetune = args.get(1).is_some_and(|a| a == "finetune");
+    let mode = args.get(1).map(String::as_str);
+    if mode == Some("convert") {
+        if args.len() < 4 {
+            usage();
+        }
+        let max = args.get(4).map_or(u64::MAX, |m| m.parse().unwrap_or_else(|_| usage()));
+        convert(&args[2], &args[3], max);
+        return;
+    }
+    let finetune = mode == Some("finetune");
     if args.len() < 2 || (finetune && args.len() < 6) {
         usage();
     }
@@ -90,21 +173,21 @@ fn main() {
         let checkpoint = &args[2];
         let superbatches: usize = args[3].parse().unwrap_or_else(|_| usage());
         let name = args[4].clone();
-        let files: Vec<&str> = args[5..].iter().map(String::as_str).collect();
+        let data_path = &args[5];
         trainer.load_from_checkpoint(checkpoint);
 
         let schedule = TrainingSchedule {
             net_id: name,
             eval_scale: SCALE as f32,
             steps: steps(superbatches),
-            // Lean more on game results: binpack scores use Stockfish's
-            // scale, not ours.
+            // Lean a little more on game results: Lc0-derived scores are
+            // only approximately on our scale.
             wdl_scheduler: wdl::ConstantWDL { value: 0.5 },
             // Start lower than from scratch: the network is already trained.
             lr_scheduler: lr::StepLR { start: 0.0005, gamma: 0.1, step: (superbatches * 9 / 20).max(1) },
             save_rate: 10,
         };
-        let data_loader = SfBinpackLoader::new_concat_multiple(&files, 1024, 8, binpack_filter);
+        let data_loader = loader::DirectSequentialDataLoader::new(&[data_path.as_str()]);
         trainer.run(&schedule, &settings, &data_loader);
     } else {
         let data_path = &args[1];

@@ -10,6 +10,9 @@ publish = false
 [dependencies]
 # Pinned to a known-good commit of the bullet trainer. Update deliberately.
 bullet_lib = { git = "https://github.com/jw1912/bullet", rev = "c004ebf04025edf91c6ccac47e72d561062a46b5" }
+# Same versions bullet uses; for converting Stockfish binpacks.
+bulletformat = "1.8.0"
+sfbinpack = "0.6.5"
 
 [features]
 # Build with `--features cuda` for NVIDIA GPUs (needs the CUDA Toolkit).
