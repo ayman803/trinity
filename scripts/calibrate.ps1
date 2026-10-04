@@ -13,7 +13,10 @@ param(
     [string]$TC = "10+0.1",
     [int]$Hash = 16,
     [int]$Concurrency = 0,        # 0 = automatic (14 on the main PC)
-    [switch]$NoUpdate
+    [switch]$NoUpdate,
+    # One-off match instead of calibration: the name of an unrated opponent
+    # whose Windows build is saved as sprt\opponents\<name>.exe.
+    [string]$Vs = ""
 )
 
 . (Join-Path $PSScriptRoot "common.ps1")
@@ -29,6 +32,7 @@ $opponents = @(
     @{ Name = "Bread"; Version = "4.0.0"; Rating = 3522; Download = $true },
     @{ Name = "Prune"; Version = "4.0.1"; Rating = 3543; Download = $true }
 )
+if ($Vs) { $opponents = @(@{ Name = $Vs; Version = ""; Rating = $null; Download = $true }) }
 # The CCRL top-20 cut-off (Halogen 16, 4 CPUs) on the same list.
 $top20 = 3625
 
@@ -142,6 +146,12 @@ try {
         if ("$eloLine" -match "^Elo:\s*(-?[0-9.]+)\s*\+/-\s*([0-9.]+)") {
             $diff = [double]::Parse($Matches[1], $inv)
             $margin = [double]::Parse($Matches[2], $inv)
+            if ($null -eq $o.Rating) {
+                $lines += ("vs {0}: Elo difference {1:+0;-0;0} +/- {2:0} (Trinity's point of view)" -f
+                    $o.Name, [Math]::Round($diff), $margin)
+                if ($gamesLine) { $lines += "   $("$gamesLine".Trim())" }
+                continue
+            }
             $est = $o.Rating + $diff
             $lines += ("vs {0} {1} (CCRL {2}): Elo difference {3:+0;-0;0} +/- {4:0} -> Trinity about {5:0}" -f
                 $o.Name, $o.Version, $o.Rating, [Math]::Round($diff), $margin, $est)
@@ -150,14 +160,16 @@ try {
                 $sumW += $w; $sumWR += $w * $est
             }
         } else {
-            $lines += "vs $($o.Name) $($o.Version) (CCRL $($o.Rating)): no usable result (too few games, or one side won everything)"
+            $label = if ($null -eq $o.Rating) { $o.Name } else { "$($o.Name) $($o.Version) (CCRL $($o.Rating))" }
+            $lines += "vs ${label}: no usable result (too few games, or one side won everything)"
         }
         if ($gamesLine) { $lines += "   $("$gamesLine".Trim())" }
         if ($timeLosses -gt 0) { $lines += "   Games lost on time (either side): $timeLosses" }
     }
 
     $hours = [Math]::Round(((Get-Date) - $started).TotalHours, 1)
-    $summary = @("CALIBRATION RESULT for '$Ref' (bench $bench)",
+    $title = if ($Vs) { "MATCH RESULT" } else { "CALIBRATION RESULT" }
+    $summary = @("$title for '$Ref' (bench $bench)",
         "Machine: $([Environment]::MachineName) ($Concurrency games at a time), tc $TC, 1 thread each") + $lines
     if ($sumW -gt 0) {
         $estimate = $sumWR / $sumW
@@ -168,14 +180,15 @@ try {
     $summary += "Duration: $hours hours. Logs: sprt\results\${stamp}_calibration_*"
     $summaryText = $summary -join "`r`n"
     Set-Content -Path (Join-Path $results "${stamp}_calibration.summary.txt") -Value $summaryText
-    Set-Content -Path (Join-Path $results "LATEST-CALIBRATION.txt") -Value $summaryText
+    $latest = if ($Vs) { "LATEST-MATCH.txt" } else { "LATEST-CALIBRATION.txt" }
+    Set-Content -Path (Join-Path $results $latest) -Value $summaryText
 
     Write-Host ""
     Write-Host "==================================================================" -ForegroundColor Cyan
     foreach ($s in $summary) { Write-Host $s }
     Write-Host "==================================================================" -ForegroundColor Cyan
     Write-Host "Copy the lines above and paste them to Claude."
-    Write-Host "(They are also saved in sprt\results\LATEST-CALIBRATION.txt)"
+    Write-Host "(They are also saved in sprt\results\$latest)"
 } catch {
     Write-UnexpectedError $_
     exit 1
