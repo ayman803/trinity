@@ -16,6 +16,14 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-03 | network #5 (+40 superbatches on 1B Lc0-derived positions) | "a big jump" (no number) | +217.8 +/- 28.4 | +169 (3242 -> 3411) | self-play overstated ~1.3x |
 | 2026-10-04 | network #6 (Leela stage 120 instead of 40 superbatches) | self-play +10 to +30; CCRL +5 to +20 | +29.1 +/- 10.3 | pending | |
 
+## Proposed (not yet run)
+
+| Idea | Predicted self-play | Predicted CCRL | GPU time |
+|---|---|---|---|
+| 1. Fresh Leela positions (next 1B, not re-used) | +10 to +25 | +5 to +20 | ~35 min (+25 min CPU conversion) |
+| 2. King input buckets + horizontal mirroring | +20 to +40 | +10 to +30 | ~45-60 min |
+| 3. Cosine LR to a low final value + WDL ramp in stage 2 | +5 to +15 | +0 to +10 | ~26 min |
+
 ## Calibrations
 
 | Date | main | akimbo 3474 | Simbelmyne 3193 | Inanis 3046 | Estimate |
