@@ -24,7 +24,7 @@ use std::{
 use bulletformat::{BulletFormat, ChessBoard};
 use sfbinpack::{
     CompressedTrainingDataEntryReader, TrainingDataEntry,
-    chess::{color::Color, piecetype::PieceType, r#move::MoveType},
+    chess::{color::Color, r#move::MoveType, piecetype::PieceType},
 };
 
 use bullet_lib::{
