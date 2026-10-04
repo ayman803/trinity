@@ -24,8 +24,10 @@ $opponents = @(
         Tag = "v1.0.0"; Binary = "akimbo"; CargoArgs = @(); Env = @{ EVALFILE = "resources/net.bin" } },
     @{ Name = "Simbelmyne"; Version = "1.10.0"; Rating = 3193; Url = "https://github.com/sroelants/simbelmyne";
         Tag = "v1.10.0"; Binary = "simbelmyne"; CargoArgs = @("-p", "simbelmyne"); Env = @{} },
-    @{ Name = "Inanis"; Version = "1.6.0"; Rating = 3046; Url = "https://github.com/Tearth/Inanis";
-        Tag = "v1.6.0"; Binary = "inanis"; CargoArgs = @(); Env = @{} }
+    # Downloaded by hand (Windows release builds): see GUIDE.md.
+    @{ Name = "Patricia"; Version = "5.1"; Rating = 3487; Download = $true },
+    @{ Name = "Bread"; Version = "4.0.0"; Rating = 3522; Download = $true },
+    @{ Name = "Prune"; Version = "4.0.1"; Rating = 3543; Download = $true }
 )
 # The CCRL top-20 cut-off (Halogen 16, 4 CPUs) on the same list.
 $top20 = 3625
@@ -75,7 +77,19 @@ try {
     $trinity = Build-Trinity "origin/$Ref"
     $bench = Get-BenchNodes $trinity
     $built = @()
-    foreach ($o in $opponents) { $built += , @($o, (Build-Opponent $o)) }
+    $opponentDir = Join-Path $script:Work "opponents"
+    foreach ($o in $opponents) {
+        if ($o.Download) {
+            $file = Join-Path $opponentDir "$($o.Name).exe"
+            if (Test-Path -LiteralPath $file) {
+                $built += , @($o, $file)
+            } else {
+                Write-Warn "Skipping $($o.Name) $($o.Version): save its Windows .exe as $file to include it."
+            }
+        } else {
+            $built += , @($o, (Build-Opponent $o))
+        }
+    }
 
     if ($Concurrency -le 0) { $Concurrency = Get-DefaultConcurrency }
     $fastchess = Get-Fastchess
@@ -86,8 +100,8 @@ try {
     New-Item -ItemType Directory -Force -Path $results | Out-Null
     $stamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
 
-    Write-Step "Calibration of '$Ref' ($($opponents.Count) opponents x $(2 * $Rounds) games, $TC, $Concurrency games at a time)"
-    Write-Host "This takes about 2 hours. To stop early, press Ctrl+C."
+    Write-Step "Calibration of '$Ref' ($($built.Count) opponents x $(2 * $Rounds) games, $TC, $Concurrency games at a time)"
+    Write-Host "This takes about 30 minutes per opponent. To stop early, press Ctrl+C."
     $keepAwake = Start-KeepAwake
     $started = Get-Date
 
