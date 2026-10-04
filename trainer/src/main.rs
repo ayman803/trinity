@@ -10,7 +10,7 @@
 //!   trinity-trainer convert <file.binpack> <out.data> [max positions]
 //!       Convert a Stockfish-format binpack (such as the Lc0-derived
 //!       datasets) to bulletformat, keeping only useful positions.
-//!   trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file>
+//!   trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file> [start lr]
 //!       Continue training a finished network on other data (the converted
 //!       Lc0 data), as the Stockfish team advises: first learn from our own
 //!       data, then refine on the stronger data.
@@ -47,7 +47,7 @@ const QB: i16 = 64;
 fn usage() -> ! {
     eprintln!("usage: trinity-trainer <shuffled data file> [superbatches] [name]");
     eprintln!("       trinity-trainer convert <file.binpack> <out.data> [max positions]");
-    eprintln!("       trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file>");
+    eprintln!("       trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file> [start lr]");
     std::process::exit(1);
 }
 
@@ -174,6 +174,7 @@ fn main() {
         let superbatches: usize = args[3].parse().unwrap_or_else(|_| usage());
         let name = args[4].clone();
         let data_path = &args[5];
+        let start_lr: f32 = args.get(6).map_or(0.0005, |l| l.parse().unwrap_or_else(|_| usage()));
         trainer.load_from_checkpoint(checkpoint);
 
         let schedule = TrainingSchedule {
@@ -184,7 +185,7 @@ fn main() {
             // only approximately on our scale.
             wdl_scheduler: wdl::ConstantWDL { value: 0.5 },
             // Start lower than from scratch: the network is already trained.
-            lr_scheduler: lr::StepLR { start: 0.0005, gamma: 0.1, step: (superbatches * 9 / 20).max(1) },
+            lr_scheduler: lr::StepLR { start: start_lr, gamma: 0.1, step: (superbatches * 9 / 20).max(1) },
             save_rate: 10,
         };
         let data_loader = loader::DirectSequentialDataLoader::new(&[data_path.as_str()]);

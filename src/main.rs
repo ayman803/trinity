@@ -8,6 +8,7 @@ mod eval;
 mod movegen;
 mod nnue;
 mod search;
+mod select;
 mod tt;
 mod types;
 mod uci;
@@ -56,6 +57,19 @@ fn real_main() -> i32 {
                 return 1;
             }
         },
+        // `trinity select <in.data> <out.data> [fraction] [threads]` — build
+        // the "drill" training set (see select.rs).
+        Some("select") if args.len() >= 3 => {
+            let fraction = args.get(3).and_then(|f| f.parse().ok()).unwrap_or(0.2);
+            let threads = args
+                .get(4)
+                .and_then(|t| t.parse().ok())
+                .unwrap_or_else(|| std::thread::available_parallelism().map_or(4, |n| n.get()));
+            if let Err(e) = select::run(&args[1], &args[2], fraction, threads) {
+                eprintln!("{e}");
+                return 1;
+            }
+        }
         _ => uci::Engine::new().run(),
     }
     0
