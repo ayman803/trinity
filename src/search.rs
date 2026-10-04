@@ -316,7 +316,8 @@ impl Searcher {
         let entry = &mut self.corr_hist[b.stm][b.pawn_key as usize & (CORR_SIZE - 1)];
         let weight = (depth + 1).min(16);
         let target = diff * CORR_GRAIN;
-        *entry = ((*entry * (CORR_WEIGHT_SCALE - weight) + target * weight) / CORR_WEIGHT_SCALE).clamp(-CORR_MAX, CORR_MAX);
+        *entry =
+            ((*entry * (CORR_WEIGHT_SCALE - weight) + target * weight) / CORR_WEIGHT_SCALE).clamp(-CORR_MAX, CORR_MAX);
     }
 
     fn is_repetition(&self, b: &Board) -> bool {

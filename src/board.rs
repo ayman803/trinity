@@ -187,9 +187,7 @@ impl Board {
     }
 
     pub fn compute_pawn_key(&self) -> u64 {
-        Bits(self.pieces[PAWN])
-            .map(|sq| KEYS.pieces[self.mailbox[sq] as usize][sq])
-            .fold(0, |k, x| k ^ x)
+        Bits(self.pieces[PAWN]).map(|sq| KEYS.pieces[self.mailbox[sq] as usize][sq]).fold(0, |k, x| k ^ x)
     }
 
     pub fn compute_hash(&self) -> u64 {
