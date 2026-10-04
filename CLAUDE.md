@@ -41,3 +41,13 @@ Windows. Every instruction must be concrete:
    testers.
 7. Before each next step, briefly review the plan as a skeptic: what could
    be wrong with these numbers?
+
+## Release checklist (before any CCRL submission)
+
+1. Check the source for close similarity to major open-source engines,
+   especially Rust ones (akimbo, Viridithas, Reckless, Svart, etc.).
+2. Run a move-similarity test against Stockfish, Reckless and a few
+   others, and report the numbers.
+3. Add a CREDITS section to README.md covering the bullet trainer, the
+   Leela/Stockfish training data, and that the code was written with
+   Claude.
