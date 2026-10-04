@@ -37,6 +37,8 @@ pub struct Board {
     pub hash: u64,
     /// Hash of the pawns only (used by correction history).
     pub pawn_key: u64,
+    /// Per colour: hash of that side's non-pawn pieces (king included).
+    pub non_pawn_keys: [u64; 2],
     pub checkers: Bitboard,
 }
 
@@ -57,6 +59,7 @@ impl Board {
             fullmove: 1,
             hash: 0,
             pawn_key: 0,
+            non_pawn_keys: [0; 2],
             checkers: 0,
         }
     }
@@ -136,6 +139,7 @@ impl Board {
         }
         b.hash = b.compute_hash();
         b.pawn_key = b.compute_pawn_key();
+        b.non_pawn_keys = [b.compute_non_pawn_key(WHITE), b.compute_non_pawn_key(BLACK)];
         b.checkers = b.attackers_to(b.king_sq(b.stm), b.occupied()) & b.colors[b.stm ^ 1];
         if b.attackers_to(b.king_sq(b.stm ^ 1), b.occupied()) & b.colors[b.stm] != 0 {
             return Err("side not to move is in check".to_string());
@@ -187,7 +191,11 @@ impl Board {
     }
 
     pub fn compute_pawn_key(&self) -> u64 {
-        Bits(self.pieces[PAWN])
+        Bits(self.pieces[PAWN]).map(|sq| KEYS.pieces[self.mailbox[sq] as usize][sq]).fold(0, |k, x| k ^ x)
+    }
+
+    pub fn compute_non_pawn_key(&self, color: usize) -> u64 {
+        Bits(self.colors[color] & !self.pieces[PAWN])
             .map(|sq| KEYS.pieces[self.mailbox[sq] as usize][sq])
             .fold(0, |k, x| k ^ x)
     }
@@ -219,6 +227,8 @@ impl Board {
         self.hash ^= KEYS.pieces[p as usize][sq];
         if piece_type(p) == PAWN {
             self.pawn_key ^= KEYS.pieces[p as usize][sq];
+        } else {
+            self.non_pawn_keys[piece_color(p)] ^= KEYS.pieces[p as usize][sq];
         }
     }
 
@@ -231,6 +241,8 @@ impl Board {
         self.hash ^= KEYS.pieces[p as usize][sq];
         if piece_type(p) == PAWN {
             self.pawn_key ^= KEYS.pieces[p as usize][sq];
+        } else {
+            self.non_pawn_keys[piece_color(p)] ^= KEYS.pieces[p as usize][sq];
         }
     }
 
@@ -244,6 +256,8 @@ impl Board {
         self.hash ^= KEYS.pieces[p as usize][from] ^ KEYS.pieces[p as usize][to];
         if piece_type(p) == PAWN {
             self.pawn_key ^= KEYS.pieces[p as usize][from] ^ KEYS.pieces[p as usize][to];
+        } else {
+            self.non_pawn_keys[piece_color(p)] ^= KEYS.pieces[p as usize][from] ^ KEYS.pieces[p as usize][to];
         }
     }
 
