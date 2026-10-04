@@ -480,6 +480,8 @@ name = "trinity-trainer"
 version = "0.1.0"
 dependencies = [
  "bullet_lib",
+ "bulletformat",
+ "sfbinpack",
 ]
 
 [[package]]

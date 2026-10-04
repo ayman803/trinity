@@ -8,6 +8,7 @@ param(
     [string]$Branch = "",        # engine code the network is for (asked if empty)
     [int]$Superbatches = 40,     # length of training (1 superbatch = ~100M positions)
     [int]$LeelaSuperbatches = 40, # length of stage 2 on data\leela\*.binpack, if present
+    [long]$LeelaPositions = 1000000000, # positions to take from the Leela data (32 bytes each on disk)
     [switch]$NoLeela,            # skip stage 2 even if Leela data is present
     [int]$MemoryMB = 8000,       # RAM used for shuffling
     [switch]$SkipShuffle,        # reuse data\prepared\shuffled.data from last time
@@ -122,14 +123,40 @@ try {
     Write-Good "Network trained: $final"
 
     # Stage 2: refine the network on Leela-derived data, if any was added
-    # to data\leela (Stockfish .binpack files).
+    # to data\leela (Stockfish .binpack files). The binpacks are converted
+    # once to our own format and shuffled; later runs reuse that file.
     $binpacks = @(Find-Files (Join-Path $dataDir "leela") "*.binpack")
     $description = "$Superbatches superbatches"
     if ($binpacks.Count -gt 0 -and -not $NoLeela) {
-        Write-Step "Stage 2: refining on Leela data ($($binpacks.Count) file(s), $LeelaSuperbatches superbatches)"
+        $leelaData = Join-Path $prepared "leela-shuffled.data"
+        if (-not (Test-Path -LiteralPath $leelaData)) {
+            Write-Step "Converting the Leela data (one time; up to $LeelaPositions positions)"
+            $parts = @()
+            $i = 0
+            foreach ($bp in $binpacks) {
+                $part = Join-Path $prepared "leela-$i.data"
+                $i++
+                Invoke-Native $trainer @("convert", $bp, $part, [string][long]($LeelaPositions / $binpacks.Count))
+                $parts += $part
+            }
+            $combined = Join-Path $prepared "leela-combined.data"
+            if ($parts.Count -eq 1) {
+                Move-Item -LiteralPath $parts[0] -Destination $combined -Force
+            } else {
+                Invoke-Native $utils (@("interleave") + $parts + @("--output", $combined))
+                foreach ($part in $parts) { Remove-Item -LiteralPath $part }
+            }
+            Invoke-Native $utils @("validate", "--input", $combined)
+            Invoke-Native $utils @("shuffle", "--input", $combined, "--output", $leelaData, "--mem-used-mb", "$MemoryMB")
+            Remove-Item -LiteralPath $combined
+        } else {
+            Write-Host "Reusing the converted Leela data from last time."
+        }
+
+        Write-Step "Stage 2: refining on Leela data ($LeelaSuperbatches superbatches)"
         Push-Location $script:Root
         try {
-            Invoke-Native $trainer (@("finetune", $stage1, "$LeelaSuperbatches", "$netId-leela") + $binpacks)
+            Invoke-Native $trainer @("finetune", $stage1, "$LeelaSuperbatches", "$netId-leela", $leelaData)
         } finally {
             Pop-Location
         }
