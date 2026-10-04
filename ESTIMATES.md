@@ -14,7 +14,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-03 | hist-prune (history pruning) | a few Elo | +0.3 +/- 4.1 after 11k games (stopped) | - | not merged |
 | 2026-10-04 | nonpawn-corr (non-pawn correction history) | more than hist-prune | +1.0 +/- 2.7 after 21k games (stopped) | - | not merged |
 | 2026-10-03 | network #5 (+40 superbatches on 1B Lc0-derived positions) | "a big jump" (no number) | +217.8 +/- 28.4 | +169 (3242 -> 3411) | self-play overstated ~1.3x |
-| 2026-10-04 | network #6 (Leela stage 120 instead of 40 superbatches) | self-play +10 to +30; CCRL +5 to +20 | +29.1 +/- 10.3 | pending | |
+| 2026-10-04 | network #6 (Leela stage 120 instead of 40 superbatches) | self-play +10 to +30; CCRL +5 to +20 | +29.1 +/- 10.3 | about +3 (akimbo 34.4% -> 35.1%; same opponent, same settings) | self-play overstated ~10x |
 
 ## Proposed (not yet run)
 
@@ -33,11 +33,20 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-03 | net #4 (bench 945619) | 10.95% | 63.65% | 79.25% | 3242 |
 | 2026-10-03 | net #5 (bench 705171) | 34.40% | 85.90% | 93.15% | 3411 |
 
+From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
+
+| Date | main | akimbo 3474 | Patricia 3487 | Bread 3522 | Prune 3543 | Simbelmyne 3193 (dropped) | Estimate (in-range opponents only) |
+|---|---|---|---|---|---|---|---|
+| 2026-10-04 | net #6 (bench 689648) | 35.10% -> 3367 | 36.55% -> 3391 | 36.15% -> 3423 | 28.55% -> 3384 | 87.25% (out of range) | about 3390 (script, all five: 3402) |
+
 ## Lessons so far
 
 - Self-play gains shrink against other engines by a varying factor
   (1.3x to 6x). Treat self-play as "better or not", not "how much".
 - Scores outside 25-75% give unreliable ratings; akimbo alone said 3362
   for net #5 while the weaker opponents said ~3500.
+- Longer training on the same Leela positions (net #6) gained +29 in
+  self-play but only about +3 against other engines: re-using data helps
+  little. Fresh data (idea 1) is the next test of that.
 - Search tweaks borrowed from stronger engines gave ~0 here; data and
   networks gave almost all the gains.

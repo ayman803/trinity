@@ -25,8 +25,6 @@ param(
 $opponents = @(
     @{ Name = "akimbo"; Version = "1.0.0"; Rating = 3474; Url = "https://github.com/jw1912/akimbo";
         Tag = "v1.0.0"; Binary = "akimbo"; CargoArgs = @(); Env = @{ EVALFILE = "resources/net.bin" } },
-    @{ Name = "Simbelmyne"; Version = "1.10.0"; Rating = 3193; Url = "https://github.com/sroelants/simbelmyne";
-        Tag = "v1.10.0"; Binary = "simbelmyne"; CargoArgs = @("-p", "simbelmyne"); Env = @{} },
     # Downloaded by hand (Windows release builds): see GUIDE.md.
     @{ Name = "Patricia"; Version = "5.1"; Rating = 3487; Download = $true },
     @{ Name = "Bread"; Version = "4.0.0"; Rating = 3522; Download = $true },
