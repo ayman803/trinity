@@ -7,7 +7,7 @@
 param(
     [string]$Branch = "",        # engine code the network is for (asked if empty)
     [int]$Superbatches = 40,     # length of training (1 superbatch = ~100M positions)
-    [int]$LeelaSuperbatches = 40, # length of stage 2 on data\leela\*.binpack, if present
+    [int]$LeelaSuperbatches = 120, # length of stage 2 on data\leela\*.binpack, if present
     [long]$LeelaPositions = 1000000000, # positions to take from the Leela data (32 bytes each on disk)
     [switch]$NoLeela,            # skip stage 2 even if Leela data is present
     [int]$MemoryMB = 8000,       # RAM used for shuffling
