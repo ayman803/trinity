@@ -7,7 +7,7 @@
 //! Usage:
 //!   trinity-trainer <shuffled data file> [superbatches] [name]
 //!       Train from scratch on our own self-play data (bulletformat).
-//!   trinity-trainer convert <file.binpack> <out.data> [max positions]
+//!   trinity-trainer convert <file.binpack> <out.data> [max positions] [skip]
 //!       Convert a Stockfish-format binpack (such as the Lc0-derived
 //!       datasets) to bulletformat, keeping only useful positions.
 //!   trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file> [start lr]
@@ -46,7 +46,7 @@ const QB: i16 = 64;
 
 fn usage() -> ! {
     eprintln!("usage: trinity-trainer <shuffled data file> [superbatches] [name]");
-    eprintln!("       trinity-trainer convert <file.binpack> <out.data> [max positions]");
+    eprintln!("       trinity-trainer convert <file.binpack> <out.data> [max positions] [skip]");
     eprintln!("       trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file> [start lr]");
     std::process::exit(1);
 }
@@ -91,12 +91,22 @@ fn convert_entry(entry: &TrainingDataEntry) -> Option<ChessBoard> {
     ChessBoard::from_raw(bbs, stm, score as i16, result).ok()
 }
 
-fn convert(input: &str, output: &str, max: u64) {
+/// `skip`: number of entries at the start of the file to pass over, so a
+/// later conversion can continue where an earlier one stopped.
+fn convert(input: &str, output: &str, max: u64, skip: u64) {
     let file = File::open(input).unwrap_or_else(|e| panic!("cannot open {input}: {e}"));
     let total = file.metadata().map(|m| m.len()).unwrap_or(0).max(1);
     let mut reader = CompressedTrainingDataEntryReader::new(BufReader::with_capacity(1 << 20, file))
         .unwrap_or_else(|e| panic!("{input} is not a valid binpack: {e:?}"));
     let mut writer = BufWriter::with_capacity(1 << 22, File::create(output).expect("cannot create output"));
+    let mut skipped = 0u64;
+    while skipped < skip && reader.has_next() {
+        reader.next();
+        skipped += 1;
+        if skipped % 100_000_000 == 0 {
+            println!("skipped {skipped} of {skip} already used positions");
+        }
+    }
     let (mut seen, mut kept) = (0u64, 0u64);
     let mut buffer = Vec::with_capacity(1 << 16);
     while reader.has_next() && kept < max {
@@ -121,7 +131,7 @@ fn convert(input: &str, output: &str, max: u64) {
     }
     ChessBoard::write_to_bin(&mut writer, &buffer).expect("write failed");
     writer.flush().expect("write failed");
-    println!("done: read {seen} positions, kept {kept}");
+    println!("done: read {seen} positions, kept {kept} (stopped at file position {})", skipped + seen);
 }
 
 fn main() {
@@ -132,7 +142,8 @@ fn main() {
             usage();
         }
         let max = args.get(4).map_or(u64::MAX, |m| m.parse().unwrap_or_else(|_| usage()));
-        convert(&args[2], &args[3], max);
+        let skip = args.get(5).map_or(0, |m| m.parse().unwrap_or_else(|_| usage()));
+        convert(&args[2], &args[3], max, skip);
         return;
     }
     let finetune = mode == Some("finetune");
