@@ -330,7 +330,7 @@ function Clear-TempFiles {
     $prepared = Join-Path (Join-Path $script:Root "data") "prepared"
     if (Test-Path -LiteralPath $prepared) {
         foreach ($d in [IO.Directory]::GetDirectories($prepared, "*.tmp")) { Remove-Leftover $d }   # shuffle temp folders
-        foreach ($name in @("combined.data", "leela-combined.data", "leela-fresh-raw.data", "drill-mix.data")) {
+        foreach ($name in @("combined.data", "leela-combined.data", "leela-fresh-raw.data", "drill-mix.data", "drill-shuffled.data")) {
             Remove-Leftover (Join-Path $prepared $name)
         }
         foreach ($f in [IO.Directory]::GetFiles($prepared, "leela-?.data")) { Remove-Leftover $f }  # conversion parts
