@@ -28,6 +28,8 @@ pub const INF: i32 = 32_000;
 pub const MATE: i32 = 31_000;
 /// Scores beyond this are "mate in N".
 pub const MATE_BOUND: i32 = MATE - 2 * MAX_PLY as i32;
+/// Tablebase win (minus the ply), kept below the mate range.
+pub const TB_WIN: i32 = MATE_BOUND - 1 - MAX_PLY as i32;
 
 /// What the GUI (or datagen/bench) asked for.
 #[derive(Clone, Default)]
@@ -486,6 +488,17 @@ impl Searcher {
             beta = beta.min(MATE - ply as i32 - 1);
             if alpha >= beta {
                 return alpha;
+            }
+        }
+
+        // Endgame tablebases: exact result right after a capture or pawn move.
+        if !root && excluded.is_none() && b.occupied().count_ones() <= crate::tb::max_pieces() {
+            if let Some(wdl) = crate::tb::probe_wdl(b) {
+                return match wdl {
+                    1 => TB_WIN - ply as i32,
+                    -1 => -TB_WIN + ply as i32,
+                    _ => 0,
+                };
             }
         }
 
@@ -1028,6 +1041,16 @@ pub fn search_parallel(searchers: &mut [Searcher], root: &Board, history: &[u64]
     let shared = searchers[0].shared.clone();
     shared.nodes.store(0, Ordering::Relaxed);
     shared.tt.new_search();
+    // In tablebase territory, play the tablebase move directly.
+    if let Some((m, outcome)) = crate::tb::root_move(root) {
+        let score = outcome * TB_WIN;
+        println!("info depth 1 score cp {score} nodes 0 pv {m}");
+        println!("info string tablebase move");
+        while limits.infinite && !shared.stop.load(Ordering::Relaxed) {
+            std::thread::sleep(std::time::Duration::from_millis(1));
+        }
+        return SearchResult { best_move: m, score };
+    }
     let (main, helpers) = searchers.split_first_mut().unwrap();
     std::thread::scope(|s| {
         for h in helpers.iter_mut() {

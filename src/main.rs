@@ -9,6 +9,7 @@ mod movegen;
 mod nnue;
 mod search;
 mod select;
+mod tb;
 mod tt;
 mod types;
 mod uci;
