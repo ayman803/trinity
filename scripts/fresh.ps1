@@ -94,13 +94,8 @@ try {
     Invoke-Native git @("-C", $script:Root, "worktree", "add", "-B", $netBranch, $tree, "origin/main")
     try {
         Copy-Item $final (Join-Path (Join-Path $tree "nets") "default.nnue") -Force
-        $identity = @()
-        $old = $ErrorActionPreference; $ErrorActionPreference = "Continue"
-        $email = & git -C $tree config user.email 2>$null
-        $ErrorActionPreference = $old
-        if (-not $email) {
-            $identity = @("-c", "user.name=Trinity trainer", "-c", "user.email=trainer@trinity.invalid")
-        }
+        # Fixed identity: keeps personal e-mail addresses out of the public history.
+        $identity = $script:CommitIdentity
         Invoke-Native git @("-C", $tree, "add", "nets/default.nnue")
         Invoke-Native git ($identity + @("-C", $tree, "commit", "-m",
                 "Fresh-data network $netId (main's network + $Superbatches superbatches on $Positions unseen Leela positions)"))

@@ -183,15 +183,8 @@ try {
         $nets = Join-Path $tree "nets"
         New-Item -ItemType Directory -Force -Path $nets | Out-Null
         Copy-Item $final (Join-Path $nets "default.nnue") -Force
-        $identity = @()
-        # Is a git identity configured? (`git config` exits with 1 when not.)
-        # Note: Windows PowerShell 5.1 drops empty-string arguments to programs.
-        $old = $ErrorActionPreference; $ErrorActionPreference = "Continue"
-        $email = & git -C $tree config user.email 2>$null
-        $ErrorActionPreference = $old
-        if (-not $email) {
-            $identity = @("-c", "user.name=Trinity trainer", "-c", "user.email=trainer@trinity.invalid")
-        }
+        # Fixed identity: keeps personal e-mail addresses out of the public history.
+        $identity = $script:CommitIdentity
         Invoke-Native git @("-C", $tree, "add", "nets/default.nnue")
         Invoke-Native git ($identity + @("-C", $tree, "commit", "-m", "New network $netId ($description, for $Branch)"))
         Invoke-Native git @("-C", $tree, "push", "-u", "origin", $netBranch)

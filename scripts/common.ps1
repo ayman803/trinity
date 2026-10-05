@@ -290,6 +290,10 @@ function Get-OpeningBook([string]$BookFile = $script:BookName) {
 }
 
 # Bring the local copy of the repository up to date with GitHub.
+# Author of the network commits the scripts publish (GitHub's private
+# address for the owner's account, never a personal e-mail address).
+$script:CommitIdentity = @("-c", "user.name=ayman803", "-c", "user.email=7761579+ayman803@users.noreply.github.com")
+
 function Update-Repository {
     Write-Step "Getting the latest code from GitHub"
     Invoke-Native git @("-C", $script:Root, "fetch", "--prune", "origin")
