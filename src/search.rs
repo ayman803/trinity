@@ -532,6 +532,9 @@ impl Searcher {
             }
         }
         self.frames[ply].static_eval = static_eval;
+        // "Unsure" node: the learned correction moves the network's opinion
+        // a lot here, so the evaluation is less trustworthy; reduce less.
+        let unsure = raw_eval > -INF && (static_eval - raw_eval).abs() >= 12;
         let improving = !in_check && ply >= 2 && static_eval > self.frames[ply - 2].static_eval;
         self.killers[ply + 1] = [Move::NONE; 2];
 
@@ -679,6 +682,7 @@ impl Searcher {
                     r += i32::from(cut_node);
                     r += i32::from(!improving);
                     r -= i32::from(child.in_check());
+                    r -= i32::from(unsure);
                     if quiet {
                         r -= self.quiet_score(b, m, ply) / 8192;
                         if m == self.killers[ply][0] || m == self.killers[ply][1] {
