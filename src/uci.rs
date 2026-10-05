@@ -80,6 +80,7 @@ impl Engine {
                 println!("option name Hash type spin default 16 min 1 max 65536");
                 println!("option name Threads type spin default 1 min 1 max 1024");
                 println!("option name Move Overhead type spin default 10 min 0 max 5000");
+                println!("option name SyzygyPath type string default <empty>");
                 let eval = if crate::nnue::network().is_some() { "NNUE" } else { "hand-crafted" };
                 println!("info string evaluation: {eval}");
                 println!("uciok");
@@ -140,6 +141,16 @@ impl Engine {
                 if let Ok(t) = value.parse::<usize>() {
                     self.threads = t.clamp(1, 1024);
                     self.rebuild();
+                }
+            }
+            "syzygypath" => {
+                // Paths may contain spaces: take everything after "value".
+                let path = value_pos.map(|v| tokens[v + 1..].join(" ")).unwrap_or_default();
+                match crate::tb::set_path(&path) {
+                    Ok(n) => {
+                        println!("info string Syzygy: {n} tables loaded (up to {} pieces)", crate::tb::max_pieces())
+                    }
+                    Err(e) => println!("info string Syzygy: {e}"),
                 }
             }
             "move overhead" => {
