@@ -51,6 +51,8 @@ Windows. Every instruction must be concrete:
 3. Add a CREDITS section to README.md covering the bullet trainer, the
    Leela/Stockfish training data, and that the code was written with
    Claude.
-4. Syzygy tablebase support (CCRL testers use 3-4-5 piece tables). Not
-   implemented as of 5 October 2026; the library/license choice is the
-   owner's decision.
+4. Syzygy tablebases (CCRL testers use 3-4-5 piece tables): supported
+   since 5 October 2026 via shakmaty-syzygy (owner chose GPL; Trinity is
+   GPL-3.0-or-later). Calibration passes C:\Trinity\syzygy to all
+   engines when that folder exists. Measure the gain with calibration,
+   not SPRT.

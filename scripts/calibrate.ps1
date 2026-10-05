@@ -99,6 +99,10 @@ try {
     # A balanced book, closer to how rating lists start their games than the
     # unbalanced book used for SPRT.
     $book = Get-OpeningBook "8moves_v3.pgn"
+    # Endgame tablebases for every engine, as CCRL does, if present.
+    $syzygy = Join-Path $script:Root "syzygy"
+    $syzygyArg = if (Test-Path -LiteralPath $syzygy) { "option.SyzygyPath=$syzygy" } else { "option.Hash=$Hash" }
+    if (Test-Path -LiteralPath $syzygy) { Write-Host "Using Syzygy tablebases from $syzygy for all engines." }
     $results = Join-Path $script:Work "results"
     New-Item -ItemType Directory -Force -Path $results | Out-Null
     $stamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
@@ -119,6 +123,7 @@ try {
             "-engine", "cmd=$trinity", "name=Trinity",
             "-engine", "cmd=$oppExe", "name=$($o.Name)",
             "-each", "proto=uci", "tc=$TC", "option.Hash=$Hash", "option.Threads=1",
+            $syzygyArg,
             "-openings", "file=$book", "format=pgn", "order=random",
             "-repeat", "-games", "2", "-rounds", "$Rounds",
             "-concurrency", "$Concurrency",
