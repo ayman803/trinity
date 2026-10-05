@@ -10,12 +10,11 @@
 use std::sync::RwLock;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-use shakmaty::fen::Fen;
-use shakmaty::{CastlingMode, Chess};
+use shakmaty::{Bitboard as SBitboard, ByColor, ByRole, CastlingMode, Chess, Color, FromSetup, Setup, Square};
 use shakmaty_syzygy::{Tablebase, Wdl};
 
-use crate::board::Board;
-use crate::types::Move;
+use crate::board::{Board, NO_SQ};
+use crate::types::*;
 
 static TABLES: RwLock<Option<Tablebase<Chess>>> = RwLock::new(None);
 static MAX_PIECES: AtomicUsize = AtomicUsize::new(0);
@@ -45,9 +44,27 @@ fn covered(b: &Board) -> bool {
     n <= max_pieces() && b.castling == 0
 }
 
+/// Copy the board into the library's representation (no castling rights:
+/// `covered` already excludes them).
 fn to_chess(b: &Board) -> Option<Chess> {
-    let fen: Fen = b.to_fen().parse().ok()?;
-    fen.into_position(CastlingMode::Standard).ok()
+    let bb = |x: u64| SBitboard(x);
+    let by_role = ByRole {
+        pawn: bb(b.pieces[PAWN]),
+        knight: bb(b.pieces[KNIGHT]),
+        bishop: bb(b.pieces[BISHOP]),
+        rook: bb(b.pieces[ROOK]),
+        queen: bb(b.pieces[QUEEN]),
+        king: bb(b.pieces[KING]),
+    };
+    let by_color = ByColor { white: bb(b.colors[WHITE]), black: bb(b.colors[BLACK]) };
+    let setup = Setup {
+        board: shakmaty::Board::try_from_bitboards(by_role, by_color).ok()?,
+        turn: if b.stm == WHITE { Color::White } else { Color::Black },
+        ep_square: (b.ep != NO_SQ).then(|| Square::new(u32::from(b.ep))),
+        halfmoves: u32::from(b.halfmove),
+        ..Setup::empty()
+    };
+    Chess::from_setup(setup, CastlingMode::Standard).ok()
 }
 
 /// Win (+1), draw (0) or loss (-1) for the side to move, with the 50-move

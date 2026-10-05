@@ -30,6 +30,8 @@ pub const MATE: i32 = 31_000;
 pub const MATE_BOUND: i32 = MATE - 2 * MAX_PLY as i32;
 /// Tablebase win (minus the ply), kept below the mate range.
 pub const TB_WIN: i32 = MATE_BOUND - 1 - MAX_PLY as i32;
+/// Scores beyond this are tablebase wins or mates (adjusted by ply in the TT).
+pub const TB_BOUND: i32 = TB_WIN - MAX_PLY as i32;
 
 /// What the GUI (or datagen/bench) asked for.
 #[derive(Clone, Default)]
@@ -304,14 +306,14 @@ impl Searcher {
         };
         // Drift towards a draw as the fifty-move counter grows.
         let scaled = raw * (200 - i32::from(b.halfmove)) / 200;
-        scaled.clamp(-MATE_BOUND + 1, MATE_BOUND - 1)
+        scaled.clamp(-TB_BOUND + 1, TB_BOUND - 1)
     }
 
     /// Static eval adjusted by the correction history for this pawn structure.
     #[inline(always)]
     fn corrected_eval(&self, b: &Board, raw: i32) -> i32 {
         let c = self.corr_hist[b.stm][b.pawn_key as usize & (CORR_SIZE - 1)];
-        (raw + c / CORR_GRAIN).clamp(-MATE_BOUND + 1, MATE_BOUND - 1)
+        (raw + c / CORR_GRAIN).clamp(-TB_BOUND + 1, TB_BOUND - 1)
     }
 
     fn update_correction(&mut self, b: &Board, depth: i32, diff: i32) {
@@ -491,17 +493,6 @@ impl Searcher {
             }
         }
 
-        // Endgame tablebases: exact result right after a capture or pawn move.
-        if !root && excluded.is_none() && b.occupied().count_ones() <= crate::tb::max_pieces() {
-            if let Some(wdl) = crate::tb::probe_wdl(b) {
-                return match wdl {
-                    1 => TB_WIN - ply as i32,
-                    -1 => -TB_WIN + ply as i32,
-                    _ => 0,
-                };
-            }
-        }
-
         let tt_entry = if excluded.is_none() { self.shared.tt.probe(b.hash) } else { None };
         let tt_move = tt_entry.map_or(Move::NONE, |e| e.mv);
         if let Some(e) = tt_entry {
@@ -513,6 +504,21 @@ impl Searcher {
                     || (e.bound == BOUND_UPPER && s <= alpha))
             {
                 return s;
+            }
+        }
+
+        // Endgame tablebases: exact result right after a capture or pawn
+        // move. Stored in the TT so that revisits cost no file lookup.
+        if !root && excluded.is_none() && b.occupied().count_ones() <= crate::tb::max_pieces() {
+            if let Some(wdl) = crate::tb::probe_wdl(b) {
+                let (score, bound) = match wdl {
+                    1 => (TB_WIN - ply as i32, BOUND_LOWER),
+                    -1 => (-TB_WIN + ply as i32, BOUND_UPPER),
+                    _ => (0, BOUND_EXACT),
+                };
+                let tb_depth = (depth + 6).min(MAX_PLY as i32 - 1);
+                self.shared.tt.store(b.hash, Move::NONE, score_to_tt(score, ply), 0, tb_depth, bound);
+                return score;
             }
         }
 
@@ -551,7 +557,7 @@ impl Searcher {
         if !pv_node && !in_check && excluded.is_none() {
             // Reverse futility pruning: we are so far ahead that even a
             // generous margin keeps us above beta.
-            if depth <= 8 && eval.abs() < MATE_BOUND && eval - 75 * (depth - i32::from(improving)) >= beta {
+            if depth <= 8 && eval.abs() < TB_BOUND && eval - 75 * (depth - i32::from(improving)) >= beta {
                 return (eval + beta) / 2;
             }
 
@@ -586,7 +592,7 @@ impl Searcher {
                     return 0;
                 }
                 if score >= beta {
-                    return if score >= MATE_BOUND { beta } else { score };
+                    return if score >= TB_BOUND { beta } else { score };
                 }
             }
         }
@@ -623,7 +629,7 @@ impl Searcher {
                 continue;
             }
 
-            if !root && best_score > -MATE_BOUND {
+            if !root && best_score > -TB_BOUND {
                 let lmr_depth =
                     (depth - self.lmr[usize::from(quiet)][depth.min(63) as usize][moves_searched.min(63)]).max(0);
                 if quiet {
@@ -657,7 +663,7 @@ impl Searcher {
                     && depth >= 8
                     && i32::from(e.depth) >= depth - 3
                     && e.bound != BOUND_UPPER
-                    && i32::from(e.score).abs() < MATE_BOUND
+                    && i32::from(e.score).abs() < TB_BOUND
                 {
                     let tt_score = score_from_tt(i32::from(e.score), ply);
                     let s_beta = tt_score - depth;
@@ -773,7 +779,7 @@ impl Searcher {
             // trustworthy in that direction (quiet best move, bound agrees).
             if !in_check
                 && !best_move.is_noisy()
-                && best_score.abs() < MATE_BOUND
+                && best_score.abs() < TB_BOUND
                 && !(bound == BOUND_LOWER && best_score <= static_eval)
                 && !(bound == BOUND_UPPER && best_score >= static_eval)
             {
@@ -1012,9 +1018,9 @@ impl Searcher {
 }
 
 fn score_to_tt(score: i32, ply: usize) -> i32 {
-    if score >= MATE_BOUND {
+    if score >= TB_BOUND {
         score + ply as i32
-    } else if score <= -MATE_BOUND {
+    } else if score <= -TB_BOUND {
         score - ply as i32
     } else {
         score
@@ -1022,9 +1028,9 @@ fn score_to_tt(score: i32, ply: usize) -> i32 {
 }
 
 fn score_from_tt(score: i32, ply: usize) -> i32 {
-    if score >= MATE_BOUND {
+    if score >= TB_BOUND {
         score - ply as i32
-    } else if score <= -MATE_BOUND {
+    } else if score <= -TB_BOUND {
         score + ply as i32
     } else {
         score
