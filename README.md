@@ -1,9 +1,13 @@
 # Trinity
 
-A UCI chess engine written from scratch in Rust.
+A UCI chess engine written from scratch in Rust, with an NNUE evaluation.
+Its code was written by Claude (Anthropic's AI model); see
+[Credits](#credits).
 
-**Goal:** climb the [CCRL](https://computerchess.org.uk/ccrl/) rating lists.
-The long-term aim is the top 20, the stretch goal the top 10.
+**Goal:** reach the top 100 of the [CCRL](https://computerchess.org.uk/ccrl/)
+rating list (about 3455) by October 2027. Our own estimate in October 2026
+is about 3380 (CCRL scale, 1 CPU); see [ESTIMATES.md](ESTIMATES.md) for every
+measurement and prediction.
 
 **For the person running the tests:** see **[GUIDE.md](GUIDE.md)**. It covers
 setup, overnight SPRT tests and network training, step by step.
@@ -45,10 +49,17 @@ setup, overnight SPRT tests and network training, step by step.
 
 **Evaluation**
 
-- NNUE (`src/nnue.rs`): a `(768 → 256)×2 → 1` network with SCReLU,
-  incrementally updated. Its layout matches what the bullet trainer writes.
+- NNUE (`src/nnue.rs`): a `(768 → 512)×2 → 1` network with SCReLU and 8
+  output buckets by piece count, incrementally updated. Trained with bullet
+  on our own self-play data, then on Leela-derived data (see Credits).
 - A simple hand-crafted evaluation (`src/eval.rs`), used until the first
   network is trained and for the first round of self-play data.
+
+**Endgame tablebases**
+
+- Syzygy tablebases through the `shakmaty-syzygy` library (UCI option
+  `SyzygyPath`): the root move comes from the DTZ tables, and the search
+  uses WDL results after captures and pawn moves.
 
 **Tooling**
 
@@ -63,6 +74,12 @@ setup, overnight SPRT tests and network training, step by step.
 
 ```
 cargo build --release
+```
+
+or, as testing frameworks such as OpenBench do:
+
+```
+make EXE=<name> [EVALFILE=<network file>]
 ```
 
 The binary is `target/release/trinity` (`trinity.exe` on Windows). For the
@@ -89,6 +106,8 @@ fastest build on your own machine, set `RUSTFLAGS="-C target-cpu=native"`.
 - `Hash` (MB, default 16)
 - `Threads` (default 1)
 - `Move Overhead` (ms, default 10)
+- `SyzygyPath` (folders with Syzygy files, separated by `;` on Windows and
+  `:` elsewhere)
 
 Extra commands for debugging: `d` (show the board), `eval`, `bench`, and
 `go perft N`.
@@ -133,8 +152,8 @@ pruning, UCI, the NNUE pipeline and the testing infrastructure.
    iterate: new data from the better engine, retrain.
 2. Search speed: staged move generation, a cheaper move picker, and lazy
    accumulator updates.
-3. Grow the network: bigger hidden layer, king-bucketed inputs,
-   horizontal mirroring, output buckets.
+3. Grow the network: king-bucketed inputs with horizontal mirroring (in
+   progress), then a bigger hidden layer.
 4. Tune the search parameters. The pruning margins are currently reasonable
    defaults, not tuned values.
 5. Better time management (node-based best-move stability) and SMP tuning.
@@ -142,3 +161,33 @@ pruning, UCI, the NNUE pipeline and the testing infrastructure.
    data.
 7. CCRL readiness: portable release builds (x86-64-v2/v3), long stability
    runs, then submission to the testers.
+
+## Credits
+
+- **Code:** written by Claude, Anthropic's AI model, working in Claude Code.
+  The project owner directs the work, runs every test on their own
+  machines and decides what is merged. Trinity's code is original:
+  ideas come from the open chess-programming community (the Chess
+  Programming Wiki and the published ideas of engines such as Stockfish),
+  but no code was copied from other engines.
+- **Network trainer:** [bullet](https://github.com/jw1912/bullet) by Jamie
+  Whiting and contributors (MIT licence), with the `bulletformat` crate.
+- **Training data:** after a first stage on Trinity's own self-play games,
+  the networks are refined on Leela-derived training data: positions from
+  [Leela Chess Zero](https://lczero.org)'s self-play games, as published in
+  Stockfish's binpack format by the Stockfish community for its own network
+  training (read with the `sfbinpack` crate). Thank you to both projects
+  for making this data public.
+- **Tablebases:** the Syzygy tablebases by Ronald de Man, probed with
+  [shakmaty-syzygy](https://github.com/niklasf/shakmaty-syzygy) by Niklas
+  Fiekas (GPL-3.0).
+- **Testing:** [fastchess](https://github.com/Disservin/fastchess) for
+  matches and SPRT, Stefan Pohl's UHO opening books, the `8moves_v3` book,
+  and [python-chess](https://github.com/niklasf/python-chess) to check the
+  perft numbers. Ratings are measured against engines on the
+  [CCRL](https://computerchess.org.uk/ccrl/) list.
+
+## Licence
+
+Trinity is free software under the GNU General Public License, version 3
+or later (GPL-3.0-or-later); see [LICENSE](LICENSE).

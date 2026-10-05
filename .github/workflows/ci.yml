@@ -18,6 +18,9 @@ jobs:
         run: cargo test --release
       - name: Bench
         run: cargo run --release -- bench
+      - name: OpenBench-style build
+        if: matrix.os == 'ubuntu-latest'
+        run: make EXE=trinity-ob && ./trinity-ob bench
       - name: Upload Windows build
         if: matrix.os == 'windows-latest'
         uses: actions/upload-artifact@v4
