@@ -67,6 +67,7 @@ function Build-Opponent($Opp) {
 $keepAwake = $null
 try {
     Assert-Tools
+    Invoke-Housekeeping
     if (-not $NoUpdate) { Update-Repository }
 
     $running = @(Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.ProcessName -like "trinity*" })

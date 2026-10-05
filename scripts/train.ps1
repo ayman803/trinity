@@ -48,6 +48,7 @@ function Select-CodeBranch {
 $keepAwake = $null
 try {
     Assert-Tools
+    Invoke-Housekeeping -Training
     if ($script:OnWindows -and -not $env:CUDA_PATH) {
         Stop-WithMessage "The NVIDIA CUDA Toolkit is not installed (or this window was opened before installing it). See GUIDE.md, 'Training a network'."
     }
@@ -129,6 +130,9 @@ try {
     $description = "$Superbatches superbatches"
     if ($binpacks.Count -gt 0 -and -not $NoLeela) {
         $leelaData = Join-Path $prepared "leela-shuffled.data"
+        # Prefer the newest converted block (made by 8-Fresh-Leela.bat).
+        $freshBlock = Join-Path $prepared "leela-fresh.data"
+        if (Test-Path -LiteralPath $freshBlock) { $leelaData = $freshBlock }
         if (-not (Test-Path -LiteralPath $leelaData)) {
             Write-Step "Converting the Leela data (one time; up to $LeelaPositions positions)"
             $parts = @()

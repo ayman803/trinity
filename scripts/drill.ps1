@@ -19,12 +19,15 @@ param(
 $keepAwake = $null
 try {
     Assert-Tools
+    Invoke-Housekeeping -Training
     if ($script:OnWindows -and -not $env:CUDA_PATH) {
         Stop-WithMessage "The NVIDIA CUDA Toolkit is not installed (or this window was opened before installing it)."
     }
     Invoke-Native git @("-C", $script:Root, "fetch", "--prune", "origin")
     $prepared = Join-Path (Join-Path $script:Root "data") "prepared"
     $leelaData = Join-Path $prepared "leela-shuffled.data"
+    $freshBlock = Join-Path $prepared "leela-fresh.data"
+    if (Test-Path -LiteralPath $freshBlock) { $leelaData = $freshBlock }
     if (-not (Test-Path -LiteralPath $leelaData)) {
         Stop-WithMessage "Converted Leela data not found ($leelaData). Run 4-Train-Network.bat with Leela data first."
     }

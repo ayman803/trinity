@@ -15,6 +15,7 @@ param(
 $keepAwake = $null
 try {
     Assert-Tools
+    Invoke-Housekeeping -Training
     if ($script:OnWindows -and -not $env:CUDA_PATH) {
         Stop-WithMessage "The NVIDIA CUDA Toolkit is not installed (or this window was opened before installing it)."
     }

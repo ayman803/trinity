@@ -55,6 +55,7 @@ function Select-Branch {
 $keepAwake = $null
 try {
     Assert-Tools
+    Invoke-Housekeeping
     if (-not $NoUpdate) { Update-Repository }
     if (-not $Dev) { $Dev = Select-Branch }
 

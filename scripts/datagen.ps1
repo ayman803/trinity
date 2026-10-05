@@ -17,6 +17,7 @@ param(
 $keepAwake = $null
 try {
     Assert-Tools
+    Invoke-Housekeeping
     if (-not $NoUpdate) { Update-Repository }
     $enginePath = Build-Trinity "origin/main"
     if ($Threads -le 0) { $Threads = Get-DefaultConcurrency }

@@ -301,3 +301,92 @@ function Update-Repository {
         Write-Warn "Your folder is not a clean copy of 'main', so it was not updated (tests still use GitHub's latest code)."
     }
 }
+
+# ---------------------------------------------------------------------------
+# Housekeeping: free disk space and remove leftovers at the start of a run.
+# ---------------------------------------------------------------------------
+$script:MinFreeGB = 120
+
+function Show-DiskSpace {
+    $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot($script:Root))
+    $freeGB = [Math]::Round($drive.AvailableFreeSpace / 1GB)
+    Write-Host "Free disk space on $($drive.Name): $freeGB GB"
+    if ($freeGB -lt $script:MinFreeGB) {
+        Write-Warn "WARNING: less than $($script:MinFreeGB) GB free. Training data needs up to about 100 GB while it is prepared."
+        Write-Warn "Free some space (for example empty the Recycle Bin, or delete old files in Downloads) before long runs."
+    }
+}
+
+function Remove-Leftover([string]$Path) {
+    if (Test-Path -LiteralPath $Path) {
+        Write-Host "Removing leftover $Path"
+        Remove-Item -LiteralPath $Path -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
+# Temporary files that only exist while a run is in progress: if one is
+# found at the start, an earlier run was interrupted.
+function Clear-TempFiles {
+    $prepared = Join-Path (Join-Path $script:Root "data") "prepared"
+    if (Test-Path -LiteralPath $prepared) {
+        foreach ($d in [IO.Directory]::GetDirectories($prepared, "*.tmp")) { Remove-Leftover $d }   # shuffle temp folders
+        foreach ($name in @("combined.data", "leela-combined.data", "leela-fresh-raw.data", "drill-mix.data")) {
+            Remove-Leftover (Join-Path $prepared $name)
+        }
+        foreach ($f in [IO.Directory]::GetFiles($prepared, "leela-?.data")) { Remove-Leftover $f }  # conversion parts
+    }
+    foreach ($pattern in @("publish-*", "trainer-src")) {
+        foreach ($d in [IO.Directory]::GetDirectories($script:Work, $pattern)) {
+            & git -C $script:Root worktree remove --force $d 2>$null | Out-Null
+            Remove-Leftover $d
+        }
+    }
+    & git -C $script:Root worktree prune 2>$null | Out-Null
+}
+
+# The checkpoint folder holding main's network, or $null.
+function Get-MainCheckpoint {
+    $mainNet = Join-Path (Join-Path $script:Root "nets") "default.nnue"
+    if (-not (Test-Path -LiteralPath $mainNet)) { return $null }
+    $mainHash = (Get-FileHash -LiteralPath $mainNet -Algorithm SHA256).Hash
+    foreach ($q in (Find-Files (Join-Path $script:Root "checkpoints") "quantised.bin")) {
+        if ((Get-FileHash -LiteralPath $q -Algorithm SHA256).Hash -eq $mainHash) { return (Split-Path $q -Parent) }
+    }
+    return $null
+}
+
+# Keep main's checkpoint and the newest few; delete older checkpoints.
+function Remove-OldCheckpoints([int]$Keep = 4) {
+    $dir = Join-Path $script:Root "checkpoints"
+    if (-not (Test-Path -LiteralPath $dir)) { return }
+    $main = Get-MainCheckpoint
+    $all = @(Get-ChildItem -LiteralPath $dir -Directory | Sort-Object LastWriteTime -Descending)
+    $i = 0
+    foreach ($c in $all) {
+        $i++
+        if ($i -le $Keep -or ($main -and $c.FullName -eq $main)) { continue }
+        Remove-Leftover $c.FullName
+    }
+}
+
+# Converted Leela blocks: once main's network was trained on the fresh
+# block (a "-fresh" checkpoint), the original block is no longer needed.
+function Remove-OldLeelaBlocks {
+    $prepared = Join-Path (Join-Path $script:Root "data") "prepared"
+    $original = Join-Path $prepared "leela-shuffled.data"
+    $fresh = Join-Path $prepared "leela-fresh.data"
+    $main = Get-MainCheckpoint
+    if ($main -and ((Split-Path $main -Leaf) -like "*-fresh-*") -and (Test-Path -LiteralPath $fresh)) {
+        Remove-Leftover $original
+    }
+}
+
+# Called at the start of every script.
+function Invoke-Housekeeping([switch]$Training) {
+    Show-DiskSpace
+    Clear-TempFiles
+    if ($Training) {
+        Remove-OldCheckpoints
+        Remove-OldLeelaBlocks
+    }
+}
