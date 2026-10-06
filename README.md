@@ -2,9 +2,11 @@
 
 A UCI chess engine in Rust with an NNUE evaluation.
 
-I'm not a programmer. The code is written by Claude (Anthropic's AI) in
-Claude Code; I decide what to try, run every test on my own two machines
-and decide what gets merged. No code is copied from other engines.
+I want to build a better mousetrap. I'm not a programmer, so Claude writes the code and I call the shots. I'd rather try an original idea and fail than to have no original ideas at all.
+
+Claude (Anthropic's AI) writes the code in Claude Code. I run every test
+on my own two machines and decide what gets merged. No code is copied from
+other engines.
 
 Strength: about 3380 on the CCRL scale (1 CPU), measured against
 akimbo, Patricia, Bread and Prune at 10+0.1. The goal is the CCRL top 100
