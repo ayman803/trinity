@@ -1,13 +1,16 @@
 # Fresh-data training: continue training main's network on Leela positions
 # it has never seen (the next part of the Leela file after the positions
-# already converted). Publishes a net-fresh-... branch for an SPRT test.
-# Double-click 8-Fresh-Leela.bat.
+# already converted). Publishes a net-<Label>-... branch for an SPRT test.
+# Double-click 8-Fresh-Leela.bat, or 10-King-Buckets.bat (the same with
+# Label "kb": main's network becomes the starting point of the king-bucket
+# network, see trainer/src/main.rs).
 
 param(
     [long]$Positions = 1000000000, # fresh positions to convert (32 bytes each on disk)
     [int]$Superbatches = 40,       # length of the refinement (1 superbatch = ~100M positions)
     [string]$LearningRate = "0.0002",
-    [int]$MemoryMB = 8000          # RAM used for shuffling
+    [int]$MemoryMB = 8000,         # RAM used for shuffling
+    [string]$Label = "fresh"       # names the network and its branch
 )
 
 . (Join-Path $PSScriptRoot "common.ps1")
@@ -75,7 +78,7 @@ try {
     Remove-Item $raw
 
     $stamp = Get-Date -Format "yyyyMMdd-HHmm"
-    $netId = "trinity-$stamp-fresh"
+    $netId = "trinity-$stamp-$Label"
     Write-Step "Training $netId on the fresh positions ($Superbatches superbatches)"
     Push-Location $script:Root
     try {
@@ -87,7 +90,7 @@ try {
     if (-not (Test-Path $final)) { Stop-WithMessage "Training finished but $final was not found." }
 
     # 3. Publish on a new branch so it can be SPRT-tested against main.
-    $netBranch = "net-fresh-$stamp"
+    $netBranch = "net-$Label-$stamp"
     Write-Step "Publishing the network on GitHub as branch '$netBranch'"
     $tree = Join-Path $script:Work "publish-$stamp"
     Invoke-Native git @("-C", $script:Root, "fetch", "origin")
@@ -98,7 +101,7 @@ try {
         $identity = $script:CommitIdentity
         Invoke-Native git @("-C", $tree, "add", "nets/default.nnue")
         Invoke-Native git ($identity + @("-C", $tree, "commit", "-m",
-                "Fresh-data network $netId (main's network + $Superbatches superbatches on $Positions unseen Leela positions)"))
+                "Network $netId (main's network + $Superbatches superbatches on $Positions unseen Leela positions, LR $LearningRate)"))
         Invoke-Native git @("-C", $tree, "push", "-u", "origin", $netBranch)
     } finally {
         Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree)

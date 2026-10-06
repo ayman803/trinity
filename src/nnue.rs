@@ -1,6 +1,8 @@
-//! NNUE evaluation: a `(768 -> HIDDEN)x2 -> 1` network with SCReLU
-//! activation and output buckets (one set of output weights per material
-//! range), matching the layout that the bullet trainer writes (see
+//! NNUE evaluation: a `(768xKB -> HIDDEN)x2 -> 1` network with SCReLU
+//! activation, king input buckets (one set of input weights per region of
+//! the board the perspective's own king stands in, mirrored so the king is
+//! always on files a-d) and output buckets (one set of output weights per
+//! material range), matching the layout that the bullet trainer writes (see
 //! `trainer/src/main.rs`).
 //!
 //! The first layer ("accumulator") is updated incrementally as moves are
@@ -17,6 +19,32 @@ pub const QB: i32 = 64;
 pub const SCALE: i32 = 400;
 const INPUTS: usize = 768;
 
+/// King bucket for each square of the own king, seen from its side, after
+/// mirroring onto files a-d (index = rank * 4 + file). MUST match the
+/// trainer. Fine near the home corner where kings usually stand, coarse
+/// further up.
+#[rustfmt::skip]
+pub const KING_BUCKET_LAYOUT: [usize; 32] = [
+    0, 1, 2, 3,
+    4, 4, 5, 5,
+    6, 6, 6, 6,
+    6, 6, 6, 6,
+    7, 7, 7, 7,
+    7, 7, 7, 7,
+    7, 7, 7, 7,
+    7, 7, 7, 7,
+];
+pub const KING_BUCKETS: usize = 8;
+
+/// (bucket offset, square xor for mirroring) of a king on `rel_ksq` (a
+/// square seen from the king's own side).
+#[inline(always)]
+fn king_bucket(rel_ksq: Square) -> (usize, usize) {
+    let file = rel_ksq % 8;
+    let (f4, flip) = if file > 3 { (7 - file, 7) } else { (file, 0) };
+    (KING_BUCKET_LAYOUT[(rel_ksq / 8) * 4 + f4] * INPUTS, flip)
+}
+
 #[derive(Clone, Copy)]
 #[repr(C, align(64))]
 pub struct Accumulator {
@@ -25,18 +53,27 @@ pub struct Accumulator {
 
 #[repr(C)]
 pub struct Network {
-    /// One column of `HIDDEN` weights per input feature (quantised by QA).
-    feature_weights: [Accumulator; INPUTS],
+    /// One column of `HIDDEN` weights per input feature and king bucket
+    /// (quantised by QA).
+    feature_weights: [Accumulator; INPUTS * KING_BUCKETS],
     feature_bias: Accumulator,
     /// Per bucket: the first `HIDDEN` weights apply to the side to move,
     /// the rest to the other side (quantised by QB).
     output_weights: [[i16; 2 * HIDDEN]; OUTPUT_BUCKETS],
     output_bias: [i16; OUTPUT_BUCKETS],
+    /// False for networks trained without king buckets: they use bucket 0
+    /// and no mirroring, so they evaluate exactly as before.
+    bucketed: bool,
 }
 
 /// Size in bytes of a network file without bullet's trailing padding.
 #[cfg_attr(not(trinity_net), allow(dead_code))]
-pub const NET_BYTES: usize = 2 * (INPUTS * HIDDEN + HIDDEN + OUTPUT_BUCKETS * (2 * HIDDEN + 1));
+pub const NET_BYTES: usize = 2 * (KING_BUCKETS * INPUTS * HIDDEN + HIDDEN + OUTPUT_BUCKETS * (2 * HIDDEN + 1));
+
+/// The previous architecture without king buckets. Loaded as it was trained:
+/// a single bucket and no mirroring (see `Network::bucketed`).
+#[cfg_attr(not(trinity_net), allow(dead_code))]
+const UNBUCKETED_BYTES: usize = 2 * (INPUTS * HIDDEN + HIDDEN + OUTPUT_BUCKETS * (2 * HIDDEN + 1));
 
 /// The earlier architecture (256 hidden, no output buckets). Such files are
 /// still accepted: they convert exactly into the current layout by giving
@@ -52,14 +89,17 @@ impl Network {
     pub fn from_bytes(bytes: &[u8]) -> Result<Box<Network>, String> {
         // bullet pads files to a multiple of 64 bytes.
         let fits = |size: usize| (size..size + 64).contains(&bytes.len());
-        let (hidden, buckets, size) = if fits(NET_BYTES) {
-            (HIDDEN, OUTPUT_BUCKETS, NET_BYTES)
+        let (hidden, buckets, king_buckets, size) = if fits(NET_BYTES) {
+            (HIDDEN, OUTPUT_BUCKETS, KING_BUCKETS, NET_BYTES)
+        } else if fits(UNBUCKETED_BYTES) {
+            (HIDDEN, OUTPUT_BUCKETS, 1, UNBUCKETED_BYTES)
         } else if fits(LEGACY_BYTES) {
-            (LEGACY_HIDDEN, 1, LEGACY_BYTES)
+            (LEGACY_HIDDEN, 1, 1, LEGACY_BYTES)
         } else {
             return Err(format!(
-                "network file is {} bytes, expected {NET_BYTES} (hidden size {HIDDEN}, {OUTPUT_BUCKETS} output \
-                 buckets) or {LEGACY_BYTES} (hidden size {LEGACY_HIDDEN}), plus padding",
+                "network file is {} bytes, expected {NET_BYTES} (hidden size {HIDDEN}, {KING_BUCKETS} king buckets, \
+                 {OUTPUT_BUCKETS} output buckets), {UNBUCKETED_BYTES} (no king buckets) or {LEGACY_BYTES} \
+                 (hidden size {LEGACY_HIDDEN}), plus padding",
                 bytes.len()
             ));
         };
@@ -74,7 +114,8 @@ impl Network {
             Box::from_raw(ptr)
         };
         // Anything not read stays zero (unused neurons of a legacy net).
-        for col in net.feature_weights.iter_mut() {
+        net.bucketed = king_buckets > 1;
+        for col in net.feature_weights[..king_buckets * INPUTS].iter_mut() {
             for v in col.vals[..hidden].iter_mut() {
                 *v = vals.next().unwrap();
             }
@@ -126,13 +167,29 @@ fn load_embedded() -> Option<&'static Network> {
     None
 }
 
-/// Input feature index of `piece` on `sq`, seen from `perspective`: our
-/// pieces come first, and Black's view is flipped vertically, so both
-/// sides share the same weights.
+/// Where `perspective`'s input weights come from in `b`: (offset of its
+/// king bucket, square xor that mirrors files when its king is on e-h).
 #[inline(always)]
-fn feature(perspective: usize, piece: Piece, sq: Square) -> usize {
+fn view(net: &Network, b: &Board, perspective: usize) -> (usize, usize) {
+    if !net.bucketed {
+        return (0, 0);
+    }
+    let ksq = b.king_sq(perspective);
+    king_bucket(if perspective == WHITE { ksq } else { flip(ksq) })
+}
+
+/// Input feature index of `piece` on `sq`, seen from `perspective` (whose
+/// king bucket and mirroring are `v`): our pieces come first, and Black's
+/// view is flipped vertically, so both sides share the same weights.
+#[inline(always)]
+fn feature(perspective: usize, v: (usize, usize), piece: Piece, sq: Square) -> usize {
     let (color, pt) = (piece_color(piece), piece_type(piece));
-    if perspective == WHITE { (color * 6 + pt) * 64 + sq } else { ((color ^ 1) * 6 + pt) * 64 + flip(sq) }
+    let (offset, mirror) = v;
+    if perspective == WHITE {
+        offset + (color * 6 + pt) * 64 + (sq ^ mirror)
+    } else {
+        offset + ((color ^ 1) * 6 + pt) * 64 + (flip(sq) ^ mirror)
+    }
 }
 
 /// Accumulators for both perspectives, indexed by colour.
@@ -143,31 +200,32 @@ pub struct AccPair {
 
 impl AccPair {
     pub fn from_board(net: &Network, b: &Board) -> AccPair {
-        let mut pair = AccPair { acc: [net.feature_bias; 2] };
-        for sq in Bits(b.occupied()) {
-            let p = b.piece_at(sq);
-            for persp in [WHITE, BLACK] {
-                let col = &net.feature_weights[feature(persp, p, sq)].vals;
-                for (a, w) in pair.acc[persp].vals.iter_mut().zip(col) {
-                    *a += *w;
-                }
-            }
-        }
-        pair
+        AccPair { acc: [refresh(net, b, WHITE), refresh(net, b, BLACK)] }
     }
 
-    /// Compute the accumulators after `m` (played on `before`) from the
-    /// parent's accumulators by adding/removing only the changed features.
+    /// Compute the accumulators after `m` (played on `before`, giving
+    /// `after`) from the parent's accumulators by adding/removing only the
+    /// changed features.
     #[cfg(test)]
-    pub fn update(&self, net: &Network, before: &Board, m: Move) -> AccPair {
+    pub fn update(&self, net: &Network, before: &Board, after: &Board, m: Move) -> AccPair {
         let mut out = *self;
-        self.update_into(&mut out, net, before, m);
+        self.update_into(&mut out, net, &mut RefreshCache::new(net), before, after, m);
         out
     }
 
-    /// Like `update`, but writes into `out` (no temporary copy).
+    /// Like `update`, but writes into `out` (no temporary copy). When the
+    /// mover's king changes bucket or side of the board, its accumulator is
+    /// rebuilt instead, through `cache`.
     #[inline(always)]
-    pub fn update_into(&self, out: &mut AccPair, net: &Network, before: &Board, m: Move) {
+    pub fn update_into(
+        &self,
+        out: &mut AccPair,
+        net: &Network,
+        cache: &mut RefreshCache,
+        before: &Board,
+        after: &Board,
+        m: Move,
+    ) {
         let us = before.stm;
         let moved = before.piece_at(m.from());
         let mut adds: [(Piece, Square); 2] = [(NO_PIECE, 0); 2];
@@ -194,9 +252,14 @@ impl AccPair {
         }
 
         for persp in [WHITE, BLACK] {
+            let v = view(net, before, persp);
+            if persp == us && piece_type(moved) == KING && view(net, after, persp) != v {
+                out.acc[persp] = cache.refresh(net, after, persp);
+                continue;
+            }
             let src = &self.acc[persp].vals;
             let dst = &mut out.acc[persp].vals;
-            let col = |(p, sq): (Piece, Square)| &net.feature_weights[feature(persp, p, sq)].vals;
+            let col = |(p, sq): (Piece, Square)| &net.feature_weights[feature(persp, v, p, sq)].vals;
             // One fused pass per case: dst = src + adds - subs.
             match (na, ns) {
                 (1, 1) => {
@@ -219,6 +282,70 @@ impl AccPair {
                 }
             }
         }
+    }
+}
+
+/// The accumulator of `perspective` for `b`, computed from scratch.
+fn refresh(net: &Network, b: &Board, perspective: usize) -> Accumulator {
+    let v = view(net, b, perspective);
+    let mut acc = net.feature_bias;
+    for sq in Bits(b.occupied()) {
+        let col = &net.feature_weights[feature(perspective, v, b.piece_at(sq), sq)].vals;
+        for (a, w) in acc.vals.iter_mut().zip(col) {
+            *a += *w;
+        }
+    }
+    acc
+}
+
+/// Accumulator cache for king-bucket changes (an idea known as "Finny
+/// tables"): for each perspective, king bucket and mirroring, the
+/// accumulator of the last position rebuilt there and that position's
+/// pieces. A rebuild then only adds and removes the pieces that differ,
+/// usually a handful instead of all of them.
+pub struct RefreshCache {
+    entries: [[CacheEntry; 2 * KING_BUCKETS]; 2],
+}
+
+#[derive(Clone, Copy)]
+struct CacheEntry {
+    acc: Accumulator,
+    pieces: [Bitboard; 6],
+    colors: [Bitboard; 2],
+}
+
+impl RefreshCache {
+    /// Every entry starts as the empty board (bias only), which is exact.
+    pub fn new(net: &Network) -> Box<RefreshCache> {
+        let empty = CacheEntry { acc: net.feature_bias, pieces: [0; 6], colors: [0; 2] };
+        Box::new(RefreshCache { entries: [[empty; 2 * KING_BUCKETS]; 2] })
+    }
+
+    fn refresh(&mut self, net: &Network, b: &Board, perspective: usize) -> Accumulator {
+        let v = view(net, b, perspective);
+        let e = &mut self.entries[perspective][v.0 / INPUTS * 2 + usize::from(v.1 != 0)];
+        for color in [WHITE, BLACK] {
+            for pt in 0..6 {
+                let now = b.colors[color] & b.pieces[pt];
+                let then = e.colors[color] & e.pieces[pt];
+                let piece = make_piece(color, pt);
+                for sq in Bits(now & !then) {
+                    let col = &net.feature_weights[feature(perspective, v, piece, sq)].vals;
+                    for (a, w) in e.acc.vals.iter_mut().zip(col) {
+                        *a += *w;
+                    }
+                }
+                for sq in Bits(then & !now) {
+                    let col = &net.feature_weights[feature(perspective, v, piece, sq)].vals;
+                    for (a, w) in e.acc.vals.iter_mut().zip(col) {
+                        *a -= *w;
+                    }
+                }
+            }
+        }
+        e.pieces = b.pieces;
+        e.colors = b.colors;
+        e.acc
     }
 }
 
@@ -288,7 +415,7 @@ pub mod tests {
                 hidden[persp][i] = f64::from(net.feature_bias.vals[i]) / QA as f64;
             }
             for sq in Bits(b.occupied()) {
-                let f = feature(persp, b.piece_at(sq), sq);
+                let f = feature(persp, view(net, b, persp), b.piece_at(sq), sq);
                 for i in 0..HIDDEN {
                     hidden[persp][i] += f64::from(net.feature_weights[f].vals[i]) / QA as f64;
                 }
@@ -312,19 +439,51 @@ pub mod tests {
             "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",
             "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1",
             "8/8/8/2k5/3Pp3/8/8/4K2R b K d3 0 1",
+            "8/8/8/1k6/3Pp3/8/8/4K2R w K - 0 1",
+            "4k3/8/8/8/8/8/8/R3K2R w KQ - 0 1",
+            "r3k2r/8/8/8/8/8/8/4K3 b kq - 0 1",
+            "8/8/3k4/8/8/4K3/8/8 w - - 0 1",
         ];
         for fen in fens {
             let b = Board::from_fen(fen).unwrap();
             let pair = AccPair::from_board(&net, &b);
             for &m in legal_moves(&b).iter() {
                 let child = b.make_move(m);
-                let inc = pair.update(&net, &b, m);
+                let inc = pair.update(&net, &b, &child, m);
                 let fresh = AccPair::from_board(&net, &child);
                 assert!(inc.acc[0].vals == fresh.acc[0].vals && inc.acc[1].vals == fresh.acc[1].vals, "{fen} {m}");
                 let q = evaluate(&net, &inc, &child) as f64;
                 let r = reference_eval(&net, &child);
                 assert!((q - r).abs() <= 2.0 + r.abs() * 0.01, "quantised {q} vs reference {r}");
             }
+        }
+    }
+
+    /// One cache reused across a long random game stays exact.
+    #[test]
+    fn refresh_cache_stays_exact() {
+        let net = Network::from_bytes(&random_net_bytes(0xcafe)).unwrap();
+        let mut cache = RefreshCache::new(&net);
+        let mut b = Board::from_fen("r3k2r/pppq1ppp/2npbn2/4p3/4P3/2NPBN2/PPPQ1PPP/R3K2R w KQkq - 0 1").unwrap();
+        let mut pair = AccPair::from_board(&net, &b);
+        let mut seed = 12345u64;
+        for _ in 0..300 {
+            let moves = legal_moves(&b);
+            if moves.is_empty() {
+                break;
+            }
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+            // Prefer king moves so the cache is exercised often.
+            let kings: Vec<Move> = moves.iter().copied().filter(|m| piece_type(b.piece_at(m.from())) == KING).collect();
+            let pool: &[Move] = if !kings.is_empty() && seed % 3 != 0 { &kings } else { moves.as_slice() };
+            let m = pool[(seed >> 33) as usize % pool.len()];
+            let child = b.make_move(m);
+            let mut next = pair;
+            pair.update_into(&mut next, &net, &mut cache, &b, &child, m);
+            let fresh = AccPair::from_board(&net, &child);
+            assert!(next.acc[0].vals == fresh.acc[0].vals && next.acc[1].vals == fresh.acc[1].vals, "{m}");
+            b = child;
+            pair = next;
         }
     }
 
@@ -350,7 +509,7 @@ pub mod tests {
                     acc[persp][i] = raw[INPUTS * h + i];
                 }
                 for sq in Bits(b.occupied()) {
-                    let f = feature(persp, b.piece_at(sq), sq);
+                    let f = feature(persp, (0, 0), b.piece_at(sq), sq);
                     for i in 0..h {
                         acc[persp][i] += raw[f * h + i];
                     }

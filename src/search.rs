@@ -19,7 +19,7 @@ use std::time::Instant;
 use crate::board::Board;
 use crate::eval;
 use crate::movegen;
-use crate::nnue::{self, AccPair, Network};
+use crate::nnue::{self, AccPair, Network, RefreshCache};
 use crate::tt::*;
 use crate::types::*;
 
@@ -192,6 +192,8 @@ pub struct Searcher {
     net: Option<&'static Network>,
     /// Accumulators for each ply of the current search path.
     acc: Box<[AccPair; MAX_PLY + 2]>,
+    /// Accumulators kept per king bucket, for cheap rebuilds.
+    refresh_cache: Option<Box<RefreshCache>>,
     lmr: Box<[[[i32; 64]; 64]; 2]>,
     /// Nodes spent below each root move (by from/to), for time management.
     root_nodes: Box<[[u64; 64]; 64]>,
@@ -232,6 +234,7 @@ impl Searcher {
             pv_len: [0; MAX_PLY + 1],
             net,
             acc: zeroed_box(),
+            refresh_cache: net.map(RefreshCache::new),
             lmr,
             root_nodes: zeroed_box(),
         }
@@ -343,11 +346,12 @@ impl Searcher {
         self.keys.push(b.hash);
         self.frames[ply].mv = m;
         self.frames[ply].piece = b.piece_at(m.from());
-        if let Some(net) = self.net {
+        let child = b.make_move(m);
+        if let (Some(net), Some(cache)) = (self.net, self.refresh_cache.as_deref_mut()) {
             let (done, rest) = self.acc.split_at_mut(ply + 1);
-            done[ply].update_into(&mut rest[0], net, b, m);
+            done[ply].update_into(&mut rest[0], net, cache, b, &child, m);
         }
-        b.make_move(m)
+        child
     }
 
     #[inline(always)]
