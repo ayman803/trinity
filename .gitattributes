@@ -3,3 +3,7 @@
 *.ps1 text eol=crlf
 *.nnue binary
 Makefile text eol=lf
+# Helper scripts for running tests on Windows: not part of the engine, so
+# leave them out of GitHub's language statistics.
+scripts/** linguist-vendored
+*.bat linguist-vendored
