@@ -24,6 +24,9 @@ on:
       games:
         description: "Games per job (5 jobs; 1800 takes about 4-5 hours; up to 1940 uses each opening once)"
         default: "1800"
+      tc:
+        description: "Time control: 8+0.08 (usual) or a longer one such as 30+0.3 (fewer games fit in a run)"
+        default: "8+0.08"
       continue_from:
         description: "Continue from run (optional): the number at the end of an earlier run's web address"
         default: ""
@@ -35,7 +38,7 @@ permissions:
 env:
   FASTCHESS_URL: https://github.com/Disservin/fastchess/releases/download/v1.8.2-alpha/fastchess-linux-x86-64.tar
   BOOK_URL: https://github.com/official-stockfish/books/raw/master/UHO_Lichess_4852_v1.epd.zip
-  TC: "8+0.08"
+  TC: ${{ inputs.tc }}
   ELO0: "0"
   ELO1: "5"
   JOBS: "5"
@@ -66,6 +69,7 @@ jobs:
             [[ "$ref" =~ ^[A-Za-z0-9._/-]+$ ]] || { echo "Not a valid branch name: $ref"; exit 1; }
             git rev-parse --verify --quiet "origin/$ref" > /dev/null || { echo "No branch called '$ref' on GitHub."; exit 1; }
           done
+          [[ "$TC" =~ ^[0-9]+(\.[0-9]+)?\+[0-9]+(\.[0-9]+)?$ ]] || { echo "Time control must look like 8+0.08."; exit 1; }
           [[ "$GAMES" =~ ^[0-9]+$ ]] && (( GAMES >= 2 && GAMES <= 6000 )) || { echo "Games per job must be 2-6000."; exit 1; }
 
       - name: Build both versions

@@ -31,6 +31,9 @@ def parse(path):
     m = re.findall(r"Ptnml\(0-2\): \[(\d+), (\d+), (\d+), (\d+), (\d+)\]", text)
     if m:
         out["ptnml"] = [int(x) for x in m[-1]]
+    m = re.search(r"^tc=(\S+)", text, re.M)
+    if m:
+        out["tc"] = m.group(1)
     for key in ("dev_bench", "base_bench", "time_losses"):
         m = re.search(rf"^{key}=(\d+)", text, re.M)
         if m:
@@ -84,6 +87,8 @@ def main():
         wld = [a + b for a, b in zip(wld, r.get("wld", [0, 0, 0]))]
         time_losses += r.get("time_losses", 0)
         benches.add((r.get("dev_bench"), r.get("base_bench")))
+        if "tc" in r and r["tc"] != tc:
+            sys.exit(f"The earlier run used time control {r['tc']}, this one {tc}; not combining.")
     if sum(ptnml) == 0:
         sys.exit("No results found: did every job fail? Open a job to see why.")
     if len(benches) > 1:
@@ -113,7 +118,7 @@ def main():
     with open("total.txt", "w", encoding="utf-8") as f:
         f.write(f"Games: {games}, Wins: {wld[0]}, Losses: {wld[1]}, Draws: {wld[2]}\n")
         f.write("Ptnml(0-2): [" + ", ".join(map(str, ptnml)) + "]\n")
-        f.write(f"dev_bench={dev_bench}\nbase_bench={base_bench}\ntime_losses={time_losses}\n")
+        f.write(f"dev_bench={dev_bench}\nbase_bench={base_bench}\ntime_losses={time_losses}\ntc={tc}\n")
     with open("result.txt", "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 

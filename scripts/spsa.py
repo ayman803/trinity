@@ -116,8 +116,9 @@ def combine(args):
     time_losses = sum(c.get("time_losses", 0) for c in chains)
     Path(args.out).write_text(json.dumps({"pairs": pairs, "theta": theta}))
     lines = [
-        f"SPSA RESULT: {len(chains)} chains, {games} games this run, {pairs} pairs per chain so far, "
-        f"games lost on time: {time_losses}",
+        f"SPSA RESULT: {len(chains)} chains, {games} games this run ({TC}, {CONCURRENCY} at a time), "
+        f"{pairs} pairs per chain so far",
+        f"Games lost on time (either side): {time_losses} ({100 * time_losses / max(games, 1):.2f}% of games)",
         "setting: default -> tuned",
     ]
     lines += [f"{name}: {p['default']} -> {round(theta[name])}" for name, p in params.items()]
