@@ -315,8 +315,13 @@ fn main() {
             // Lean a little more on game results: Lc0-derived scores are
             // only approximately on our scale.
             wdl_scheduler: wdl::ConstantWDL { value: 0.5 },
-            // Start lower than from scratch: the network is already trained.
-            lr_scheduler: lr::StepLR { start: start_lr, gamma: 0.1, step: (superbatches * 9 / 20).max(1) },
+            // Start lower than from scratch (the network is already trained)
+            // and slide smoothly down to 1% of the start.
+            lr_scheduler: lr::CosineDecayLR {
+                initial_lr: start_lr,
+                final_lr: start_lr * 0.01,
+                final_superbatch: superbatches,
+            },
             save_rate: 10,
         };
         let data_loader = loader::DirectSequentialDataLoader::new(&[data_path.as_str()]);

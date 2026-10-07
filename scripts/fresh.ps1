@@ -10,7 +10,8 @@ param(
     [int]$Superbatches = 40,       # length of the refinement (1 superbatch = ~100M positions)
     [string]$LearningRate = "0.0002",
     [int]$MemoryMB = 8000,         # RAM used for shuffling
-    [string]$Label = "fresh"       # names the network and its branch
+    [string]$Label = "fresh",      # names the network and its branch
+    [switch]$ReuseData             # train on the positions of the previous run again (to compare settings)
 )
 
 . (Join-Path $PSScriptRoot "common.ps1")
@@ -63,6 +64,9 @@ try {
     # 2. Convert the next unused part of the Leela file, then shuffle it.
     $fresh = Join-Path $prepared "leela-fresh.data"
     $raw = Join-Path $prepared "leela-fresh-raw.data"
+    if ($ReuseData -and (Test-Path -LiteralPath $fresh)) {
+        Write-Step "Reusing the positions of the previous run ($fresh)"
+    } else {
     if (Test-Path $fresh) { Remove-Item $fresh }
     Write-Step "Converting $Positions fresh Leela positions (skipping the $skip already used; 20-40 minutes)"
     $old = $ErrorActionPreference; $ErrorActionPreference = "Continue"
@@ -76,6 +80,7 @@ try {
     Invoke-Native $utils @("validate", "--input", $raw)
     Invoke-Native $utils @("shuffle", "--input", $raw, "--output", $fresh, "--mem-used-mb", "$MemoryMB")
     Remove-Item $raw
+    }
 
     $stamp = Get-Date -Format "yyyyMMdd-HHmm"
     $netId = "trinity-$stamp-$Label"
@@ -101,7 +106,7 @@ try {
         $identity = $script:CommitIdentity
         Invoke-Native git @("-C", $tree, "add", "nets/default.nnue")
         Invoke-Native git ($identity + @("-C", $tree, "commit", "-m",
-                "Network $netId (main's network + $Superbatches superbatches on $Positions unseen Leela positions, LR $LearningRate)"))
+                "Network $netId (main's network + $Superbatches superbatches on $(if ($ReuseData) { 'the previous run''s' } else { "$Positions unseen" }) Leela positions, LR $LearningRate)"))
         Invoke-Native git @("-C", $tree, "push", "-u", "origin", $netBranch)
     } finally {
         Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree)
