@@ -8,7 +8,7 @@ Claude (Anthropic's AI) writes the code in Claude Code. I run every test
 on my own two machines and decide what gets merged. No code is copied from
 other engines.
 
-Strength: about 3380 on the CCRL scale (1 CPU), measured against
+Strength: about 3395 on the CCRL scale (1 CPU), measured against
 akimbo, Patricia, Bread and Prune at 10+0.1. The goal is the CCRL top 100
 (about 3455) by October 2027. Every prediction and result is logged in
 [ESTIMATES.md](ESTIMATES.md), including the ones that went wrong.
