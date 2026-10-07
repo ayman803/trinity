@@ -19,7 +19,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-05 | fresh Leela data (main's net + 40 superbatches on 1B never-seen Leela positions, LR 0.0002) | self-play +5 to +20 | +6.0 +/- 4.1 after 8930 games (passed, merged; bench 735643) | -13 together with tablebases (3390 -> 3377; akimbo, which has no tablebase support: -0.85% = about -6 +/- 10) | no CCRL gain; self-play overstated again. TB-off calibration pending to separate the two |
 | 2026-10-05 | corr-unsure (owner's "unsure" idea, cheap form: reduce LMR by 1 where the correction shifts eval >= 12 cp) | self-play -3 to +5 | pending (laptop) | - | |
 | 2026-10-06 | king buckets (8 buckets, mirrored; starts from main's network, 80 superbatches on 1B unseen Leela positions, LR 0.0005) | self-play +10 to +40; CCRL +5 to +20 (about 6% slower search) | +19.1 +/- 8.5 after 2622 games (passed, merged; bench 550859) | +17 (3379 -> 3396; all four opponents up) | self-play held up almost fully (~1.1x), the best ratio so far |
-| 2026-10-07 | king buckets, longer (main's KB network + 160 superbatches on the next 1B unseen Leela positions, LR 0.0005) | self-play +3 to +15; CCRL +2 to +12 | pending | pending | |
+| 2026-10-07 | king buckets, longer (main's KB network + 160 superbatches on the next 1B unseen Leela positions, LR 0.0005) | self-play +3 to +15; CCRL +2 to +12 | -13.8 +/- 7.9 after 2888 games (FAILED, not merged) | - | wrong: lower training loss (0.0257 vs 0.0261) but weaker. Likely cause: restarting at LR 0.0005 undid the tuned network; refinements need a low LR (fresh data at 0.0002 gave +6) |
 
 ## Proposed (not yet run)
 
@@ -62,5 +62,7 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
   against other engines: refining on more Leela data has stopped paying.
 - More network capacity (king buckets) transferred almost fully to other
   engines (+19 self-play, +17 CCRL), unlike more data on the same network.
+- Lower training loss does not mean a stronger network (king buckets 160
+  superbatches: lower loss, -14 Elo).
 - Search tweaks borrowed from stronger engines gave ~0 here; data and
   networks gave almost all the gains.
