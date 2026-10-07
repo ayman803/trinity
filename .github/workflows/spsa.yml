@@ -1,0 +1,108 @@
+# SPSA tuning of Trinity's own search settings (src/tune.rs), on 5
+# GitHub-hosted runners. It only tests this repository's engine (games
+# between two builds of Trinity with slightly different settings) and is
+# started by hand: Actions tab -> "SPSA tune" -> "Run workflow".
+#
+# Each job runs its own tuning chain for about 5 hours (3 games at a time,
+# 5+0.05). The last job averages the chains and writes the tuned values to
+# the run's summary page. A later run can continue from this one, with the
+# step sizes shrinking further; about 3 runs make one complete tune.
+
+name: SPSA tune
+
+on:
+  workflow_dispatch:
+    inputs:
+      continue_from:
+        description: "Continue from run (optional): the number at the end of an earlier SPSA run's web address"
+        default: ""
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  FASTCHESS_URL: https://github.com/Disservin/fastchess/releases/download/v1.8.2-alpha/fastchess-linux-x86-64.tar
+  BOOK_URL: https://github.com/official-stockfish/books/raw/master/UHO_Lichess_4852_v1.epd.zip
+  # Planned length of a complete tune, in game pairs per chain (sets how
+  # fast the step sizes shrink).
+  TOTAL_PAIRS: "4500"
+
+jobs:
+  tune:
+    name: chain ${{ matrix.chain }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        chain: [1, 2, 3, 4, 5]
+    env:
+      PREVIOUS: ${{ inputs.continue_from }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Trinity with adjustable settings
+        run: |
+          RUSTFLAGS="-C target-cpu=native" cargo build --release --features tune
+          ./target/release/trinity bench | tail -1
+
+      - name: Get fastchess and the opening book
+        run: |
+          curl -sSfL "$FASTCHESS_URL" | tar -x
+          curl -sSfL -o book.zip "$BOOK_URL" && unzip -q book.zip
+
+      - name: Check the earlier run number
+        if: inputs.continue_from != ''
+        run: '[[ "$PREVIOUS" =~ ^[0-9]+$ ]] || { echo "Continue from run must be a number."; exit 1; }'
+      - uses: actions/download-artifact@v4
+        if: inputs.continue_from != ''
+        with:
+          name: spsa-state
+          path: earlier
+          run-id: ${{ inputs.continue_from }}
+          github-token: ${{ github.token }}
+
+      - name: Tune
+        run: |
+          state=()
+          [ -f earlier/state.json ] && state=(--state earlier/state.json)
+          python3 -I scripts/spsa.py chain --engine ./target/release/trinity \
+            --fastchess ./fastchess-linux-x86-64/fastchess --book UHO_Lichess_4852_v1.epd \
+            --minutes 310 --seed $(( ${{ github.run_id }} % 100000 * 10 + ${{ matrix.chain }} )) \
+            --total-pairs "$TOTAL_PAIRS" "${state[@]}" --out "chain-${{ matrix.chain }}.json"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chain-${{ matrix.chain }}
+          path: chain-${{ matrix.chain }}.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+  combine:
+    name: SPSA result
+    needs: tune
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: chain-*
+          path: chains
+      - name: Average the chains
+        run: |
+          python3 -I scripts/spsa.py combine --out state.json chains/*/*.json
+          {
+            echo '```'
+            cat result.txt
+            echo '```'
+            echo "To continue tuning: Run workflow again with **Continue from run** = \`${{ github.run_id }}\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: spsa-state
+          path: state.json
+          retention-days: 90

@@ -21,6 +21,7 @@ use crate::eval;
 use crate::movegen;
 use crate::nnue::{self, AccPair, Network, RefreshCache};
 use crate::tt::*;
+use crate::tune;
 use crate::types::*;
 
 pub const MAX_PLY: usize = 128;
@@ -115,7 +116,20 @@ fn apply_bonus(entry: &mut i16, bonus: i32) {
 
 #[inline(always)]
 fn history_bonus(depth: i32) -> i32 {
-    (170 * depth - 80).min(1700)
+    (tune::HIST_MUL() * depth - tune::HIST_SUB()).min(tune::HIST_MAX())
+}
+
+/// Late-move-reduction table: [noisy/quiet][depth][moves searched].
+fn init_lmr(lmr: &mut [[[i32; 64]; 64]; 2]) {
+    let (nb, nd) = (f64::from(tune::LMR_NOISY_BASE()) / 100.0, f64::from(tune::LMR_NOISY_DIV()) / 100.0);
+    let (qb, qd) = (f64::from(tune::LMR_QUIET_BASE()) / 100.0, f64::from(tune::LMR_QUIET_DIV()) / 100.0);
+    for d in 1..64 {
+        for m in 1..64 {
+            let l = (d as f64).ln() * (m as f64).ln();
+            lmr[0][d][m] = (nb + l / nd) as i32; // noisy moves
+            lmr[1][d][m] = (qb + l / qd) as i32; // quiet moves
+        }
+    }
 }
 
 /// The moves of one node with their ordering scores. Scores are only
@@ -202,13 +216,7 @@ pub struct Searcher {
 impl Searcher {
     pub fn new(shared: Arc<Shared>, id: usize) -> Searcher {
         let mut lmr: Box<[[[i32; 64]; 64]; 2]> = zeroed_box();
-        for d in 1..64 {
-            for m in 1..64 {
-                let l = (d as f64).ln() * (m as f64).ln();
-                lmr[0][d][m] = (0.20 + l / 3.35) as i32; // noisy moves
-                lmr[1][d][m] = (0.80 + l / 2.25) as i32; // quiet moves
-            }
-        }
+        init_lmr(&mut lmr);
         let net = nnue::network();
         Searcher {
             shared,
@@ -561,12 +569,13 @@ impl Searcher {
         if !pv_node && !in_check && excluded.is_none() {
             // Reverse futility pruning: we are so far ahead that even a
             // generous margin keeps us above beta.
-            if depth <= 8 && eval.abs() < TB_BOUND && eval - 75 * (depth - i32::from(improving)) >= beta {
+            if depth <= 8 && eval.abs() < TB_BOUND && eval - tune::RFP_MARGIN() * (depth - i32::from(improving)) >= beta
+            {
                 return (eval + beta) / 2;
             }
 
             // Razoring: hopelessly behind; check if captures can save us.
-            if depth <= 3 && eval + 200 + 250 * depth <= alpha {
+            if depth <= 3 && eval + tune::RAZOR_BASE() + tune::RAZOR_MUL() * depth <= alpha {
                 let q = self.qsearch(b, alpha, alpha + 1, ply);
                 if q <= alpha {
                     return q;
@@ -582,7 +591,7 @@ impl Searcher {
                 && self.frames[ply - 1].piece != NO_PIECE
                 && b.has_non_pawn_material(b.stm)
             {
-                let r = 3 + depth / 3 + ((eval - beta) / 200).min(3);
+                let r = 3 + depth / 3 + ((eval - beta) / tune::NMP_EVAL_DIV()).min(3);
                 let nb = b.make_null();
                 self.keys.push(b.hash);
                 self.frames[ply].mv = Move::NONE;
@@ -639,20 +648,22 @@ impl Searcher {
                 if quiet {
                     // Late move pruning: after enough quiet moves, the rest
                     // are very unlikely to be good.
-                    if moves_searched as i32 >= (3 + depth * depth) / (2 - i32::from(improving)) {
+                    if moves_searched as i32
+                        >= (tune::LMP_BASE() + tune::LMP_MUL() * depth * depth) / (100 * (2 - i32::from(improving)))
+                    {
                         skip_quiets = true;
                         continue;
                     }
                     // Futility pruning: this quiet move can't lift us to alpha.
-                    if !in_check && lmr_depth <= 8 && eval + 90 + 100 * lmr_depth <= alpha {
+                    if !in_check && lmr_depth <= 8 && eval + tune::FUT_BASE() + tune::FUT_MUL() * lmr_depth <= alpha {
                         skip_quiets = true;
                         continue;
                     }
                     // SEE pruning: the move hangs material.
-                    if lmr_depth <= 8 && !b.see_ge(m, -30 * lmr_depth * lmr_depth) {
+                    if lmr_depth <= 8 && !b.see_ge(m, -tune::SEE_QUIET() * lmr_depth * lmr_depth) {
                         continue;
                     }
-                } else if depth <= 8 && !b.see_ge(m, -90 * depth) {
+                } else if depth <= 8 && !b.see_ge(m, -tune::SEE_NOISY() * depth) {
                     continue;
                 }
             }
@@ -670,7 +681,7 @@ impl Searcher {
                     && i32::from(e.score).abs() < TB_BOUND
                 {
                     let tt_score = score_from_tt(i32::from(e.score), ply);
-                    let s_beta = tt_score - depth;
+                    let s_beta = tt_score - depth * tune::SE_MUL() / 16;
                     let s_score = self.negamax(b, s_beta - 1, s_beta, (depth - 1) / 2, ply, cut_node, m);
                     if self.stopped() {
                         return 0;
@@ -703,7 +714,7 @@ impl Searcher {
                     r += i32::from(!improving);
                     r -= i32::from(child.in_check());
                     if quiet {
-                        r -= self.quiet_score(b, m, ply) / 8192;
+                        r -= self.quiet_score(b, m, ply) / tune::LMR_HIST_DIV();
                         if m == self.killers[ply][0] || m == self.killers[ply][1] {
                             r -= 1;
                         }
@@ -866,8 +877,8 @@ impl Searcher {
                 if !m.is_promotion() {
                     let cap = b.captured_piece(m);
                     let gain = crate::board::SEE_VALUES[piece_type(cap)];
-                    if static_eval + 150 + gain <= alpha {
-                        best = best.max(static_eval + 150 + gain);
+                    if static_eval + tune::QS_FUTILITY() + gain <= alpha {
+                        best = best.max(static_eval + tune::QS_FUTILITY() + gain);
                         continue;
                     }
                 }
@@ -909,6 +920,10 @@ impl Searcher {
     pub fn search(&mut self, root: &Board, history: &[u64], limits: &Limits) -> SearchResult {
         self.limits = limits.clone();
         self.start = Instant::now();
+        // The tuner may have changed the LMR settings since this searcher
+        // was created.
+        #[cfg(feature = "tune")]
+        init_lmr(&mut self.lmr);
         let stm_time = limits.time;
         self.setup_time(stm_time);
         self.nodes = 0;
@@ -933,7 +948,7 @@ impl Searcher {
         for depth in 1..=max_depth {
             self.root_depth = depth;
             self.seldepth = 0;
-            let mut delta = 20;
+            let mut delta = tune::ASP_DELTA();
             let (mut alpha, mut beta) = if depth >= 5 { (prev_score - delta, prev_score + delta) } else { (-INF, INF) };
             let mut score;
             loop {

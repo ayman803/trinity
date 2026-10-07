@@ -11,6 +11,7 @@ mod search;
 mod select;
 mod tb;
 mod tt;
+mod tune;
 mod types;
 mod uci;
 mod zobrist;

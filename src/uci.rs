@@ -81,6 +81,10 @@ impl Engine {
                 println!("option name Threads type spin default 1 min 1 max 1024");
                 println!("option name Move Overhead type spin default 10 min 0 max 5000");
                 println!("option name SyzygyPath type string default <empty>");
+                #[cfg(feature = "tune")]
+                for (name, default, min, max, _) in crate::tune::LIST {
+                    println!("option name {name} type spin default {default} min {min} max {max}");
+                }
                 let eval = if crate::nnue::network().is_some() { "NNUE" } else { "hand-crafted" };
                 println!("info string evaluation: {eval}");
                 println!("uciok");
@@ -158,6 +162,8 @@ impl Engine {
                     self.move_overhead = ms.min(5000);
                 }
             }
+            #[cfg(feature = "tune")]
+            _ if value.parse::<i32>().is_ok_and(|v| crate::tune::set(&name, v)) => {}
             _ => println!("info string unknown option: {name}"),
         }
     }
