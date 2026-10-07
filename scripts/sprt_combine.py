@@ -5,7 +5,9 @@ Each job leaves a small text file with fastchess's last "Games:" and
 "Ptnml(0-2):" lines and the two bench numbers. The totals are added up
 (also to the totals of an earlier run, if one is given) and judged with the
 same test fastchess uses on the PC: pentanomial, "normalized" Elo model,
-bounds [elo0, elo1], alpha = beta = 0.05. The LLR is the usual normal
+bounds [elo0, elo1], alpha = beta = 0.05. Only finished game pairs count:
+a pair cut off by the time limit is left out, as in fastchess's own
+pentanomial totals. The LLR is the usual normal
 approximation of fastchess's value (within about 0.05 of it).
 
 Usage: python3 sprt_combine.py <results dir> <dev> <base> <tc> <elo0> <elo1> <jobs>
@@ -29,7 +31,7 @@ def parse(path):
     m = re.findall(r"Ptnml\(0-2\): \[(\d+), (\d+), (\d+), (\d+), (\d+)\]", text)
     if m:
         out["ptnml"] = [int(x) for x in m[-1]]
-    for key in ("dev_bench", "base_bench"):
+    for key in ("dev_bench", "base_bench", "time_losses"):
         m = re.search(rf"^{key}=(\d+)", text, re.M)
         if m:
             out[key] = int(m.group(1))
@@ -68,7 +70,7 @@ def main():
     folder, dev, base, tc = sys.argv[1:5]
     elo0, elo1 = float(sys.argv[5]), float(sys.argv[6])
     jobs = int(sys.argv[7])
-    ptnml, wld, benches, done = [0] * 5, [0] * 3, set(), 0
+    ptnml, wld, benches, done, time_losses = [0] * 5, [0] * 3, set(), 0, 0
     earlier = None
     for path in sorted(glob.glob(os.path.join(folder, "**", "*.txt"), recursive=True)):
         r = parse(path)
@@ -80,6 +82,7 @@ def main():
             done += 1
         ptnml = [a + b for a, b in zip(ptnml, r["ptnml"])]
         wld = [a + b for a, b in zip(wld, r.get("wld", [0, 0, 0]))]
+        time_losses += r.get("time_losses", 0)
         benches.add((r.get("dev_bench"), r.get("base_bench")))
     if sum(ptnml) == 0:
         sys.exit("No results found: did every job fail? Open a job to see why.")
@@ -102,6 +105,7 @@ def main():
         f"Games: {games}, Wins: {wld[0]}, Losses: {wld[1]}, Draws: {wld[2]}, "
         f"Points: {wld[0] + wld[2] / 2:.1f} ({100 * j['score']:.2f} %)",
         f"Ptnml(0-2): {ptnml}",
+        f"Games lost on time (either side): {time_losses}",
         f"Elo: {j['elo']:.2f} +/- {j['elo_err']:.2f}, nElo: {j['nelo']:.2f} +/- {j['nelo_err']:.2f}",
         f"LLR: {j['llr']:.2f} ({lower:.2f}, {upper:.2f}) [{elo0:.2f}, {elo1:.2f}]",
     ]
@@ -109,7 +113,7 @@ def main():
     with open("total.txt", "w", encoding="utf-8") as f:
         f.write(f"Games: {games}, Wins: {wld[0]}, Losses: {wld[1]}, Draws: {wld[2]}\n")
         f.write("Ptnml(0-2): [" + ", ".join(map(str, ptnml)) + "]\n")
-        f.write(f"dev_bench={dev_bench}\nbase_bench={base_bench}\n")
+        f.write(f"dev_bench={dev_bench}\nbase_bench={base_bench}\ntime_losses={time_losses}\n")
     with open("result.txt", "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 

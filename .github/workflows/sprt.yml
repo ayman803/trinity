@@ -3,7 +3,10 @@
 # of Trinity playing each other) and is started by hand:
 # Actions tab -> "SPRT test" -> "Run workflow".
 #
-# Each job plays a fixed number of games with its own opening order; the
+# All jobs shuffle the opening book the same way (seed = run number) and
+# each takes its own slice of it, so no opening is played by two jobs as
+# long as 5 x games/2 <= 4852 (the book's size). Each job plays 3 games at a
+# time on its 4 vCPUs, leaving room so that games are not lost on time. The
 # last job adds up all results (and those of an earlier run, if given) and
 # writes one SPRT result to the run's summary page.
 
@@ -19,8 +22,8 @@ on:
         description: "Branch to compare against"
         default: "main"
       games:
-        description: "Games per job (5 jobs; 2000 takes about 4 hours)"
-        default: "2000"
+        description: "Games per job (5 jobs; 1800 takes about 4-5 hours; up to 1940 uses each opening once)"
+        default: "1800"
       continue_from:
         description: "Continue from run (optional): the number at the end of an earlier run's web address"
         default: ""
@@ -83,18 +86,23 @@ jobs:
 
       - name: Play
         run: |
-          seed=$(( ${{ github.run_id }} * 10 + JOB ))
+          rounds=$(( GAMES / 2 ))
+          start=$(( (JOB - 1) * rounds + 1 ))
           # Stop in time to report: a job that runs out of time still
           # counts the games it finished.
           timeout --signal=INT 320m ./fastchess-linux-x86-64/fastchess \
             -engine cmd=./dev name=dev -engine cmd=./base name=base \
             -each proto=uci tc=$TC option.Hash=16 option.Threads=1 \
-            -openings file=UHO_Lichess_4852_v1.epd format=epd order=random -srand $seed \
-            -repeat -games 2 -rounds $(( GAMES / 2 )) -concurrency $(nproc) \
+            -openings file=UHO_Lichess_4852_v1.epd format=epd order=random start=$start -srand ${{ github.run_id }} \
+            -repeat -games 2 -rounds $rounds -concurrency 3 \
             -draw movenumber=40 movecount=8 score=10 \
             -resign movecount=3 score=600 twosided=true \
             -ratinginterval 50 | tee play.log || true
-          { grep -E "^(Games|Ptnml)" play.log | tail -2; cat bench.txt; } > "job-$JOB.txt"
+          {
+            grep -E "^(Games|Ptnml)" play.log | tail -2
+            echo "time_losses=$(grep -c '^Finished game.*loses on time' play.log || true)"
+            cat bench.txt
+          } > "job-$JOB.txt"
           cat "job-$JOB.txt"
 
       - uses: actions/upload-artifact@v4
