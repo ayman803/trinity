@@ -1,0 +1,146 @@
+# Self-play SPRT test of a Trinity branch against main, split over 5
+# GitHub-hosted runners. It only tests this repository's engine (two builds
+# of Trinity playing each other) and is started by hand:
+# Actions tab -> "SPRT test" -> "Run workflow".
+#
+# Each job plays a fixed number of games with its own opening order; the
+# last job adds up all results (and those of an earlier run, if given) and
+# writes one SPRT result to the run's summary page.
+
+name: SPRT test
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to test (for example net-kb-20261007-1200)"
+        required: true
+      base:
+        description: "Branch to compare against"
+        default: "main"
+      games:
+        description: "Games per job (5 jobs; 2000 takes about 4 hours)"
+        default: "2000"
+      continue_from:
+        description: "Continue from run (optional): the number at the end of an earlier run's web address"
+        default: ""
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  FASTCHESS_URL: https://github.com/Disservin/fastchess/releases/download/v1.8.2-alpha/fastchess-linux-x86-64.tar
+  BOOK_URL: https://github.com/official-stockfish/books/raw/master/UHO_Lichess_4852_v1.epd.zip
+  TC: "8+0.08"
+  ELO0: "0"
+  ELO1: "5"
+  JOBS: "5"
+
+jobs:
+  play:
+    name: games ${{ matrix.job }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        job: [1, 2, 3, 4, 5]
+    env:
+      DEV: ${{ inputs.branch }}
+      BASE: ${{ inputs.base }}
+      GAMES: ${{ inputs.games }}
+      JOB: ${{ matrix.job }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Check the inputs
+        run: |
+          for ref in "$DEV" "$BASE"; do
+            [[ "$ref" =~ ^[A-Za-z0-9._/-]+$ ]] || { echo "Not a valid branch name: $ref"; exit 1; }
+            git rev-parse --verify --quiet "origin/$ref" > /dev/null || { echo "No branch called '$ref' on GitHub."; exit 1; }
+          done
+          [[ "$GAMES" =~ ^[0-9]+$ ]] && (( GAMES >= 2 && GAMES <= 6000 )) || { echo "Games per job must be 2-6000."; exit 1; }
+
+      - name: Build both versions
+        run: |
+          for side in dev base; do
+            ref=$([ "$side" = dev ] && echo "$DEV" || echo "$BASE")
+            git worktree add --detach "src-$side" "origin/$ref"
+            RUSTFLAGS="-C target-cpu=native" cargo build --release --manifest-path "src-$side/Cargo.toml" --target-dir "target-$side"
+            cp "target-$side/release/trinity" "./$side"
+            echo "${side}_bench=$(./$side bench | tail -1 | awk '{print $1}')" >> bench.txt
+          done
+          cat bench.txt
+
+      - name: Get fastchess and the opening book
+        run: |
+          curl -sSfL "$FASTCHESS_URL" | tar -x
+          curl -sSfL -o book.zip "$BOOK_URL" && unzip -q book.zip
+
+      - name: Play
+        run: |
+          seed=$(( ${{ github.run_id }} * 10 + JOB ))
+          # Stop in time to report: a job that runs out of time still
+          # counts the games it finished.
+          timeout --signal=INT 320m ./fastchess-linux-x86-64/fastchess \
+            -engine cmd=./dev name=dev -engine cmd=./base name=base \
+            -each proto=uci tc=$TC option.Hash=16 option.Threads=1 \
+            -openings file=UHO_Lichess_4852_v1.epd format=epd order=random -srand $seed \
+            -repeat -games 2 -rounds $(( GAMES / 2 )) -concurrency $(nproc) \
+            -draw movenumber=40 movecount=8 score=10 \
+            -resign movecount=3 score=600 twosided=true \
+            -ratinginterval 50 | tee play.log || true
+          { grep -E "^(Games|Ptnml)" play.log | tail -2; cat bench.txt; } > "job-$JOB.txt"
+          cat "job-$JOB.txt"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: games-${{ matrix.job }}
+          path: job-${{ matrix.job }}.txt
+          if-no-files-found: ignore
+          retention-days: 30
+
+  combine:
+    name: SPRT result
+    needs: play
+    if: always()
+    runs-on: ubuntu-latest
+    env:
+      DEV: ${{ inputs.branch }}
+      BASE: ${{ inputs.base }}
+      PREVIOUS: ${{ inputs.continue_from }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: games-*
+          path: results
+      - name: Check the earlier run number
+        if: inputs.continue_from != ''
+        run: '[[ "$PREVIOUS" =~ ^[0-9]+$ ]] || { echo "Continue from run must be a number."; exit 1; }'
+      - uses: actions/download-artifact@v4
+        if: inputs.continue_from != ''
+        with:
+          name: sprt-total
+          path: results/earlier
+          run-id: ${{ inputs.continue_from }}
+          github-token: ${{ github.token }}
+      - name: Combine
+        run: |
+          python3 -I scripts/sprt_combine.py results "$DEV" "$BASE" "$TC" "$ELO0" "$ELO1" "$JOBS"
+          {
+            echo '```'
+            cat result.txt
+            echo '```'
+            echo "To add more games to this test: Run workflow again with the same branches and **Continue from run** = \`${{ github.run_id }}\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sprt-total
+          path: total.txt
+          retention-days: 90
