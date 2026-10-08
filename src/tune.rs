@@ -49,37 +49,37 @@ macro_rules! tunables {
 
 tunables! {
     // Reverse futility pruning margin per ply.
-    RFP_MARGIN = 75, 30, 150, 8;
+    RFP_MARGIN = 81, 30, 150, 8;
     // Razoring: margin = base + mul * depth.
-    RAZOR_BASE = 200, 50, 400, 20;
-    RAZOR_MUL = 250, 100, 450, 20;
+    RAZOR_BASE = 209, 50, 400, 20;
+    RAZOR_MUL = 266, 100, 450, 20;
     // Null move: one more ply of reduction per this much eval above beta.
     NMP_EVAL_DIV = 200, 80, 400, 20;
     // Late move pruning: quiet moves allowed = (base + mul * depth^2) / 100,
     // halved when not improving.
-    LMP_BASE = 300, 100, 800, 40;
-    LMP_MUL = 100, 50, 200, 8;
+    LMP_BASE = 349, 100, 800, 40;
+    LMP_MUL = 101, 50, 200, 8;
     // Futility pruning: margin = base + mul * depth.
-    FUT_BASE = 90, 30, 200, 10;
-    FUT_MUL = 100, 50, 200, 8;
+    FUT_BASE = 91, 30, 200, 10;
+    FUT_MUL = 102, 50, 200, 8;
     // SEE pruning thresholds: quiet moves -x * depth^2, captures -x * depth.
-    SEE_QUIET = 30, 10, 80, 4;
-    SEE_NOISY = 90, 40, 180, 8;
+    SEE_QUIET = 29, 10, 80, 4;
+    SEE_NOISY = 89, 40, 180, 8;
     // Singular extension margin, in 16ths of a centipawn per ply.
     SE_MUL = 16, 8, 48, 2;
     // Late move reductions: base and divisor (in hundredths) of the
     // ln(depth) * ln(moves) formula, and the history that cancels a ply.
-    LMR_NOISY_BASE = 20, 0, 80, 5;
-    LMR_NOISY_DIV = 335, 200, 500, 15;
+    LMR_NOISY_BASE = 19, 0, 80, 5;
+    LMR_NOISY_DIV = 337, 200, 500, 15;
     LMR_QUIET_BASE = 80, 30, 150, 6;
     LMR_QUIET_DIV = 225, 150, 350, 10;
-    LMR_HIST_DIV = 8192, 4000, 16000, 600;
+    LMR_HIST_DIV = 8006, 4000, 16000, 600;
     // Quiescence search futility margin.
-    QS_FUTILITY = 150, 50, 300, 12;
+    QS_FUTILITY = 162, 50, 300, 12;
     // First aspiration window half-width.
     ASP_DELTA = 20, 8, 50, 2;
     // History bonus: min(mul * depth - sub, max).
-    HIST_MUL = 170, 80, 300, 10;
-    HIST_SUB = 80, 0, 200, 10;
-    HIST_MAX = 1700, 800, 3000, 100;
+    HIST_MUL = 172, 80, 300, 10;
+    HIST_SUB = 79, 0, 200, 10;
+    HIST_MAX = 1698, 800, 3000, 100;
 }
