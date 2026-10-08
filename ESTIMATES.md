@@ -66,5 +66,7 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
   engines (+19 self-play, +17 CCRL), unlike more data on the same network.
 - More training on Leela data after the network has converged gives
   nothing (fresh data +6 self-play / ~0 CCRL; king buckets refined: -3.8).
+- GitHub Actions SPRT matches the PC: king buckets +16.3 +/- 4.4 on GitHub
+  (9000 games, 0 time losses) vs +19.1 +/- 8.5 on the PC.
 - Search tweaks borrowed from stronger engines gave ~0 here; data and
   networks gave almost all the gains.
