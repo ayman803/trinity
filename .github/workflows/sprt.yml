@@ -145,6 +145,8 @@ jobs:
       - name: Combine
         run: |
           python3 -I scripts/sprt_combine.py results "$DEV" "$BASE" "$TC" "$ELO0" "$ELO1" "$JOBS"
+          # Also as a notice: readable through GitHub's API, not only on the page.
+          echo "::notice title=SPRT result::$(sed ':a;N;$!ba;s/\n/%0A/g' result.txt)"
           {
             echo '```'
             cat result.txt
