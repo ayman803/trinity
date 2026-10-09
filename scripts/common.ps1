@@ -338,6 +338,7 @@ function Clear-TempFiles {
             Remove-Leftover (Join-Path $prepared $name)
         }
         foreach ($f in [IO.Directory]::GetFiles($prepared, "leela-?.data")) { Remove-Leftover $f }  # conversion parts
+        foreach ($f in [IO.Directory]::GetFiles($prepared, "big-*.raw")) { Remove-Leftover $f }  # unshuffled big-network parts
     }
     foreach ($pattern in @("publish-*", "trainer-src")) {
         foreach ($d in [IO.Directory]::GetDirectories($script:Work, $pattern)) {

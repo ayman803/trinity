@@ -11,7 +11,12 @@
 use crate::board::Board;
 use crate::types::*;
 
+/// Hidden layer size, chosen at build time from the embedded network
+/// (build.rs). Smaller networks still load into the 512 layout.
+#[cfg(not(trinity_hidden_1024))]
 pub const HIDDEN: usize = 512;
+#[cfg(trinity_hidden_1024)]
+pub const HIDDEN: usize = 1024;
 /// Output buckets by number of pieces on the board: (pieces - 2) / 4.
 pub const OUTPUT_BUCKETS: usize = 8;
 pub const QA: i32 = 255;

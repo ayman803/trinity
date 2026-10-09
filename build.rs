@@ -142,6 +142,7 @@ fn main() {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-env-changed=EVALFILE");
     println!("cargo::rustc-check-cfg=cfg(trinity_net)");
+    println!("cargo::rustc-check-cfg=cfg(trinity_hidden_1024)");
 
     let out_dir = env::var("OUT_DIR").unwrap();
     let mut rng = Rng(0x7E1A_17C0_FFEE_1234);
@@ -168,5 +169,13 @@ fn main() {
     if net_path.is_file() {
         fs::copy(&net_path, Path::new(&out_dir).join("net.bin")).unwrap();
         println!("cargo:rustc-cfg=trinity_net");
+        // The hidden layer size is fixed at compile time; pick it from the
+        // size of the network file (1024 neurons, 8 king buckets, 8 output
+        // buckets: see src/nnue.rs).
+        let wide = 2 * (8 * 768 * 1024 + 1024 + 8 * (2 * 1024 + 1));
+        let len = fs::metadata(&net_path).unwrap().len() as usize;
+        if (wide..wide + 64).contains(&len) {
+            println!("cargo:rustc-cfg=trinity_hidden_1024");
+        }
     }
 }

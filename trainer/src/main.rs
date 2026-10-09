@@ -52,7 +52,11 @@ use bullet_lib::{
     value::{ValueTrainerBuilder, loader},
 };
 
-const HIDDEN_SIZE: usize = 512;
+/// Hidden layer size: 512 unless the environment variable TRINITY_HIDDEN
+/// says otherwise (1024 is the other size the engine supports).
+fn hidden_size() -> usize {
+    std::env::var("TRINITY_HIDDEN").ok().and_then(|v| v.parse().ok()).unwrap_or(512)
+}
 const OUTPUT_BUCKETS: usize = 8;
 const SCALE: i32 = 400;
 const QA: i16 = 255;
@@ -117,7 +121,7 @@ fn warm_start_weights(checkpoint: &str) -> Option<String> {
     let mut new = Vec::new();
     for (name, vals) in old {
         if name == "l0w" {
-            assert_eq!(vals.len(), 768 * HIDDEN_SIZE, "unexpected input layer size in {checkpoint}");
+            assert_eq!(vals.len(), 768 * hidden_size(), "unexpected input layer size in {checkpoint}");
             new.push(("l0w".to_string(), vec![0.0; vals.len() * KING_BUCKETS]));
             new.push(("l0f".to_string(), vals));
         } else {
@@ -132,6 +136,8 @@ fn warm_start_weights(checkpoint: &str) -> Option<String> {
 fn usage() -> ! {
     eprintln!("usage: trinity-trainer <shuffled data file> [superbatches] [name]");
     eprintln!("       trinity-trainer convert <file.binpack> <out.data> [max positions] [skip]");
+    eprintln!("       trinity-trainer convert-chunks <file.binpack> <out prefix> <chunks> <positions per chunk>");
+    eprintln!("       trinity-trainer scratch <superbatches> <name> <start lr> <wdl> <data files...>");
     eprintln!("       trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file> [start lr]");
     std::process::exit(1);
 }
@@ -179,11 +185,19 @@ fn convert_entry(entry: &TrainingDataEntry) -> Option<ChessBoard> {
 /// `skip`: number of entries at the start of the file to pass over, so a
 /// later conversion can continue where an earlier one stopped.
 fn convert(input: &str, output: &str, max: u64, skip: u64) {
+    convert_into(input, &[output.to_string()], max, skip);
+}
+
+/// Convert into several files of `per_file` positions each (the last one may
+/// hold fewer if the binpack ends), in one pass over the binpack.
+fn convert_into(input: &str, outputs: &[String], per_file: u64, skip: u64) {
     let file = File::open(input).unwrap_or_else(|e| panic!("cannot open {input}: {e}"));
     let total = file.metadata().map(|m| m.len()).unwrap_or(0).max(1);
     let mut reader = CompressedTrainingDataEntryReader::new(BufReader::with_capacity(1 << 20, file))
         .unwrap_or_else(|e| panic!("{input} is not a valid binpack: {e:?}"));
-    let mut writer = BufWriter::with_capacity(1 << 22, File::create(output).expect("cannot create output"));
+    let create = |path: &str| BufWriter::with_capacity(1 << 22, File::create(path).expect("cannot create output"));
+    let mut index = 0;
+    let mut writer = create(&outputs[0]);
     let mut skipped = 0u64;
     while skipped < skip && reader.has_next() {
         reader.next();
@@ -194,6 +208,7 @@ fn convert(input: &str, output: &str, max: u64, skip: u64) {
     }
     let (mut seen, mut kept) = (0u64, 0u64);
     let mut buffer = Vec::with_capacity(1 << 16);
+    let max = per_file.saturating_mul(outputs.len() as u64);
     while reader.has_next() && kept < max {
         let entry = reader.next();
         seen += 1;
@@ -203,9 +218,15 @@ fn convert(input: &str, output: &str, max: u64, skip: u64) {
                 kept += 1;
             }
         }
-        if buffer.len() == buffer.capacity() {
+        if buffer.len() == buffer.capacity() || (kept > 0 && kept % per_file == 0 && !buffer.is_empty()) {
             ChessBoard::write_to_bin(&mut writer, &buffer).expect("write failed");
             buffer.clear();
+            if kept % per_file == 0 && kept < max && index + 1 < outputs.len() {
+                writer.flush().expect("write failed");
+                index += 1;
+                writer = create(&outputs[index]);
+                println!("file {} of {} written", index, outputs.len());
+            }
         }
         if seen % 50_000_000 == 0 {
             println!(
@@ -231,6 +252,22 @@ fn main() {
         convert(&args[2], &args[3], max, skip);
         return;
     }
+    if mode == Some("convert-chunks") {
+        if args.len() < 6 {
+            usage();
+        }
+        let chunks: usize = args[4].parse().unwrap_or_else(|_| usage());
+        let per_chunk: u64 = args[5].parse().unwrap_or_else(|_| usage());
+        let outputs: Vec<String> = (1..=chunks).map(|i| format!("{}-{i}.raw", args[3])).collect();
+        convert_into(&args[2], &outputs, per_chunk, 0);
+        return;
+    }
+    let scratch = mode == Some("scratch");
+    if scratch && args.len() < 7 {
+        usage();
+    }
+    let hidden = hidden_size();
+    println!("Hidden layer size: {hidden}");
     let finetune = mode == Some("finetune");
     // Hidden check: `kbcheck <old checkpoint> <out file>` saves the warm-started
     // king-bucket network without training (to verify the layout).
@@ -259,11 +296,11 @@ fn main() {
             SavedFormat::id("l1b").round().quantise::<i16>(QA * QB),
         ])
         .loss_fn(|output, target| output.sigmoid().squared_error(target))
-        .build(|builder, stm_inputs, ntm_inputs, output_buckets| {
-            let l0f = builder.new_weights("l0f", Shape::new(HIDDEN_SIZE, 768), InitSettings::Zeroed);
-            let mut l0 = builder.new_affine("l0", 768 * KING_BUCKETS, HIDDEN_SIZE);
+        .build(move |builder, stm_inputs, ntm_inputs, output_buckets| {
+            let l0f = builder.new_weights("l0f", Shape::new(hidden, 768), InitSettings::Zeroed);
+            let mut l0 = builder.new_affine("l0", 768 * KING_BUCKETS, hidden);
             l0.weights = l0.weights + l0f.repeat(KING_BUCKETS);
-            let l1 = builder.new_affine("l1", 2 * HIDDEN_SIZE, OUTPUT_BUCKETS);
+            let l1 = builder.new_affine("l1", 2 * hidden, OUTPUT_BUCKETS);
             let stm_hidden = l0.forward(stm_inputs).screlu();
             let ntm_hidden = l0.forward(ntm_inputs).screlu();
             l1.forward(stm_hidden.concat(ntm_hidden)).select(output_buckets)
@@ -290,6 +327,30 @@ fn main() {
             panic!("cannot load {path}: {e:?}");
         }
         trainer.save_quantised(&args[3]).expect("cannot save");
+        return;
+    }
+    if scratch {
+        // scratch <superbatches> <name> <start lr> <wdl> <data files...>:
+        // train from random weights; the LR slides smoothly to 1% of its start.
+        let superbatches: usize = args[2].parse().unwrap_or_else(|_| usage());
+        let name = args[3].clone();
+        let start_lr: f32 = args[4].parse().unwrap_or_else(|_| usage());
+        let wdl: f32 = args[5].parse().unwrap_or_else(|_| usage());
+        let files: Vec<&str> = args[6..].iter().map(String::as_str).collect();
+        let schedule = TrainingSchedule {
+            net_id: name,
+            eval_scale: SCALE as f32,
+            steps: steps(superbatches),
+            wdl_scheduler: wdl::ConstantWDL { value: wdl },
+            lr_scheduler: lr::CosineDecayLR {
+                initial_lr: start_lr,
+                final_lr: start_lr * 0.01,
+                final_superbatch: superbatches,
+            },
+            save_rate: 50,
+        };
+        let data_loader = loader::DirectSequentialDataLoader::new(&files);
+        trainer.run(&schedule, &settings, &data_loader);
         return;
     }
     if finetune {
