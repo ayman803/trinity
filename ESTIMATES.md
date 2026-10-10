@@ -96,3 +96,8 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
   all values are high because many test positions have an obvious best
   move. Stockfish to be added from the PC run (13-Similarity-Test.bat).
 - Repeating time control 40/20: 0 games lost on time in 1200.
+- CCRL 40/15 list of 9 October 2026 (best versions only): #100 is Houdini 6
+  4CPU at 3455 (#99 3456, #101 3451, #102 3449). The goal line of about
+  3455 stands. Trinity's 3449 (1 CPU, 10+0.1, our own calibration) would sit
+  near #102; the difference is inside our measurement error (about +/- 15).
+  Opponent ratings unchanged except Patricia 5.1: 3487 -> 3488.

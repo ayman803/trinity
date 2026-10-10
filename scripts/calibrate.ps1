@@ -21,12 +21,12 @@ param(
 
 . (Join-Path $PSScriptRoot "common.ps1")
 
-# CCRL 40/15 ratings (single CPU), list of 2 October 2026.
+# CCRL 40/15 ratings (single CPU), list of 9 October 2026.
 $opponents = @(
     @{ Name = "akimbo"; Version = "1.0.0"; Rating = 3474; Url = "https://github.com/jw1912/akimbo";
         Tag = "v1.0.0"; Binary = "akimbo"; CargoArgs = @(); Env = @{ EVALFILE = "resources/net.bin" } },
     # Downloaded by hand (Windows release builds): see GUIDE.md.
-    @{ Name = "Patricia"; Version = "5.1"; Rating = 3487; Download = $true },
+    @{ Name = "Patricia"; Version = "5.1"; Rating = 3488; Download = $true },
     @{ Name = "Bread"; Version = "4.0.0"; Rating = 3522; Download = $true },
     @{ Name = "Prune"; Version = "4.0.1"; Rating = 3543; Download = $true }
 )
