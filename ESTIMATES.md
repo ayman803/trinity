@@ -77,3 +77,22 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
   refinement. Long, single training runs beat patching.
 - Search tweaks borrowed from stronger engines gave ~0 here; data and
   networks gave almost all the gains.
+
+## Release checks
+
+- Move similarity (`trinity similarity`, 1000 positions from short random
+  games, 100 ms per move, 10 October 2026). Share of positions with the
+  same move:
+
+  |          | Trinity | Reckless | akimbo | Patricia |
+  |---|---|---|---|---|
+  | Trinity  | -       | 78.3%    | 78.3%  | 77.4%    |
+  | Reckless | 78.3%   | -        | 77.0%  | 74.9%    |
+  | akimbo   | 78.3%   | 77.0%    | -      | 76.1%    |
+  | Patricia | 77.4%   | 74.9%    | 76.1%  | -        |
+
+  Trinity against itself (two runs, timing noise only): 86%. Trinity is no
+  closer to any engine than the unrelated pairs are to each other (75-77%);
+  all values are high because many test positions have an obvious best
+  move. Stockfish to be added from the PC run (13-Similarity-Test.bat).
+- Repeating time control 40/20: 0 games lost on time in 1200.
