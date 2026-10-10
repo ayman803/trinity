@@ -9,6 +9,7 @@ mod movegen;
 mod nnue;
 mod search;
 mod select;
+mod similarity;
 mod tb;
 mod tt;
 mod tune;
@@ -49,6 +50,15 @@ fn real_main() -> i32 {
                     eprintln!("{e}");
                     return 1;
                 }
+            }
+        }
+        // `trinity similarity <positions> <movetime ms> <name=path>...`
+        Some("similarity") => {
+            let count = args.get(1).and_then(|c| c.parse().ok()).unwrap_or(1000);
+            let movetime = args.get(2).and_then(|t| t.parse().ok()).unwrap_or(100);
+            if let Err(e) = similarity::run(count, movetime, &args[3.min(args.len())..]) {
+                eprintln!("{e}");
+                return 1;
             }
         }
         Some("datagen") => match datagen::Config::from_args(&args[1..]) {

@@ -1,0 +1,85 @@
+# Publish a release of Trinity: Windows and Linux builds for modern
+# processors (x86-64-v3: AVX2, about 2013 onwards) and older ones
+# (x86-64-v2), attached to a GitHub release. Started by hand:
+# Actions tab -> "Release" -> "Run workflow", with the version number that
+# Cargo.toml already carries.
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version number, the same as in Cargo.toml (for example 1.0.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.os }} ${{ matrix.cpu }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - { os: windows-latest, cpu: x86-64-v3, suffix: windows-x86-64-v3.exe }
+          - { os: windows-latest, cpu: x86-64-v2, suffix: windows-x86-64-v2.exe }
+          - { os: ubuntu-latest, cpu: x86-64-v3, suffix: linux-x86-64-v3 }
+          - { os: ubuntu-latest, cpu: x86-64-v2, suffix: linux-x86-64-v2 }
+    env:
+      VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Check the version number
+        shell: bash
+        run: |
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Version must look like 1.0.0"; exit 1; }
+          grep -q "^version = \"$VERSION\"" Cargo.toml || { echo "Cargo.toml does not say version $VERSION"; exit 1; }
+      - name: Build
+        shell: bash
+        env:
+          RUSTFLAGS: -C target-cpu=${{ matrix.cpu }}
+        run: |
+          cargo build --release
+          exe=target/release/trinity; [ -f "$exe.exe" ] && exe="$exe.exe"
+          out="trinity-$VERSION-${{ matrix.suffix }}"
+          cp "$exe" "$out"
+          echo "bench: $(./$out bench | tail -1)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trinity-${{ matrix.suffix }}
+          path: trinity-${{ inputs.version }}-${{ matrix.suffix }}
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ inputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: files
+          merge-multiple: true
+      - name: Create the release
+        run: |
+          linux=$(ls files/*linux-x86-64-v2)
+          chmod +x files/*linux*
+          bench=$("$linux" bench | tail -1 | awk '{print $1}')
+          cat > notes.md <<'EOF'
+          Trinity VERSION, a UCI chess engine with an NNUE evaluation (see README.md).
+
+          - Network: (768x8 king buckets -> 1024)x2 -> 8 output buckets, trained from scratch on Leela-derived data.
+          - Syzygy tablebases: UCI option `SyzygyPath`.
+          - Bench: BENCH nodes.
+
+          Downloads: `x86-64-v3` needs a processor with AVX2 (most made since about 2013); `x86-64-v2` runs on older ones.
+
+          The code is written by Claude (Anthropic's AI), directed and tested by the project owner. Licence: GPL-3.0-or-later.
+          EOF
+          sed -i "s/VERSION/$VERSION/; s/BENCH/$bench/" notes.md
+          cat notes.md
+          gh release create "v$VERSION" files/* --title "Trinity $VERSION" --notes-file notes.md --target "$GITHUB_SHA"
