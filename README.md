@@ -29,8 +29,8 @@ UCI options: `Hash`, `Threads`, `Move Overhead`, `SyzygyPath`.
 - Bitboards, legal move generation, perft-tested.
 - Alpha-beta (PVS) with the usual pruning, reductions and extensions,
   history-based move ordering, correction history, Lazy SMP.
-- NNUE: (768x8 king buckets, mirrored -> 512)x2 -> 8 output buckets,
-  SCReLU.
+- NNUE: (768x8 king buckets, mirrored -> 1024)x2 -> 8 output buckets,
+  SCReLU. Trained from scratch on 3.65 billion Leela-derived positions.
   Trained first on Trinity's own games, then on Leela-derived data.
 - Syzygy tablebases.
 
