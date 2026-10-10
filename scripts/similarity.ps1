@@ -16,12 +16,19 @@ function Get-LatestEngine([string]$Repo, [string]$Name, [string]$Pattern) {
     $found = @(Get-ChildItem -LiteralPath $dir -Recurse -Filter "*.exe" -ErrorAction SilentlyContinue)
     if ($found.Count -gt 0) { return $found[0].FullName }
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
-    $release = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest" -UseBasicParsing
-    $asset = @($release.assets | Where-Object { $_.name -match $Pattern }) | Select-Object -First 1
+    # Newest release first; older ones if its file names do not match.
+    $releases = @(Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases?per_page=10" -UseBasicParsing)
+    $asset = $null
+    foreach ($release in $releases) {
+        if ($release.prerelease) { continue }
+        $asset = @($release.assets | Where-Object { $_.name -match $Pattern }) | Select-Object -First 1
+        if ($asset) { Write-Host "$Name $($release.tag_name): $($asset.name)"; break }
+    }
     if (-not $asset) { Write-Warn "No Windows download found for $Name; skipping it."; return $null }
     $file = Join-Path $dir $asset.name
     Save-Download $asset.browser_download_url $file
     if ($file -like "*.zip") { Expand-Archive -LiteralPath $file -DestinationPath $dir -Force }
+    if ($file -like "*.tar") { Invoke-Native tar @("-xf", $file, "-C", $dir) }
     $found = @(Get-ChildItem -LiteralPath $dir -Recurse -Filter "*.exe")
     if ($found.Count -eq 0) { Write-Warn "No .exe inside the $Name download; skipping it."; return $null }
     return $found[0].FullName
@@ -33,7 +40,7 @@ try {
     Update-Repository
     $trinity = Build-Trinity "origin/main"
     $engines = @("Trinity=$trinity")
-    $sf = Get-LatestEngine "official-stockfish/Stockfish" "Stockfish" "windows-x86-64-avx2\.zip$"
+    $sf = Get-LatestEngine "official-stockfish/Stockfish" "Stockfish" "(?i)windows.*x86-64-avx2.*\.(zip|tar|exe)$"
     if ($sf) { $engines += "Stockfish=$sf" }
     $rk = Get-LatestEngine "codedeliveryservice/Reckless" "Reckless" "(?i)windows.*\.(exe|zip)$"
     if ($rk) { $engines += "Reckless=$rk" }
