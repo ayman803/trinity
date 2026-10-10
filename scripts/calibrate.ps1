@@ -169,6 +169,10 @@ try {
         }
         if ($gamesLine) { $lines += "   $("$gamesLine".Trim())" }
         if ($timeLosses -gt 0) { $lines += "   Games lost on time (either side): $timeLosses" }
+        # fastchess lists each player's own timeouts at the end of the match.
+        if ($text -match "Player: Trinity\s+Timeouts: (\d+)" -and [int]$Matches[1] -gt 0) {
+            $lines += "   ...of which Trinity lost on time: $($Matches[1])"
+        }
     }
 
     $hours = [Math]::Round(((Get-Date) - $started).TotalHours, 1)
