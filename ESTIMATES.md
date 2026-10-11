@@ -112,7 +112,31 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
   two unrelated engines (akimbo-Bread, 82.1%). No outlier.
 - With Stockfish 18 (PC, 11 October 2026): Trinity-Stockfish 81.0%;
   Stockfish-Reckless 82.0%, Stockfish-Bread 82.3%, Reckless-Bread 82.3%.
-  Trinity's highest match is again below the unrelated pairs. No outlier.
+  Trinity against the others in the same run: Bread 80.1%, akimbo 79.6%,
+  Reckless 78.9%, Prune 77.1%, Patricia 76.2%. All within the 73-82% range
+  of the unrelated pairs. No outlier.
+- Caveat: this test separates engines poorly. Unrelated engines match up to
+  82%, and Trinity matches itself 86%, so only about 4 points separate
+  "unrelated" from "identical". The positions are too easy (many have one
+  obvious move). It would catch a near-copy, not a partial one.
+- Source comparison (release checklist item 1, 11 October 2026). Every Rust
+  or C++ file, comments and strings removed, cut into 25-token windows;
+  share of Trinity's windows also found in the other engine's source:
+
+  | Trinity vs | exact | names and numbers renamed |
+  |---|---|---|
+  | akimbo     | 0.1% | 0.5% |
+  | Viridithas | 0.1% | 0.6% |
+  | Reckless   | 0.2% | 0.7% |
+  | Patricia   | 0.0% | 0.0% |
+
+  For comparison, Reckless vs Viridithas: 2.7% / 3.3%; Patricia vs Reckless:
+  4.1% / 3.6%. Trinity's longest shared runs are boilerplate: a list of
+  bench positions (5 of its 44 positions are the usual public test
+  positions), a zeroed heap allocation, a prefetch call, and a row of
+  println! lines. Svart could not be checked (its repository now holds only
+  a README). Limits: this finds copied text, even renamed. It cannot find
+  ideas or structure re-expressed in new code.
 - Repeating time control 40/20: 0 games lost on time in 1200.
 - CCRL 40/15 list of 9 October 2026 (best versions only): #100 is Houdini 6
   4CPU at 3455 (#99 3456, #101 3451, #102 3449). The goal line of about
