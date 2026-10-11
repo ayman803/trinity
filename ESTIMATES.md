@@ -95,6 +95,20 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
   closer to any engine than the unrelated pairs are to each other (75-77%);
   all values are high because many test positions have an obvious best
   move. Stockfish to be added from the PC run (13-Similarity-Test.bat).
+- PC run (13-Similarity-Test.bat, 1000 positions, 100 ms, 10 October 2026;
+  Stockfish download failed, fixed afterwards):
+
+  |          | Trinity | Reckless | akimbo | Patricia | Bread | Prune |
+  |---|---|---|---|---|---|---|
+  | Trinity  | -     | 77.7% | 80.5% | 77.4% | 81.2% | 77.2% |
+  | Reckless | 77.7% | -     | 81.4% | 76.3% | 79.8% | 80.8% |
+  | akimbo   | 80.5% | 81.4% | -     | 77.7% | 82.1% | 79.9% |
+  | Patricia | 77.4% | 76.3% | 77.7% | -     | 76.6% | 76.3% |
+  | Bread    | 81.2% | 79.8% | 82.1% | 76.6% | -     | 80.2% |
+  | Prune    | 77.2% | 80.8% | 79.9% | 76.3% | 80.2% | -     |
+
+  Trinity's highest match (Bread, 81.2%) is below the highest match between
+  two unrelated engines (akimbo-Bread, 82.1%). No outlier.
 - Repeating time control 40/20: 0 games lost on time in 1200.
 - CCRL 40/15 list of 9 October 2026 (best versions only): #100 is Houdini 6
   4CPU at 3455 (#99 3456, #101 3451, #102 3449). The goal line of about
