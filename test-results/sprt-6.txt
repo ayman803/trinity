@@ -1,0 +1,11 @@
+SPRT test #6, finished 2026-10-10T17:47:29Z (copied from the run's notice on 2026-10-11)
+Run: https://github.com/ayman803/trinity/actions/runs/38055472765 (run id 38055472765)
+SPRT RESULT: PASSED - 'net-big-20261009-1900' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: net-big-20261009-1900 (bench 626889) vs main (bench 637984), tc 30+0.3, bounds [0, 5]
+Games: 3000, Wins: 1089, Losses: 394, Draws: 1517, Points: 1847.5 (61.58 %)
+Ptnml(0-2): [1, 135, 593, 710, 61]
+Games lost on time (either side): 0
+Elo: 81.98 +/- 6.66, nElo: 158.77 +/- 12.43
+LLR: 19.42 (-2.94, 2.94) [0.00, 5.00]
+Illegal moves and crashes: not counted by the workflow at the time.

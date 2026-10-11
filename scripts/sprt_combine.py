@@ -34,7 +34,7 @@ def parse(path):
     m = re.search(r"^tc=(\S+)", text, re.M)
     if m:
         out["tc"] = m.group(1)
-    for key in ("dev_bench", "base_bench", "time_losses"):
+    for key in ("dev_bench", "base_bench", "time_losses", "illegal_moves", "crashes"):
         m = re.search(rf"^{key}=(\d+)", text, re.M)
         if m:
             out[key] = int(m.group(1))
@@ -73,7 +73,8 @@ def main():
     folder, dev, base, tc = sys.argv[1:5]
     elo0, elo1 = float(sys.argv[5]), float(sys.argv[6])
     jobs = int(sys.argv[7])
-    ptnml, wld, benches, done, time_losses = [0] * 5, [0] * 3, set(), 0, 0
+    ptnml, wld, benches, done = [0] * 5, [0] * 3, set(), 0
+    time_losses = illegal_moves = crashes = 0
     earlier = None
     for path in sorted(glob.glob(os.path.join(folder, "**", "*.txt"), recursive=True)):
         r = parse(path)
@@ -86,6 +87,8 @@ def main():
         ptnml = [a + b for a, b in zip(ptnml, r["ptnml"])]
         wld = [a + b for a, b in zip(wld, r.get("wld", [0, 0, 0]))]
         time_losses += r.get("time_losses", 0)
+        illegal_moves += r.get("illegal_moves", 0)
+        crashes += r.get("crashes", 0)
         benches.add((r.get("dev_bench"), r.get("base_bench")))
         if "tc" in r and r["tc"] != tc:
             sys.exit(f"The earlier run used time control {r['tc']}, this one {tc}; not combining.")
@@ -111,6 +114,7 @@ def main():
         f"Points: {wld[0] + wld[2] / 2:.1f} ({100 * j['score']:.2f} %)",
         f"Ptnml(0-2): {ptnml}",
         f"Games lost on time (either side): {time_losses}",
+        f"Illegal moves: {illegal_moves}; crashes or hangs: {crashes}",
         f"Elo: {j['elo']:.2f} +/- {j['elo_err']:.2f}, nElo: {j['nelo']:.2f} +/- {j['nelo_err']:.2f}",
         f"LLR: {j['llr']:.2f} ({lower:.2f}, {upper:.2f}) [{elo0:.2f}, {elo1:.2f}]",
     ]
@@ -118,7 +122,8 @@ def main():
     with open("total.txt", "w", encoding="utf-8") as f:
         f.write(f"Games: {games}, Wins: {wld[0]}, Losses: {wld[1]}, Draws: {wld[2]}\n")
         f.write("Ptnml(0-2): [" + ", ".join(map(str, ptnml)) + "]\n")
-        f.write(f"dev_bench={dev_bench}\nbase_bench={base_bench}\ntime_losses={time_losses}\ntc={tc}\n")
+        f.write(f"dev_bench={dev_bench}\nbase_bench={base_bench}\ntime_losses={time_losses}\n")
+        f.write(f"illegal_moves={illegal_moves}\ncrashes={crashes}\ntc={tc}\n")
     with open("result.txt", "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 

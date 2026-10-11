@@ -12,6 +12,8 @@
 
 name: SPRT test
 
+run-name: SPRT ${{ inputs.branch }} vs ${{ inputs.base }}
+
 on:
   workflow_dispatch:
     inputs:
@@ -105,6 +107,8 @@ jobs:
           {
             grep -E "^(Games|Ptnml)" play.log | tail -2
             echo "time_losses=$(grep -c '^Finished game.*loses on time' play.log || true)"
+            echo "illegal_moves=$(grep -c '^Finished game.*illegal move' play.log || true)"
+            echo "crashes=$(grep -cE '^Finished game.*(disconnects|stalls)' play.log || true)"
             cat bench.txt
           } > "job-$JOB.txt"
           cat "job-$JOB.txt"
@@ -122,6 +126,9 @@ jobs:
     needs: play
     if: always()
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
     env:
       DEV: ${{ inputs.branch }}
       BASE: ${{ inputs.base }}
@@ -158,3 +165,28 @@ jobs:
           name: sprt-total
           path: total.txt
           retention-days: 90
+      # A plain-text copy in the repository (test-results/sprt-<number>.txt),
+      # readable without signing in to GitHub.
+      - name: Save the result in the repository
+        env:
+          NUMBER: ${{ github.run_number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          out="test-results/sprt-$NUMBER.txt"
+          {
+            echo "SPRT test #$NUMBER, finished $(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo "Run: $RUN_URL (run id ${{ github.run_id }})"
+            [ -n "$PREVIOUS" ] && echo "Continues run id $PREVIOUS; the totals below include it."
+            cat result.txt
+          } > "/tmp/sprt.txt"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3 4 5; do
+            git fetch -q origin main && git checkout -q -B save origin/main
+            mkdir -p test-results && cp /tmp/sprt.txt "$out"
+            git add "$out"
+            git commit -q -m "SPRT result #$NUMBER: $DEV vs $BASE [skip ci]" || break
+            git push -q origin HEAD:main && break
+            sleep $((attempt * 5))
+          done
+          cat "$out"

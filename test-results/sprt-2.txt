@@ -1,0 +1,11 @@
+SPRT test #2, finished 2026-10-08 (copied from the run's summary as pasted on 2026-10-08; the notice was added later)
+Run: https://github.com/ayman803/trinity/actions/runs/37703472848 (run id 37703472848)
+SPRT RESULT: PASSED - 'net-kb-20261005-1802' is stronger than 'net-fresh-20261004-1752'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: net-kb-20261005-1802 (bench 550859) vs net-fresh-20261004-1752 (bench 735643), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 2579, Losses: 2158, Draws: 4263, Points: 4710.5 (52.34 %)
+Ptnml(0-2): [119, 957, 1971, 1290, 163]
+Games lost on time (either side): 0
+Elo: 16.26 +/- 4.38, nElo: 26.70 +/- 7.18
+LLR: 9.02 (-2.94, 2.94) [0.00, 5.00]
+Illegal moves and crashes: not counted by the workflow at the time.

@@ -1,0 +1,2 @@
+SPRT test #1, 2026-10-07: a 20-game trial run to check that the new workflow works (corr-unsure vs main). Not a real test; result not kept.
+Run: https://github.com/ayman803/trinity/actions/runs/37553886693 (run id 37553886693)

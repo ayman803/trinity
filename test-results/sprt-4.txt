@@ -1,0 +1,11 @@
+SPRT test #4, finished 2026-10-09T04:41:39Z (copied from the run's notice on 2026-10-11)
+Run: https://github.com/ayman803/trinity/actions/runs/37862696074 (run id 37862696074)
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: spsa-tune1 (bench 637984) vs main (bench 550859), tc 30+0.3, bounds [0, 5]
+Games: 3000, Wins: 668, Losses: 593, Draws: 1739, Points: 1537.5 (51.25 %)
+Ptnml(0-2): [10, 308, 787, 387, 8]
+Games lost on time (either side): 0
+Elo: 8.69 +/- 6.28, nElo: 17.22 +/- 12.43
+LLR: 1.83 (-2.94, 2.94) [0.00, 5.00]
+Illegal moves and crashes: not counted by the workflow at the time.

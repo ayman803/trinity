@@ -1,0 +1,11 @@
+SPRT test #3, finished 2026-10-09T03:43:01Z (copied from the run's notice on 2026-10-11)
+Run: https://github.com/ayman803/trinity/actions/runs/37862590485 (run id 37862590485)
+SPRT RESULT: PASSED - 'spsa-tune1' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: spsa-tune1 (bench 637984) vs main (bench 550859), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 2174, Losses: 1884, Draws: 4942, Points: 4645.0 (51.61 %)
+Ptnml(0-2): [62, 954, 2187, 1226, 71]
+Games lost on time (either side): 0
+Elo: 11.20 +/- 3.93, nElo: 20.46 +/- 7.18
+LLR: 6.70 (-2.94, 2.94) [0.00, 5.00]
+Illegal moves and crashes: not counted by the workflow at the time.
