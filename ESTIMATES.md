@@ -13,7 +13,7 @@ opponents); real uncertainty about +/- 50-100.
 - Running on GitHub: `spsa-1024` (second run) and `unsure-1024`.
 - Next attempt (+50 branch, separate from 1.0.0): ideas 8-11 below.
   Fable 5.1 used for design decisions only, from the plan's included
-  allowance first. Spending cap beyond the plan: set by the owner. Gate: if
+  allowance first. Spending cap beyond the plan: $200. Gate: if
   the first two Fable-designed changes don't beat `main`, stop paying.
   Stop rule: less than +10 on calibration over 4 weeks of steady testing
   means park the project.
