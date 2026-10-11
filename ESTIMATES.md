@@ -4,6 +4,20 @@ Self-play = SPRT against the previous `main` (8+0.08, UHO book).
 CCRL = calibration estimate (10+0.1, balanced book, 1 thread, rated
 opponents); real uncertainty about +/- 50-100.
 
+## Where things stand (11 October 2026)
+
+- Strength: about 3449 at 10+0.1 and about 3480 at repeating 40/20 (our
+  calibration, 1 thread). CCRL 40/15 list of 9 October 2026: #100 is 3455.
+- Release 1.0.0: prepared (draft release first, then public). Waiting for
+  the SPRT of `spsa-1024`; it goes in if it passes.
+- Running on GitHub: `spsa-1024` (second run) and `unsure-1024`.
+- Next attempt (+50 branch, separate from 1.0.0): ideas 8-11 below.
+  Fable 5.1 used for design decisions only, from the plan's included
+  allowance first. Spending cap beyond the plan: set by the owner. Gate: if
+  the first two Fable-designed changes don't beat `main`, stop paying.
+  Stop rule: less than +10 on calibration over 4 weeks of steady testing
+  means park the project.
+
 ## Changes
 
 | Date | Change | Predicted | Self-play result | CCRL-scale result | Notes |
@@ -23,7 +37,8 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-07 | king buckets, gentle refinement (same 160 superbatches and the same positions as the failed run, LR 0.0002 sliding to 0.000002) | self-play -3 to +8 | -3.8 +/- 4.6 after 8016 games (FAILED, not merged) | - | the gentle rate hurt much less (-3.8 vs -13.8), so the rate explained most of the loss, but more Leela data still gives nothing on this network |
 | 2026-10-07 | SPSA tune of 20 search settings (never tuned before; 5 chains x ~3 GitHub runs, 5+0.05) | self-play +10 to +30; CCRL +5 to +20 | +11.2 +/- 3.9 at 8+0.08 (9000 games, passed) and +8.7 +/- 6.3 at 30+0.3 (3000 games, LLR 1.83); merged, bench 637984 | about +3 (3396 -> 3399; within noise) | self-play overstated ~4x; most of the gain did not carry over |
 | 2026-10-09 | big network: 1024 neurons, king buckets, from scratch, 600 superbatches on up to 4B Leela positions, LR 0.001 cosine, WDL 0.5 (about 28% slower search) | self-play +10 to +40; CCRL +5 to +25. Kill test: no pass by 20 October = network path used up | +80.0 +/- 4.3 at 8+0.08 (9000 games, 3380 W / 1343 L, 0 time losses; merged, bench 626889). +82.0 +/- 6.7 at 30+0.3 (3000 games, passed). Trained on 3.65B positions (whole file) | +50 (3399 -> 3449; all four opponents up 5-9 points) | far above the prediction: the earlier networks were starved of capacity and training time |
-| 2026-10-11 | SPSA re-tune for the 1024 network (2 runs, 35280 games; all moves small, branch spsa-1024, bench 627481) | self-play 0 to +5; CCRL 0 to +3 | pending | - | the settings tuned on the 512 network mostly still fit |
+| 2026-10-11 | SPSA re-tune for the 1024 network (2 runs, 35280 games; all moves small, branch spsa-1024, bench 627481) | self-play 0 to +5; CCRL 0 to +3 | +4.1 +/- 3.8 after 9000 games (LLR 1.97, not decided; second run going) | - | the settings tuned on the 512 network mostly still fit |
+| 2026-10-11 | corr-unsure on the 1024 network (branch unsure-1024, bench 805153) | self-play 0 to +4; CCRL 0 to +1 | pending (GitHub) | - | passed +2.9 on the older main |
 
 ## Proposed (not yet run)
 
@@ -36,6 +51,10 @@ opponents); real uncertainty about +/- 50-100.
 | 5. Drop contradictory labels (Leela > +3 pawns but lost, or < -3 but won) | +0 to +10 | +0 to +5 | ~35 min + conversion |
 | 6. Teacher-student distillation (large GPU net re-scores positions for the fast net) | +5 to +25 | +0 to +15 | several hours + re-scoring |
 | 7. Syzygy tablebases (3-4-5 piece) | small in self-play | +5 to +15 | engine work; library decision pending |
+| 8. Multi-threading: test 4 threads vs 1, fix scaling if weak | n/a (1 thread) | +60 to +100 on the 4-CPU list only | none; PC games at 4 threads |
+| 9. Time management for repeating 40/15 | small at 8+0.08 | +5 to +20 | none; 40/20 calibration |
+| 10. Second Leela file + longer 1024 (or wider) training | +15 to +40 | +10 to +25 | 3-4 days; needs ~200 GB free (PC has 93) |
+| 11. Batch of small search ideas, GitHub SPRT | +2 to +5 each | +10 to +15 for ten | none |
 
 ## Calibrations
 
