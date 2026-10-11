@@ -7,7 +7,10 @@ opponents); real uncertainty about +/- 50-100.
 ## Where things stand (11 October 2026)
 
 - Strength: about 3449 at 10+0.1 and about 3480 at repeating 40/20 (our
-  calibration, 1 thread). CCRL 40/15 list of 9 October 2026: #100 is 3455.
+  calibration, 1 thread), measured on the build of 10 October (bench
+  626889), before unsure-1024 and the SPSA re-tune. Release 1.0.0 itself is
+  to be calibrated after release, to compare with CCRL's own rating when it
+  appears: a gap above 50-100 means the calibration method needs fixing. CCRL 40/15 list of 9 October 2026: #100 is 3455.
 - Goal line: the CCRL 40/15 list as published ("best versions only"), where
   a 4-CPU entry counts. The 1-CPU estimate is always reported next to it.
 - Release 1.0.0: prepared (draft release first, then public). Waiting for
