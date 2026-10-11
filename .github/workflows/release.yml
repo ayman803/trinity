@@ -2,7 +2,8 @@
 # processors (x86-64-v3: AVX2, about 2013 onwards) and older ones
 # (x86-64-v2), attached to a GitHub release. Started by hand:
 # Actions tab -> "Release" -> "Run workflow", with the version number that
-# Cargo.toml already carries.
+# Cargo.toml already carries. The release is made as a draft (visible only
+# to the owner) so the files can be checked before it is made public.
 
 name: Release
 
@@ -73,8 +74,9 @@ jobs:
           Trinity VERSION, a UCI chess engine with an NNUE evaluation (see README.md).
 
           - Network: (768x8 king buckets -> 1024)x2 -> 8 output buckets, trained from scratch on Leela-derived data.
-          - Syzygy tablebases: UCI option `SyzygyPath`.
+          - UCI options: `Hash` (MB, default 16), `Threads` (default 1; multi-threading works but has only been tested on 1 thread), `Move Overhead` (ms, default 10), `SyzygyPath` (Syzygy tablebases).
           - Bench: BENCH nodes.
+          - Checks against copying: a move-similarity test and a source comparison with several open-source engines, in ESTIMATES.md (section "Release checks").
 
           Downloads: `x86-64-v3` needs a processor with AVX2 (most made since about 2013); `x86-64-v2` runs on older ones.
 
@@ -82,4 +84,4 @@ jobs:
           EOF
           sed -i "s/VERSION/$VERSION/; s/BENCH/$bench/" notes.md
           cat notes.md
-          gh release create "v$VERSION" files/* --title "Trinity $VERSION" --notes-file notes.md --target "$GITHUB_SHA"
+          gh release create --draft "v$VERSION" files/* --title "Trinity $VERSION" --notes-file notes.md --target "$GITHUB_SHA"
