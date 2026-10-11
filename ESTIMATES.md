@@ -23,6 +23,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-07 | king buckets, gentle refinement (same 160 superbatches and the same positions as the failed run, LR 0.0002 sliding to 0.000002) | self-play -3 to +8 | -3.8 +/- 4.6 after 8016 games (FAILED, not merged) | - | the gentle rate hurt much less (-3.8 vs -13.8), so the rate explained most of the loss, but more Leela data still gives nothing on this network |
 | 2026-10-07 | SPSA tune of 20 search settings (never tuned before; 5 chains x ~3 GitHub runs, 5+0.05) | self-play +10 to +30; CCRL +5 to +20 | +11.2 +/- 3.9 at 8+0.08 (9000 games, passed) and +8.7 +/- 6.3 at 30+0.3 (3000 games, LLR 1.83); merged, bench 637984 | about +3 (3396 -> 3399; within noise) | self-play overstated ~4x; most of the gain did not carry over |
 | 2026-10-09 | big network: 1024 neurons, king buckets, from scratch, 600 superbatches on up to 4B Leela positions, LR 0.001 cosine, WDL 0.5 (about 28% slower search) | self-play +10 to +40; CCRL +5 to +25. Kill test: no pass by 20 October = network path used up | +80.0 +/- 4.3 at 8+0.08 (9000 games, 3380 W / 1343 L, 0 time losses; merged, bench 626889). +82.0 +/- 6.7 at 30+0.3 (3000 games, passed). Trained on 3.65B positions (whole file) | +50 (3399 -> 3449; all four opponents up 5-9 points) | far above the prediction: the earlier networks were starved of capacity and training time |
+| 2026-10-11 | SPSA re-tune for the 1024 network (2 runs, 35280 games; all moves small, branch spsa-1024, bench 627481) | self-play 0 to +5; CCRL 0 to +3 | pending | - | the settings tuned on the 512 network mostly still fit |
 
 ## Proposed (not yet run)
 
@@ -109,6 +110,9 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
 
   Trinity's highest match (Bread, 81.2%) is below the highest match between
   two unrelated engines (akimbo-Bread, 82.1%). No outlier.
+- With Stockfish 18 (PC, 11 October 2026): Trinity-Stockfish 81.0%;
+  Stockfish-Reckless 82.0%, Stockfish-Bread 82.3%, Reckless-Bread 82.3%.
+  Trinity's highest match is again below the unrelated pairs. No outlier.
 - Repeating time control 40/20: 0 games lost on time in 1200.
 - CCRL 40/15 list of 9 October 2026 (best versions only): #100 is Houdini 6
   4CPU at 3455 (#99 3456, #101 3451, #102 3449). The goal line of about
