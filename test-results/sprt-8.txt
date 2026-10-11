@@ -1,0 +1,11 @@
+SPRT test #8, finished 2026-10-11 23:23 UTC (copied from the run's notice)
+Run: https://github.com/ayman803/trinity/actions/runs/38168814300 (run id 38168814300)
+SPRT RESULT: PASSED - 'unsure-1024' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: unsure-1024 (bench 805153) vs main (bench 626889), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 2105, Losses: 1826, Draws: 5069, Points: 4639.5 (51.55 %)
+Ptnml(0-2): [36, 967, 2244, 1188, 65]
+Games lost on time (either side): 0
+Elo: 10.77 +/- 3.82, nElo: 20.27 +/- 7.18
+LLR: 6.62 (-2.94, 2.94) [0.00, 5.00]
+Illegal moves and crashes: not counted by this run (started before the workflow counted them).
