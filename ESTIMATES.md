@@ -8,12 +8,19 @@ opponents); real uncertainty about +/- 50-100.
 
 - Strength: about 3449 at 10+0.1 and about 3480 at repeating 40/20 (our
   calibration, 1 thread). CCRL 40/15 list of 9 October 2026: #100 is 3455.
+- Goal line: the CCRL 40/15 list as published ("best versions only"), where
+  a 4-CPU entry counts. The 1-CPU estimate is always reported next to it.
 - Release 1.0.0: prepared (draft release first, then public). Waiting for
-  the SPRT of `spsa-1024`; it goes in if it passes.
+  the SPRT of `spsa-1024` (goes in if it passes) and the threads test
+  (4 threads vs 1, PC and laptop; a release check, since CCRL tests on 4
+  CPUs).
 - Running on GitHub: `spsa-1024` (second run) and `unsure-1024`.
 - Next attempt (+50 branch, separate from 1.0.0): ideas 8-11 below.
-  Fable 5.1 used for design decisions only, from the plan's included
-  allowance first. Spending cap beyond the plan: $200. Gate: if
+  Fable 5.1 at maximum effort designs each change; Opus does the routine
+  steps. Paid from the plan's included allowance first. Cap on extra
+  credit bought beyond the plan (any model): $200. Pause Fable until the
+  weekly reset if Trinity reaches 40% of the owner's weekly usage (the
+  owner checks; the Session cannot see it). Gate: if
   the first two Fable-designed changes don't beat `main`, stop paying.
   Stop rule: less than +10 on calibration over 4 weeks of steady testing
   means park the project.
