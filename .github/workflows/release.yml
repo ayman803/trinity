@@ -80,7 +80,7 @@ jobs:
 
           Downloads: `x86-64-v3` needs a processor with AVX2 (most made since about 2013); `x86-64-v2` runs on older ones.
 
-          The code is written by Claude (Anthropic's AI), directed and tested by the project owner. Licence: GPL-3.0-or-later.
+          The code is written by Claude (Anthropic's AI), directed and tested by Ayman Mikhail. Licence: GPL-3.0-or-later.
           EOF
           sed -i "s/VERSION/$VERSION/; s/BENCH/$bench/" notes.md
           cat notes.md

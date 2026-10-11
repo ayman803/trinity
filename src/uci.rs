@@ -12,7 +12,7 @@ use crate::types::*;
 
 pub const NAME: &str = "Trinity";
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
-pub const AUTHOR: &str = "the Trinity developers";
+pub const AUTHOR: &str = "Ayman Mikhail";
 
 /// Search threads recurse deeply; give them plenty of stack.
 pub const STACK_SIZE: usize = 64 * 1024 * 1024;

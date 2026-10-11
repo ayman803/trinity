@@ -39,7 +39,7 @@ train networks and run SPRT tests. [GUIDE.md](GUIDE.md) explains them.
 
 ## Credits
 
-- Code: Claude (Anthropic), see above.
+- Code: Claude (Anthropic), directed and tested by Ayman Mikhail.
 - Trainer: [bullet](https://github.com/jw1912/bullet) by Jamie Whiting and
   contributors.
 - Training data: Leela Chess Zero self-play positions, in the binpack form
