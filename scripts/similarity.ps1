@@ -16,15 +16,26 @@ function Get-LatestEngine([string]$Repo, [string]$Name, [string]$Pattern) {
     $found = @(Get-ChildItem -LiteralPath $dir -Recurse -Filter "*.exe" -ErrorAction SilentlyContinue)
     if ($found.Count -gt 0) { return $found[0].FullName }
     New-Item -ItemType Directory -Force -Path $dir | Out-Null
-    # Newest release first; older ones if its file names do not match.
-    $releases = @(Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases?per_page=10" -UseBasicParsing)
+    # The newest full release first, then recent ones (development builds
+    # included). ForEach-Object unpacks the list: Windows PowerShell 5 hands
+    # a JSON list over as one object.
+    $latest = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest" -UseBasicParsing
+    $recent = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases?per_page=30" -UseBasicParsing
+    $releases = @(@($latest) + @($recent | ForEach-Object { $_ }))
     $asset = $null
-    foreach ($release in $releases) {
-        if ($release.prerelease) { continue }
-        $asset = @($release.assets | Where-Object { $_.name -match $Pattern }) | Select-Object -First 1
-        if ($asset) { Write-Host "$Name $($release.tag_name): $($asset.name)"; break }
+    foreach ($p in @($Pattern, "(?i)windows.*\.(zip|exe)$")) {
+        foreach ($release in $releases) {
+            $asset = @($release.assets | Where-Object { $_.name -match $p }) | Select-Object -First 1
+            if ($asset) { break }
+        }
+        if ($asset) { break }
     }
-    if (-not $asset) { Write-Warn "No Windows download found for $Name; skipping it."; return $null }
+    if (-not $asset) {
+        Write-Warn "No Windows download found for $Name; skipping it. Files in its newest release:"
+        $latest.assets | ForEach-Object { Write-Host "  $($_.name)" }
+        return $null
+    }
+    Write-Host "$Name $($release.tag_name): $($asset.name)"
     $file = Join-Path $dir $asset.name
     Save-Download $asset.browser_download_url $file
     if ($file -like "*.zip") { Expand-Archive -LiteralPath $file -DestinationPath $dir -Force }
