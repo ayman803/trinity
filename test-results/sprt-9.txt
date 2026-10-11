@@ -1,0 +1,12 @@
+SPRT test #9, finished 2026-10-11 23:40 UTC (copied from the run's notice)
+Run: https://github.com/ayman803/trinity/actions/runs/38170023995 (run id 38170023995)
+Continues run id 38153477285 (test #7); the totals below include it.
+SPRT RESULT: PASSED - 'spsa-1024' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: spsa-1024 (bench 627481) vs main (bench 626889), tc 8+0.08, bounds [0, 5]
+Games: 18000, Wins: 4035, Losses: 3729, Draws: 10236, Points: 9153.0 (50.85 %)
+Ptnml(0-2): [83, 2060, 4429, 2324, 104]
+Games lost on time (either side): 0
+Elo: 5.91 +/- 2.71, nElo: 11.07 +/- 5.08
+LLR: 6.39 (-2.94, 2.94) [0.00, 5.00]
+Illegal moves and crashes: not counted by this run (started before the workflow counted them).
