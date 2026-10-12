@@ -170,6 +170,11 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
   a README). Limits: this finds copied text, even renamed. It cannot find
   ideas or structure re-expressed in new code.
 - Repeating time control 40/20: 0 games lost on time in 1200.
+- Release 1.0.0 download check (PC, 12 October 2026): the GitHub-built
+  `windows-x86-64-v3` file gives bench 780879 at 1.62M nps, against 1.69M
+  nps for the PC's own build (4% slower, normal for a generic build); `uci`
+  shows `id name Trinity 1.0.0` and `id author Ayman Mikhail`. The
+  `x86-64-v2` build also gives bench 780879 (measured by the workflow).
 - CCRL 40/15 list of 9 October 2026 (best versions only): #100 is Houdini 6
   4CPU at 3455 (#99 3456, #101 3451, #102 3449). The goal line of about
   3455 stands. Trinity's 3449 (1 CPU, 10+0.1, our own calibration) would sit
