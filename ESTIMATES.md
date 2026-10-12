@@ -15,8 +15,8 @@ opponents); real uncertainty about +/- 50-100.
   a 4-CPU entry counts. The 1-CPU estimate is always reported next to it.
 - Release 1.0.0: prepared (draft release first, then public). Waiting for
   the SPRT of `spsa-1024` (goes in if it passes) and the threads test
-  (4 threads vs 1, PC and laptop; a release check, since CCRL tests on 4
-  CPUs).
+  (4 threads vs 1 on the PC: passed, +99.6, no errors; the laptop check
+  was not run).
 - `unsure-1024` passed (+10.8, merged). `spsa-1024` passed (+5.9) against the older main; being re-checked together with unsure-1024 as branch `unsure-spsa` before merging. Not counted toward the +50 or the stop rule (tuned at 8+0.08).
 - Next attempt (+50 branch, separate from 1.0.0): ideas 8-11 below.
   Fable 5.1 at maximum effort designs each change; Opus does the routine
