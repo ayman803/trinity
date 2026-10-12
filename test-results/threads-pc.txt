@@ -1,0 +1,9 @@
+THREADS TEST: 'main' (bench 626889), 4 threads vs 1 thread
+Machine: DESKTOP-K61E7PJ (the PC), 10 cores / 20 threads, 2 game(s) at a time, tc 10+0.1, hash 64 MB, book 8moves_v3
+Started 2026-10-11 15:09 Pacific; build before unsure-1024 and the SPSA re-tune.
+Elo: 99.57 +/- 10.16, nElo: 222.78 +/- 21.53
+Games: 1000, Wins: 289, Losses: 10, Draws: 701, Points: 639.5 (63.95 %)
+Ptnml(0-2): [0, 3, 245, 222, 30], WL/DD Ratio: 0.03
+Games lost on time: 0; illegal moves: 0; crashes or hangs: 0
+(Elo is from the 4-thread side's point of view.)
+Duration: 3.6 hours.
