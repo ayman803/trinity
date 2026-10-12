@@ -74,7 +74,7 @@ jobs:
           Trinity VERSION, a UCI chess engine with an NNUE evaluation (see README.md).
 
           - Network: (768x8 king buckets -> 1024)x2 -> 8 output buckets, trained from scratch on Leela-derived data.
-          - UCI options: `Hash` (MB, default 16), `Threads` (default 1; multi-threading works but has only been tested on 1 thread), `Move Overhead` (ms, default 10), `SyzygyPath` (Syzygy tablebases).
+          - UCI options: `Hash` (MB, default 16), `Threads` (default 1; scaling tested with 4 threads, see test-results/), `Move Overhead` (ms, default 10), `SyzygyPath` (Syzygy tablebases).
           - Bench: BENCH nodes.
           - Checks against copying: a move-similarity test and a source comparison with several open-source engines, in ESTIMATES.md (section "Release checks").
 
