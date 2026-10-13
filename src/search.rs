@@ -190,9 +190,9 @@ pub struct Searcher {
     start: Instant,
     soft_ms: u64,
     hard_ms: u64,
-    /// Time plan for this game (ms): what the budget rule planned for the
-    /// moves so far, and what was really spent. The soft limit is scaled
-    /// so that the real spend tracks the plan (see `setup_time`).
+    /// Time plan for this game (ms): the soft limits given for the moves so
+    /// far and what was really spent. The soft limit is scaled so that the
+    /// real spend tracks the plan (see `setup_time`).
     plan_ms: f64,
     used_ms: f64,
     plan_this_ms: f64,
@@ -286,15 +286,17 @@ impl Searcher {
             };
             // Closed loop: the stop rule ends most moves well before the
             // soft limit (about half of it, measured), so the planned time
-            // piled up unused. Scale the soft limit by plan / spend so far
-            // in this game, with a prior of 0.6 worth three moves, so that
-            // what is saved on easy moves is spent on the others.
+            // piled up unused. Measure, over this game, how much of the soft
+            // limits it was given the search really used (with a prior of
+            // 0.6 worth three moves), and give it the plan divided by that,
+            // so that the real spend tracks the plan: what is saved on easy
+            // moves is spent on the others.
             let prior = 3.0 * base as f64;
-            let ratio = (self.used_ms + 0.6 * prior) / (self.plan_ms + prior);
-            let scale = (1.0 / ratio).clamp(1.0, 2.5);
-            self.plan_this_ms = base as f64;
-            let soft = (base as f64 * scale) as u64;
-            self.soft_ms = soft.min(t / 2).max(1);
+            let used_share = (self.used_ms + 0.6 * prior) / (self.plan_ms + prior);
+            let scale = (1.0 / used_share).clamp(1.0, 2.5);
+            let soft = ((base as f64 * scale) as u64).min(t / 2).max(1);
+            self.plan_this_ms = soft as f64;
+            self.soft_ms = soft;
             self.hard_ms = (base * 3).max(soft * 8 / 5).min(t * 3 / 5).max(1);
         }
     }
