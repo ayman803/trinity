@@ -6,11 +6,12 @@ opponents); real uncertainty about +/- 50-100.
 
 ## Where things stand (11 October 2026)
 
-- Strength: about 3449 at 10+0.1 and about 3480 at repeating 40/20 (our
-  calibration, 1 thread), measured on the build of 10 October (bench
-  626889), before unsure-1024 and the SPSA re-tune. Release 1.0.0 itself is
-  to be calibrated after release, to compare with CCRL's own rating when it
-  appears: a gap above 50-100 means the calibration method needs fixing. CCRL 40/15 list of 9 October 2026: #100 is 3455.
+- Strength of release 1.0.0: about 3466 at 10+0.1 (1 CPU, calibration of
+  12 October, same script and opponents as before). The previous build
+  (bench 626889) measured about 3449 at 10+0.1 and about 3480 at
+  repeating 40/20. CCRL 40/15 list of 9 October 2026: #100 is 3455.
+  Compare 3466 with CCRL's own rating of 1.0.0 when it appears: a gap
+  above 50-100 means the calibration method needs fixing.
 - Goal line: the CCRL 40/15 list as published ("best versions only"), where
   a 4-CPU entry counts. The 1-CPU estimate is always reported next to it.
 - Release 1.0.0: PUBLISHED 13 October 2026 (github.com/ayman803/trinity/releases/tag/v1.0.0, bench 780879). Before publishing it waited for
@@ -87,6 +88,7 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
 | 2026-10-09 | SPSA-tuned search (bench 637984) | 38.65% -> 3394 | 36.85% -> 3393 | 36.20% -> 3424 | 28.65% -> 3384 | - | about 3399 |
 | 2026-10-10 | 1024-neuron network (bench 626889) | 44.90% -> 3438 | 42.95% -> 3438 | 44.50% -> 3484 | 34.80% -> 3434 | - | about 3449 (6 games lost on time in 4000, worth watching) |
 | 2026-10-10 | same, at repeating 40/20 (300 games per opponent) | 48.17% -> 3461 | 47.33% -> 3468 | 48.67% -> 3513 | 40.67% -> 3477 | - | about 3480 (+/- 11); 0 games lost on time in 1200. Higher than at 10+0.1, not yet explained |
+| 2026-10-12 | release 1.0.0: + unsure-1024 + SPSA re-tune (bench 780879) | 47.00% -> 3453 | 45.75% -> 3458 | 45.80% -> 3493 | 38.45% -> 3461 | - | about 3466 (+17 over 3449; predicted +1 to +13). 3 games lost on time by Trinity in 4000 |
 
 ## Lessons so far
 

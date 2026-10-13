@@ -1,0 +1,16 @@
+CALIBRATION RESULT for 'main' (bench 780879) = release 1.0.0
+Machine: DESKTOP-K61E7PJ (14 games at a time), tc 10+0.1, 1 thread each
+vs akimbo 1.0.0 (CCRL 3474): Elo difference -21 +/- 13 -> Trinity about 3453
+   Games: 1000, Wins: 179, Losses: 239, Draws: 582, Points: 470.0 (47.00 %)
+vs Patricia 5.1 (CCRL 3488): Elo difference -30 +/- 13 -> Trinity about 3458
+   Games: 1000, Wins: 145, Losses: 230, Draws: 625, Points: 457.5 (45.75 %)
+   Games lost on time (either side): 2
+   ...of which Trinity lost on time: 2
+vs Bread 4.0.0 (CCRL 3522): Elo difference -29 +/- 13 -> Trinity about 3493
+   Games: 1000, Wins: 164, Losses: 248, Draws: 588, Points: 458.0 (45.80 %)
+vs Prune 4.0.1 (CCRL 3543): Elo difference -82 +/- 13 -> Trinity about 3461
+   Games: 1000, Wins: 92, Losses: 323, Draws: 585, Points: 384.5 (38.45 %)
+   Games lost on time (either side): 1
+   ...of which Trinity lost on time: 1
+ESTIMATED CCRL RATING (1 CPU): about 3466 (statistical +/- 6; real uncertainty about +/- 50-100)
+Duration: 2.3 hours. (Copied from the screen; this run started before the script saved its own games.)
