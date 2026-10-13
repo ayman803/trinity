@@ -12,6 +12,7 @@ mod search;
 mod select;
 mod similarity;
 mod tb;
+mod timeuse;
 mod tt;
 mod tune;
 mod types;
@@ -67,6 +68,13 @@ fn real_main() -> i32 {
             let max = args.get(1).and_then(|c| c.parse().ok()).unwrap_or(200);
             let workers = args.get(2).and_then(|t| t.parse().ok()).unwrap_or(4);
             if let Err(e) = forensics::run(max, workers, &args[3.min(args.len())..]) {
+                eprintln!("{e}");
+                return 1;
+            }
+        }
+        // `trinity timeuse <pgn files...>`
+        Some("timeuse") => {
+            if let Err(e) = timeuse::run(&args[1..]) {
                 eprintln!("{e}");
                 return 1;
             }

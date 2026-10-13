@@ -31,19 +31,26 @@ const MARGIN: i32 = 50;
 /// Positions searched again: the turning point and the ones before it.
 const LOOK_BACK: usize = 3;
 
-struct Ply {
-    board: Board,
-    mv: Move,
-    eval: Option<i32>,
-    secs: f64,
+pub(crate) struct Ply {
+    pub board: Board,
+    pub mv: Move,
+    pub eval: Option<i32>,
+    pub secs: f64,
 }
 
-struct Loss {
-    opponent: String,
-    trinity: usize,
-    termination: String,
-    plies: Vec<Ply>,
+/// One of Trinity's games from a fastchess PGN file.
+pub(crate) struct Game {
+    pub opponent: String,
+    pub trinity: usize,
+    pub termination: String,
+    /// Trinity's score: 1.0, 0.5 or 0.0.
+    pub score: f64,
+    pub time_control: String,
+    pub opponent_time_control: String,
+    pub plies: Vec<Ply>,
 }
+
+type Loss = Game;
 
 /// SAN of a legal move (without check marks).
 fn san(b: &Board, m: Move) -> String {
@@ -120,6 +127,11 @@ fn tag(header: &str, name: &str) -> Option<String> {
 
 /// Trinity's lost games in one PGN file.
 fn read_losses(text: &str, out: &mut Vec<Loss>) {
+    read_games(text, out, true);
+}
+
+/// Trinity's games in one PGN file (only the lost ones if `only_lost`).
+pub(crate) fn read_games(text: &str, out: &mut Vec<Game>, only_lost: bool) {
     for game in text.split("[Event ").skip(1) {
         let Some(split) = game.find("\n\n").or_else(|| game.find("\r\n\r\n")) else { continue };
         let (header, moves) = game.split_at(split);
@@ -135,9 +147,14 @@ fn read_losses(text: &str, out: &mut Vec<Loss>) {
             continue;
         };
         let lost = (trinity == WHITE && result == "0-1") || (trinity == BLACK && result == "1-0");
-        if !lost {
+        if only_lost && !lost {
             continue;
         }
+        let score = match (result.as_str(), trinity) {
+            ("1/2-1/2", _) => 0.5,
+            ("1-0", WHITE) | ("0-1", BLACK) => 1.0,
+            _ => 0.0,
+        };
         let mut board = match tag(header, "FEN") {
             Some(fen) => match Board::from_fen(&fen) {
                 Ok(b) => b,
@@ -183,7 +200,14 @@ fn read_losses(text: &str, out: &mut Vec<Loss>) {
         if ok {
             let opponent = if trinity == WHITE { black } else { white };
             let termination = tag(header, "Termination").unwrap_or_default();
-            out.push(Loss { opponent, trinity, termination, plies });
+            // fastchess writes one tag for both sides, or one per colour.
+            let side_tc = |side: usize| {
+                tag(header, if side == WHITE { "WhiteTimeControl" } else { "BlackTimeControl" })
+                    .or_else(|| tag(header, "TimeControl"))
+                    .unwrap_or_default()
+            };
+            let (time_control, opponent_time_control) = (side_tc(trinity), side_tc(1 - trinity));
+            out.push(Game { opponent, trinity, termination, score, time_control, opponent_time_control, plies });
         }
     }
 }
@@ -207,7 +231,7 @@ fn piece_count(b: &Board) -> u32 {
     b.occupied().count_ones()
 }
 
-fn phase(b: &Board) -> &'static str {
+pub(crate) fn phase(b: &Board) -> &'static str {
     match piece_count(b) {
         n if n > 24 => "opening",
         n if n > 12 => "middlegame",
