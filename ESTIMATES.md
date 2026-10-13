@@ -60,8 +60,8 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-12 | threads: 4 threads vs 1 thread, same clock (PC, 1000 games, 10+0.1; release check) | +60 to +100 if threading works | +99.6 +/- 10.2; 0 time losses, 0 illegal moves, 0 crashes (test-results/threads-pc.txt) | not measured (only matters on the 4-CPU list) | threading works. Self-play overstates; against other engines expect perhaps +60 to +90 on 4 CPUs |
 | 2026-10-13 | weight averaging (Scout idea 2): mean of checkpoints 550+600 of the 1024 run (branch net-avg-550-600-20261012-2235, bench 830311) | self-play 0 to +8 (Scout); CCRL about 70% of that | +0.4 +/- 3.9 after 9000 games (SPRT #11, LLR -0.64; stopped, not merged) | - | no gain: the late checkpoints of a run that ends at a tiny learning rate are already at the centre |
 | 2026-10-13 | weight averaging, bolder: mean of checkpoints 450, 500, 550, 600 (branch net-avg-450-600-20261012-2235, bench 859329) | self-play -5 to +8 | -1.3 +/- 4.3 after 7200 games (SPRT #12, one GitHub job lost; stopped, not merged) | - | no gain |
-| 2026-10-13 | tm-unsure: think up to 30% longer when the root's eval correction is large (Fable design B; bench unchanged) | self-play -2 to +6; CCRL 0 to +3 | +3.9 +/- 3.8 after 9000 games (SPRT #13, LLR 1.83; stopped, not merged) | - | did not beat its control: the gain is the extra time, not the unsure signal. Does not count for the Fable gate |
-| 2026-10-13 | tm-control: 12% more soft time on every move (control for tm-unsure: its measured mean multiplier is 1.12) | self-play -2 to +4 | +5.3 +/- 3.7 after 9000 games (SPRT #14, LLR 2.82; stopped, not merged) | - | simply thinking 12% longer on every move gains about +5: confirms the unspent-time leak that part A targets |
+| 2026-10-13 | tm-unsure: think up to 30% longer when the root's eval correction is large (Fable design B; bench unchanged) | self-play -2 to +6; CCRL 0 to +3 | +3.9 +/- 3.8 after 9000 games (SPRT #13, LLR 1.83; stopped, not merged) | - | no sign that the unsure signal helps beyond the extra time (+3.9 and +5.3 are statistically the same; both spent the same extra time on average, mean multiplier 1.12). Dropped; does not count for the Fable gate |
+| 2026-10-13 | tm-control: 12% more soft time on every move (control for tm-unsure: its measured mean multiplier is 1.12) | self-play -2 to +4 | +5.3 +/- 3.7 after 9000 games (SPRT #14, LLR 2.82; stopped, not merged) | - | simply thinking 12% longer on every move gains about +5: confirms the unspent-time leak. Resumed as SPRT #15 (continues #14); merge if it passes, after a 40/20 time-loss check |
 
 ## Proposed (not yet run)
 
@@ -183,7 +183,13 @@ first principles, nothing taken from other engines):
   changes with 2x time | signals) directly on Trinity's games and fit the
   table. These constants have never been tuned.
 
-Gate: part A is the first Fable-designed change for the gate; B counts only if it beats both main and tm-control.
+Gate (fixed 13 October, before any part A result): tm-control is banked
+first (SPRT #15; merged if it passes). Part A is the first Fable-designed
+change for the gate and must beat the main of that moment (including
+tm-control if merged). Deciding test: repeating clock 40/20, bounds
+[0, 5], cap 2 GitHub runs (the games that fit; about 6000). Passed =
+gate win; anything else at the cap = gate loss, keep main (simpler wins
+a tie). An 8+0.08 run of part A is a safety check only.
 Test plan: SPRT on GitHub at 8+0.08 for B and its control now; A at 8+0.08 and at 40/60
 (the workflow now accepts repeating controls); CCRL-scale check of the
 winners with 12-Calibrate-Repeating.bat (two runs, +/- 11 each).
