@@ -58,7 +58,8 @@ try {
             Write-Step "Averaging checkpoints $($v.Steps -join ', ')"
             Invoke-Native $trainer (@("average", $out) + $dirsArg)
             $size = (Get-Item -LiteralPath $out).Length
-            if ($size -ne 12617744) { Stop-WithMessage "$out has an unexpected size ($size bytes)." }
+            # 12617744 bytes of weights, padded to a multiple of 64 (as main's network is).
+            if ($size -lt 12617744 -or $size -ge 12617744 + 64) { Stop-WithMessage "$out has an unexpected size ($size bytes)." }
 
             $branch = "net-avg-$($v.Label)-$stamp"
             $tree = Join-Path $script:Work "publish-$branch"
