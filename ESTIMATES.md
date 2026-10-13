@@ -116,6 +116,22 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
 - Search tweaks borrowed from stronger engines gave ~0 here; data and
   networks gave almost all the gains.
 
+## Loss forensics
+
+- 13 October 2026, release 1.0.0's calibration (200 of 1040 losses, Stockfish
+  as referee at 100 ms, Trinity re-searched at 10x its time;
+  test-results/forensics-2026-10-12_19-36.txt): gradual 68% (no single move
+  lost a pawn by the referee's judgment), search 22% (one clear mistake
+  that 10x time fixes), evaluation 6% (one clear mistake that 10x time
+  does not fix), lost from the book 3%, time 1%. Search mistakes mostly
+  in the middlegame and after a quiet opponent move.
+- Reading: most losses are a slow slide of small inaccuracies, which
+  points at evaluation quality in general (the network) more than at
+  tactics; of the clear single mistakes, about 4 in 5 are fixed by more
+  time, which points at search depth and time use. Caveats: the referee
+  at 100 ms is noisy (+/- 30-50 cp), and the 1-pawn threshold puts many
+  medium mistakes into "gradual".
+
 ## Release checks
 
 - Move similarity (`trinity similarity`, 1000 positions from short random
