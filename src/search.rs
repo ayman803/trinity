@@ -939,6 +939,15 @@ impl Searcher {
         if let Some(net) = self.net {
             self.acc[0] = AccPair::from_board(net, root);
         }
+        // "Unsure" root (the owner's idea, as in LMR): where the learned
+        // correction moves the network's opinion a lot, the evaluation is
+        // less reliable and depth has to make up for it: think up to 30%
+        // longer. The soft limit only; the hard limit stays.
+        if self.soft_ms != u64::MAX {
+            let raw = self.evaluate(root, 0);
+            let gap = (self.corrected_eval(root, raw) - raw).unsigned_abs().min(40);
+            self.soft_ms = self.soft_ms * (400 + 3 * u64::from(gap)) / 400;
+        }
 
         let legal = movegen::legal_moves(root);
         let mut result = SearchResult { best_move: legal.as_slice().first().copied().unwrap_or(Move::NONE), score: 0 };
