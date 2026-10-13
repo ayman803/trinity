@@ -58,7 +58,8 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-12 | threads: 4 threads vs 1 thread, same clock (PC, 1000 games, 10+0.1; release check) | +60 to +100 if threading works | +99.6 +/- 10.2; 0 time losses, 0 illegal moves, 0 crashes (test-results/threads-pc.txt) | not measured (only matters on the 4-CPU list) | threading works. Self-play overstates; against other engines expect perhaps +60 to +90 on 4 CPUs |
 | 2026-10-13 | weight averaging (Scout idea 2): mean of checkpoints 550+600 of the 1024 run (branch net-avg-550-600-20261012-2235, bench 830311) | self-play 0 to +8 (Scout); CCRL about 70% of that | +0.4 +/- 3.9 after 9000 games (SPRT #11, LLR -0.64; stopped, not merged) | - | no gain: the late checkpoints of a run that ends at a tiny learning rate are already at the centre |
 | 2026-10-13 | weight averaging, bolder: mean of checkpoints 450, 500, 550, 600 (branch net-avg-450-600-20261012-2235, bench 859329) | self-play -5 to +8 | -1.3 +/- 4.3 after 7200 games (SPRT #12, one GitHub job lost; stopped, not merged) | - | no gain |
-| 2026-10-13 | tm-unsure: think up to 30% longer when the root's eval correction is large (Fable design B; bench unchanged) | self-play -2 to +6; CCRL 0 to +3 | pending | - | first Fable-designed change (gate 1 of 2) |
+| 2026-10-13 | tm-unsure: think up to 30% longer when the root's eval correction is large (Fable design B; bench unchanged) | self-play -2 to +6; CCRL 0 to +3 | pending | - | counts for the Fable gate only if it beats both main and tm-control |
+| 2026-10-13 | tm-control: 12% more soft time on every move (control for tm-unsure: its measured mean multiplier is 1.12) | self-play -2 to +4 | pending | - | if tm-unsure passes but does not beat this, the gain is the time leak (part A), not the unsure signal |
 
 ## Proposed (not yet run)
 
@@ -180,7 +181,8 @@ first principles, nothing taken from other engines):
   changes with 2x time | signals) directly on Trinity's games and fit the
   table. These constants have never been tuned.
 
-Test plan: SPRT on GitHub at 8+0.08 for B now; A at 8+0.08 and at 40/60
+Gate: part A is the first Fable-designed change for the gate; B counts only if it beats both main and tm-control.
+Test plan: SPRT on GitHub at 8+0.08 for B and its control now; A at 8+0.08 and at 40/60
 (the workflow now accepts repeating controls); CCRL-scale check of the
 winners with 12-Calibrate-Repeating.bat (two runs, +/- 11 each).
 
