@@ -63,6 +63,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-13 | tm-unsure: think up to 30% longer when the root's eval correction is large (Fable design B; bench unchanged) | self-play -2 to +6; CCRL 0 to +3 | +3.9 +/- 3.8 after 9000 games (SPRT #13, LLR 1.83; stopped, not merged) | - | no sign that the unsure signal helps beyond the extra time (+3.9 and +5.3 are statistically the same; both spent the same extra time on average, mean multiplier 1.12). Dropped; does not count for the Fable gate |
 | 2026-10-13 | tm-control: 12% more soft time on every move (control for tm-unsure: its measured mean multiplier is 1.12) | self-play -2 to +4 | +5.3 +/- 3.7 after 9000 games (SPRT #14, LLR 2.82; stopped, not merged) | - | simply thinking 12% longer on every move gains about +5: confirms the unspent-time leak. Resumed as SPRT #15 (continues #14); merge if it passes, after a 40/20 time-loss check |
 | 2026-10-13 | tm-plan (part A, Fable gate change 1): the soft limit is scaled by plan/spend so far in the game (closed loop, prior 0.6, clamp 1-2.5x), and the whole increment is spent; hard limit at least 1.6x soft. Bench unchanged | 8+0.08 vs main: +4 to +10; 40/20 vs tm-control (gate): +2 to +6, about a 50% chance to pass the capped test; CCRL-scale (40/20 calibration): +1 to +6 | pending | - | PC data: Trinity spends 0.67 (10+0.1) and 0.48 (40/20) of its own plan; its rated opponents 0.84 and 0.63. Fixed-ratio alternative rejected: the ratio differs by clock, so the loop measures it |
+| 2026-10-13 | nnue-simd: the network's output layer written with AVX2 instructions (same arithmetic, bench node count unchanged 780879); about 10% more nodes per second measured here (1.06M vs 0.97M) | self-play +4 to +8 (a 10% speed-up is worth about 0.14 doublings); CCRL +2 to +4 | pending (SPRT #16) | - | engineering of Trinity's own code, not a borrowed idea. Not a Fable gate change |
 
 ## Proposed (not yet run)
 
@@ -208,6 +209,29 @@ a tie). An 8+0.08 run of part A is a safety check only.
 Test plan: SPRT on GitHub at 8+0.08 for B and its control now; A at 8+0.08 and at 40/60
 (the workflow now accepts repeating controls); CCRL-scale check of the
 winners with 12-Calibrate-Repeating.bat (two runs, +/- 11 each).
+
+## Where the time per node goes (Fable, 13 October 2026)
+
+Measured on the AVX2 build (callgrind on `bench 8`, instruction counts) and
+with a timing probe (`cargo test --release speed_probe -- --ignored
+--nocapture`, kept in src/nnue.rs):
+- search logic (negamax, move scoring, movegen, SEE, make_move): about
+  50%; the network: evaluate 19%, accumulator updates about 10% (inlined
+  in negamax), king-bucket refreshes 3%; bench's own per-position table
+  clearing about 18% (memset), which games do not pay.
+- evaluate cost 169 ns per call with the compiler's own vectorisation,
+  83 ns with explicit AVX2 (branch nnue-simd); the accumulator update
+  about 135-150 ns; a make_move 16-18 ns.
+- Not pursued: lazy or deferred accumulator updates (a known technique
+  elsewhere, dropped under the originality rule); caching the quiet
+  history score between move ordering and LMR (under 2%).
+- Conclusion for "deeper or faster": the cheap, certain gain is speed in
+  Trinity's own code (about 10% now, perhaps 5% more from the update loops
+  and the refresh cache). Where depth is lost in the search itself is not
+  known yet; Scout's ablation audit (switch off one pruning rule at a time
+  on the forensics mistake positions, 8 minutes of PC time) is the right
+  next measurement before designing any search change, given that search
+  tweaks have transferred poorly so far.
 
 ## Loss forensics
 
