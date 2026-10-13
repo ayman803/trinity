@@ -58,6 +58,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-12 | threads: 4 threads vs 1 thread, same clock (PC, 1000 games, 10+0.1; release check) | +60 to +100 if threading works | +99.6 +/- 10.2; 0 time losses, 0 illegal moves, 0 crashes (test-results/threads-pc.txt) | not measured (only matters on the 4-CPU list) | threading works. Self-play overstates; against other engines expect perhaps +60 to +90 on 4 CPUs |
 | 2026-10-13 | weight averaging (Scout idea 2): mean of checkpoints 550+600 of the 1024 run (branch net-avg-550-600-20261012-2235, bench 830311) | self-play 0 to +8 (Scout); CCRL about 70% of that | +0.4 +/- 3.9 after 9000 games (SPRT #11, LLR -0.64; stopped, not merged) | - | no gain: the late checkpoints of a run that ends at a tiny learning rate are already at the centre |
 | 2026-10-13 | weight averaging, bolder: mean of checkpoints 450, 500, 550, 600 (branch net-avg-450-600-20261012-2235, bench 859329) | self-play -5 to +8 | -1.3 +/- 4.3 after 7200 games (SPRT #12, one GitHub job lost; stopped, not merged) | - | no gain |
+| 2026-10-13 | tm-unsure: think up to 30% longer when the root's eval correction is large (Fable design B; bench unchanged) | self-play -2 to +6; CCRL 0 to +3 | pending | - | first Fable-designed change (gate 1 of 2) |
 
 ## Proposed (not yet run)
 
@@ -117,6 +118,63 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
   refinement. Long, single training runs beat patching.
 - Search tweaks borrowed from stronger engines gave ~0 here; data and
   networks gave almost all the gains.
+
+## Time management design (Fable, 13 October 2026)
+
+Facts first, from Trinity's own games (20 self-play games at 10+0.1 here;
+the calibration games on the PC are being measured with 18-Time-Use.bat):
+
+- Baselines kill two forensics leads. Over ALL of Trinity's moves the
+  median time ratio (move time / the game's average) is 0.77, the same as
+  the 0.75 found for its mistakes: Trinity does not under-think its
+  mistakes in particular. 80% of all moves follow a quiet opponent move,
+  the same as the 77% among search mistakes. Both leads are base rates.
+- Real leak: at 10+0.1 Trinity ends the game with a median 17% of its
+  available time unused (its opponent copy too). The cause is the budget
+  rule t/25 + 0.75 x increment: it treats every position as "25 moves to
+  go" and never spends the last quarter of the increment, so time piles up
+  towards the end of a game that the rule cannot see coming. Only 1% of
+  moves reach the hard limit; 22% stop very early (under 35% of the soft
+  limit). Moves after which Trinity's own eval then fell by 100+ cp had a
+  median time ratio of 0.48, twice as often "quick" as an average move:
+  the stop rule's confidence is sometimes misplaced (noted, not yet used).
+- Trinity's games are long: median own moves still to come is about 61 at
+  moves 1-10, 51 at 11-20, 43 at 21-30, 37 at 31-40, 27 at 41-60 (80th
+  percentile about 17 higher). "25 to go" is far from this at every stage.
+
+Design (three parts, each its own branch and test; from Trinity's data and
+first principles, nothing taken from other engines):
+
+- A. Horizon model (branch to come after the PC data): base time =
+  time left / H + increment, where H is the expected number of own moves
+  still to come, read from a small table by move number and piece count
+  fitted to Trinity's own calibration games (a quantile above the median,
+  so that running short stays rare). In repeating controls (CCRL's 40/15)
+  H = min(moves to the control, expected remaining) + 1, so the last
+  period of a game that will end early is not hoarded. Aim: the unused
+  share falls from ~17% to under 8% without more time losses. Prediction:
+  self-play +3 to +12 at 8+0.08 if the leak is confirmed on the PC data
+  (0 to +4 if the calibration games show under 8% unused); at a repeating
+  control +2 to +8; CCRL-scale (40/20 calibration) +2 to +8. Ceiling note:
+  time management moves time between moves (at most about 2x on one
+  move); the 60% of mistakes that 10x time fixes are a search-depth
+  finding, not a time-management mandate.
+- B. Unsure root (branch tm-unsure, pushed): the owner's "unsure" signal
+  (|corrected - raw eval| at the root, which gave +10.8 in LMR) scales the
+  soft time by up to 1.3x at a gap of 40 cp. Hypothesis: where the
+  network's opinion needs the largest learned correction, evaluation is
+  least reliable and depth must make up for it. Prediction: self-play -2
+  to +6 at 8+0.08; CCRL-scale 0 to +3.
+- C. Stop-rule calibration (later, only if A or B pass): expose the stop
+  rule's constants (stability table, node-fraction and score-drop
+  coefficients, the 0.6 factor, hard multiplier) to the SPSA tuner and
+  tune at a repeating control such as 20/15, or measure P(best move
+  changes with 2x time | signals) directly on Trinity's games and fit the
+  table. These constants have never been tuned.
+
+Test plan: SPRT on GitHub at 8+0.08 for B now; A at 8+0.08 and at 40/60
+(the workflow now accepts repeating controls); CCRL-scale check of the
+winners with 12-Calibrate-Repeating.bat (two runs, +/- 11 each).
 
 ## Loss forensics
 
