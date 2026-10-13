@@ -18,7 +18,7 @@ use crate::board::Board;
 use crate::movegen;
 use crate::nnue;
 
-struct Engine {
+pub(crate) struct Engine {
     name: String,
     child: Child,
     input: ChildStdin,
@@ -26,7 +26,7 @@ struct Engine {
 }
 
 impl Engine {
-    fn start(name: &str, path: &str) -> Result<Engine, String> {
+    pub(crate) fn start(name: &str, path: &str) -> Result<Engine, String> {
         let mut child = Command::new(path)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -45,7 +45,7 @@ impl Engine {
         Ok(e)
     }
 
-    fn send(&mut self, line: &str) -> Result<(), String> {
+    pub(crate) fn send(&mut self, line: &str) -> Result<(), String> {
         writeln!(self.input, "{line}").and_then(|_| self.input.flush()).map_err(|e| format!("{}: {e}", self.name))
     }
 
@@ -60,6 +60,37 @@ impl Engine {
             }
             if line.trim_start().starts_with(prefix) {
                 return Ok(line.trim().to_string());
+            }
+        }
+    }
+
+    /// Search `fen` (after `moves`, UCI, may be empty) for `movetime` ms;
+    /// returns the best move and the last reported score (cp, side to move).
+    pub(crate) fn analyse(&mut self, fen: &str, moves: &str, movetime: u64) -> Result<(String, i32), String> {
+        if moves.is_empty() {
+            self.send(&format!("position fen {fen}"))?;
+        } else {
+            self.send(&format!("position fen {fen} moves {moves}"))?;
+        }
+        self.send(&format!("go movetime {movetime}"))?;
+        let mut score = 0;
+        let mut line = String::new();
+        loop {
+            line.clear();
+            let n = self.output.read_line(&mut line).map_err(|e| format!("{}: {e}", self.name))?;
+            if n == 0 {
+                return Err(format!("{} stopped unexpectedly", self.name));
+            }
+            let words: Vec<&str> = line.split_whitespace().collect();
+            if words.first() == Some(&"bestmove") {
+                return Ok((words.get(1).unwrap_or(&"").to_string(), score));
+            }
+            if let Some(p) = words.iter().position(|w| *w == "score") {
+                match (words.get(p + 1), words.get(p + 2).and_then(|v| v.parse::<i32>().ok())) {
+                    (Some(&"cp"), Some(v)) => score = v,
+                    (Some(&"mate"), Some(v)) => score = if v > 0 { 10_000 } else { -10_000 },
+                    _ => {}
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ mod bench;
 mod board;
 mod datagen;
 mod eval;
+mod forensics;
 mod movegen;
 mod nnue;
 mod search;
@@ -57,6 +58,15 @@ fn real_main() -> i32 {
             let count = args.get(1).and_then(|c| c.parse().ok()).unwrap_or(1000);
             let movetime = args.get(2).and_then(|t| t.parse().ok()).unwrap_or(100);
             if let Err(e) = similarity::run(count, movetime, &args[3.min(args.len())..]) {
+                eprintln!("{e}");
+                return 1;
+            }
+        }
+        // `trinity forensics <max losses> <workers> <pgn files...>`
+        Some("forensics") => {
+            let max = args.get(1).and_then(|c| c.parse().ok()).unwrap_or(200);
+            let workers = args.get(2).and_then(|t| t.parse().ok()).unwrap_or(4);
+            if let Err(e) = forensics::run(max, workers, &args[3.min(args.len())..]) {
                 eprintln!("{e}");
                 return 1;
             }

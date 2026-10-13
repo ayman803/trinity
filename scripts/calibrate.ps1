@@ -31,8 +31,8 @@ $opponents = @(
     @{ Name = "Prune"; Version = "4.0.1"; Rating = 3543; Download = $true }
 )
 if ($Vs) { $opponents = @(@{ Name = $Vs; Version = ""; Rating = $null; Download = $true }) }
-# The CCRL top-20 cut-off (Halogen 16, 4 CPUs) on the same list.
-$top20 = 3625
+# The goal line: #100 on the same list (Houdini 6, 4 CPUs).
+$top100 = 3455
 
 function Build-Opponent($Opp) {
     $dir = Join-Path $script:Work "opponents"
@@ -232,7 +232,7 @@ try {
         $estimate = $sumWR / $sumW
         $error95 = 1.0 / [Math]::Sqrt($sumW)
         $summary += ("ESTIMATED CCRL RATING (1 CPU): about {0:0} (statistical +/- {1:0}; real uncertainty about +/- 50-100)" -f $estimate, $error95)
-        $summary += ("Top-20 cut-off: {0} (4 CPUs). Gap: about {1:0} Elo" -f $top20, ($top20 - $estimate))
+        $summary += ("Top-100 line: {0} (#100 on the CCRL 40/15 list of 9 October 2026). Difference: {1:+0;-0;0} Elo" -f $top100, ($estimate - $top100))
     }
     $summary += "Duration: $hours hours. Logs: sprt\results\${stamp}_calibration_*"
     $summaryText = $summary -join "`r`n"

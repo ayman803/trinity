@@ -395,3 +395,26 @@ function Invoke-Housekeeping([switch]$Training) {
         Remove-OldLeelaBlocks
     }
 }
+
+# Commit files to main on GitHub through a temporary worktree (so the main
+# folder's own state does not matter). $Files maps repository paths to text.
+function Publish-RepoFiles([string]$Message, [hashtable]$Files) {
+    $tree = Join-Path $script:Work "publish-files"
+    if (Test-Path $tree) { Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree) }
+    Invoke-Native git @("-C", $script:Root, "worktree", "prune")
+    Invoke-Native git @("-C", $script:Root, "fetch", "origin", "main")
+    Invoke-Native git @("-C", $script:Root, "worktree", "add", "--detach", $tree, "origin/main")
+    try {
+        foreach ($path in $Files.Keys) {
+            $full = Join-Path $tree $path
+            New-Item -ItemType Directory -Force -Path (Split-Path $full) | Out-Null
+            Set-Content -Path $full -Value $Files[$path]
+            Invoke-Native git @("-C", $tree, "add", $path)
+        }
+        Invoke-Native git ($script:CommitIdentity + @("-C", $tree, "commit", "-m", $Message))
+        Invoke-Native git @("-C", $tree, "push", "origin", "HEAD:main")
+        Write-Good "Saved on GitHub: $($Files.Keys -join ', ')"
+    } finally {
+        Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree)
+    }
+}
