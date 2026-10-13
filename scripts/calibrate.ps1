@@ -64,6 +64,53 @@ function Build-Opponent($Opp) {
     return $oppExe
 }
 
+# Trinity's lost games from fastchess PGN files, as one PGN text.
+function Get-LostGames($PgnFiles) {
+    $lost = New-Object System.Text.StringBuilder
+    $count = 0
+    foreach ($pair in $PgnFiles) {
+        $file = $pair[1]
+        if (-not (Test-Path -LiteralPath $file)) { continue }
+        $text = Get-Content -LiteralPath $file -Raw
+        foreach ($game in ($text -split '(?m)^(?=\[Event )')) {
+            if ($game -notmatch '\[Result "([^"]+)"\]') { continue }
+            $result = $Matches[1]
+            $white = $game -match '\[White "Trinity"\]'
+            $black = $game -match '\[Black "Trinity"\]'
+            if (($white -and $result -eq "0-1") -or ($black -and $result -eq "1-0")) {
+                [void]$lost.Append($game.TrimEnd()).Append("`n`n")
+                $count++
+            }
+        }
+    }
+    return @($lost.ToString(), $count)
+}
+
+function Publish-CalibrationRecord($Stamp, $Ref, $SummaryText, $PgnFiles) {
+    $lost = Get-LostGames $PgnFiles
+    $safeRef = $Ref -replace '[^A-Za-z0-9._-]', '_'
+    $tree = Join-Path $script:Work "publish-calibration"
+    if (Test-Path $tree) { Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree) }
+    Invoke-Native git @("-C", $script:Root, "worktree", "prune")
+    Invoke-Native git @("-C", $script:Root, "fetch", "origin", "main")
+    Invoke-Native git @("-C", $script:Root, "worktree", "add", "--detach", $tree, "origin/main")
+    try {
+        $resultsDir = Join-Path $tree "test-results"
+        $gamesDir = Join-Path $tree "games"
+        New-Item -ItemType Directory -Force -Path $resultsDir, $gamesDir | Out-Null
+        Set-Content -Path (Join-Path $resultsDir "calibration-$Stamp-$safeRef.txt") -Value $SummaryText
+        $gamesFile = Join-Path $gamesDir "calibration-$Stamp-$safeRef-losses.pgn"
+        [IO.File]::WriteAllText($gamesFile, $lost[0])
+        Invoke-Native git @("-C", $tree, "add", "test-results", "games")
+        Invoke-Native git ($script:CommitIdentity + @("-C", $tree, "commit", "-m",
+                "Calibration of '$Ref' ($Stamp): summary and Trinity's $($lost[1]) lost games"))
+        Invoke-Native git @("-C", $tree, "push", "origin", "HEAD:main")
+        Write-Good "Saved on GitHub: test-results\calibration-$Stamp-$safeRef.txt and $($lost[1]) lost games in games\."
+    } finally {
+        Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree)
+    }
+}
+
 $keepAwake = $null
 try {
     Assert-Tools
@@ -113,12 +160,14 @@ try {
     $started = Get-Date
 
     $lines = @()
+    $pgnFiles = @()
     $sumW = 0.0; $sumWR = 0.0
     foreach ($pair in $built) {
         $o = $pair[0]; $oppExe = $pair[1]
         $name = "${stamp}_calibration_$($Ref -replace '[^A-Za-z0-9._-]', '_')_vs_$($o.Name)"
         $log = Join-Path $results "$name.log"
         $pgn = Join-Path $results "$name.pgn"
+        $pgnFiles += , @($o.Name, $pgn)
         $fcArgs = @(
             "-engine", "cmd=$trinity", "name=Trinity",
             "-engine", "cmd=$oppExe", "name=$($o.Name)",
@@ -190,6 +239,14 @@ try {
     Set-Content -Path (Join-Path $results "${stamp}_calibration.summary.txt") -Value $summaryText
     $latest = if ($Vs) { "LATEST-MATCH.txt" } else { "LATEST-CALIBRATION.txt" }
     Set-Content -Path (Join-Path $results $latest) -Value $summaryText
+
+    # Publish the summary and Trinity's lost games in the repository
+    # (test-results/ and games/), so the advisor and Scout can study them.
+    try {
+        Publish-CalibrationRecord $stamp $Ref $summaryText $pgnFiles
+    } catch {
+        Write-Warn "Could not save the games and summary on GitHub: $($_.Exception.Message)"
+    }
 
     Write-Host ""
     Write-Host "==================================================================" -ForegroundColor Cyan
