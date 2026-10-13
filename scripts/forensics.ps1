@@ -27,6 +27,16 @@ try {
     Write-Host "Using the calibration of $stamp ($($files.Count) opponents)."
 
     if ($Workers -le 0) { $Workers = [Math]::Max(1, (Get-DefaultConcurrency) - 4) }
+    # Stockfish (downloaded by 13-Similarity-Test.bat) judges which move was
+    # the mistake; only as a referee (see the originality rule in CLAUDE.md).
+    $referee = @(Get-ChildItem -LiteralPath (Join-Path (Join-Path $script:Work "similarity") "Stockfish") -Recurse -Filter "*.exe" -ErrorAction SilentlyContinue) | Select-Object -First 1
+    $refArgs = @()
+    if ($referee) {
+        Write-Host "Referee: $($referee.FullName)"
+        $refArgs = @("--referee=$($referee.FullName)")
+    } else {
+        Write-Warn "No Stockfish found (run 13-Similarity-Test.bat once to download it); Trinity judges itself."
+    }
     $trinity = Build-Trinity "origin/main"
     $keepAwake = Start-KeepAwake
     Write-Step "Loss forensics: up to $Losses lost games, $Workers at a time"
@@ -34,7 +44,7 @@ try {
     $old = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
     try {
-        & $trinity @("forensics", "$Losses", "$Workers") @files | Tee-Object -FilePath $log
+        & $trinity (@("forensics", "$Losses", "$Workers") + $refArgs + $files) | Tee-Object -FilePath $log
     } finally {
         $ErrorActionPreference = $old
     }

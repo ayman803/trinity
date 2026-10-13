@@ -261,7 +261,69 @@ fn judge(engine: &mut Engine, loss: &Loss) -> Result<Verdict, String> {
     Ok(Verdict { class: "evaluation", phase: phase(&loss.plies[i].board), before, detail: String::new() })
 }
 
-pub fn run(max: usize, workers: usize, files: &[String]) -> Result<(), String> {
+/// Referee search time per position (ms).
+const REFEREE_MS: u64 = 100;
+/// A move that loses at least this much (cp, by the referee) is a mistake.
+const MISTAKE: i32 = 100;
+
+/// With a stronger engine as referee: the turning point is Trinity's first
+/// move that, by the referee's judgment, threw away at least MISTAKE cp
+/// while the position was not yet lost. Trinity then searches that
+/// position for ten times as long; if it now plays a move the referee
+/// rates clearly better, the loss is a search loss, otherwise an
+/// evaluation loss. The referee only judges positions.
+fn judge_with_referee(engine: &mut Engine, referee: &mut Engine, loss: &Loss) -> Result<Verdict, String> {
+    let last = loss.plies.last().map(|p| p.board).unwrap_or_else(Board::startpos);
+    if loss.termination.contains("time") {
+        return Ok(Verdict { class: "time", phase: phase(&last), before: "-", detail: String::new() });
+    }
+    let mine: Vec<usize> = (0..loss.plies.len())
+        .filter(|&i| loss.plies[i].board.stm == loss.trinity && loss.plies[i].eval.is_some())
+        .collect();
+    let mut first = true;
+    for &k in &mine {
+        let ply = &loss.plies[k];
+        let fen = ply.board.to_fen();
+        let played = ply.mv.to_uci();
+        let (_, before_score) = referee.analyse(&fen, "", REFEREE_MS)?;
+        if before_score < -MISTAKE {
+            if first {
+                return Ok(Verdict { class: "lost from the book", phase: phase(&ply.board), before: "-", detail: String::new() });
+            }
+            break;
+        }
+        first = false;
+        let after_score = -referee.analyse(&fen, &played, REFEREE_MS)?.1;
+        if before_score - after_score < MISTAKE {
+            continue;
+        }
+        let before = match k.checked_sub(1).map(|j| (&loss.plies[j].board, loss.plies[j].mv)) {
+            Some((b, m)) if b.make_move(m).in_check() => "check",
+            Some((_, m)) if m.is_capture() => "capture",
+            Some(_) => "quiet",
+            None => "-",
+        };
+        let ms = ((ply.secs * 10_000.0) as u64).clamp(200, 5_000);
+        engine.send("ucinewgame")?;
+        let (longer, _) = engine.analyse(&fen, "", ms)?;
+        let longer_score = if longer == played { after_score } else { -referee.analyse(&fen, &longer, REFEREE_MS)?.1 };
+        let class = if longer_score - after_score >= MARGIN { "search" } else { "evaluation" };
+        return Ok(Verdict {
+            class,
+            phase: phase(&ply.board),
+            before,
+            detail: format!(
+                "played {} (referee {:+} -> {:+}); with 10x time Trinity plays {} (referee {:+})",
+                played, before_score, after_score, longer, longer_score
+            ),
+        });
+    }
+    Ok(Verdict { class: "gradual (no single mistake)", phase: phase(&last), before: "-", detail: String::new() })
+}
+
+pub fn run(max: usize, workers: usize, args: &[String]) -> Result<(), String> {
+    let referee_path = args.iter().find_map(|a| a.strip_prefix("--referee=")).map(str::to_string);
+    let files: Vec<&String> = args.iter().filter(|a| !a.starts_with("--referee=")).collect();
     let mut losses = Vec::new();
     for f in files {
         let text = std::fs::read_to_string(f).map_err(|e| format!("{f}: {e}"))?;
@@ -291,13 +353,24 @@ pub fn run(max: usize, workers: usize, files: &[String]) -> Result<(), String> {
                         return;
                     }
                 };
+                let mut referee = match referee_path.as_deref().map(|p| Engine::start("referee", p)).transpose() {
+                    Ok(r) => r,
+                    Err(e) => {
+                        *error.lock().unwrap() = Some(e);
+                        return;
+                    }
+                };
                 loop {
                     let k = next.fetch_add(1, Ordering::Relaxed);
                     if k >= chosen.len() {
                         break;
                     }
                     let i = chosen[k];
-                    match judge(&mut engine, &losses[i]) {
+                    let verdict = match referee.as_mut() {
+                        Some(r) => judge_with_referee(&mut engine, r, &losses[i]),
+                        None => judge(&mut engine, &losses[i]),
+                    };
+                    match verdict {
                         Ok(v) => results.lock().unwrap().push((i, v)),
                         Err(e) => {
                             *error.lock().unwrap() = Some(e);
@@ -320,9 +393,13 @@ pub fn run(max: usize, workers: usize, files: &[String]) -> Result<(), String> {
     let count = |f: &dyn Fn(&Verdict) -> bool| results.iter().filter(|(_, v)| f(v)).count();
     println!();
     println!("LOSS FORENSICS: {} of Trinity's {total} lost games (re-searched at 10x the time it used, 0.2-5 s)", results.len());
-    for class in ["search", "evaluation", "time", "lost from the book", "unclear (no clear fall)"] {
+    match &referee_path {
+        Some(p) => println!("Referee for mistakes: {p} ({REFEREE_MS} ms per position)"),
+        None => println!("No referee: Trinity judges itself (search losses are undercounted)"),
+    }
+    for class in ["search", "evaluation", "time", "lost from the book", "gradual (no single mistake)", "unclear (no clear fall)"] {
         let c = count(&|v: &Verdict| v.class == class);
-        println!("  {class:<24} {c:>5}  ({:.0}%)", 100.0 * c as f64 / n);
+        println!("  {class:<28} {c:>5}  ({:.0}%)", 100.0 * c as f64 / n);
     }
     println!("By phase at the turning point (search / evaluation):");
     for ph in ["opening", "middlegame", "endgame"] {

@@ -67,6 +67,10 @@ and science from outside computer chess. Ideas already in Trinity stay.
 One exception: the release checks may run other engines (similarity test)
 and compare their source text mechanically to prove Trinity copies
 nothing; nothing learned there may be used.
+Second exception (owner, 13 October 2026): loss forensics may use an
+outside engine (Stockfish) purely as a referee that scores positions, to
+find which of Trinity's moves was the mistake. Nothing is taken from how
+that engine works.
 
 ## Scout (daily idea task)
 
