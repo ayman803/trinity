@@ -2,27 +2,31 @@ Calibration games of 2026-10-12_19-36
 LOSS FORENSICS: 200 of Trinity's 1040 lost games (re-searched at 10x the time it used, 0.2-5 s)
 Referee for mistakes: C:\Trinity\sprt\similarity\Stockfish\stockfish\stockfish-windows-x86-64-avx2.exe (100 ms per position)
   search                          43  (22%)
-  evaluation                      12  (6%)
+  evaluation                       8  (4%)
   time                             2  (1%)
-  lost from the book               6  (3%)
-  gradual (no single mistake)    137  (68%)
+  lost from the book               5  (2%)
+  gradual (no single mistake)    142  (71%)
   unclear (no clear fall)          0  (0%)
 By phase at the turning point (search / evaluation):
-  opening        14 / 2   
-  middlegame     25 / 5   
-  endgame         4 / 5   
+  opening         9 / 3   
+  middlegame     29 / 1   
+  endgame         5 / 4   
 Opponent's move just before the turning point (search / evaluation):
-  capture         9 / 2   
+  capture        10 / 1   
   check           1 / 0   
-  quiet          33 / 10  
+  quiet          32 / 7   
 By opponent (search / evaluation / other):
-  Bread          11 /    1 /   36
-  Patricia       17 /    3 /   24
-  Prune           9 /    4 /   49
-  akimbo          6 /    4 /   36
+  Bread          11 /    0 /   37
+  Patricia       14 /    2 /   28
+  Prune          13 /    1 /   48
+  akimbo          5 /    5 /   36
+Gradual losses, their 3 worst moves (drop >= 30 cp) retried at 10x time: search 138 / evaluation 107
+Search mistakes: time spent on the mistake / Trinity's average move time in that game: median 0.77 (43 cases)
+  ...on the first 5 moves out of the book: 2 search mistakes, median time ratio 2.05
+  ...on the later moves: 41 search mistakes, median time ratio 0.75
 Examples of search losses:
-  played c5d4 (referee -18 -> -236); with 10x time Trinity plays f6d5 (referee -24)
-  played f3e1 (referee -42 -> -190); with 10x time Trinity plays d4d3 (referee -55)
-  played e1e6 (referee +38 -> -94); with 10x time Trinity plays g5h5 (referee +0)
-  played c7e5 (referee +70 -> -39); with 10x time Trinity plays c4c3 (referee +78)
-  played c3a4 (referee +38 -> -187); with 10x time Trinity plays c3e2 (referee +31)
+  played c5d4 (referee -27 -> -221); with 10x time Trinity plays f6d5 (referee -19)
+  played f3e1 (referee -56 -> -234); with 10x time Trinity plays d4d3 (referee -57)
+  played c7e5 (referee +77 -> -43); with 10x time Trinity plays c4c3 (referee +76)
+  played c3a4 (referee +35 -> -300); with 10x time Trinity plays c3e2 (referee +31)
+  played f4f5 (referee -5 -> -128); with 10x time Trinity plays b1e4 (referee -12)
