@@ -16,9 +16,8 @@ opponents); real uncertainty about +/- 50-100.
 - Release 1.0.0: prepared (draft release first, then public). Waiting for
   the SPRT of `spsa-1024` (goes in if it passes) and the threads test
   (4 threads vs 1 on the PC: passed, +99.6, no errors, plus a 200-game
-  check of the 1.0.0 build: no errors). The laptop check was skipped at
-  first (laptop not available) and is now running on the 1.0.0 build; a
-  problem there would be fixed in 1.0.1.
+  check of the 1.0.0 build: no errors). The laptop (mixed fast and slow
+  cores) also passed a 200-game check of the 1.0.0 build: no errors.
 - `unsure-1024` passed (+10.8, SPRT #8) and the SPSA re-tune passed on top of it (+10.8, SPRT #10); both merged, bench 780879. This is the 1.0.0 build. The SPSA part is not counted toward the +50 or the stop rule (tuned at 8+0.08).
 - Next attempt (+50 branch, separate from 1.0.0): ideas 8-11 below.
   Fable 5.1 at maximum effort designs each change; Opus does the routine

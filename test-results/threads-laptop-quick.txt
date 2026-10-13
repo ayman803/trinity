@@ -1,0 +1,8 @@
+THREADS TEST (short check of the 1.0.0 build): 'main' (bench 780879), 4 threads vs 1 thread
+Machine: KO6AVF (the laptop, i7-1355U: 2 fast + 8 slow cores), 10 cores / 12 threads, 1 game at a time, tc 10+0.1, hash 64 MB, book 8moves_v3
+Elo: 81.37 +/- 23.57, nElo: 172.66 +/- 48.15
+Games: 200, Wins: 51, Losses: 5, Draws: 144, Points: 123.0 (61.50 %)
+Ptnml(0-2): [0, 3, 54, 37, 6], WL/DD Ratio: 0.04
+Games lost on time: 0; illegal moves: 0; crashes or hangs: 0
+(Elo is from the 4-thread side's point of view. A crash and time-loss check on mixed fast/slow cores; the Elo figure is not comparable with the PC's.)
+Duration: 1.4 hours.
