@@ -539,3 +539,49 @@ pub mod tests {
         assert!(Network::from_bytes(&[0u8; 1000]).is_err());
     }
 }
+
+#[cfg(test)]
+mod speed_probe {
+    use super::*;
+    use crate::board::Board;
+    use crate::movegen;
+    use std::time::Instant;
+
+    /// Prints the cost of one evaluate() and one update_into() call, to
+    /// compare with the time per node of `bench`. Run with
+    /// `cargo test --release speed_probe -- --nocapture`.
+    #[test]
+    #[ignore = "timing only: cargo test --release speed_probe -- --ignored --nocapture"]
+    fn speed_probe() {
+        let Some(net) = network() else { return };
+        let b = Board::from_fen("r1bq1rk1/pp2bppp/2n1pn2/3p4/2PP4/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 8").unwrap();
+        let pair = AccPair::from_board(net, &b);
+        let n = 2_000_000;
+        let t = Instant::now();
+        let mut s = 0i64;
+        for i in 0..n {
+            s += evaluate(net, &pair, &b) as i64 + (i & 1) as i64;
+        }
+        let eval_ns = t.elapsed().as_nanos() as f64 / n as f64;
+        let moves = movegen::legal_moves(&b);
+        let mut cache = RefreshCache::new(net);
+        let mut out = AccPair::from_board(net, &b);
+        let t = Instant::now();
+        let mut k = 0;
+        for i in 0..n {
+            let m = moves.as_slice()[i % moves.len()];
+            let after = b.make_move(m);
+            pair.update_into(&mut out, net, &mut cache, &b, &after, m);
+            k += out.acc[0].vals[0] as i64;
+        }
+        let upd_ns = t.elapsed().as_nanos() as f64 / n as f64;
+        let t = Instant::now();
+        for i in 0..n {
+            let m = moves.as_slice()[i % moves.len()];
+            let after = b.make_move(m);
+            k += after.hash as i64 & 1;
+        }
+        let mk_ns = t.elapsed().as_nanos() as f64 / n as f64;
+        println!("SPEEDPROBE evaluate {eval_ns:.0} ns, make_move+update {upd_ns:.0} ns, make_move alone {mk_ns:.0} ns (s={s} k={k})");
+    }
+}
