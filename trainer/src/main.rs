@@ -339,6 +339,17 @@ fn main() {
                 acc.iter_mut().zip(vals).for_each(|(a, v)| *a += v);
             }
         }
+        // How far apart the checkpoints are (0 would make averaging pointless).
+        let spread = sets[0]
+            .iter()
+            .zip(sets.last().unwrap())
+            .flat_map(|((_, a), (_, b))| a.iter().zip(b).map(|(x, y)| (x - y).abs()))
+            .fold((0f32, 0f64, 0usize), |(m, s, c), d| (m.max(d), s + d as f64, c + 1));
+        println!(
+            "First vs last checkpoint: largest weight difference {:.6}, average {:.8}",
+            spread.0,
+            spread.1 / spread.2.max(1) as f64
+        );
         let n = sets.len() as f32;
         mean.iter_mut().for_each(|(_, vals)| vals.iter_mut().for_each(|v| *v /= n));
         let tmp = format!("{}.weights.bin", args[2]);

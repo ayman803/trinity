@@ -61,6 +61,14 @@ try {
             # 12617744 bytes of weights, padded to a multiple of 64 (as main's network is).
             if ($size -lt 12617744 -or $size -ge 12617744 + 64) { Stop-WithMessage "$out has an unexpected size ($size bytes)." }
 
+            $main = Join-Path (Join-Path $script:Root "nets") "default.nnue"
+            $hashOut = (Get-FileHash -LiteralPath $out -Algorithm SHA256).Hash
+            $hashMain = (Get-FileHash -LiteralPath $main -Algorithm SHA256).Hash
+            Write-Host "Fingerprint of the average: $($hashOut.Substring(0, 16)); of main's network: $($hashMain.Substring(0, 16))"
+            if ($hashOut -eq $hashMain) {
+                Write-Warn "The average $($v.Label) is identical to main's network; not published."
+                continue
+            }
             $branch = "net-avg-$($v.Label)-$stamp"
             $tree = Join-Path $script:Work "publish-$branch"
             Invoke-Native git @("-C", $script:Root, "fetch", "origin")
@@ -80,7 +88,7 @@ try {
         Remove-Item Env:TRINITY_HIDDEN -ErrorAction SilentlyContinue
     }
     Write-Host ""
-    Write-Good "Done. Tell Claude: weight averaging done, branches $($branches -join ' and ')."
+    Write-Good "Done. Tell Claude: weight averaging done, branches: $($branches -join ' and ') (send a screenshot of this window)."
 } catch {
     Write-UnexpectedError $_
     exit 1
