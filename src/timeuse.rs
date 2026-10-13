@@ -48,6 +48,8 @@ struct SideStats {
     period_left: Vec<f64>,
     quick: usize,
     near_hard: usize,
+    /// Move time as a fraction of Trinity's soft limit for that move.
+    soft_fractions: Vec<f64>,
     ratios: Vec<f64>,
     /// Time ratios of moves after which the mover's own eval fell >= 100 cp.
     swing_ratios: Vec<f64>,
@@ -132,6 +134,7 @@ fn walk(game: &Game, side: usize, tc: TimeControl, s: &mut SideStats) {
         if t >= 0.9 * hard {
             s.near_hard += 1;
         }
+        s.soft_fractions.push(t / soft.max(1e-6));
         let ratio = if avg > 0.0 { t / avg } else { 1.0 };
         s.ratios.push(ratio);
         s.by_move[bucket(ply.board.fullmove)].push(t);
@@ -184,6 +187,12 @@ fn report(name: &str, s: &mut SideStats) {
         "  moves stopped very early (under 35% of the soft limit): {:.0}%; near the hard limit: {:.0}%",
         pct(s.quick, s.moves),
         pct(s.near_hard, s.moves)
+    );
+    let mean_fraction = s.soft_fractions.iter().sum::<f64>() / s.soft_fractions.len().max(1) as f64;
+    println!(
+        "  move time as a share of the soft limit: mean {:.2}, median {:.2} (the budget rule plans for about 1.0)",
+        mean_fraction,
+        median(&mut s.soft_fractions)
     );
     let all = median(&mut s.ratios);
     let below_half = s.ratios.iter().filter(|&&r| r < 0.5).count();

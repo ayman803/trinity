@@ -138,6 +138,14 @@ the calibration games on the PC are being measured with 18-Time-Use.bat):
   limit). Moves after which Trinity's own eval then fell by 100+ cp had a
   median time ratio of 0.48, twice as often "quick" as an average move:
   the stop rule's confidence is sometimes misplaced (noted, not yet used).
+- Repeating control (CCRL's kind), 7 self-play games at 40/20 here: a
+  median 34% of the available time is unused at the end of the game, and
+  about 7 s of each 20 s period is carried over; 40% of moves stop under
+  35% of the soft limit, 1% reach the hard limit. The stop rule saves time
+  readily but the savings are never spent: they only raise later budgets
+  by 1/(moves to go) per move, so they pile up. Fix in A: plan the spend
+  (soft = (t/H + inc) / c, with c the measured mean of move time / soft
+  limit, about 0.5) so that the realised spend matches the plan.
 - Trinity's games are long: median own moves still to come is about 61 at
   moves 1-10, 51 at 11-20, 43 at 21-30, 37 at 31-40, 27 at 41-60 (80th
   percentile about 17 higher). "25 to go" is far from this at every stage.
