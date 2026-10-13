@@ -56,3 +56,20 @@ Windows. Every instruction must be concrete:
    GPL-3.0-or-later). Calibration passes C:\Trinity\syzygy to all
    engines when that folder exists. Measure the gain with calibration,
    not SPRT.
+
+## Originality rule (set by the owner, 13 October 2026)
+
+Absolute, for the Session, Fable and Scout alike. For every new idea from
+now on, do not read other engines' code, commit logs, test logs, or forum
+posts about their techniques. Drop any idea you recognise as another
+engine's. Allowed sources: Trinity's own code and data, first principles,
+and science from outside computer chess. Ideas already in Trinity stay.
+One exception: the release checks may run other engines (similarity test)
+and compare their source text mechanically to prove Trinity copies
+nothing; nothing learned there may be used.
+
+## Scout (daily idea task)
+
+A scheduled task runs at 5:46 am Pacific and writes scout/YYYY-MM-DD.md
+plus one line per idea in scout/INDEX.md. It never touches code, tests or
+ESTIMATES.md. Read scout/INDEX.md before planning the next step.
