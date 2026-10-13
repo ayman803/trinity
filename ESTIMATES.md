@@ -62,6 +62,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-13 | weight averaging, bolder: mean of checkpoints 450, 500, 550, 600 (branch net-avg-450-600-20261012-2235, bench 859329) | self-play -5 to +8 | -1.3 +/- 4.3 after 7200 games (SPRT #12, one GitHub job lost; stopped, not merged) | - | no gain |
 | 2026-10-13 | tm-unsure: think up to 30% longer when the root's eval correction is large (Fable design B; bench unchanged) | self-play -2 to +6; CCRL 0 to +3 | +3.9 +/- 3.8 after 9000 games (SPRT #13, LLR 1.83; stopped, not merged) | - | no sign that the unsure signal helps beyond the extra time (+3.9 and +5.3 are statistically the same; both spent the same extra time on average, mean multiplier 1.12). Dropped; does not count for the Fable gate |
 | 2026-10-13 | tm-control: 12% more soft time on every move (control for tm-unsure: its measured mean multiplier is 1.12) | self-play -2 to +4 | +5.3 +/- 3.7 after 9000 games (SPRT #14, LLR 2.82; stopped, not merged) | - | simply thinking 12% longer on every move gains about +5: confirms the unspent-time leak. Resumed as SPRT #15 (continues #14); merge if it passes, after a 40/20 time-loss check |
+| 2026-10-13 | tm-plan (part A, Fable gate change 1): the soft limit is scaled by plan/spend so far in the game (closed loop, prior 0.6, clamp 1-2.5x), and the whole increment is spent; hard limit at least 1.6x soft. Bench unchanged | 8+0.08 vs main: +4 to +10; 40/20 vs tm-control (gate): +2 to +6, about a 50% chance to pass the capped test; CCRL-scale (40/20 calibration): +1 to +6 | pending | - | PC data: Trinity spends 0.67 (10+0.1) and 0.48 (40/20) of its own plan; its rated opponents 0.84 and 0.63. Fixed-ratio alternative rejected: the ratio differs by clock, so the loop measures it |
 
 ## Proposed (not yet run)
 
@@ -149,6 +150,20 @@ the calibration games on the PC are being measured with 18-Time-Use.bat):
   by 1/(moves to go) per move, so they pile up. Fix in A: plan the spend
   (soft = (t/H + inc) / c, with c the measured mean of move time / soft
   limit, about 0.5) so that the realised spend matches the plan.
+- PC data (18-Time-Use.bat, 4000 games at 10+0.1 and 1200 at 40/20 against
+  rated engines, test-results/timeuse-*.txt) confirms the picture: Trinity
+  spends a mean 0.67 of its planned soft limit at 10+0.1 and 0.48 at 40/20;
+  its opponents, under the same clock, 0.84 and 0.63. Unused at game end:
+  19% vs the opponents' 12% (10+0.1); 43% vs 37% (40/20, inflated by
+  adjudicated endings for both). Carried over per 40-move period: 6.5 s vs
+  5.1 s. Per move at 11-20: Trinity 0.27 s, opponents 0.40 s, which is
+  exactly Trinity's planned base: the formula is fine, the stop rule
+  under-spends it. Moves after which the eval fell by 100+ cp: ratio 0.73
+  vs 0.75 overall, no signal (the 0.48 seen in 20 self-play games was
+  noise). The remaining-moves table (median/80th percentile by move
+  number: 58/83, 48/73, 39/64, 30/55, 22/49, 22/55) is kept for a possible
+  A2 (horizon model); A itself changes only the spend ratio and the
+  increment, to keep the test readable.
 - Trinity's games are long: median own moves still to come is about 61 at
   moves 1-10, 51 at 11-20, 43 at 21-30, 37 at 31-40, 27 at 41-60 (80th
   percentile about 17 higher). "25 to go" is far from this at every stage.
