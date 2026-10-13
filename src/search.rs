@@ -282,7 +282,7 @@ impl Searcher {
             // of 1/25 of the clock in sudden death) plus the whole increment.
             let base = match l.movestogo {
                 Some(mtg) => t / (mtg.clamp(1, 50) + 1) + l.inc,
-                None => t / 25 + l.inc,
+                None => t / 25 + l.inc * 3 / 4,
             };
             // Closed loop: the stop rule ends most moves well before the
             // soft limit (about half of it, measured), so the planned time
@@ -293,7 +293,11 @@ impl Searcher {
             // moves is spent on the others.
             let prior = 3.0 * base as f64;
             let used_share = (self.used_ms + 0.6 * prior) / (self.plan_ms + prior);
-            let scale = (1.0 / used_share).clamp(1.0, 2.5);
+            // In sudden death (no moves-to-go) the clock only shrinks, and a
+            // large scale ran it down to 0.1 s in validation games: there the
+            // loop may raise the budget by at most 25%.
+            let max_scale = if l.movestogo.is_some() { 2.5 } else { 1.25 };
+            let scale = (1.0 / used_share).clamp(1.0, max_scale);
             let soft = ((base as f64 * scale) as u64).min(t / 2).max(1);
             self.plan_this_ms = soft as f64;
             self.soft_ms = soft;
