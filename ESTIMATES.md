@@ -12,6 +12,10 @@ opponents); real uncertainty about +/- 50-100.
   repeating 40/20. CCRL 40/15 list of 9 October 2026: #100 is 3455.
   Compare 3466 with CCRL's own rating of 1.0.0 when it appears: a gap
   above 50-100 means the calibration method needs fixing.
+- Scout (daily idea task, from 13 October 2026): review on 27 October. If
+  at least one Scout idea has passed SPRT by then, keep it daily; if none
+  has, cut it to weekly. Cut it to every 2-3 days earlier if it starts
+  repeating itself or reporting "No new idea".
 - Goal line: the CCRL 40/15 list as published ("best versions only"), where
   a 4-CPU entry counts. The 1-CPU estimate is always reported next to it.
 - Release 1.0.0: PUBLISHED 13 October 2026 (github.com/ayman803/trinity/releases/tag/v1.0.0, bench 780879). Before publishing it waited for
