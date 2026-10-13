@@ -56,6 +56,8 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-11 | SPSA re-tune for the 1024 network (2 runs, 35280 games; all moves small, branch spsa-1024, bench 627481) | self-play 0 to +5; CCRL 0 to +3 | +5.9 +/- 2.7 after 18000 games (SPRT #7 + #9, passed against the main before unsure-1024) | - | the settings tuned on the 512 network mostly still fit |
 | 2026-10-11 | corr-unsure on the 1024 network (branch unsure-1024, bench 805153) | self-play 0 to +4; CCRL 0 to +1 | +10.8 +/- 3.8 after 9000 games (SPRT #8, passed; merged, bench 805153) | - | far above the prediction and the laptop's +2.9 on the older main: the 1024 network's corrections may be more informative. Expect it to shrink against other engines |
 | 2026-10-12 | threads: 4 threads vs 1 thread, same clock (PC, 1000 games, 10+0.1; release check) | +60 to +100 if threading works | +99.6 +/- 10.2; 0 time losses, 0 illegal moves, 0 crashes (test-results/threads-pc.txt) | not measured (only matters on the 4-CPU list) | threading works. Self-play overstates; against other engines expect perhaps +60 to +90 on 4 CPUs |
+| 2026-10-13 | weight averaging (Scout idea 2): mean of checkpoints 550+600 of the 1024 run (branch net-avg-550-600-20261012-2235, bench 830311) | self-play 0 to +8 (Scout); CCRL about 70% of that | pending | - | no training. Start-position eval 44 cp vs main's 37: sane |
+| 2026-10-13 | weight averaging, bolder: mean of checkpoints 450, 500, 550, 600 (branch net-avg-450-600-20261012-2235, bench 859329) | self-play -5 to +8 | pending | - | the earlier checkpoints were trained at a higher learning rate, so this can also be worse |
 
 ## Proposed (not yet run)
 
