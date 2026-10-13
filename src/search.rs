@@ -190,6 +190,12 @@ pub struct Searcher {
     start: Instant,
     soft_ms: u64,
     hard_ms: u64,
+    /// Time plan for this game (ms): what the budget rule planned for the
+    /// moves so far, and what was really spent. The soft limit is scaled
+    /// so that the real spend tracks the plan (see `setup_time`).
+    plan_ms: f64,
+    used_ms: f64,
+    plan_this_ms: f64,
     root_depth: i32,
 
     history: Box<History>,
@@ -229,6 +235,9 @@ impl Searcher {
             start: Instant::now(),
             soft_ms: u64::MAX,
             hard_ms: u64::MAX,
+            plan_ms: 0.0,
+            used_ms: 0.0,
+            plan_this_ms: 0.0,
             root_depth: 0,
             history: zeroed_box(),
             cont_hist: zeroed_box(),
@@ -254,6 +263,8 @@ impl Searcher {
         self.cont_hist = zeroed_box();
         self.capt_hist = zeroed_box();
         self.corr_hist = zeroed_box();
+        self.plan_ms = 0.0;
+        self.used_ms = 0.0;
         self.counters = zeroed_box();
         self.killers = [[Move::NONE; 2]; MAX_PLY + 2];
     }
@@ -267,12 +278,32 @@ impl Searcher {
             self.hard_ms = mt.saturating_sub(l.move_overhead).max(1);
         } else if let Some(time) = stm_time {
             let t = time.saturating_sub(l.move_overhead).max(1);
+            // The plan: an equal share of the time to the next control (or
+            // of 1/25 of the clock in sudden death) plus the whole increment.
             let base = match l.movestogo {
-                Some(mtg) => t / (mtg.clamp(1, 50) + 1) + l.inc * 3 / 4,
-                None => t / 25 + l.inc * 3 / 4,
+                Some(mtg) => t / (mtg.clamp(1, 50) + 1) + l.inc,
+                None => t / 25 + l.inc,
             };
-            self.soft_ms = base.min(t / 2).max(1);
-            self.hard_ms = (base * 3).min(t * 3 / 5).max(1);
+            // Closed loop: the stop rule ends most moves well before the
+            // soft limit (about half of it, measured), so the planned time
+            // piled up unused. Scale the soft limit by plan / spend so far
+            // in this game, with a prior of 0.6 worth three moves, so that
+            // what is saved on easy moves is spent on the others.
+            let prior = 3.0 * base as f64;
+            let ratio = (self.used_ms + 0.6 * prior) / (self.plan_ms + prior);
+            let scale = (1.0 / ratio).clamp(1.0, 2.5);
+            self.plan_this_ms = base as f64;
+            let soft = (base as f64 * scale) as u64;
+            self.soft_ms = soft.min(t / 2).max(1);
+            self.hard_ms = (base * 3).max(soft * 8 / 5).min(t * 3 / 5).max(1);
+        }
+    }
+
+    /// After a timed move: record what was planned and what was spent.
+    fn account_time(&mut self) {
+        if self.limits.time.is_some() && self.limits.movetime.is_none() {
+            self.plan_ms += self.plan_this_ms;
+            self.used_ms += self.elapsed_ms() as f64;
         }
     }
 
@@ -1016,6 +1047,9 @@ impl Searcher {
             }
         }
         self.flush_nodes();
+        if self.id == 0 {
+            self.account_time();
+        }
         result
     }
 
