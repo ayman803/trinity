@@ -139,6 +139,7 @@ fn usage() -> ! {
     eprintln!("       trinity-trainer convert-chunks <file.binpack> <out prefix> <chunks> <positions per chunk>");
     eprintln!("       trinity-trainer scratch <superbatches> <name> <start lr> <wdl> <data files...>");
     eprintln!("       trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file> [start lr]");
+    eprintln!("       trinity-trainer average <out file> <checkpoint dirs...>");
     std::process::exit(1);
 }
 
@@ -272,7 +273,7 @@ fn main() {
     // Hidden check: `kbcheck <old checkpoint> <out file>` saves the warm-started
     // king-bucket network without training (to verify the layout).
     let kbcheck = mode == Some("kbcheck");
-    if args.len() < 2 || (finetune && args.len() < 6) {
+    if args.len() < 2 || (finetune && args.len() < 6) || (mode == Some("average") && args.len() < 5) {
         usage();
     }
 
@@ -321,6 +322,35 @@ fn main() {
         end_superbatch: superbatches,
     };
 
+    if mode == Some("average") {
+        // average <out file> <checkpoint dirs...>: the element-wise mean of
+        // the checkpoints' weights, saved as a quantised network (no
+        // training). Polyak-Ruppert / stochastic weight averaging.
+        if args.len() < 5 {
+            usage();
+        }
+        let sets: Vec<Vec<(String, Vec<f32>)>> =
+            args[3..].iter().map(|c| read_weights(&format!("{c}/optimiser_state/weights.bin"))).collect();
+        let mut mean = sets[0].clone();
+        for set in &sets[1..] {
+            assert_eq!(set.len(), mean.len(), "checkpoints have different layouts");
+            for ((name, acc), (other, vals)) in mean.iter_mut().zip(set) {
+                assert!(name == other && acc.len() == vals.len(), "checkpoints have different layouts");
+                acc.iter_mut().zip(vals).for_each(|(a, v)| *a += v);
+            }
+        }
+        let n = sets.len() as f32;
+        mean.iter_mut().for_each(|(_, vals)| vals.iter_mut().for_each(|v| *v /= n));
+        let tmp = format!("{}.weights.bin", args[2]);
+        write_weights(&tmp, &mean);
+        if let Err(e) = trainer.optimiser.load_weights_from_file(&tmp) {
+            panic!("cannot load {tmp}: {e:?}");
+        }
+        trainer.save_quantised(&args[2]).expect("cannot save");
+        let _ = std::fs::remove_file(&tmp);
+        println!("Averaged {} checkpoints into {}", sets.len(), args[2]);
+        return;
+    }
     if kbcheck {
         let path = warm_start_weights(&args[2]).expect("checkpoint already has king buckets");
         if let Err(e) = trainer.optimiser.load_weights_from_file(&path) {

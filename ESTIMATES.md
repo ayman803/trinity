@@ -125,12 +125,18 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
   that 10x time fixes), evaluation 6% (one clear mistake that 10x time
   does not fix), lost from the book 3%, time 1%. Search mistakes mostly
   in the middlegame and after a quiet opponent move.
-- Reading: most losses are a slow slide of small inaccuracies, which
-  points at evaluation quality in general (the network) more than at
-  tactics; of the clear single mistakes, about 4 in 5 are fixed by more
-  time, which points at search depth and time use. Caveats: the referee
-  at 100 ms is noisy (+/- 30-50 cp), and the 1-pawn threshold puts many
-  medium mistakes into "gradual".
+- Re-run with the gradual losses tested too (same 200 losses): Trinity's 3
+  worst moves in each gradual loss (drop >= 30 cp) were retried at 10x
+  time: 138 fixed (search) / 107 not (evaluation). With the clear mistakes
+  (43 / 8): about 60% of tested mistakes are fixed by more time, about 40%
+  are not. Search mistakes were played with 0.75x Trinity's average move
+  time (median); only 2 of 43 fell in the first 5 moves out of the book, so
+  the "too little time just after the book" lead is not supported.
+- Reading: search depth and time use matter at least as much as the
+  network; earlier "mostly the network" was withdrawn. Caveats: no noise
+  control yet (how often a retry at the SAME time also "fixes" a move,
+  given referee noise of +/- 30-50 cp and search randomness); the margin
+  for small mistakes (half the drop, at least 15 cp) is lenient.
 
 ## Release checks
 
