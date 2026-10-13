@@ -27,9 +27,11 @@ opponents); real uncertainty about +/- 50-100.
 - Next attempt (+50 branch, separate from 1.0.0): ideas 8-11 below.
   Fable 5.1 at maximum effort designs each change; Opus does the routine
   steps. Paid from the plan's included allowance first. Cap on extra
-  credit bought beyond the plan (any model): $200. Pause Fable until the
-  weekly reset if Trinity reaches 40% of the owner's weekly usage (the
-  owner checks; the Session cannot see it). Gate: if
+  credit bought beyond the plan (any model): $200. Fable has its own weekly
+  limit, separate from the regular one; one Fable design turn used about
+  9% of it (13 October). Pause Fable at 80% of the Fable limit. Trinity's
+  share of the regular weekly limit stays capped at 50% (13 October:
+  about 12-18%). The owner checks usage; the Session cannot see it. Gate: if
   the first two Fable-designed changes don't beat `main`, stop paying.
   Stop rule: less than +10 on calibration over 4 weeks of steady testing
   means park the project.
