@@ -13,7 +13,7 @@ opponents); real uncertainty about +/- 50-100.
   appears: a gap above 50-100 means the calibration method needs fixing. CCRL 40/15 list of 9 October 2026: #100 is 3455.
 - Goal line: the CCRL 40/15 list as published ("best versions only"), where
   a 4-CPU entry counts. The 1-CPU estimate is always reported next to it.
-- Release 1.0.0: prepared (draft release first, then public). Waiting for
+- Release 1.0.0: PUBLISHED 13 October 2026 (github.com/ayman803/trinity/releases/tag/v1.0.0, bench 780879). Before publishing it waited for
   the SPRT of `spsa-1024` (goes in if it passes) and the threads test
   (4 threads vs 1 on the PC: passed, +99.6, no errors, plus a 200-game
   check of the 1.0.0 build: no errors). The laptop (mixed fast and slow
