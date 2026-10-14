@@ -12,6 +12,9 @@ on:
       runs:
         description: "bench runs per branch"
         default: "10"
+      copies:
+        description: "copies of bench running at once (SPRT tests think in up to 3 games at once per machine)"
+        default: "1"
 
 run-name: Speed ${{ inputs.refs }}
 
@@ -30,6 +33,7 @@ jobs:
     env:
       REFS: ${{ inputs.refs }}
       RUNS: ${{ inputs.runs }}
+      COPIES: ${{ inputs.copies }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,6 +42,7 @@ jobs:
       - name: Build and bench
         run: |
           [[ "$RUNS" =~ ^[0-9]+$ ]] && (( RUNS >= 1 && RUNS <= 50 )) || { echo "runs must be 1-50"; exit 1; }
+          [[ "$COPIES" =~ ^[0-9]+$ ]] && (( COPIES >= 1 && COPIES <= 4 )) || { echo "copies must be 1-4"; exit 1; }
           cpu=$(lscpu | sed -n 's/^Model name: *//p' | head -1)
           avx2=$(grep -q avx2 /proc/cpuinfo && echo yes || echo no)
           names=()
@@ -51,18 +56,23 @@ jobs:
           done
           for i in $(seq 1 "$RUNS"); do
             for n in "${names[@]}"; do
-              echo "$n $(./eng-$n bench | tail -1)" >> nps.txt
+              for c in $(seq 1 "$COPIES"); do
+                ( echo "$n $(./eng-$n bench | tail -1)" > "one-$c.txt" ) &
+              done
+              wait
+              cat one-*.txt >> nps.txt
+              rm -f one-*.txt
             done
           done
           python3 - "$cpu" "$avx2" "${names[@]}" <<'PY' > report.txt
-          import statistics, sys
+          import os, statistics, sys
           cpu, avx2, names = sys.argv[1], sys.argv[2], sys.argv[3:]
           nps, nodes = {n: [] for n in names}, {}
           for line in open("nps.txt"):
               n, nd, _, v, _ = line.split()
               nps[n].append(int(v)); nodes[n] = nd
           ref = statistics.median(nps[names[0]])
-          print(f"Processor: {cpu} (AVX2: {avx2})")
+          print(f"Processor: {cpu} (AVX2: {avx2}); copies at once: {os.environ['COPIES']}")
           for n in names:
               m = statistics.median(nps[n])
               print(f"{n}: bench {nodes[n]} nodes, median {m:.0f} nps over {len(nps[n])} runs ({100 * (m / ref - 1):+.1f}% vs {names[0]})")
