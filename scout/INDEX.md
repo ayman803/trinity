@@ -12,3 +12,6 @@ One line per idea ever proposed: date | short name | status.
 2026-10-13 | Mirror twin: average eval of position and its left-right mirror at PV nodes | checked 14 Oct: the network already mirrors each side by king file, so both evals are identical; dropped
 2026-10-13 | On-policy fine-tuning: train on positions from Trinity's own games, labelled by its deeper search | proposed
 2026-10-13 | Winner's-curse discount at crowded nodes (max-of-noisy-estimates bias) | proposed
+2026-10-14 | Finding: SPRT #16 nnue-simd commit has no AVX2 code (test-only change); re-test needed | proposed
+2026-10-14 | Identical-binary guard in the SPRT workflow (checksum both engines before playing) | proposed
+2026-10-14 | Time-odds ruler: price speed changes from measured Elo per extra time (tm-control +6.8 at 1.12x) | proposed
