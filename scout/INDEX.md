@@ -9,6 +9,6 @@ One line per idea ever proposed: date | short name | status.
 2026-10-13 | Ensemble across threads: helpers use an equal-strength averaged network | proposed
 2026-10-13 | Closed-loop clock: feedback controller tracking a planned remaining-time curve | proposed
 2026-10-13 | Ablation audit of pruning rules on forensics mistake positions | proposed
-2026-10-13 | Mirror twin: average eval of position and its left-right mirror at PV nodes | proposed
+2026-10-13 | Mirror twin: average eval of position and its left-right mirror at PV nodes | checked 14 Oct: the network already mirrors each side by king file, so both evals are identical; dropped
 2026-10-13 | On-policy fine-tuning: train on positions from Trinity's own games, labelled by its deeper search | proposed
 2026-10-13 | Winner's-curse discount at crowded nodes (max-of-noisy-estimates bias) | proposed
