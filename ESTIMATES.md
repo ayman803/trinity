@@ -222,6 +222,12 @@ Result note (14 October): nnue-simd gained +13.25 against a prediction of
 the ruler; possible reasons: the GitHub runners' processors gain more from
 the AVX2 code than this machine, or luck (the 95% range is +9.5 to +17).
 Lesson for estimates: measure speed-ups on the test machines, not only here.
+Checked 14 October (Speed workflow, 3 GitHub machines, AMD EPYC 7763, 10
+bench runs each): nnue-simd +5.6%, +1.6%, +7.1% nodes per second, i.e. no
+more than here. So the "faster machines" reason is ruled out: by the ruler,
++5% speed is worth about +3, and +13.25 is far above that. Unexplained.
+The combined test #19 is an independent repeat: if nnue-simd's +13 is real,
+combo should score about +17 to +20 (+13 plus most of tm-control's +6.8).
 Combined test started 14 October: branch combo = main + tm-control +
 nnue-simd, SPRT #19 at 8+0.08 and #20 at 40/20 (1200 games, the time-loss
 check), both against main.
