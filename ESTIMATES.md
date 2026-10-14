@@ -226,6 +226,12 @@ Checked 14 October (Speed workflow, 3 GitHub machines, AMD EPYC 7763, 10
 bench runs each): nnue-simd +5.6%, +1.6%, +7.1% nodes per second, i.e. no
 more than here. So the "faster machines" reason is ruled out: by the ruler,
 +5% speed is worth about +3, and +13.25 is far above that. Unexplained.
+Under game-like load (advisor's check, 14 October: 3 bench copies at once,
+30 runs per machine): -2.9% (AMD EPYC 9V45), +8.6% (Xeon Platinum 8573C),
++9.9% (Xeon 6973P-C). Machines differ a lot (the AMD one may already get
+wide vector code from the compiler for the plain loop), but no machine
+shows a gain near the +20% that +13 Elo would need. Load does not explain
+it either.
 The combined test #19 is an independent repeat: if nnue-simd's +13 is real,
 combo should score about +17 to +20 (+13 plus most of tm-control's +6.8).
 Combined test started 14 October: branch combo = main + tm-control +
