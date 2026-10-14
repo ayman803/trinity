@@ -1,0 +1,72 @@
+# Speed check on GitHub's machines (the ones SPRT tests run on): builds
+# each branch for the machine, runs `bench` on them in turn, and reports the
+# median nodes per second and the processor. Three jobs, so three machines.
+name: Speed
+
+on:
+  workflow_dispatch:
+    inputs:
+      refs:
+        description: "Branches to compare, separated by spaces (the first is the reference)"
+        default: "main nnue-simd"
+      runs:
+        description: "bench runs per branch"
+        default: "10"
+
+run-name: Speed ${{ inputs.refs }}
+
+permissions:
+  contents: read
+
+jobs:
+  bench:
+    name: machine ${{ matrix.job }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        job: [1, 2, 3]
+    env:
+      REFS: ${{ inputs.refs }}
+      RUNS: ${{ inputs.runs }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build and bench
+        run: |
+          [[ "$RUNS" =~ ^[0-9]+$ ]] && (( RUNS >= 1 && RUNS <= 50 )) || { echo "runs must be 1-50"; exit 1; }
+          cpu=$(lscpu | sed -n 's/^Model name: *//p' | head -1)
+          avx2=$(grep -q avx2 /proc/cpuinfo && echo yes || echo no)
+          names=()
+          for ref in $REFS; do
+            [[ "$ref" =~ ^[A-Za-z0-9._/-]+$ ]] || { echo "Not a valid branch name: $ref"; exit 1; }
+            safe=${ref//\//_}
+            git worktree add --detach "src-$safe" "origin/$ref"
+            RUSTFLAGS="-C target-cpu=native" cargo build -q --release --manifest-path "src-$safe/Cargo.toml" --target-dir "target-$safe"
+            cp "target-$safe/release/trinity" "./eng-$safe"
+            names+=("$safe")
+          done
+          for i in $(seq 1 "$RUNS"); do
+            for n in "${names[@]}"; do
+              echo "$n $(./eng-$n bench | tail -1)" >> nps.txt
+            done
+          done
+          python3 - "$cpu" "$avx2" "${names[@]}" <<'PY' > report.txt
+          import statistics, sys
+          cpu, avx2, names = sys.argv[1], sys.argv[2], sys.argv[3:]
+          nps, nodes = {n: [] for n in names}, {}
+          for line in open("nps.txt"):
+              n, nd, _, v, _ = line.split()
+              nps[n].append(int(v)); nodes[n] = nd
+          ref = statistics.median(nps[names[0]])
+          print(f"Processor: {cpu} (AVX2: {avx2})")
+          for n in names:
+              m = statistics.median(nps[n])
+              print(f"{n}: bench {nodes[n]} nodes, median {m:.0f} nps over {len(nps[n])} runs ({100 * (m / ref - 1):+.1f}% vs {names[0]})")
+          PY
+          cat report.txt
+          while read -r line; do echo "::notice title=Speed (machine ${{ matrix.job }})::$line"; done < report.txt
+          { echo '```'; cat report.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
