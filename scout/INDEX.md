@@ -15,3 +15,5 @@ One line per idea ever proposed: date | short name | status.
 2026-10-14 | Finding: SPRT #16 nnue-simd commit has no AVX2 code (test-only change); re-test needed | proposed
 2026-10-14 | Identical-binary guard in the SPRT workflow (checksum both engines before playing) | proposed
 2026-10-14 | Time-odds ruler: price speed changes from measured Elo per extra time (tm-control +6.8 at 1.12x) | proposed
+2026-10-14 | Equal-marginal-value test: extra time in one move band at a time | proposed
+2026-10-14 | Rounding-aware quantisation of the network (match float output) | proposed
