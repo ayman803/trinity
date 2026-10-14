@@ -1,0 +1,11 @@
+SPRT test #17, finished 2026-10-14 18:01 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/38578666503 (run id 38578666503)
+SPRT RESULT: PASSED - 'nnue-simd' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: nnue-simd (bench 780879) vs main (bench 780879), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 2168, Losses: 1825, Draws: 5007, Points: 4671.5 (51.91 %)
+Ptnml(0-2): [26, 948, 2259, 1191, 76]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 13.25 +/- 3.80, nElo: 25.02 +/- 7.18
+LLR: 8.39 (-2.94, 2.94) [0.00, 5.00]
