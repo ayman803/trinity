@@ -62,8 +62,8 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-13 | weight averaging, bolder: mean of checkpoints 450, 500, 550, 600 (branch net-avg-450-600-20261012-2235, bench 859329) | self-play -5 to +8 | -1.3 +/- 4.3 after 7200 games (SPRT #12, one GitHub job lost; stopped, not merged) | - | no gain |
 | 2026-10-13 | tm-unsure: think up to 30% longer when the root's eval correction is large (Fable design B; bench unchanged) | self-play -2 to +6; CCRL 0 to +3 | +3.9 +/- 3.8 after 9000 games (SPRT #13, LLR 1.83; stopped, not merged) | - | no sign that the unsure signal helps beyond the extra time (+3.9 and +5.3 are statistically the same; both spent the same extra time on average, mean multiplier 1.12). Dropped; does not count for the Fable gate |
 | 2026-10-13 | tm-control: 12% more soft time on every move (control for tm-unsure: its measured mean multiplier is 1.12) | self-play -2 to +4 | +5.3 +/- 3.7 after 9000 games (SPRT #14, LLR 2.82; stopped, not merged) | - | simply thinking 12% longer on every move gains about +5: confirms the unspent-time leak. Resumed as SPRT #15 (continues #14); merge if it passes, after a 40/20 time-loss check |
-| 2026-10-13 | tm-plan (part A, Fable gate change 1): the soft limit is scaled by plan/spend so far in the game (closed loop, prior 0.6, clamp 1-2.5x), and the whole increment is spent; hard limit at least 1.6x soft. Bench unchanged | 8+0.08 vs main: +4 to +10; 40/20 vs tm-control (gate): +2 to +6, about a 50% chance to pass the capped test; CCRL-scale (40/20 calibration): +1 to +6 | pending | - | Validation (16 games at 10+0.1): first version overshot in sudden death, clock down to 0.09 s and 158 of 812 moves started under 1 s (main: 2); fixed by capping the loop at 1.25x and keeping 3/4 of the increment in sudden death (repeating controls keep 2.5x). PC data: Trinity spends 0.67 (10+0.1) and 0.48 (40/20) of its own plan; its rated opponents 0.84 and 0.63. Fixed-ratio alternative rejected: the ratio differs by clock, so the loop measures it |
-| 2026-10-13 | nnue-simd: the network's output layer written with AVX2 instructions (same arithmetic, bench node count unchanged 780879); about 10% more nodes per second measured here (1.06M vs 0.97M) | self-play +3 to +6 (measured on 60 positions from real games at 300 ms: +7.3% nodes per second, less than the 10% on bench); CCRL +2 to +4 | pending (SPRT #16) | - | v2 build (no AVX2) checked: falls back to the old code, bench 780879, no AVX2 instructions. Gate status: owner to decide |
+| 2026-10-13 | tm-plan (part A, Fable gate change 1): the soft limit is scaled by plan/spend so far in the game (closed loop, prior 0.6, clamp 1-2.5x), and the whole increment is spent; hard limit at least 1.6x soft. Bench unchanged | 8+0.08 vs main: +4 to +10; gate test vs main of that moment (40/10 since 13 October, decided before any result; same prediction): +2 to +6, about a 50% chance to pass the capped test; CCRL-scale (40/20 calibration): +1 to +6 | pending | - | Validation (16 games at 10+0.1): first version overshot in sudden death, clock down to 0.09 s and 158 of 812 moves started under 1 s (main: 2); fixed by capping the loop at 1.25x and keeping 3/4 of the increment in sudden death (repeating controls keep 2.5x). PC data: Trinity spends 0.67 (10+0.1) and 0.48 (40/20) of its own plan; its rated opponents 0.84 and 0.63. Fixed-ratio alternative rejected: the ratio differs by clock, so the loop measures it |
+| 2026-10-13 | nnue-simd: the network's output layer written with AVX2 instructions (same arithmetic, bench node count unchanged 780879); about 10% more nodes per second measured here (1.06M vs 0.97M) | self-play +3 to +6 (measured on 60 positions from real games at 300 ms: +7.3% nodes per second, less than the 10% on bench); CCRL +2 to +4 | pending (SPRT #16) | - | v2 build (no AVX2) checked: falls back to the old code, bench 780879, no AVX2 instructions. Fable gate change 2 (owner: counts whether it passes or fails) |
 
 ## Proposed (not yet run)
 
@@ -202,10 +202,17 @@ first principles, nothing taken from other engines):
 Gate (fixed 13 October, before any part A result): tm-control is banked
 first (SPRT #15; merged if it passes). Part A is the first Fable-designed
 change for the gate and must beat the main of that moment (including
-tm-control if merged). Deciding test: repeating clock 40/20, bounds
-[0, 5], cap 2 GitHub runs (the games that fit; about 6000). Passed =
-gate win; anything else at the cap = gate loss, keep main (simpler wins
-a tie). An 8+0.08 run of part A is a safety check only.
+tm-control if merged). Deciding test: repeating clock 40/10 (owner, 13
+October, before any part A result; was 40/20), bounds [0, 5]. Game cap
+written down before the test: 12000 games = 2 GitHub runs of 1200 games
+per job (5 jobs); if a run's time limit cuts it short, the cap is still 2
+runs. Passed = gate win; anything else at the cap = gate loss, keep main
+(simpler wins a tie). An 8+0.08 run of part A is a safety check only.
+Gate change 2 is nnue-simd (owner, 13 October): it counts whether it
+passes or fails. If both changes fail, stop paying for Fable.
+Other owner decisions (13 October): if tm-control (#15) and nnue-simd
+(#16) both pass, test them together against main before merging either;
+hold release 1.1 while CCRL tests 1.0.0.
 Test plan: SPRT on GitHub at 8+0.08 for B and its control now; A at 8+0.08 and at 40/60
 (the workflow now accepts repeating controls); CCRL-scale check of the
 winners with 12-Calibrate-Repeating.bat (two runs, +/- 11 each).
