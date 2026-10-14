@@ -210,6 +210,13 @@ runs. Passed = gate win; anything else at the cap = gate loss, keep main
 (simpler wins a tie). An 8+0.08 run of part A is a safety check only.
 Gate change 2 is nnue-simd (owner, 13 October): it counts whether it
 passes or fails. If both changes fail, stop paying for Fable.
+Owner decisions of 14 October, before any #17 or #18 result: if #17
+(nnue-simd re-test) is undecided at 9000 games, continue it once to 18000;
+that result is final for gate change 2 (passed = gate win; still undecided
+or failed = gate loss, as for part A). The combined test of nnue-simd +
+tm-control also gets a 40/20 time-loss check. Part A is not merged on #18
+alone (#18 is against a main without tm-control; only the 40/10 gate test
+decides part A).
 Other owner decisions (13 October): if tm-control (#15) and nnue-simd
 (#16) both pass, test them together against main before merging either;
 hold release 1.1 while CCRL tests 1.0.0.
