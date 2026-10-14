@@ -77,3 +77,18 @@ that engine works.
 A scheduled task runs at 5:46 am Pacific and writes scout/YYYY-MM-DD.md
 plus one line per idea in scout/INDEX.md. It never touches code, tests or
 ESTIMATES.md. Read scout/INDEX.md before planning the next step.
+
+## Coder 2 (network work, set by the owner, 14 October 2026)
+
+A second coding session (Fable by default) owns the network: the design of
+the next training run (data, size, length) and Scout's quantisation check.
+Lanes:
+1. Coder 2 works only on its own `net-...` branches and never pushes to
+   `main`. The Session tests and merges everything.
+2. Only the Session edits ESTIMATES.md. Coder 2 keeps its own NETWORK.md.
+3. Ayman decides what runs on the PC (GPU for training, CPU for
+   calibrations).
+4. The same rules apply to both, including the originality rule (no
+   copying, Coda included by name).
+Disk for training data: 32 GB per billion positions, plus about 52 GB for
+shuffling and spare (scripts/big.ps1).

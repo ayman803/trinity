@@ -316,7 +316,7 @@ function Show-DiskSpace {
     $freeGB = [Math]::Round($drive.AvailableFreeSpace / 1GB)
     Write-Host "Free disk space on $($drive.Name): $freeGB GB"
     if ($freeGB -lt $script:MinFreeGB) {
-        Write-Warn "WARNING: less than $($script:MinFreeGB) GB free. Training data needs up to about 100 GB while it is prepared."
+        Write-Warn "WARNING: less than $($script:MinFreeGB) GB free. Training data needs 32 GB per billion positions plus about 52 GB while it is shuffled (the 4-billion big network: about 180 GB)."
         Write-Warn "Free some space (for example empty the Recycle Bin, or delete old files in Downloads) before long runs."
     }
 }
