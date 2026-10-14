@@ -196,19 +196,22 @@ function Stop-KeepAwake($Handle) {
 # ---------------------------------------------------------------------------
 
 # Build Trinity from a git ref (branch or commit) into sprt\engines and
-# return the path of the executable. Builds are cached by commit.
+# return the path of the executable. Builds are cached by commit. $Cpu is
+# the processor level to build for: "native" (this PC, fastest) or, for
+# example, "x86-64-v2" (the release build for older processors).
 function Build-Trinity {
-    param([Parameter(Mandatory)][string]$Ref)
+    param([Parameter(Mandatory)][string]$Ref, [string]$Cpu = "native")
     $sha = Get-NativeOutput git @("-C", $script:Root, "rev-parse", "--short=10", $Ref)
     $safe = ($Ref -replace "^origin/", "") -replace "[^A-Za-z0-9._-]", "_"
     $engines = Join-Path $script:Work "engines"
     New-Item -ItemType Directory -Force -Path $engines | Out-Null
-    $enginePath = Join-Path $engines "trinity-$safe-$sha$($script:ExeSuffix)"
+    $cpuTag = if ($Cpu -eq "native") { "" } else { "-$Cpu" }
+    $enginePath = Join-Path $engines "trinity-$safe-$sha$cpuTag$($script:ExeSuffix)"
     if (Test-Path $enginePath) {
         Write-Host "Using cached build of $Ref ($sha)."
         return $enginePath
     }
-    Write-Step "Building $Ref ($sha)"
+    Write-Step "Building $Ref ($sha$(if ($cpuTag) { ", for $Cpu" }))"
     $tree = Join-Path $script:Work "build-$safe"
     if (Test-Path $tree) {
         Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree)
@@ -217,7 +220,7 @@ function Build-Trinity {
     Invoke-Native git @("-C", $script:Root, "worktree", "add", "--detach", $tree, $sha)
     try {
         $oldFlags = $env:RUSTFLAGS
-        $env:RUSTFLAGS = "-C target-cpu=native"   # fastest code for this PC
+        $env:RUSTFLAGS = "-C target-cpu=$Cpu"
         Invoke-Native cargo @("build", "--release", "--manifest-path", (Join-Path $tree "Cargo.toml"),
             "--target-dir", (Join-Path $script:Work "target"))
     } finally {

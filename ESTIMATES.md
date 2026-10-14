@@ -225,6 +225,14 @@ Lesson for estimates: measure speed-ups on the test machines, not only here.
 Combined test started 14 October: branch combo = main + tm-control +
 nnue-simd, SPRT #19 at 8+0.08 and #20 at 40/20 (1200 games, the time-loss
 check), both against main.
+Prediction for combo, logged before #19 and #20 finished (Scout and
+advisor, owner's paste of 14 October): self-play +10 to +18; calibration
+(CCRL scale) +5 to +12, i.e. 3466 -> about 3471-3478.
+Merge conditions for combo (owner, 14 October): #19 passes; #20 shows no
+time losses; the x86-64-v2 build (no AVX2) gives the same bench as the
+AVX2 build and plays 20 games on the PC with no crash (19-V2-Check.bat).
+The v2 check logged on 13 October was on the branch without the AVX2 code,
+so it does not count.
 Other owner decisions (13 October): if tm-control (#15) and nnue-simd
 (#16) both pass, test them together against main before merging either;
 hold release 1.1 while CCRL tests 1.0.0.
