@@ -328,7 +328,7 @@ the width run is banked); step 2 of the quantisation idea (after step 1).
 | # | Job | Script | PC time | Status |
 |---|---|---|---|---|
 | N1 | Quantisation check, step 1 | tools\net\Quant-Check.bat | a few minutes of CPU (any time nothing else heavy is running; a GitHub test does not matter) | ready; deletes nothing |
-| N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 8-10 h GPU (the 1024 run took 5.0 h); no calibration or SPRT on the PC meanwhile | GO (owner, 15 October); scheduled after the Session's calibration; wide.ps1 deletes its own raw data parts (rule 5: for the Session's review) |
+| N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 8-10 h GPU (the 1024 run took 5.0 h); no calibration or SPRT on the PC meanwhile | RUNNING since the evening of 14 October Pacific (conversion first, 57% of positions kept as before); expected to finish 7-9 am Pacific on 15 October |
 | N3 | Loss of every saved checkpoint on the same positions (condition 1) | tools\net\Net-Loss.bat | about a minute of CPU, after N2 (or during it for an early look at checkpoint 300: it is light) | ready once N2 has made the data; deletes nothing |
 
 ## Test requests (lane "network")
