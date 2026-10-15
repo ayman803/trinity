@@ -75,7 +75,7 @@ at once. PC: one heavy job at a time, in the order Ayman chooses.
 |---|---|---|---|---|
 | 1 | Merge combo (tm-control + nnue-simd): v2 check result | search | PC (done) | waiting for the result text; merge when it says PASSED |
 | 2 | Part A (tm-plan) gate test vs the new main, repeating 40/10, cap 12000 games | search | GitHub | after 1 |
-| 3 | Calibration of the new main (5-Calibrate.bat) | search | PC CPU | after 1 |
+| 3 | Calibration (5-Calibrate.bat) | search | PC CPU | owner, 14 October: after part A is merged, not now (combo alone is worth about +3 to +5 on the CCRL scale, below calibration's +/- 15) |
 | 4 | Quantisation check (Scout 14 October, idea 2): float vs integer eval gap | network | PC CPU or GitHub | Coder 2 to design |
 | 5 | Next training run (data, size, length) | network | PC GPU | Coder 2 to design; disk budget about 200 GB |
 
