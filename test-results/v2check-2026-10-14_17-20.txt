@@ -1,0 +1,9 @@
+V2 CHECK: 'combo' on DESKTOP-K61E7PJ - PASSED
+bench AVX2 build: 780879 nodes, 1807470 nps
+bench v2 build:   780879 nodes, 1282058 nps
+Same bench node count: yes
+Games finished: 20 of 20, tc 10+0.1
+Elo: 34.86 +/- 66.06, nElo: 81.89 +/- 152.27
+Games: 20, Wins: 4, Losses: 2, Draws: 14, Points: 11.0 (55.00 %)
+Ptnml(0-2): [0, 1, 6, 3, 0], WL/DD Ratio: 0.20
+Games lost on time: 0; illegal moves: 0; crashes or hangs: 0
