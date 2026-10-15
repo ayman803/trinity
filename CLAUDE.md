@@ -77,3 +77,30 @@ that engine works.
 A scheduled task runs at 5:46 am Pacific and writes scout/YYYY-MM-DD.md
 plus one line per idea in scout/INDEX.md. It never touches code, tests or
 ESTIMATES.md. Read scout/INDEX.md before planning the next step.
+
+## Coder 2 (network work, set by the owner, 14-15 October 2026)
+
+A second coding session (Fable by default) owns the network: the design of
+the next training run (data, size, length) and Scout's quantisation check.
+1. Coder 2 works only on branches named `net-...` and never pushes to
+   `main`. The Session tests and merges everything into `main`.
+2. Coder 2 keeps its notes in NETWORK.md on the fixed branch `net-notes`
+   (the Session and Scout read it there; the Session merges it into main
+   from time to time) and never edits ESTIMATES.md. Only the Session edits
+   ESTIMATES.md.
+   Coder 2 runs in the cloud and cannot reach the PC: it gives Ayman exact
+   steps (a .bat file on its branch) for anything that must run there.
+   The integer network is in the repo (nets/default.nnue); the float
+   weights exist only on the PC (checkpoints\...\optimiser_state\weights.bin).
+3. The originality rule applies to Coder 2 too, including Coda by name.
+4. Tests: Coder 2 asks for a test in NETWORK.md; the Session adds it to the
+   test queue in ESTIMATES.md (lane "network") and runs it like any other.
+   Every network merge follows the usual steps: SPRT, a combination test if
+   needed, the v2 check (19-V2-Check.bat), and calibration (5-Calibrate.bat).
+5. GitHub test machines: at most 2 tests at once for the Session's lane
+   (search) and at most 1 for Coder 2's lane (network).
+6. The PC runs one heavy job at a time (training, data preparation or
+   calibration). Ayman decides the order.
+7. Disk budget for training: about 200 GB (C: had 265 GB free on 15
+   October). Training data takes 32 GB per billion positions, plus about
+   52 GB for shuffling and spare (scripts/big.ps1).

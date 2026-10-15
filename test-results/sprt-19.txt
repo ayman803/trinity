@@ -1,0 +1,11 @@
+SPRT test #19, finished 2026-10-14 22:19 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/38615485906 (run id 38615485906)
+SPRT RESULT: PASSED - 'combo' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: combo (bench 780879) vs main (bench 780879), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 2088, Losses: 1942, Draws: 4970, Points: 4573.0 (50.81 %)
+Ptnml(0-2): [38, 989, 2308, 1119, 46]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 5.64 +/- 3.74, nElo: 10.83 +/- 7.18
+LLR: 3.10 (-2.94, 2.94) [0.00, 5.00]

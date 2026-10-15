@@ -84,6 +84,13 @@ jobs:
             echo "${side}_bench=$(./$side bench | tail -1 | awk '{print $1}')" >> bench.txt
           done
           cat bench.txt
+          # Builds are byte-for-byte reproducible, so two different branches
+          # that give the same engine file differ only in tests or comments:
+          # playing them would measure nothing.
+          if [ "$DEV" != "$BASE" ] && cmp -s dev base; then
+            echo "::error::'$DEV' and '$BASE' build exactly the same engine (the change is not in the engine). No games played."
+            exit 1
+          fi
 
       - name: Get fastchess and the opening book
         run: |

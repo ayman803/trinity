@@ -1,0 +1,12 @@
+SPRT test #15, finished 2026-10-14 01:08 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/38469220278 (run id 38469220278)
+Continues run id 38434847160; the totals below include it.
+SPRT RESULT: PASSED - 'tm-control' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: tm-control (bench 780879) vs main (bench 780879), tc 8+0.08, bounds [0, 5]
+Games: 18000, Wins: 4196, Losses: 3846, Draws: 9958, Points: 9175.0 (50.97 %)
+Ptnml(0-2): [76, 1962, 4596, 2268, 98]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 6.76 +/- 2.65, nElo: 12.93 +/- 5.08
+LLR: 7.78 (-2.94, 2.94) [0.00, 5.00]
