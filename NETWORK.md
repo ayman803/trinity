@@ -157,6 +157,59 @@ error, or a finer output quantisation) only if the mean gap is above 8 cp
 or one bucket is far worse than the others, or if the layout check shows
 the files do not match. Expected Elo from step 2 even then: 0 to +2.
 
+Result (PC, 14 October 18:05 Pacific, sprt\coder2\results\quantcheck-2026-10-14_18-05.txt;
+20,000 positions from 39,200 calibration games, 42 PGN files):
+- Layout check: 100.000% of all 6.3 million numbers equal. The files
+  belong together and the layout is right.
+- Gap integer - float: mean |gap| 6.4 cp, median 5.2, 95th percentile
+  16.6, 99th 23.2, max 55; 21% of positions off by 10 cp or more; bias
+  +0.6 overall; 229 of 20,000 evals change sign (1.1%, all near zero).
+- Source: first layer alone 3.4 cp, output layer alone 5.4 cp (they add
+  in quadrature: sqrt(3.4^2 + 5.4^2) = 6.4, so the two errors are
+  independent). The output layer is the larger part, as predicted, but
+  the first layer is not negligible (predicted under 2).
+- By output bucket the mean |gap| is even (5.4 to 7.4), but the BIAS is
+  not: +5.2 cp at 6-9 pieces, +3.1 at 26-29, +2.9 at 2-5, -4.1 at 30-32,
+  -1.8 at 18-21. These are systematic shifts per piece-count range, so a
+  capture that crosses from 30-32 to 26-29 pieces looks about 7 cp better
+  to the integer network than to the float one.
+- Large evals are rounded worse: 7.3 cp at |eval| >= 200 vs 5.7 under 50.
+- Prediction vs actual: mean 4-8 (actual 6.4, right); 95th percentile
+  10-16 (16.6, just outside); bias within +/- 1 (overall +0.6, right, but
+  per bucket up to +/- 5, not foreseen); "almost all from the output
+  layer" (two thirds, not almost all).
+- Output weights in the file: mean |w| is 17 units of 1/64, 3.4% of them
+  are above 64 units (|w| > 1.0), max 127. A finer output scale (1/128)
+  would halve the output error but needs the weights clipped at 1.0 in
+  training (3.4% of them are larger) or a slower integer path; a
+  training-recipe question for a later run, not a patch.
+
+Verdict against the decision rule (act only above 8 cp mean or a bucket
+far worse): the random part is below the bar and costs under 1% extra
+evaluation error; the per-bucket bias is the one finding worth a cheap
+fix. Options for the owner:
+- (a) Nothing now. Cost 0.
+- (b) Step 2 light: re-round the output layer of main's network to match
+  the float output on positions (per bucket: the bias, and for each of
+  the 2048 output weights the rounding direction chosen to cancel the
+  error; fitted on half of the positions, checked on the other half).
+  No training, no speed cost, engine unchanged. Needs: an engine command
+  on a net-... branch, a tools\net script on the PC (the float weights
+  are only there; a minute of CPU), a branch with the re-rounded network,
+  and one GitHub SPRT in the network lane, which is idle while the PC
+  trains. Prediction: self-play 0 to +3, most likely about +1; a [0, 5]
+  SPRT will most likely end undecided. The procedure then also serves the
+  2048 network, whose output layer has twice the terms and so about 1.4x
+  the output error. Recommendation: (b) only if the Session has the
+  GitHub slot to spare; otherwise fold the procedure into the 2048
+  network's quantisation later, where it is tested for free.
+
+Training speed from the checkpoint times: superbatch 50 at 19:25,
+600 at 23:59 on 9 October = 0.50 minutes per superbatch, 5.0 hours for the
+whole 1024 run (not "under 10"). The 2048 run should take about 8-10
+hours of GPU, plus 2-3 hours of CPU for the data: started at 8:30 pm it
+is done by about 7-9 am.
+
 ### 2. Plan for the next training run (15 October)
 
 What the history says (ESTIMATES.md): capacity transferred to other
@@ -183,11 +236,10 @@ which also double, are untouched by the AVX2 code; measure the cost on
 the PC and the GitHub machines before reading the test.)
 
 Training time: the 1024 run (600 superbatches, 3.65 billion positions,
-batch 16384) started 9 October 19:00 Pacific and had been tested by the
-next morning, so it took under 10 hours. The quantisation check prints
-the exact checkpoint times. Expect about 1.6-2x for 2048 (15-20 hours) and
-1.3-1.5x for 1536, plus 2-3 hours of CPU to convert and shuffle the
-Leela file again (it was deleted on 13 October).
+batch 16384) took 5.0 hours (checkpoint times from the quantisation
+check: 0.50 minutes per superbatch). Expect about 1.6-2x for 2048 (8-10
+hours) and 1.3-1.5x for 1536, plus 2-3 hours of CPU to convert and
+shuffle the Leela file again (it was deleted on 13 October).
 
 Disk: 4 parts x 32 GB = 117 GB of data (the file yields 3.65 billion
 positions) plus 32 GB while shuffling: within the 200 GB budget. All of
@@ -276,7 +328,7 @@ the width run is banked); step 2 of the quantisation idea (after step 1).
 | # | Job | Script | PC time | Status |
 |---|---|---|---|---|
 | N1 | Quantisation check, step 1 | tools\net\Quant-Check.bat | a few minutes of CPU (any time nothing else heavy is running; a GitHub test does not matter) | ready; deletes nothing |
-| N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 15-20 h GPU; no calibration or SPRT on the PC meanwhile | GO (owner, 15 October); scheduled after the Session's calibration; wide.ps1 deletes its own raw data parts (rule 5: for the Session's review) |
+| N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 8-10 h GPU (the 1024 run took 5.0 h); no calibration or SPRT on the PC meanwhile | GO (owner, 15 October); scheduled after the Session's calibration; wide.ps1 deletes its own raw data parts (rule 5: for the Session's review) |
 | N3 | Loss of every saved checkpoint on the same positions (condition 1) | tools\net\Net-Loss.bat | about a minute of CPU, after N2 (or during it for an early look at checkpoint 300: it is light) | ready once N2 has made the data; deletes nothing |
 
 ## Test requests (lane "network")
