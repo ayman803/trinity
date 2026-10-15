@@ -1,8 +1,8 @@
 # Network notes (Coder 2)
 
 Coder 2 owns this file from 15 October 2026 (see CLAUDE.md, "Coder 2").
-Its live copy is on the branch `net-notes`; the copy on main is merged
-from there.
+It lives on `main` (Coder 2 may push NETWORK.md and tools/net/ there);
+the branch `net-notes` is no longer used.
 The first section is the Session's handover; everything after it is Coder
 2's. Ask for tests at the end of this file; the Session queues and runs
 them (ESTIMATES.md, "Test queue", lane "network").

@@ -29,7 +29,7 @@ opponents); real uncertainty about +/- 50-100.
   steps. Paid from the plan's included allowance first. Cap on extra
   credit bought beyond the plan (any model): $200. Fable has its own weekly
   limit, separate from the regular one; one Fable design turn used about
-  9% of it (13 October). Pause Fable at 80% of the Fable limit. Trinity's
+  9% of it (13 October). Pause Fable at 80% of the Fable limit (both coders together, from 15 October). Trinity's
   share of the regular weekly limit stays capped at 50% (13 October:
   about 12-18%). The owner checks usage; the Session cannot see it. Gate: if
   the first two Fable-designed changes don't beat `main`, stop paying.
@@ -73,11 +73,21 @@ at once. PC: one heavy job at a time, in the order Ayman chooses.
 
 | # | Test | Lane | Where | Status (15 October) |
 |---|---|---|---|---|
-| 1 | Merge combo (tm-control + nnue-simd): v2 check result | search | PC (done) | waiting for the result text; merge when it says PASSED |
+| 1 | Merge combo (tm-control + nnue-simd) | search | - | DONE 15 October: v2 check passed (same bench 780879, 20 games, no errors); merged |
 | 2 | Part A (tm-plan) gate test vs the new main, repeating 40/10, cap 12000 games | search | GitHub | after 1 |
 | 3 | Calibration (5-Calibrate.bat) | search | PC CPU | owner, 14 October: after part A is merged, not now (combo alone is worth about +3 to +5 on the CCRL scale, below calibration's +/- 15) |
 | 4 | Quantisation check (Scout 14 October, idea 2): float vs integer eval gap | network | PC CPU or GitHub | Coder 2 to design |
 | 5 | Next training run (data, size, length) | network | PC GPU | Coder 2 to design; disk budget about 200 GB |
+
+## PC queue
+
+One heavy job at a time on the PC; Ayman decides the order. Coder 2
+requests PC time in NETWORK.md; the Session adds it here.
+
+| # | Job | Owner | Hours | Status (15 October) |
+|---|---|---|---|---|
+| 1 | Quantisation check, step 1 (script in tools/net/) | Coder 2 | under 1 | waiting for Coder 2's script |
+| 2 | Calibration (5-Calibrate.bat) | Session | about 24 | after part A is merged |
 
 ## Proposed (not yet run)
 
