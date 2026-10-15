@@ -315,6 +315,27 @@ will be measured against that). Two conditions:
    loss 1-3% lower at the same superbatch, 2-4% at 600. Held-out not lower
    at all: the width is unused, expect no Elo. Training much lower but
    held-out not: memorisation.
+   Same run, same positions (Scout, 15 October, idea 1, adopted): the
+   nine networks that were ever in main, read from the repository's
+   history (the engine reads their integer files; the two averaged
+   networks are gone with their branches). Their Elo steps, from
+   ESTIMATES.md, give the exchange rate between held-out loss and Elo:
+
+   | Network (commit) | Self-play step | CCRL step | Note |
+   |---|---|---|---|
+   | net3 -> net4 (39b8bd1 -> e0c0fee) | +25.9 | +4 | 256 -> 512 neurons, output buckets |
+   | net4 -> net5 (32dde25) | +217.8 | +169 | first Leela data |
+   | net5 -> net6 (3870ee6) | +29.1 | +3 | 120 instead of 40 Leela superbatches |
+   | net6 -> fresh (3aca207) | +6.0 | about 0 | fresh Leela data |
+   | fresh -> king buckets (b2fbbb4) | +19.1 | +17 | 8 king buckets, mirrored |
+   | king buckets -> big1024 (f3d46ea) | +80 (about +96 before the 28% speed cost) | +50 | 1024 from scratch |
+
+   Prediction for the exchange rate: the held-out result loss falls along
+   the whole sequence; the two steps that gained little against rated
+   engines (net6: +3, fresh: about 0) differ from their predecessors by
+   under 0.3% relative, and king buckets -> big1024 (+50 CCRL) by 2-4%.
+   If that holds, about 15-25 CCRL-scale Elo per 1% of relative held-out
+   loss, and the 2048 network's loss at 600 prices it before any test.
    Checkpoint safety (Session, 14 October evening): Remove-OldCheckpoints
    in scripts/common.ps1 runs only when 4-Train, 7-Drill, 8-Fresh-Leela or
    11-Big-Network starts; it now never deletes big1024 folders and keeps
@@ -322,6 +343,15 @@ will be measured against that). Two conditions:
    checkpoints live in sprt\coder2\checkpoints, outside its reach.
 2. If 2048 lands between -5 and +5 at 30+0.3, one SPSA re-tune of the
    search settings before the verdict.
+3. (Scout, 15 October, idea 2, adopted as the contingency.) If the 2048
+   run's held-out loss is not below the 1024 run's at superbatch 300 and
+   600, or its curve stalls, the width is not judged used up: the next run
+   is 2048 with the learning rate halved (0.0005), everything else the
+   same, judged on held-out loss at 300 and 600 before any SPRT. The
+   reasoning from first principles: with an Adam-type optimiser every
+   weight moves by about the learning rate, so a layer twice as wide moves
+   its output about twice as far per step; the rate tuned at 1024 is too
+   hot at 2048. Not started before tonight's curves are read.
 
 After a pass (for the Session's queue): v2 check (19-V2-Check.bat),
 calibration (5-Calibrate.bat, rule 2), then an SPSA re-tune of the search

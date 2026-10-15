@@ -115,3 +115,21 @@ function Publish-NetBranch([string]$BaseBranch, [string]$NewBranch, [string]$Net
     Invoke-Native git @("-C", $script:Root, "push", "-u", "origin", "${commit}:refs/heads/$NewBranch")
     return $commit
 }
+
+# One file from a commit in the repository's history (for example an old
+# nets/default.nnue), extracted (not checked out) into
+# sprt\coder2\history\<label>.<extension>. Reused when it already exists.
+function Export-HistoricFile([string]$Sha, [string]$RepoPath, [string]$Label) {
+    $dir = Get-OutDir "history"
+    $ext = [IO.Path]::GetExtension($RepoPath)
+    $file = Join-Path $dir "$Label$ext"
+    if (Test-Path -LiteralPath $file) { return $file }
+    $zip = Join-Path $dir "$Label.zip"
+    Invoke-Native git @("-C", $script:Root, "archive", "--format=zip", "--output=$zip", $Sha, "--", $RepoPath)
+    $unpack = Join-Path $dir "$Label-unpacked"
+    Expand-Archive -Path $zip -DestinationPath $unpack -Force
+    $found = Join-Path $unpack $RepoPath
+    if (-not (Test-Path -LiteralPath $found)) { Stop-WithMessage "Could not extract $RepoPath from commit $Sha." }
+    Copy-Item -LiteralPath $found -Destination $file -Force
+    return $file
+}

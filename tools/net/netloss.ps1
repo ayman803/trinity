@@ -6,6 +6,10 @@
 #   label = game result; no network was trained on them (the fair test);
 # - training: the first positions of sprt\coder2\data\big-1.data, if it
 #   exists (fit only; the gap to the held-out number is the memorisation).
+# Also scored, on the same positions: every network that was ever in main
+# (read from the repository's history into sprt\coder2\history), whose
+# Elo steps are known, so that a held-out loss difference can be priced in
+# Elo (Scout, 15 October, idea 1).
 # About a minute. Double-click tools\net\Net-Loss.bat.
 #
 # Writes only inside sprt\coder2 (the branch's build and
@@ -56,13 +60,30 @@ try {
     if ($dirs.Count -eq 0) { Stop-WithMessage "No checkpoints with optimiser_state\weights.bin found." }
     Write-Host "Checkpoints: $($dirs.Count)"
 
+    # The networks that were in main, oldest first (commit, label); their Elo
+    # steps are in ESTIMATES.md ("Changes").
+    $history = @(
+        @("6a73bb8", "main-net1-20260930"),
+        @("a8fbd96", "main-net2-20261001"),
+        @("39b8bd1", "main-net3-20261001"),
+        @("e0c0fee", "main-net4-512-20261003"),
+        @("32dde25", "main-net5-leela40-20261003"),
+        @("3870ee6", "main-net6-leela120-20261004"),
+        @("3aca207", "main-fresh-20261004"),
+        @("b2fbbb4", "main-kingbuckets-20261005"),
+        @("f3d46ea", "main-big1024-20261009")
+    )
+    Write-Step "Reading the $($history.Count) networks that were in main from the repository's history"
+    $netFiles = @()
+    foreach ($h in $history) { $netFiles += Export-HistoricFile $h[0] "nets/default.nnue" $h[1] }
+
     $exe = Build-NetEngine $Branch
     Write-Step "Scoring $($dirs.Count) checkpoints (a minute or two)"
     $stamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
     $resultFile = Join-Path (Get-OutDir "results") "netloss-$stamp.txt"
     $old = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
-    $output = & $exe (@("netloss", "$Positions") + $dirs + $inputs) 2>&1
+    $output = & $exe (@("netloss", "$Positions") + $dirs + $netFiles + $inputs) 2>&1
     $code = $LASTEXITCODE
     $ErrorActionPreference = $old
     if ($code -ne 0) { Stop-WithMessage "netloss failed: $($output -join "`n")" }
