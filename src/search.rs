@@ -939,6 +939,11 @@ impl Searcher {
         if let Some(net) = self.net {
             self.acc[0] = AccPair::from_board(net, root);
         }
+        // Control for branch tm-unsure: think 12% longer on every move, the
+        // average extra time tm-unsure gives (measured: mean multiplier 1.12).
+        if self.soft_ms != u64::MAX {
+            self.soft_ms = self.soft_ms * 112 / 100;
+        }
 
         let legal = movegen::legal_moves(root);
         let mut result = SearchResult { best_move: legal.as_slice().first().copied().unwrap_or(Move::NONE), score: 0 };
