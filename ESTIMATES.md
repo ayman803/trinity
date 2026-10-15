@@ -88,7 +88,7 @@ requests PC time in NETWORK.md; the Session adds it here.
 |---|---|---|---|---|
 | 1 | Quantisation check, step 1 (tools/net/Quant-Check.bat; reviewed by the Session 15 October: deletes nothing, writes only sprt\coder2) | Coder 2 | under 1 | next; Coder 2's prediction: mean gap 4-8 cp, 95th percentile 10-16 cp |
 | 2 | Calibration of the new main, combo merged (5-Calibrate.bat) | Session | about 2.5 | after 1 (owner, 15 October: before the training, so the scoreboard and the stop rule have a current number; prediction +2 to +8) |
-| 3 | Wide network, 2048 neurons (tools/net/Wide-Network.bat; reviewed by the Session 15 October: deletes only its own unshuffled .raw parts in sprt\coder2\data, peak disk about 150 GB, touches nothing of the Session's) | Coder 2 | about 20 (GPU) + 2-3 (CPU) | after 2; owner said go. No calibration or SPRT on the PC meanwhile. Coder 2 compares the training loss at superbatch 300 with the 1024 run and reports; if 2048 is not clearly ahead, Ayman may stop it |
+| 3 | Wide network, 2048 neurons (tools/net/Wide-Network.bat; reviewed by the Session 15 October: deletes only its own unshuffled .raw parts in sprt\coder2\data, peak disk about 150 GB, touches nothing of the Session's) | Coder 2 | about 20 (GPU) + 2-3 (CPU) | after 2; owner said go. No calibration or SPRT on the PC meanwhile. Coder 2 compares the training loss at superbatch 300 with the 1024 run and reports; if 2048 is not clearly ahead, Ayman may stop it. Loss comparison script tools/net/Net-Loss.bat (reviewed: deletes nothing), run after training |
 
 ## Proposed (not yet run)
 

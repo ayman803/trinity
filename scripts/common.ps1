@@ -363,16 +363,19 @@ function Get-MainCheckpoint {
     return $null
 }
 
-# Keep main's checkpoint and the newest few; delete older checkpoints.
+# Keep every checkpoint of the run that made main's network (Coder 2
+# compares training runs at the same superbatch) and the newest few;
+# delete older checkpoints.
 function Remove-OldCheckpoints([int]$Keep = 4) {
     $dir = Join-Path $script:Root "checkpoints"
     if (-not (Test-Path -LiteralPath $dir)) { return }
     $main = Get-MainCheckpoint
+    $mainRun = if ($main) { (Split-Path $main -Leaf) -replace "-\d+$", "" } else { $null }
     $all = @(Get-ChildItem -LiteralPath $dir -Directory | Sort-Object LastWriteTime -Descending)
     $i = 0
     foreach ($c in $all) {
         $i++
-        if ($i -le $Keep -or ($main -and $c.FullName -eq $main)) { continue }
+        if ($i -le $Keep -or ($mainRun -and ($c.Name -replace "-\d+$", "") -eq $mainRun)) { continue }
         Remove-Leftover $c.FullName
     }
 }
