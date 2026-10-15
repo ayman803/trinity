@@ -50,8 +50,8 @@ try {
 
     # Every checkpoint folder of every run, sorted by run and superbatch.
     $dirs = @()
-    foreach ($root in @((Join-Path $script:Root "checkpoints"), (Join-Path $script:Out "checkpoints"))) {
-        foreach ($w in (Find-Files $root "weights.bin")) {
+    foreach ($ckptDir in @((Join-Path $script:Root "checkpoints"), (Join-Path $script:Out "checkpoints"))) {
+        foreach ($w in (Find-Files $ckptDir "weights.bin")) {
             $d = Split-Path (Split-Path $w -Parent) -Parent
             if ((Split-Path (Split-Path $w -Parent) -Leaf) -eq "optimiser_state") { $dirs += $d }
         }

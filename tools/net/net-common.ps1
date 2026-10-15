@@ -13,6 +13,10 @@
 # private index file in the output folder (no worktree, nothing checked out).
 
 $ErrorActionPreference = "Stop"
+# PowerShell ignores case in variable names, and code outside functions
+# shares the script scope: never use $out, $root, $work, $exesuffix or
+# $onwindows as a variable name in these scripts (it would overwrite
+# $script:Out etc.; this broke the first wide-network run on 15 October).
 $netToolsRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path   # C:\Trinity
 . (Join-Path (Join-Path $netToolsRoot "scripts") "common.ps1")
 $script:Root = $netToolsRoot
@@ -85,8 +89,8 @@ function Build-NetTrainer([string]$Branch) {
 function Find-NetCheckpoint([string]$NetFile) {
     if (-not (Test-Path -LiteralPath $NetFile)) { return $null }
     $hash = (Get-FileHash -LiteralPath $NetFile -Algorithm SHA256).Hash
-    foreach ($root in @((Join-Path $script:Root "checkpoints"), (Join-Path $script:Out "checkpoints"))) {
-        foreach ($q in (Find-Files $root "quantised.bin")) {
+    foreach ($ckptDir in @((Join-Path $script:Root "checkpoints"), (Join-Path $script:Out "checkpoints"))) {
+        foreach ($q in (Find-Files $ckptDir "quantised.bin")) {
             if ((Get-FileHash -LiteralPath $q -Algorithm SHA256).Hash -eq $hash) { return (Split-Path $q -Parent) }
         }
     }
