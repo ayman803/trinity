@@ -288,26 +288,38 @@ Skeptic's review of these numbers:
   can hide a +10 as easily as show it.
 
 Decision (owner, 15 October, evening): GO 2048. PC order: Quant-Check.bat,
-then 5-Calibrate.bat on the new main (the Session's), then
-Wide-Network.bat overnight. Two conditions:
+then Wide-Network.bat overnight (the calibration of the new main was
+already done on 14 October: about 3482, +16 over 3466; the 2048 network
+will be measured against that). Two conditions:
 1. Compare the training loss with the 1024 run at superbatch 300 and
    report. The 1024 run's loss log was never saved (big.ps1 showed it on
    screen only), so, as the owner allows, both runs' checkpoints are scored
    on the same positions instead: tools\net\Net-Loss.bat runs the engine
    command `trinity netloss` (branch net-quantcheck) on every saved
-   checkpoint of both runs with the first 250,000 positions of the shuffled
-   data part big-1 (a random sample), the trainer's own loss (sigmoid
-   output vs the wdl-0.5 target), plus the pure-result and pure-score
-   losses and the mean cp error. Caveats: these are training positions
-   (both runs trained on the whole file; no held-out positions exist, and
-   holding some out would change the recipe, so that is for a later run);
-   and the Session's housekeeping keeps only main's checkpoint and the 4
-   newest, so the 1024 run's checkpoint 300 may be gone (Quant-Check.bat
-   lists what is left). Then the comparison is at the superbatches both
-   runs still have (probably 450-600) and at 600. Prediction: at the same
-   superbatch the 2048 run's loss is 1-3% lower (relative), at 600 about
-   2-4% lower. Not lower at all: the width is unused, expect no Elo. Much
-   lower (over 6%) with a flat Elo result: memorisation of the data.
+   checkpoint of both runs. Two kinds of positions, both reported (advisor
+   and Session, 14 October evening: a wider network can win on training
+   positions by memorising them, and no held-out Leela positions exist
+   because both runs train on the whole file):
+   - held-out: 1,000,000 positions from Trinity's own calibration games
+     (39,200 games; ply 16 on, not in check), label = the game's result,
+     loss = (sigmoid(output) - result)^2. Neither network ever saw them.
+     This is the fair number.
+   - training: the first 1,000,000 positions of the shuffled part big-1,
+     the trainer's own loss (wdl 0.5) plus the pure-result and pure-score
+     losses and the mean cp error. Fit only; the gap between the two kinds
+     is the memorisation.
+   All 12 checkpoints of the 1024 run (50 to 600) still exist (listed by
+   the quantisation check), so the comparison is at every superbatch,
+   including 300. Prediction: held-out result loss of the 2048 run 0.5-1.5%
+   lower (relative) than the 1024 run's at the same superbatch; training
+   loss 1-3% lower at the same superbatch, 2-4% at 600. Held-out not lower
+   at all: the width is unused, expect no Elo. Training much lower but
+   held-out not: memorisation.
+   Checkpoint safety (Session, 14 October evening): Remove-OldCheckpoints
+   in scripts/common.ps1 runs only when 4-Train, 7-Drill, 8-Fresh-Leela or
+   11-Big-Network starts; it now never deletes big1024 folders and keeps
+   main's whole run. Coder 2's scripts never call it, and Coder 2's
+   checkpoints live in sprt\coder2\checkpoints, outside its reach.
 2. If 2048 lands between -5 and +5 at 30+0.3, one SPSA re-tune of the
    search settings before the verdict.
 
@@ -329,7 +341,7 @@ the width run is banked); step 2 of the quantisation idea (after step 1).
 |---|---|---|---|---|
 | N1 | Quantisation check, step 1 | tools\net\Quant-Check.bat | a few minutes of CPU (any time nothing else heavy is running; a GitHub test does not matter) | ready; deletes nothing |
 | N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 8-10 h GPU (the 1024 run took 5.0 h); no calibration or SPRT on the PC meanwhile | RUNNING since the evening of 14 October Pacific (conversion first, 57% of positions kept as before); expected to finish 7-9 am Pacific on 15 October |
-| N3 | Loss of every saved checkpoint on the same positions (condition 1) | tools\net\Net-Loss.bat | about a minute of CPU, after N2 (or during it for an early look at checkpoint 300: it is light) | ready once N2 has made the data; deletes nothing |
+| N3 | Loss of every saved checkpoint on the same positions (condition 1): held-out game positions and training positions | tools\net\Net-Loss.bat | a minute or two of CPU, after N2 | ready; deletes nothing |
 
 ## Test requests (lane "network")
 
