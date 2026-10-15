@@ -73,7 +73,7 @@ try {
         Invoke-Native $trainer @("convert-chunks", $binpacks[0], $prefix, "$Chunks", "$PerChunk")
         foreach ($i in 1..$Chunks) {
             $raw = "$prefix-$i.raw"
-            $out = $parts[$i - 1]
+            $shuffledPart = $parts[$i - 1]
             if (-not (Test-Path -LiteralPath $raw)) { continue }
             if ((Get-Item -LiteralPath $raw).Length -lt 32MB) {
                 # An empty tail part (the file ran out): the one deletion, of this script's own file.
@@ -82,7 +82,7 @@ try {
             }
             Write-Step "Shuffling part $i of $Chunks"
             Invoke-Native $utils @("validate", "--input", $raw)
-            Invoke-Native $utils @("shuffle", "--input", $raw, "--output", $out, "--mem-used-mb", "$MemoryMB")
+            Invoke-Native $utils @("shuffle", "--input", $raw, "--output", $shuffledPart, "--mem-used-mb", "$MemoryMB")
             # The shuffled copy replaces the raw one (this script's own file).
             Remove-Item -LiteralPath $raw
             Show-DiskSpace
