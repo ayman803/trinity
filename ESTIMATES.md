@@ -87,7 +87,7 @@ requests PC time in NETWORK.md; the Session adds it here.
 | # | Job | Owner | Hours | Status (15 October) |
 |---|---|---|---|---|
 | 1 | Quantisation check, step 1 (tools/net/Quant-Check.bat; reviewed by the Session 15 October: deletes nothing, writes only sprt\coder2) | Coder 2 | under 1 | next; Coder 2's prediction: mean gap 4-8 cp, 95th percentile 10-16 cp |
-| 2 | Calibration of the new main, combo merged (5-Calibrate.bat) | Session | about 2.5 | after 1 (owner, 15 October: before the training, so the scoreboard and the stop rule have a current number; prediction +2 to +8) |
+| 2 | Calibration of the new main, combo merged (5-Calibrate.bat) | Session | about 2.5 | DONE 14 October: about 3482 (+16) |
 | 3 | Wide network, 2048 neurons (tools/net/Wide-Network.bat; reviewed by the Session 15 October: deletes only its own unshuffled .raw parts in sprt\coder2\data, peak disk about 150 GB, touches nothing of the Session's) | Coder 2 | about 20 (GPU) + 2-3 (CPU) | after 2; owner said go. No calibration or SPRT on the PC meanwhile. Coder 2 compares the training loss at superbatch 300 with the 1024 run and reports; if 2048 is not clearly ahead, Ayman may stop it. Loss comparison script tools/net/Net-Loss.bat (reviewed: deletes nothing), run after training |
 
 ## Proposed (not yet run)
@@ -126,6 +126,7 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
 | 2026-10-10 | 1024-neuron network (bench 626889) | 44.90% -> 3438 | 42.95% -> 3438 | 44.50% -> 3484 | 34.80% -> 3434 | - | about 3449 (6 games lost on time in 4000, worth watching) |
 | 2026-10-10 | same, at repeating 40/20 (300 games per opponent) | 48.17% -> 3461 | 47.33% -> 3468 | 48.67% -> 3513 | 40.67% -> 3477 | - | about 3480 (+/- 11); 0 games lost on time in 1200. Higher than at 10+0.1, not yet explained |
 | 2026-10-12 | release 1.0.0: + unsure-1024 + SPSA re-tune (bench 780879) | 47.00% -> 3453 | 45.75% -> 3458 | 45.80% -> 3493 | 38.45% -> 3461 | - | about 3466 (+17 over 3449; predicted +1 to +13). 3 games lost on time by Trinity in 4000 |
+| 2026-10-14 | main with combo merged: tm-control + nnue-simd (bench 780879) | 49.05% -> 3467 | 47.60% -> 3471 | 48.95% -> 3515 | 40.45% -> 3476 | - | about 3482 (+16 over 3466; predicted +5 to +12, lowered to +2 to +8 after #19). All four opponents up 13-22. 9 games lost on time by Trinity in 4000 (1.0.0: 3), worth watching |
 
 ## Lessons so far
 
@@ -278,6 +279,15 @@ Revised calibration prediction for combo (owner, 15 October, after #19 and
 before any calibration): +2 to +8 on the CCRL scale (was +5 to +12). The
 combo miss is logged: predicted self-play +10 to +18, got +5.6. Gate count
 unchanged: #17 stays the gate win, as decided in advance.
+Calibration of combo (14 October, 4000 games at 10+0.1): about 3482, +16
+over 1.0.0's 3466, above even the first prediction (+5 to +12) and far
+above the lowered one (+2 to +8); self-play said only +5.6. All four
+opponents agree (+13 to +22). Reading: time-management gains may carry
+over to rated engines more than 1:1, unlike network refinements (the
+opponents spend their time better, so Trinity's leak cost more against
+them). Statistical uncertainty of a difference of two calibrations is
+about +/- 10, so the true gain is likely +6 to +26. Lowering the
+prediction after #19 was the wrong correction for this kind of change.
 Merge conditions for combo (owner, 14 October): #19 passes; #20 shows no
 time losses; the x86-64-v2 build (no AVX2) gives the same bench as the
 AVX2 build and plays 20 games on the PC with no crash (19-V2-Check.bat).
