@@ -75,9 +75,9 @@ at once. PC: one heavy job at a time, in the order Ayman chooses.
 |---|---|---|---|---|
 | 1 | Merge combo (tm-control + nnue-simd) | search | - | DONE 15 October: v2 check passed (same bench 780879, 20 games, no errors); merged |
 | 2 | Part A (tm-plan) gate test vs the new main, repeating 40/10, cap 12000 games | search | GitHub | started 15 October (SPRT #21). Version tested, fixed before any result: tm-plan with the new main merged in, so it keeps tm-control's 12% as well (part A added to main, nothing removed). Local check: 20 games at 40/10, 0 time losses |
-| 3 | Calibration (5-Calibrate.bat) | search | PC CPU | owner, 14 October: after part A is merged, not now (combo alone is worth about +3 to +5 on the CCRL scale, below calibration's +/- 15) |
+| 3 | Calibration (5-Calibrate.bat) | search | PC CPU | owner, 15 October: now, on the main with combo (replaces the 14 October decision to wait for part A); part A needs its own calibration later |
 | 4 | Quantisation check (Scout 14 October, idea 2): float vs integer eval gap | network | PC CPU or GitHub | Coder 2 to design |
-| 5 | Wide network (2048 neurons, same recipe as the 1024 run: 3.65B Leela positions, 600 superbatches, LR 0.001 cosine, WDL 0.5) | network | PC GPU, then GitHub SPRT | planned. Coder 2's prediction (logged before training): self-play +15 to +45, CCRL +5 to +25, about 70% chance to pass; speed cost -28% (AVX2 build). Session's review: test it at 8+0.08 and at 30+0.3 (a slower, bigger network is penalised more at a fast clock than at CCRL's 40/15, as with the 1024 net: +80 and +82); about 16 epochs over 3.65B positions for twice the weights, so under-training is the main risk |
+| 5 | Wide network (2048 neurons, same recipe as the 1024 run: 3.65B Leela positions, 600 superbatches, LR 0.001 cosine, WDL 0.5) | network | PC GPU, then GitHub SPRT | planned. Coder 2's prediction (logged before training): self-play +15 to +45, CCRL +5 to +25, about 70% chance to pass; speed cost -28% (AVX2 build). Owner's rule, fixed before training: if 2048 lands between -5 and +5 at 30+0.3, run one SPSA re-tune before the verdict; clearly negative closes the path. Session's review: test it at 8+0.08 and at 30+0.3 (a slower, bigger network is penalised more at a fast clock than at CCRL's 40/15, as with the 1024 net: +80 and +82); about 16 epochs over 3.65B positions for twice the weights, so under-training is the main risk |
 
 ## PC queue
 
@@ -86,9 +86,9 @@ requests PC time in NETWORK.md; the Session adds it here.
 
 | # | Job | Owner | Hours | Status (15 October) |
 |---|---|---|---|---|
-| 1 | Quantisation check, step 1 (tools/net/Quant-Check.bat; reviewed by the Session 15 October: deletes nothing, writes only sprt\coder2) | Coder 2 | under 1 | ready; Coder 2's prediction: mean gap 4-8 cp, 95th percentile 10-16 cp |
-| 3 | Wide network, 2048 neurons (tools/net/Wide-Network.bat; reviewed by the Session 15 October: deletes only its own unshuffled .raw parts in sprt\coder2\data, peak disk about 150 GB, touches nothing of the Session's) | Coder 2 | about 20 (GPU) + 2-3 (CPU) | waiting for Ayman's go; no calibration or SPRT on the PC meanwhile |
-| 2 | Calibration (5-Calibrate.bat) | Session | about 24 | after part A is merged |
+| 1 | Quantisation check, step 1 (tools/net/Quant-Check.bat; reviewed by the Session 15 October: deletes nothing, writes only sprt\coder2) | Coder 2 | under 1 | next; Coder 2's prediction: mean gap 4-8 cp, 95th percentile 10-16 cp |
+| 2 | Calibration of the new main, combo merged (5-Calibrate.bat) | Session | about 2.5 | after 1 (owner, 15 October: before the training, so the scoreboard and the stop rule have a current number; prediction +2 to +8) |
+| 3 | Wide network, 2048 neurons (tools/net/Wide-Network.bat; reviewed by the Session 15 October: deletes only its own unshuffled .raw parts in sprt\coder2\data, peak disk about 150 GB, touches nothing of the Session's) | Coder 2 | about 20 (GPU) + 2-3 (CPU) | after 2; owner said go. No calibration or SPRT on the PC meanwhile. Coder 2 compares the training loss at superbatch 300 with the 1024 run and reports; if 2048 is not clearly ahead, Ayman may stop it |
 
 ## Proposed (not yet run)
 
