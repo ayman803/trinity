@@ -166,19 +166,21 @@ nothing (+6 / ~0; -3.8; weight averaging ~0). So the lever is capacity,
 and the honest unknown is how much of the +80 was the width rather than
 the from-scratch 600-superbatch run on the whole file.
 
-Measured here (cloud machine, main's code without the AVX2 output layer,
-the 1024 network padded with zero neurons so the search is identical,
-bench 780879 in all three):
+Measured here (cloud machine with AVX2, main's code of 15 October with
+the AVX2 output layer, builds for the machine's own processor, the 1024
+network padded with zero neurons so the search is identical: bench 780879
+in all three):
 
-| Hidden | nodes/s (mean of 3) | vs 1024 | Elo by the time-odds ruler (0.57 per 1%) |
+| Hidden | nodes/s (mean of 4) | vs 1024 | Elo by the time-odds ruler (0.57 per 1%) |
 |---|---|---|---|
-| 1024 | 827k | - | - |
-| 1536 | 619k | -25% | about -14 self-play |
-| 2048 | 501k | -39% | about -22 self-play |
+| 1024 | 1104k | - | - |
+| 1536 | 899k | -19% | about -11 self-play |
+| 2048 | 794k | -28% | about -16 self-play |
 
-(512 -> 1024 cost 28% on the PC and still gained +50 CCRL. The AVX2
-output layer, once merged, trims the width cost a little; the accumulator
-updates, which also double, it does not touch.)
+(Without the AVX2 output layer the costs were 25% and 39%. 512 -> 1024
+cost 28% on the PC and still gained +50 CCRL. The accumulator updates,
+which also double, are untouched by the AVX2 code; measure the cost on
+the PC and the GitHub machines before reading the test.)
 
 Training time: the 1024 run (600 superbatches, 3.65 billion positions,
 batch 16384) started 9 October 19:00 Pacific and had been tested by the
@@ -209,21 +211,22 @@ kept), so overfitting of the wider network on 16 passes over the same
 3.65 billion positions can be seen rather than guessed.
 
 Prediction (written before the run):
-- 2048: self-play vs main at 8+0.08 +10 to +40 (central +25: a raw gain of
-  about half of the 1024 run's +95-before-speed, minus 22 for speed);
-  CCRL-scale +5 to +25 (central +12). Chance to pass SPRT [0, 5]: about
-  65%. If the 1024 gain was mostly the recipe rather than the width, the
+- 2048: self-play vs main at 8+0.08 +15 to +45 (central +30: a raw gain
+  of about half of the 1024 run's +95-before-speed, minus 16 for speed);
+  CCRL-scale +5 to +25 (central +15). Chance to pass SPRT [0, 5]: about
+  70%. If the 1024 gain was mostly the recipe rather than the width, the
   result is -10 to +5 and the width path is closed; that is worth knowing
   either way, and 2048 gives a clearer answer than 1536.
 - 1536 (fallback if the PC time is too long or the risk unwanted):
-  self-play +5 to +25 (central +13); CCRL +3 to +15 (central +8).
+  self-play +5 to +30 (central +15); CCRL +3 to +15 (central +9).
 
 Skeptic's review of these numbers:
 - The +80 of the 1024 run bundled width, from-scratch training, 600
   superbatches and 3.65B positions; nobody knows the width's share.
-- The speed cost was measured on a cloud CPU without the AVX2 code; the PC
-  and the GitHub test machines may pay more or less. The ruler (0.57 Elo
-  per 1%) was measured at +12% time; a 39% change may not scale linearly.
+- The speed cost was measured on one cloud CPU; the PC and the GitHub
+  test machines may pay more or less (nnue-simd itself ranged from -3% to
+  +10% across machines). The ruler (0.57 Elo per 1%) was measured at +12%
+  time; a 28% change may not scale linearly.
 - A test that stops when it passes over-reads (SPRT #17: +13 that became
   +6 in the repeat). Calibration decides, not the SPRT number.
 - 16 passes over the same data: a wider network can memorise more; the
@@ -254,4 +257,6 @@ the width run is banked); step 2 of the quantisation idea (after step 1).
 ## Test requests (lane "network")
 
 (none yet; after N2 finishes, an SPRT of `net-wide2048-<date>` vs main at
-8+0.08, bounds [0, 5], after Coder 2 has updated the branch from main)
+8+0.08, bounds [0, 5], after Coder 2 has updated the branch from main.
+Branch state on 15 October: net-quantcheck and net-wide both carry main's
+combo merge of 15 October, build, pass the tests, bench 780879.)
