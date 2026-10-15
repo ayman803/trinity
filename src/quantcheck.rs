@@ -34,7 +34,7 @@ struct FloatNet {
 
 /// The trainer's weights file: per tensor, its name and a newline, its
 /// length as a little-endian u64, then f32 values.
-fn read_weights(path: &str) -> Result<Vec<(String, Vec<f32>)>, String> {
+pub(crate) fn read_weights(path: &str) -> Result<Vec<(String, Vec<f32>)>, String> {
     let bytes = std::fs::read(path).map_err(|e| format!("cannot read {path}: {e}"))?;
     let mut out = Vec::new();
     let mut i = 0;
@@ -315,6 +315,14 @@ pub fn run(weights: &str, max: usize, files: &[String]) -> Result<(), String> {
     println!("Positions where the integer and float evals have different signs: {sign_flips} of {}", boards.len());
     println!("Reading: the engine reports whole centipawns, so a gap under about 1 cp is the integer rounding alone.");
     Ok(())
+}
+
+/// The float network's eval of `b` in cp (for the netloss tests).
+#[cfg(test)]
+pub(crate) fn float_eval_for_test(weights: &str, b: &Board) -> f64 {
+    let net = nnue::network().expect("engine built without a network");
+    let f = load_float(weights).unwrap();
+    evals(&f, net, b)[1]
 }
 
 #[cfg(test)]

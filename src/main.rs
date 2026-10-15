@@ -7,6 +7,7 @@ mod datagen;
 mod eval;
 mod forensics;
 mod movegen;
+mod netloss;
 mod nnue;
 mod quantcheck;
 mod search;
@@ -82,6 +83,19 @@ fn real_main() -> i32 {
                 return 1;
             }
             if let Err(e) = quantcheck::run(&args[1], max, &args[3..]) {
+                eprintln!("{e}");
+                return 1;
+            }
+        }
+        // `trinity netloss <data file> <positions> <checkpoint dirs...>`: the
+        // training loss of float checkpoints on the same sample of positions.
+        Some("netloss") => {
+            let count = args.get(2).and_then(|c| c.parse().ok()).unwrap_or(250_000);
+            if args.len() < 4 {
+                eprintln!("usage: trinity netloss <data file> <positions> <checkpoint dirs...>");
+                return 1;
+            }
+            if let Err(e) = netloss::run(&args[1], count, &args[3..]) {
                 eprintln!("{e}");
                 return 1;
             }

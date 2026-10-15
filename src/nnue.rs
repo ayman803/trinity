@@ -44,7 +44,7 @@ pub const KING_BUCKETS: usize = 8;
 /// (bucket offset, square xor for mirroring) of a king on `rel_ksq` (a
 /// square seen from the king's own side).
 #[inline(always)]
-fn king_bucket(rel_ksq: Square) -> (usize, usize) {
+pub(crate) fn king_bucket(rel_ksq: Square) -> (usize, usize) {
     let file = rel_ksq % 8;
     let (f4, flip) = if file > 3 { (7 - file, 7) } else { (file, 0) };
     (KING_BUCKET_LAYOUT[(rel_ksq / 8) * 4 + f4] * INPUTS, flip)
