@@ -74,7 +74,7 @@ at once. PC: one heavy job at a time, in the order Ayman chooses.
 | # | Test | Lane | Where | Status (15 October) |
 |---|---|---|---|---|
 | 1 | Merge combo (tm-control + nnue-simd) | search | - | DONE 15 October: v2 check passed (same bench 780879, 20 games, no errors); merged |
-| 2 | Part A (tm-plan) gate test vs the new main, repeating 40/10, cap 12000 games | search | GitHub | after 1 |
+| 2 | Part A (tm-plan) gate test vs the new main, repeating 40/10, cap 12000 games | search | GitHub | started 15 October (SPRT #21). Version tested, fixed before any result: tm-plan with the new main merged in, so it keeps tm-control's 12% as well (part A added to main, nothing removed). Local check: 20 games at 40/10, 0 time losses |
 | 3 | Calibration (5-Calibrate.bat) | search | PC CPU | owner, 14 October: after part A is merged, not now (combo alone is worth about +3 to +5 on the CCRL scale, below calibration's +/- 15) |
 | 4 | Quantisation check (Scout 14 October, idea 2): float vs integer eval gap | network | PC CPU or GitHub | Coder 2 to design |
 | 5 | Next training run (data, size, length) | network | PC GPU | Coder 2 to design; disk budget about 200 GB |
