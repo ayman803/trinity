@@ -36,6 +36,9 @@ use crate::types::*;
 /// Float weights of any supported width, in the engine's layout.
 struct FloatNet {
     hidden: usize,
+    /// False for the older networks without king buckets: one set of input
+    /// weights, no mirroring.
+    bucketed: bool,
     /// `[feature][neuron]`, feature = king bucket * 768 + piece feature.
     l0w: Vec<f32>,
     l0b: Vec<f32>,
@@ -44,7 +47,47 @@ struct FloatNet {
     l1b: Vec<f32>,
 }
 
-fn load(dir: &str) -> Result<FloatNet, String> {
+/// A checkpoint folder (float weights) or an integer network file
+/// (`.nnue`, de-quantised: the engine's own numbers divided by QA and QB).
+fn load(path: &str) -> Result<FloatNet, String> {
+    if path.ends_with(".nnue") { load_nnue(path) } else { load_checkpoint(path) }
+}
+
+/// The integer network layouts the engine accepts (src/nnue.rs): 256
+/// neurons with one output (the first networks), 512 without king buckets
+/// (networks 4 to 6 and "fresh"), and 512 to 2048 with 8 king buckets.
+fn load_nnue(path: &str) -> Result<FloatNet, String> {
+    let bytes = std::fs::read(path).map_err(|e| format!("cannot read {path}: {e}"))?;
+    let layouts: Vec<(usize, usize, usize)> = [(256, 1, 1), (512, 1, 8), (1024, 1, 8)]
+        .into_iter()
+        .chain([512, 1024, 1536, 2048].into_iter().map(|h| (h, KING_BUCKETS, OUTPUT_BUCKETS)))
+        .collect();
+    let (hidden, king_buckets, out_buckets) = layouts
+        .into_iter()
+        .find(|&(h, kb, ob)| {
+            let size = 2 * (kb * INPUTS * h + h + ob * (2 * h + 1));
+            (size..size + 64).contains(&bytes.len())
+        })
+        .ok_or(format!("{path} is {} bytes: not a network layout Trinity knows", bytes.len()))?;
+    let mut vals = bytes.chunks_exact(2).map(|c| f32::from(i16::from_le_bytes([c[0], c[1]])));
+    let mut take = |n: usize, q: f32| -> Vec<f32> { (0..n).map(|_| vals.next().unwrap_or(0.0) / q).collect() };
+    let (qa, qb) = (nnue::QA as f32, nnue::QB as f32);
+    let mut l0w = take(king_buckets * INPUTS * hidden, qa);
+    if king_buckets == 1 {
+        // The same weights for every king bucket (the file has one set).
+        l0w = l0w.repeat(KING_BUCKETS);
+    }
+    let l0b = take(hidden, qa);
+    let mut l1w = take(out_buckets * 2 * hidden, qb);
+    let mut l1b = take(out_buckets, qa * qb);
+    if out_buckets == 1 {
+        l1w = l1w.repeat(OUTPUT_BUCKETS);
+        l1b = l1b.repeat(OUTPUT_BUCKETS);
+    }
+    Ok(FloatNet { hidden, bucketed: king_buckets > 1, l0w, l0b, l1w, l1b })
+}
+
+fn load_checkpoint(dir: &str) -> Result<FloatNet, String> {
     let path = format!("{dir}/optimiser_state/weights.bin");
     let tensors = read_weights(&path)?;
     let get = |name: &str| -> Result<&Vec<f32>, String> {
@@ -83,7 +126,7 @@ fn load(dir: &str) -> Result<FloatNet, String> {
     if l1b.len() != OUTPUT_BUCKETS {
         return Err(format!("{path}: l1b has {} values, expected {OUTPUT_BUCKETS}", l1b.len()));
     }
-    Ok(FloatNet { hidden, l0w, l0b, l1w, l1b })
+    Ok(FloatNet { hidden, bucketed: true, l0w, l0b, l1w, l1b })
 }
 
 /// The network's raw output for a record (side to move's view; x SCALE = cp).
@@ -92,7 +135,11 @@ fn load(dir: &str) -> Result<FloatNet, String> {
 fn output(f: &FloatNet, rec: &ChessBoard) -> f64 {
     let h = f.hidden;
     // `opp_ksq` is stored already flipped to the opponent's own view.
-    let views = [nnue::king_bucket(usize::from(rec.ksq)), nnue::king_bucket(usize::from(rec.opp_ksq))];
+    let views = if f.bucketed {
+        [nnue::king_bucket(usize::from(rec.ksq)), nnue::king_bucket(usize::from(rec.opp_ksq))]
+    } else {
+        [(0, 0), (0, 0)]
+    };
     let mut hidden = [f.l0b.iter().map(|&x| f64::from(x)).collect::<Vec<f64>>(), Vec::new()];
     hidden[1] = hidden[0].clone();
     for (pc, sq) in *rec {
@@ -257,7 +304,8 @@ fn score_all(checkpoints: &[String], sample: &[ChessBoard], held_out: bool) {
             }
         };
         let [l, lw, lc, cp] = mean_losses(&f, sample);
-        let name = dir.trim_end_matches(['/', '\\']).rsplit(['/', '\\']).next().unwrap_or(dir);
+        let name =
+            dir.trim_end_matches(['/', '\\']).rsplit(['/', '\\']).next().unwrap_or(dir).trim_end_matches(".nnue");
         if held_out {
             println!("{name:60} {:>7} {lw:>12.6}", f.hidden);
         } else {
@@ -377,6 +425,54 @@ mod tests {
         // The loss of a perfect prediction is zero; of a sure win called a sure loss, one.
         let [l, lw, lc, _] = mean_losses(&f, &back);
         assert!(l > 0.0 && l < 1.0 && lw < 1.0 && lc < 1.0);
+        // The same network read as an integer file gives the same output.
+        let as_file = load("nets/default.nnue").or_else(|_| load("../nets/default.nnue"));
+        if let Ok(g) = as_file {
+            for rec in &back {
+                assert!((output(&g, rec) - output(&f, rec)).abs() < 1e-9);
+            }
+        }
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// Integer files of the older layouts (no king buckets; 256 neurons
+    /// with one output) evaluate as the engine itself evaluates them.
+    #[test]
+    fn older_layouts_match_the_engine() {
+        use crate::nnue::{AccPair, Network, QA, QB};
+        let dir = std::env::temp_dir().join("trinity-netloss-layouts");
+        std::fs::create_dir_all(&dir).unwrap();
+        let fens = [
+            "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",
+            "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R b KQkq - 0 1",
+            "6k1/5ppp/8/8/8/8/5PPP/3R2K1 b - - 0 1",
+        ];
+        for (seed, hidden, out_buckets) in [(7u64, nnue::HIDDEN, OUTPUT_BUCKETS), (9, 256, 1)] {
+            let n = INPUTS * hidden + hidden + out_buckets * (2 * hidden + 1);
+            let out_start = INPUTS * hidden + hidden;
+            let mut s = seed;
+            let mut bytes = Vec::new();
+            for i in 0..n {
+                s ^= s << 13;
+                s ^= s >> 7;
+                s ^= s << 17;
+                let v: i16 = if i >= out_start { (s % 255) as i16 - 127 } else { (s % 101) as i16 - 50 };
+                bytes.extend_from_slice(&v.to_le_bytes());
+            }
+            bytes.resize((2 * n).div_ceil(64) * 64, 0);
+            let path = dir.join(format!("layout-{hidden}.nnue"));
+            std::fs::write(&path, &bytes).unwrap();
+            let net: Box<Network> = Network::from_bytes(&bytes).unwrap();
+            let f = load(path.to_str().unwrap()).unwrap();
+            assert!(!f.bucketed && f.hidden == hidden);
+            for fen in fens {
+                let b = Board::from_fen(fen).unwrap();
+                let integer = f64::from(nnue::evaluate(&net, &AccPair::from_board(&net, &b), &b));
+                let float = output(&f, &to_bullet(&b, 0, 0.5)) * f64::from(SCALE);
+                let tol = 1.0 + float.abs() * 0.02 + f64::from(SCALE) / f64::from(QA * QB);
+                assert!((integer - float).abs() <= tol, "hidden {hidden}: {integer} vs {float}");
+            }
+        }
         let _ = std::fs::remove_dir_all(&dir);
     }
 }
