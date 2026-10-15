@@ -274,6 +274,10 @@ passes catches upswings), and the speed-up is worth about what the ruler
 says (+3) or less. The gate rule was fixed in advance, so #17 still counts
 as the gate win, but future estimates should treat a single early pass as
 an overstatement. Self-play gain of combo vs main: about +6.
+Revised calibration prediction for combo (owner, 15 October, after #19 and
+before any calibration): +2 to +8 on the CCRL scale (was +5 to +12). The
+combo miss is logged: predicted self-play +10 to +18, got +5.6. Gate count
+unchanged: #17 stays the gate win, as decided in advance.
 Merge conditions for combo (owner, 14 October): #19 passes; #20 shows no
 time losses; the x86-64-v2 build (no AVX2) gives the same bench as the
 AVX2 build and plays 20 games on the PC with no crash (19-V2-Check.bat).
