@@ -235,6 +235,30 @@ Skeptic's review of these numbers:
 - Everything downstream of the SPRT (calibration +/- 15 real uncertainty)
   can hide a +10 as easily as show it.
 
+Decision (owner, 15 October, evening): GO 2048. PC order: Quant-Check.bat,
+then 5-Calibrate.bat on the new main (the Session's), then
+Wide-Network.bat overnight. Two conditions:
+1. Compare the training loss with the 1024 run at superbatch 300 and
+   report. The 1024 run's loss log was never saved (big.ps1 showed it on
+   screen only), so, as the owner allows, both runs' checkpoints are scored
+   on the same positions instead: tools\net\Net-Loss.bat runs the engine
+   command `trinity netloss` (branch net-quantcheck) on every saved
+   checkpoint of both runs with the first 250,000 positions of the shuffled
+   data part big-1 (a random sample), the trainer's own loss (sigmoid
+   output vs the wdl-0.5 target), plus the pure-result and pure-score
+   losses and the mean cp error. Caveats: these are training positions
+   (both runs trained on the whole file; no held-out positions exist, and
+   holding some out would change the recipe, so that is for a later run);
+   and the Session's housekeeping keeps only main's checkpoint and the 4
+   newest, so the 1024 run's checkpoint 300 may be gone (Quant-Check.bat
+   lists what is left). Then the comparison is at the superbatches both
+   runs still have (probably 450-600) and at 600. Prediction: at the same
+   superbatch the 2048 run's loss is 1-3% lower (relative), at 600 about
+   2-4% lower. Not lower at all: the width is unused, expect no Elo. Much
+   lower (over 6%) with a flat Elo result: memorisation of the data.
+2. If 2048 lands between -5 and +5 at 30+0.3, one SPSA re-tune of the
+   search settings before the verdict.
+
 After a pass (for the Session's queue): v2 check (19-V2-Check.bat),
 calibration (5-Calibrate.bat, rule 2), then an SPSA re-tune of the search
 settings (owner's rule of 15 October; the last one was worth +5.9).
@@ -252,11 +276,14 @@ the width run is banked); step 2 of the quantisation idea (after step 1).
 | # | Job | Script | PC time | Status |
 |---|---|---|---|---|
 | N1 | Quantisation check, step 1 | tools\net\Quant-Check.bat | a few minutes of CPU (any time nothing else heavy is running; a GitHub test does not matter) | ready; deletes nothing |
-| N2 | Wide network training (2048; or `-Hidden 1536`) | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 15-20 h GPU; no calibration or SPRT on the PC meanwhile | waiting for Ayman's go on the plan and the Session's review of wide.ps1 (it deletes its own raw data parts) |
+| N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 15-20 h GPU; no calibration or SPRT on the PC meanwhile | GO (owner, 15 October); scheduled after the Session's calibration; wide.ps1 deletes its own raw data parts (rule 5: for the Session's review) |
+| N3 | Loss of every saved checkpoint on the same positions (condition 1) | tools\net\Net-Loss.bat | about a minute of CPU, after N2 (or during it for an early look at checkpoint 300: it is light) | ready once N2 has made the data; deletes nothing |
 
 ## Test requests (lane "network")
 
-(none yet; after N2 finishes, an SPRT of `net-wide2048-<date>` vs main at
-8+0.08, bounds [0, 5], after Coder 2 has updated the branch from main.
+(none yet; after N2 finishes and Coder 2 has updated the branch from main:
+an SPRT of `net-wide2048-<date>` vs main at 8+0.08, bounds [0, 5]; if it
+passes, 3000 games at 30+0.3 as for the 1024 network (the owner's
+condition 2 reads the 30+0.3 result).
 Branch state on 15 October: net-quantcheck and net-wide both carry main's
 combo merge of 15 October, build, pass the tests, bench 780879.)
