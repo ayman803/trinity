@@ -361,6 +361,36 @@ impl RefreshCache {
 /// Squared clipped ReLU, dotted with the output weights. Written as
 /// `(v * w) * v` with the first product in i16 so the compiler can use
 /// the `madd` SIMD instruction; `v * w` fits in i16 because |w| < 128.
+/// AVX2 version: the same arithmetic 16 neurons at a time. The i32 lanes
+/// cannot overflow: each holds at most 2 * HIDDEN / 16 products of at most
+/// 255 * 127 * 255.
+#[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+#[inline(always)]
+fn screlu_dot(acc: &[i16; HIDDEN], weights: &[i16]) -> i32 {
+    use std::arch::x86_64::*;
+    let weights = &weights[..HIDDEN];
+    // SAFETY: AVX2 is enabled at compile time (cfg above); every load reads
+    // 16 i16 values inside `acc` or `weights`, both HIDDEN long, and
+    // unaligned loads are used.
+    unsafe {
+        let zero = _mm256_setzero_si256();
+        let qa = _mm256_set1_epi16(QA as i16);
+        let mut sum = _mm256_setzero_si256();
+        for i in (0..HIDDEN).step_by(16) {
+            let a = _mm256_loadu_si256(acc.as_ptr().add(i) as *const __m256i);
+            let w = _mm256_loadu_si256(weights.as_ptr().add(i) as *const __m256i);
+            let v = _mm256_min_epi16(_mm256_max_epi16(a, zero), qa);
+            let vw = _mm256_mullo_epi16(v, w);
+            sum = _mm256_add_epi32(sum, _mm256_madd_epi16(vw, v));
+        }
+        let half = _mm_add_epi32(_mm256_castsi256_si128(sum), _mm256_extracti128_si256(sum, 1));
+        let quad = _mm_add_epi32(half, _mm_shuffle_epi32(half, 0b01_00_11_10));
+        let pair = _mm_add_epi32(quad, _mm_shuffle_epi32(quad, 0b10_11_00_01));
+        _mm_cvtsi128_si32(pair)
+    }
+}
+
+#[cfg(not(all(target_arch = "x86_64", target_feature = "avx2")))]
 #[inline(always)]
 fn screlu_dot(acc: &[i16; HIDDEN], weights: &[i16]) -> i32 {
     let mut sum = 0i32;
@@ -541,5 +571,81 @@ pub mod tests {
     #[test]
     fn rejects_wrong_size() {
         assert!(Network::from_bytes(&[0u8; 1000]).is_err());
+    }
+
+    /// The output layer gives exactly the plain formula's result, including
+    /// the extreme values (accumulators far outside 0..QA, weights +-127).
+    #[test]
+    fn screlu_dot_matches_plain_formula() {
+        let mut s = 0x9e37_79b9_7f4a_7c15u64;
+        let mut next = || {
+            s ^= s << 13;
+            s ^= s >> 7;
+            s ^= s << 17;
+            s
+        };
+        for round in 0..200 {
+            let mut acc = [0i16; HIDDEN];
+            let mut w = vec![0i16; HIDDEN];
+            for i in 0..HIDDEN {
+                acc[i] = match round % 3 {
+                    0 => next() as i16,
+                    1 => QA as i16,
+                    _ => (next() % 400) as i16 - 100,
+                };
+                w[i] = if round % 3 == 1 { 127 } else { (next() % 255) as i16 - 127 };
+            }
+            let plain: i32 = acc.iter().zip(&w).map(|(&a, &w)| {
+                let v = i32::from(a.clamp(0, QA as i16));
+                v * v * i32::from(w)
+            }).sum();
+            assert_eq!(screlu_dot(&acc, &w), plain, "round {round}");
+        }
+    }
+}
+
+#[cfg(test)]
+mod speed_probe {
+    use super::*;
+    use crate::board::Board;
+    use crate::movegen;
+    use std::time::Instant;
+
+    /// Prints the cost of one evaluate() and one update_into() call, to
+    /// compare with the time per node of `bench`. Run with
+    /// `cargo test --release speed_probe -- --nocapture`.
+    #[test]
+    #[ignore = "timing only: cargo test --release speed_probe -- --ignored --nocapture"]
+    fn speed_probe() {
+        let Some(net) = network() else { return };
+        let b = Board::from_fen("r1bq1rk1/pp2bppp/2n1pn2/3p4/2PP4/2N1PN2/PP3PPP/R2QKB1R w KQ - 0 8").unwrap();
+        let pair = AccPair::from_board(net, &b);
+        let n = 2_000_000;
+        let t = Instant::now();
+        let mut s = 0i64;
+        for i in 0..n {
+            s += evaluate(net, &pair, &b) as i64 + (i & 1) as i64;
+        }
+        let eval_ns = t.elapsed().as_nanos() as f64 / n as f64;
+        let moves = movegen::legal_moves(&b);
+        let mut cache = RefreshCache::new(net);
+        let mut out = AccPair::from_board(net, &b);
+        let t = Instant::now();
+        let mut k = 0;
+        for i in 0..n {
+            let m = moves.as_slice()[i % moves.len()];
+            let after = b.make_move(m);
+            pair.update_into(&mut out, net, &mut cache, &b, &after, m);
+            k += out.acc[0].vals[0] as i64;
+        }
+        let upd_ns = t.elapsed().as_nanos() as f64 / n as f64;
+        let t = Instant::now();
+        for i in 0..n {
+            let m = moves.as_slice()[i % moves.len()];
+            let after = b.make_move(m);
+            k += after.hash as i64 & 1;
+        }
+        let mk_ns = t.elapsed().as_nanos() as f64 / n as f64;
+        println!("SPEEDPROBE evaluate {eval_ns:.0} ns, make_move+update {upd_ns:.0} ns, make_move alone {mk_ns:.0} ns (s={s} k={k})");
     }
 }
