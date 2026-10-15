@@ -240,6 +240,15 @@ check), both against main.
 Prediction for combo, logged before #19 and #20 finished (Scout and
 advisor, owner's paste of 14 October): self-play +10 to +18; calibration
 (CCRL scale) +5 to +12, i.e. 3466 -> about 3471-3478.
+Result: #19 PASSED +5.64 +/- 3.74 (9000 games, LLR 3.10, 0 time losses);
+#20 at 40/20: +4.05 +/- 9.29 (1200 games, 0 time losses, 0 crashes).
+Below the prediction (+10 to +18) and far below the +17 to +20 that
+nnue-simd's +13 would imply. Reading: the parts do not add up as measured
+alone; most likely #17's +13 was largely luck (a test that stops when it
+passes catches upswings), and the speed-up is worth about what the ruler
+says (+3) or less. The gate rule was fixed in advance, so #17 still counts
+as the gate win, but future estimates should treat a single early pass as
+an overstatement. Self-play gain of combo vs main: about +6.
 Merge conditions for combo (owner, 14 October): #19 passes; #20 shows no
 time losses; the x86-64-v2 build (no AVX2) gives the same bench as the
 AVX2 build and plays 20 games on the PC with no crash (19-V2-Check.bat).
