@@ -375,6 +375,9 @@ function Remove-OldCheckpoints([int]$Keep = 4) {
     $i = 0
     foreach ($c in $all) {
         $i++
+        # The 1024 run ("big1024") is the reference for Coder 2's comparisons:
+        # never deleted, even after another network replaces it in main.
+        if ($c.Name -like "*big1024*") { continue }
         if ($i -le $Keep -or ($mainRun -and ($c.Name -replace "-\d+$", "") -eq $mainRun)) { continue }
         Remove-Leftover $c.FullName
     }
