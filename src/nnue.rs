@@ -22,7 +22,7 @@ pub const OUTPUT_BUCKETS: usize = 8;
 pub const QA: i32 = 255;
 pub const QB: i32 = 64;
 pub const SCALE: i32 = 400;
-const INPUTS: usize = 768;
+pub(crate) const INPUTS: usize = 768;
 
 /// King bucket for each square of the own king, seen from its side, after
 /// mirroring onto files a-d (index = rank * 4 + file). MUST match the
@@ -147,6 +147,22 @@ impl Network {
     }
 }
 
+impl Network {
+    /// Read access to the quantised weights (for the quantisation check).
+    pub(crate) fn feature_weights(&self, f: usize) -> &[i16; HIDDEN] {
+        &self.feature_weights[f].vals
+    }
+    pub(crate) fn feature_bias(&self) -> &[i16; HIDDEN] {
+        &self.feature_bias.vals
+    }
+    pub(crate) fn output_weights(&self, bucket: usize) -> &[i16; 2 * HIDDEN] {
+        &self.output_weights[bucket]
+    }
+    pub(crate) fn output_bias(&self, bucket: usize) -> i16 {
+        self.output_bias[bucket]
+    }
+}
+
 #[cfg(trinity_net)]
 static EMBEDDED: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/net.bin"));
 
@@ -175,7 +191,7 @@ fn load_embedded() -> Option<&'static Network> {
 /// Where `perspective`'s input weights come from in `b`: (offset of its
 /// king bucket, square xor that mirrors files when its king is on e-h).
 #[inline(always)]
-fn view(net: &Network, b: &Board, perspective: usize) -> (usize, usize) {
+pub(crate) fn view(net: &Network, b: &Board, perspective: usize) -> (usize, usize) {
     if !net.bucketed {
         return (0, 0);
     }
@@ -187,7 +203,7 @@ fn view(net: &Network, b: &Board, perspective: usize) -> (usize, usize) {
 /// king bucket and mirroring are `v`): our pieces come first, and Black's
 /// view is flipped vertically, so both sides share the same weights.
 #[inline(always)]
-fn feature(perspective: usize, v: (usize, usize), piece: Piece, sq: Square) -> usize {
+pub(crate) fn feature(perspective: usize, v: (usize, usize), piece: Piece, sq: Square) -> usize {
     let (color, pt) = (piece_color(piece), piece_type(piece));
     let (offset, mirror) = v;
     if perspective == WHITE {
@@ -368,7 +384,7 @@ fn screlu_dot(acc: &[i16; HIDDEN], weights: &[i16]) -> i32 {
 }
 
 #[inline(always)]
-fn output_bucket(b: &Board) -> usize {
+pub(crate) fn output_bucket(b: &Board) -> usize {
     (b.occupied().count_ones() as usize - 2) / 32usize.div_ceil(OUTPUT_BUCKETS)
 }
 

@@ -8,6 +8,7 @@ mod eval;
 mod forensics;
 mod movegen;
 mod nnue;
+mod quantcheck;
 mod search;
 mod select;
 mod similarity;
@@ -68,6 +69,19 @@ fn real_main() -> i32 {
             let max = args.get(1).and_then(|c| c.parse().ok()).unwrap_or(200);
             let workers = args.get(2).and_then(|t| t.parse().ok()).unwrap_or(4);
             if let Err(e) = forensics::run(max, workers, &args[3.min(args.len())..]) {
+                eprintln!("{e}");
+                return 1;
+            }
+        }
+        // `trinity quantcheck <weights.bin> <max positions> <pgn files...>`:
+        // how far the integer network's eval is from the float network's.
+        Some("quantcheck") => {
+            let max = args.get(2).and_then(|c| c.parse().ok()).unwrap_or(20_000);
+            if args.len() < 4 {
+                eprintln!("usage: trinity quantcheck <weights.bin> <max positions> <pgn files...>");
+                return 1;
+            }
+            if let Err(e) = quantcheck::run(&args[1], max, &args[3..]) {
                 eprintln!("{e}");
                 return 1;
             }
