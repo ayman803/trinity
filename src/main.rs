@@ -87,15 +87,18 @@ fn real_main() -> i32 {
                 return 1;
             }
         }
-        // `trinity netloss <data file> <positions> <checkpoint dirs...>`: the
-        // training loss of float checkpoints on the same sample of positions.
+        // `trinity netloss <positions> <checkpoint dirs...> [--games=<pgn>]...
+        // [--train=<data file>]`: the loss of float checkpoints on the same
+        // positions (held-out game positions and/or training positions).
         Some("netloss") => {
-            let count = args.get(2).and_then(|c| c.parse().ok()).unwrap_or(250_000);
-            if args.len() < 4 {
-                eprintln!("usage: trinity netloss <data file> <positions> <checkpoint dirs...>");
+            let count = args.get(1).and_then(|c| c.parse().ok()).unwrap_or(1_000_000);
+            if args.len() < 3 {
+                eprintln!(
+                    "usage: trinity netloss <positions> <checkpoint dirs...> [--games=<pgn file>]... [--train=<data file>]"
+                );
                 return 1;
             }
-            if let Err(e) = netloss::run(&args[1], count, &args[3..]) {
+            if let Err(e) = netloss::run(count, &args[2..]) {
                 eprintln!("{e}");
                 return 1;
             }

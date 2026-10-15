@@ -1,25 +1,34 @@
-//! `trinity netloss`: the training loss of one or more float checkpoints on
-//! the same sample of training positions, computed the trainer's way.
+//! `trinity netloss`: the loss of one or more float checkpoints on the same
+//! positions, computed the trainer's way, so two training runs can be
+//! compared at the same superbatch.
 //!
-//! Usage: trinity netloss <data file> <positions> <checkpoint dirs...>
+//! Usage: trinity netloss <positions> <checkpoint dirs...>
+//!            [--games=<pgn file>]... [--train=<data file>]
 //!
-//! The data file is shuffled training data in bullet's 32-byte format (the
-//! parts the training scripts make), so its first `positions` records are a
-//! random sample. Each checkpoint folder holds optimiser_state\weights.bin
-//! (the trainer's float weights; 1024, 1536 or 2048 neurons, 8 king buckets,
-//! 8 output buckets). The loss is the one the trainer minimises: the
-//! squared difference between sigmoid(output) and the target
-//! wdl x result + (1 - wdl) x sigmoid(score / 400), with wdl = 0.5 as in
-//! the training runs; the pure-result (wdl 1) and pure-score (wdl 0) losses
-//! and the mean |output - score| in cp are reported as well.
+//! Two kinds of positions:
+//! - Held-out: Trinity's own games (fastchess PGN files, `--games`), which
+//!   no network was trained on; positions from ply 16 on, side to move not
+//!   in check, spread evenly over all games, up to `positions`. The only
+//!   label is the game's result, so the loss reported is the pure-result
+//!   loss (sigmoid(output) vs 0, 0.5 or 1). A bigger network cannot win
+//!   here by memorising its training data.
+//! - Training: a shuffled training file in bullet's 32-byte format
+//!   (`--train`), of which the first `positions` records are a random
+//!   sample. The loss is the one the trainer minimised: sigmoid(output) vs
+//!   wdl x result + (1 - wdl) x sigmoid(score / 400) with wdl 0.5; the
+//!   pure-result and pure-score losses and the mean |output - score| in cp
+//!   are shown too. This measures fit, not generalisation; the gap between
+//!   the two kinds is the memorisation.
 //!
-//! Why: the 1024 run's loss log was not kept, so "compare the loss at
-//! superbatch 300" means scoring its checkpoint and the new run's checkpoint
-//! on the same positions. These are training positions (both runs trained
-//! on the whole file), so this measures fit, not generalisation.
+//! Each checkpoint folder holds optimiser_state\weights.bin (the trainer's
+//! float weights; 1024, 1536 or 2048 neurons, 8 king buckets, 8 output
+//! buckets). Why: the 1024 run's loss log was not kept.
 
 use bulletformat::ChessBoard;
 
+use crate::board::Board;
+use crate::datagen::to_bullet;
+use crate::forensics::{Game, read_games};
 use crate::nnue::{self, INPUTS, KING_BUCKETS, OUTPUT_BUCKETS, SCALE};
 use crate::quantcheck::read_weights;
 use crate::types::*;
@@ -204,19 +213,41 @@ fn mean_losses(f: &FloatNet, sample: &[ChessBoard]) -> [f64; 4] {
     total.map(|v| v / n)
 }
 
-pub fn run(data: &str, count: usize, checkpoints: &[String]) -> Result<(), String> {
-    let sample = read_sample(data, count)?;
-    if sample.is_empty() {
-        return Err(format!("{data} holds no positions"));
+/// Positions from Trinity's games (from ply 16 on, side to move not in
+/// check, at most `count`, spread evenly), labelled with the game's result
+/// and a score of 0 (unknown).
+fn read_games_sample(files: &[String], count: usize) -> Result<(Vec<ChessBoard>, usize, usize), String> {
+    let mut games: Vec<Game> = Vec::new();
+    for f in files {
+        let text = std::fs::read_to_string(f).map_err(|e| format!("{f}: {e}"))?;
+        read_games(&text, &mut games, false);
     }
-    println!(
-        "NETWORK LOSS on the first {} positions of {data} (training positions; wdl 0.5 is the loss the trainer minimised)",
-        sample.len()
-    );
-    println!(
-        "{:60} {:>7} {:>10} {:>10} {:>10} {:>9}",
-        "checkpoint", "neurons", "loss(0.5)", "loss(wdl)", "loss(cp)", "|cp err|"
-    );
+    let all: Vec<(Board, f32)> = games
+        .iter()
+        .flat_map(|g| {
+            let white_result = if g.trinity == WHITE { g.score } else { 1.0 - g.score } as f32;
+            g.plies.iter().skip(16).map(move |p| (p.board, white_result))
+        })
+        .filter(|(b, _)| !b.in_check())
+        .collect();
+    let total = all.len();
+    let chosen: Vec<ChessBoard> = if total > count && count > 0 {
+        (0..count).map(|k| &all[k * total / count]).map(|(b, r)| to_bullet(b, 0, *r)).collect()
+    } else {
+        all.iter().map(|(b, r)| to_bullet(b, 0, *r)).collect()
+    };
+    Ok((chosen, games.len(), total))
+}
+
+fn score_all(checkpoints: &[String], sample: &[ChessBoard], held_out: bool) {
+    if held_out {
+        println!("{:60} {:>7} {:>12}", "checkpoint", "neurons", "loss(result)");
+    } else {
+        println!(
+            "{:60} {:>7} {:>10} {:>10} {:>10} {:>9}",
+            "checkpoint", "neurons", "loss(0.5)", "loss(wdl)", "loss(cp)", "|cp err|"
+        );
+    }
     for dir in checkpoints {
         let f = match load(dir) {
             Ok(f) => f,
@@ -225,9 +256,49 @@ pub fn run(data: &str, count: usize, checkpoints: &[String]) -> Result<(), Strin
                 continue;
             }
         };
-        let [l, lw, lc, cp] = mean_losses(&f, &sample);
+        let [l, lw, lc, cp] = mean_losses(&f, sample);
         let name = dir.trim_end_matches(['/', '\\']).rsplit(['/', '\\']).next().unwrap_or(dir);
-        println!("{name:60} {:>7} {l:>10.6} {lw:>10.6} {lc:>10.6} {cp:>9.1}", f.hidden);
+        if held_out {
+            println!("{name:60} {:>7} {lw:>12.6}", f.hidden);
+        } else {
+            println!("{name:60} {:>7} {l:>10.6} {lw:>10.6} {lc:>10.6} {cp:>9.1}", f.hidden);
+        }
+    }
+}
+
+pub fn run(count: usize, args: &[String]) -> Result<(), String> {
+    let games: Vec<String> = args.iter().filter_map(|a| a.strip_prefix("--games=")).map(str::to_string).collect();
+    let train: Option<&str> = args.iter().find_map(|a| a.strip_prefix("--train="));
+    let checkpoints: Vec<String> = args.iter().filter(|a| !a.starts_with("--")).cloned().collect();
+    if checkpoints.is_empty() {
+        return Err("no checkpoint folders given".into());
+    }
+    if games.is_empty() && train.is_none() {
+        return Err("give at least one --games=<pgn file> or --train=<data file>".into());
+    }
+    if !games.is_empty() {
+        let (sample, n_games, total) = read_games_sample(&games, count)?;
+        if sample.is_empty() {
+            return Err("no positions found in the PGN files".into());
+        }
+        println!(
+            "HELD-OUT LOSS on {} positions from {n_games} of Trinity's games ({total} candidates, ply 16 on, not in check; \
+             label = game result; no network trained on these)",
+            sample.len()
+        );
+        score_all(&checkpoints, &sample, true);
+    }
+    if let Some(data) = train {
+        let sample = read_sample(data, count)?;
+        if sample.is_empty() {
+            return Err(format!("{data} holds no positions"));
+        }
+        println!(
+            "TRAINING LOSS on the first {} positions of {data} (training positions: fit, not generalisation; \
+             wdl 0.5 is the loss the trainer minimised)",
+            sample.len()
+        );
+        score_all(&checkpoints, &sample, false);
     }
     Ok(())
 }
@@ -235,8 +306,6 @@ pub fn run(data: &str, count: usize, checkpoints: &[String]) -> Result<(), Strin
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::board::Board;
-    use crate::datagen::to_bullet;
     use bulletformat::BulletFormat;
 
     /// Records written by the engine's own data writer come back unchanged,
