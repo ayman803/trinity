@@ -65,6 +65,20 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-13 | tm-plan (part A, Fable gate change 1): the soft limit is scaled by plan/spend so far in the game (closed loop, prior 0.6, clamp 1-2.5x), and the whole increment is spent; hard limit at least 1.6x soft. Bench unchanged | 8+0.08 vs main: +4 to +10; gate test vs main of that moment (40/10 since 13 October, decided before any result; same prediction): +2 to +6, about a 50% chance to pass the capped test; CCRL-scale (40/20 calibration): +1 to +6 | pending | - | Safety check SPRT #18 vs main at 8+0.08: +4.29 +/- 3.77 after 9000 games (LLR 2.11, undecided, 0 time losses): no sign of harm; not continued (the 40/10 gate test decides). Below tm-control's +6.8 vs the same main at this clock. Validation (16 games at 10+0.1): first version overshot in sudden death, clock down to 0.09 s and 158 of 812 moves started under 1 s (main: 2); fixed by capping the loop at 1.25x and keeping 3/4 of the increment in sudden death (repeating controls keep 2.5x). PC data: Trinity spends 0.67 (10+0.1) and 0.48 (40/20) of its own plan; its rated opponents 0.84 and 0.63. Fixed-ratio alternative rejected: the ratio differs by clock, so the loop measures it |
 | 2026-10-13 | nnue-simd: the network's output layer written with AVX2 instructions (same arithmetic, bench node count unchanged 780879); about 10% more nodes per second measured here (1.06M vs 0.97M) | self-play +3 to +6 (measured on 60 positions from real games at 300 ms: +7.3% nodes per second, less than the 10% on bench); CCRL +2 to +4 | SPRT #16 (+0.15 +/- 3.71, 9000 games) INVALID: the branch's only commit held the speed probe, not the AVX2 code, so both sides were the same engine (found by Scout, 14 October). Code committed 14 October (961b44b; median of 10 paired bench runs +7.7% nodes per second, ruler: about +4.4); re-test: PASSED +13.25 +/- 3.80 after 9000 games (SPRT #17, LLR 8.39, 0 time losses). Gate change 2 = gate WIN. #16 does not count for the gate. Side result: 9000 games of identical engines gave +0.15, so the GitHub setup favours neither side. The workflow now stops when both branches build the same engine file | - | v2 build (no AVX2) checked: falls back to the old code, bench 780879, no AVX2 instructions. Fable gate change 2 (owner: counts whether it passes or fails) |
 
+## Test queue
+
+Lanes: search = the Session; network = Coder 2 (asks in NETWORK.md; the
+Session runs and merges). GitHub: at most 2 search tests and 1 network test
+at once. PC: one heavy job at a time, in the order Ayman chooses.
+
+| # | Test | Lane | Where | Status (15 October) |
+|---|---|---|---|---|
+| 1 | Merge combo (tm-control + nnue-simd): v2 check result | search | PC (done) | waiting for the result text; merge when it says PASSED |
+| 2 | Part A (tm-plan) gate test vs the new main, repeating 40/10, cap 12000 games | search | GitHub | after 1 |
+| 3 | Calibration of the new main (5-Calibrate.bat) | search | PC CPU | after 1 |
+| 4 | Quantisation check (Scout 14 October, idea 2): float vs integer eval gap | network | PC CPU or GitHub | Coder 2 to design |
+| 5 | Next training run (data, size, length) | network | PC GPU | Coder 2 to design; disk budget about 200 GB |
+
 ## Proposed (not yet run)
 
 | Idea | Predicted self-play | Predicted CCRL | GPU time |
