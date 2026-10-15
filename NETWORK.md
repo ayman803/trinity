@@ -1,11 +1,31 @@
 # Network notes (Coder 2)
 
 Coder 2 owns this file from 15 October 2026 (see CLAUDE.md, "Coder 2").
-It lives on `main` (Coder 2 may push NETWORK.md and tools/net/ there);
-the branch `net-notes` is no longer used.
-The first section is the Session's handover; everything after it is Coder
-2's. Ask for tests at the end of this file; the Session queues and runs
-them (ESTIMATES.md, "Test queue", lane "network").
+It lives on `main` (owner's rule change of 15 October; the branch
+`net-notes` is no longer used). The first section is the Session's
+handover; everything after it is Coder 2's. PC time and tests are asked
+for at the end of this file; the Session queues and runs them (ESTIMATES.md,
+"Test queue", lane "network").
+
+## Coder 2's rules (owner, 15 October 2026)
+
+1. Coder 2 may push to `main`, but only NETWORK.md and its scripts in
+   `tools/net/` (so the PC can `git pull` them and the others can read the
+   notes). Engine code and `.nnue` files stay on `net-...` branches; only
+   the Session merges them.
+2. PC work goes through double-click scripts in `tools/net/`, like the
+   Session's. Coder 2 asks for PC time here; the Session schedules it, and
+   Ayman gets one instruction at a time.
+3. Coder 2 updates its branch from `main` before every test request.
+4. Fable for design, Opus for routine steps; the Fable limit (80% pause) is
+   shared with the Session.
+5. Coder 2's PC scripts may only write inside their own output folder
+   (`C:\Trinity\sprt\coder2\`); any script that deletes or moves files
+   is reviewed by the Session before Ayman runs it. (Added later on 15
+   October. The PC queue rule that goes with it: no calibration or SPRT
+   on the PC while training runs.)
+6. Unchanged: never edit ESTIMATES.md; the originality rule (CLAUDE.md)
+   applies; write a prediction before every test.
 
 ## Handover from the Session (15 October 2026)
 
@@ -92,6 +112,146 @@ them (ESTIMATES.md, "Test queue", lane "network").
    Leela file, Trinity's own games), size, length, learning rate. Disk
    and PC time are the limits; Ayman decides when the PC trains.
 
-## Test requests
+## Coder 2's log
 
-(none yet)
+### 1. Quantisation check, step 1 (Scout, 14 October, idea 2)
+
+Question: how far does the integer network in the engine (nets/default.nnue,
+rounded to whole units of 1/255 and 1/64) drift from the float network it
+was rounded from (checkpoints\...-big1024-600\optimiser_state\weights.bin)?
+
+How (15 October, done, waiting for the PC):
+- Engine command `trinity quantcheck <weights.bin> <max positions> <pgn
+  files...>` on branch `net-quantcheck` (src/quantcheck.rs; the engine
+  itself is unchanged, bench 780879). It first checks number by number
+  that rounding the float weights the trainer's way gives exactly the
+  integer file (so the two files belong together and the layout is right),
+  then evaluates positions from Trinity's own calibration games (from ply
+  16 on, side to move not in check, 20,000 spread evenly over all games)
+  with both networks and reports the gap integer - float in cp: bias, mean
+  absolute, median, 95th and 99th percentile, share over 5 and 10 cp, by
+  output bucket and by eval size, plus the sign-flip count. It also reports
+  the gap with only the first layer rounded and with only the output layer
+  rounded, so we know where the error comes from.
+- PC script: tools\net\Quant-Check.bat (a few CPU minutes; builds the
+  branch inside sprt\coder2, finds the checkpoint whose quantised.bin
+  equals main's network, reads sprt\results\*_calibration_*.pgn, saves
+  sprt\coder2\results\quantcheck-<date>.txt; deletes nothing). It also
+  prints when each checkpoint of the 1024 run was written, which gives the
+  training speed for the plan below.
+- Checked here with the dequantised network as a stand-in for the float
+  weights (gap 0.6 cp = the final rounding to whole cp alone) and with
+  weights perturbed by up to 0.45 of a rounding step, which imitates real
+  rounding error: mean gap about 6 cp, of which about 6 cp came from the
+  output layer and under 2 cp from the first layer.
+
+Prediction (written before the PC run): mean |gap| 4 to 8 cp, 95th
+percentile 10 to 16 cp, bias within +/- 1 cp, no bucket clearly worse;
+almost all of it from the output layer (1/64 steps on weights of size up
+to 2 are coarse; 1/255 steps on the first layer are fine, and the SCReLU
+clamp hides much of them). Yardstick: the referee noise in the forensics
+is +/- 30-50 cp and a "mistake" there is a 30 cp drop, so a 6 cp random
+error adds under 1% to the evaluation's own error. Decision rule: act
+(step 2: choose each output weight's rounding direction to cancel the
+error, or a finer output quantisation) only if the mean gap is above 8 cp
+or one bucket is far worse than the others, or if the layout check shows
+the files do not match. Expected Elo from step 2 even then: 0 to +2.
+
+### 2. Plan for the next training run (15 October)
+
+What the history says (ESTIMATES.md): capacity transferred to other
+engines (king buckets +19 self-play / +17 CCRL; 512 -> 1024 from scratch
++80 / +50), while more or fresh Leela data on a converged network gave
+nothing (+6 / ~0; -3.8; weight averaging ~0). So the lever is capacity,
+and the honest unknown is how much of the +80 was the width rather than
+the from-scratch 600-superbatch run on the whole file.
+
+Measured here (cloud machine, main's code without the AVX2 output layer,
+the 1024 network padded with zero neurons so the search is identical,
+bench 780879 in all three):
+
+| Hidden | nodes/s (mean of 3) | vs 1024 | Elo by the time-odds ruler (0.57 per 1%) |
+|---|---|---|---|
+| 1024 | 827k | - | - |
+| 1536 | 619k | -25% | about -14 self-play |
+| 2048 | 501k | -39% | about -22 self-play |
+
+(512 -> 1024 cost 28% on the PC and still gained +50 CCRL. The AVX2
+output layer, once merged, trims the width cost a little; the accumulator
+updates, which also double, it does not touch.)
+
+Training time: the 1024 run (600 superbatches, 3.65 billion positions,
+batch 16384) started 9 October 19:00 Pacific and had been tested by the
+next morning, so it took under 10 hours. The quantisation check prints
+the exact checkpoint times. Expect about 1.6-2x for 2048 (15-20 hours) and
+1.3-1.5x for 1536, plus 2-3 hours of CPU to convert and shuffle the
+Leela file again (it was deleted on 13 October).
+
+Disk: 4 parts x 32 GB = 117 GB of data (the file yields 3.65 billion
+positions) plus 32 GB while shuffling: within the 200 GB budget. All of
+it lives in sprt\coder2 (data\, checkpoints\, results\); the parts stay
+on disk afterwards (a second run reuses them) until Ayman deletes the
+folder. The script deletes only its own raw parts after shuffling them
+(rule 5: it needs the Session's review before it runs; the deletion is
+marked at the top of tools\net\wide.ps1).
+
+The run (ONE change, as the drill and refinement failures advise):
+`tools\net\Wide-Network.bat` = big.ps1's recipe exactly (whole Leela
+file, from scratch, 600 superbatches, LR 0.001 cosine to 1%, WDL 0.5,
+batch 16384, 8 king buckets mirrored, 8 output buckets) with the hidden
+layer 2048 instead of 1024. The trainer and the published branch
+(`net-wide2048-<date>`) come from branch `net-wide`, which is main plus
+engine support for 1536 and 2048 neurons (build.rs and src/nnue.rs; the
+1024 build is byte-for-byte the same, bench 780879; both sizes build and
+pass the tests here). The trainer's loss per superbatch is saved in
+sprt\results\train-<name>.log this time (the 1024 run's log was not
+kept), so overfitting of the wider network on 16 passes over the same
+3.65 billion positions can be seen rather than guessed.
+
+Prediction (written before the run):
+- 2048: self-play vs main at 8+0.08 +10 to +40 (central +25: a raw gain of
+  about half of the 1024 run's +95-before-speed, minus 22 for speed);
+  CCRL-scale +5 to +25 (central +12). Chance to pass SPRT [0, 5]: about
+  65%. If the 1024 gain was mostly the recipe rather than the width, the
+  result is -10 to +5 and the width path is closed; that is worth knowing
+  either way, and 2048 gives a clearer answer than 1536.
+- 1536 (fallback if the PC time is too long or the risk unwanted):
+  self-play +5 to +25 (central +13); CCRL +3 to +15 (central +8).
+
+Skeptic's review of these numbers:
+- The +80 of the 1024 run bundled width, from-scratch training, 600
+  superbatches and 3.65B positions; nobody knows the width's share.
+- The speed cost was measured on a cloud CPU without the AVX2 code; the PC
+  and the GitHub test machines may pay more or less. The ruler (0.57 Elo
+  per 1%) was measured at +12% time; a 39% change may not scale linearly.
+- A test that stops when it passes over-reads (SPRT #17: +13 that became
+  +6 in the repeat). Calibration decides, not the SPRT number.
+- 16 passes over the same data: a wider network can memorise more; the
+  loss log will show it (training loss falling while the SPRT result is
+  flat would be the sign).
+- Everything downstream of the SPRT (calibration +/- 15 real uncertainty)
+  can hide a +10 as easily as show it.
+
+After a pass (for the Session's queue): v2 check (19-V2-Check.bat),
+calibration (5-Calibrate.bat, rule 2), then an SPSA re-tune of the search
+settings (owner's rule of 15 October; the last one was worth +5.9).
+
+Parked alternatives (not for the first run): 16 king buckets (capacity
+without per-node cost, but a smaller expected gain than width); a second
+Leela file (the disk budget caps data at about 4.5 billion positions, so
+it adds at most 25%); positions from Trinity's own games labelled by its
+deeper search (Scout, 13 October: on-policy data; datagen gives about 100
+million positions a day, 3% of the data; a fine-tune experiment only once
+the width run is banked); step 2 of the quantisation idea (after step 1).
+
+## PC time requests (for the Session's PC queue in ESTIMATES.md)
+
+| # | Job | Script | PC time | Status |
+|---|---|---|---|---|
+| N1 | Quantisation check, step 1 | tools\net\Quant-Check.bat | a few minutes of CPU (any time nothing else heavy is running; a GitHub test does not matter) | ready; deletes nothing |
+| N2 | Wide network training (2048; or `-Hidden 1536`) | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 15-20 h GPU; no calibration or SPRT on the PC meanwhile | waiting for Ayman's go on the plan and the Session's review of wide.ps1 (it deletes its own raw data parts) |
+
+## Test requests (lane "network")
+
+(none yet; after N2 finishes, an SPRT of `net-wide2048-<date>` vs main at
+8+0.08, bounds [0, 5], after Coder 2 has updated the branch from main)
