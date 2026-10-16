@@ -137,3 +137,31 @@ function Export-HistoricFile([string]$Sha, [string]$RepoPath, [string]$Label) {
     Copy-Item -LiteralPath $found -Destination $file -Force
     return $file
 }
+
+# Commit one file to a branch on GitHub (for example main) without checking
+# anything out: a private index file, git's object store, one commit on top
+# of the branch's current tip, one push. Coder 2 may push to main only
+# NETWORK.md and files under tools/net (CLAUDE.md), so RepoPath must be
+# such a path. Fails if the branch moved between fetch and push (rerun).
+function Publish-FileToBranch([string]$TargetBranch, [string]$RepoPath, [string]$File, [string]$Message) {
+    if ($TargetBranch -eq "main" -and -not ($RepoPath -eq "NETWORK.md" -or $RepoPath -like "tools/net/*")) {
+        Stop-WithMessage "Coder 2's scripts may write only NETWORK.md and tools/net/* to main (asked: $RepoPath)."
+    }
+    Write-Step "Publishing $RepoPath on GitHub ($TargetBranch)"
+    Invoke-Native git @("-C", $script:Root, "fetch", "origin", $TargetBranch)
+    $index = Join-Path (Get-OutDir "publish") "$($RepoPath -replace '[^A-Za-z0-9._-]', '_').index"
+    $oldIndex = $env:GIT_INDEX_FILE
+    $env:GIT_INDEX_FILE = $index
+    try {
+        Invoke-Native git @("-C", $script:Root, "read-tree", "origin/$TargetBranch")
+        $blob = Get-NativeOutput git @("-C", $script:Root, "hash-object", "-w", $File)
+        Invoke-Native git @("-C", $script:Root, "update-index", "--add", "--cacheinfo", "100644,$blob,$RepoPath")
+        $tree = Get-NativeOutput git @("-C", $script:Root, "write-tree")
+        $parent = Get-NativeOutput git @("-C", $script:Root, "rev-parse", "origin/$TargetBranch")
+        $commit = Get-NativeOutput git ($script:CommitIdentity + @("-C", $script:Root, "commit-tree", $tree, "-p", $parent, "-m", $Message))
+    } finally {
+        if ($null -eq $oldIndex) { Remove-Item Env:GIT_INDEX_FILE -ErrorAction SilentlyContinue } else { $env:GIT_INDEX_FILE = $oldIndex }
+    }
+    Invoke-Native git @("-C", $script:Root, "push", "origin", "${commit}:refs/heads/$TargetBranch")
+    return $commit
+}
