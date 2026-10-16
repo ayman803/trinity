@@ -25,7 +25,8 @@ param(
     [int]$Superbatches = 600,
     [string]$LearningRate = "0.001",
     [string]$Wdl = "0.5",
-    [int]$MemoryMB = 8000
+    [int]$MemoryMB = 8000,
+    [switch]$DryRun                   # every stage on a few million positions, about 2 minutes; publishes nothing
 )
 
 . (Join-Path $PSScriptRoot "net-common.ps1")
@@ -39,6 +40,18 @@ try {
     }
     Invoke-Native git @("-C", $script:Root, "fetch", "--prune", "origin")
     $dataDir = Get-OutDir "data"
+    $workDir = $script:Out
+    if ($DryRun) {
+        # Same stages on a tiny sample, in a folder of its own (made fresh
+        # each time; only this script's own dry-run files are removed).
+        $workDir = Join-Path $script:Out "dry"
+        if (Test-Path -LiteralPath $workDir) { Remove-Item -LiteralPath $workDir -Recurse -Force }
+        New-Item -ItemType Directory -Force -Path $workDir | Out-Null
+        $SecondParts = 1
+        $PerChunk = 3000000
+        $Superbatches = 1
+        Write-Step "DRY RUN: convert 3 million positions, shuffle, train 1 superbatch, save; nothing is published"
+    }
     # The first file's parts, made by Wide-Network.bat (same positions as the 1024 run).
     $firstParts = @(1..4 | ForEach-Object { Join-Path $dataDir "big-$_.data" } | Where-Object { Test-Path -LiteralPath $_ })
     if ($firstParts.Count -lt 4) { Stop-WithMessage "Expected the 4 converted parts big-1.data .. big-4.data in sprt\coder2\data (found $($firstParts.Count)). Wide-Network.bat makes them." }
@@ -48,15 +61,16 @@ try {
     if (-not (Test-Path -LiteralPath $utils)) { Stop-WithMessage "$utils is missing (4-Train-Network.bat installs it)." }
 
     $Chunks = $SecondParts
-    $parts = @(1..$Chunks | ForEach-Object { Join-Path $dataDir "second-$_.data" })
+    $secondDir = if ($DryRun) { $workDir } else { $dataDir }
+    $parts = @(1..$Chunks | ForEach-Object { Join-Path $secondDir "second-$_.data" })
     $missing = @($parts | Where-Object { -not (Test-Path -LiteralPath $_) })
     $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot($script:Root))
     $freeGB = [Math]::Floor($drive.AvailableFreeSpace / 1GB)
-    if ($missing.Count -gt 0) {
+    if ($missing.Count -gt 0 -and -not $DryRun) {
         # 32 GB per part, 32 GB more while a part is shuffled, 20 GB spare.
         $needGB = 32 * $missing.Count + 52
         if ($freeGB -lt $needGB) {
-            Stop-WithMessage "Only $freeGB GB free; about $needGB GB are needed for $($missing.Count) billion positions. Free some space (or ask Coder 2 to use fewer parts)."
+            Stop-WithMessage "Only $freeGB GB free; about $needGB GB are needed for $($missing.Count) billion positions. Free some space (or ask Claude to use fewer parts)."
         }
     }
     $keepAwake = Start-KeepAwake
@@ -68,7 +82,7 @@ try {
     # 2. Convert (one pass over the Leela file), then shuffle each part.
     #    Parts already made by an earlier run are kept and reused.
     if ($missing.Count -gt 0) {
-        $prefix = Join-Path $dataDir "second"
+        $prefix = Join-Path $secondDir "second"
         Write-Step "Converting up to $Chunks x $PerChunk positions of the second Leela file (about 20 minutes per billion)"
         Invoke-Native $trainer @("convert-chunks", $binpacks[0], $prefix, "$Chunks", "$PerChunk")
         foreach ($i in 1..$Chunks) {
@@ -94,9 +108,14 @@ try {
     # in order, so alternating the months keeps the final low-learning-rate
     # stretch from being mostly one month: big-1, second-1, big-2, second-2, big-3, big-4.
     $files = @()
+    if ($DryRun) {
+        # The tiny new part first, then a real part, so one superbatch reads both.
+        $files = @($secondFiles[0], $firstParts[0])
+    } else {
     for ($k = 0; $k -lt [Math]::Max($firstParts.Count, $secondFiles.Count); $k++) {
         if ($k -lt $firstParts.Count) { $files += $firstParts[$k] }
         if ($k -lt $secondFiles.Count) { $files += $secondFiles[$k] }
+    }
     }
     Write-Host "Data files in training order: $(($files | ForEach-Object { Split-Path $_ -Leaf }) -join ', ')"
     $positions = [Math]::Round((($files | ForEach-Object { (Get-Item -LiteralPath $_).Length } | Measure-Object -Sum).Sum) / 32 / 1e9, 2)
@@ -111,7 +130,7 @@ try {
     Write-Step "Training $netId from scratch: $Hidden neurons, $Superbatches superbatches on $positions billion positions (the 1024 run took 5 hours)"
     Write-Host "Trainer output is also saved in $log"
     $env:TRINITY_HIDDEN = "$Hidden"
-    Push-Location $script:Out
+    Push-Location $workDir
     try {
         $old = $ErrorActionPreference
         $ErrorActionPreference = "Continue"
@@ -123,9 +142,17 @@ try {
         Pop-Location
         Remove-Item Env:TRINITY_HIDDEN -ErrorAction SilentlyContinue
     }
-    $final = Join-Path (Join-Path (Join-Path $script:Out "checkpoints") "$netId-$Superbatches") "quantised.bin"
+    $final = Join-Path (Join-Path (Join-Path $workDir "checkpoints") "$netId-$Superbatches") "quantised.bin"
     if (-not (Test-Path $final)) { Stop-WithMessage "Training finished but $final was not found." }
     $trained = Get-Date
+    $expected = 2 * (8 * 768 * $Hidden + $Hidden + 8 * (2 * $Hidden + 1))
+    $size = (Get-Item -LiteralPath $final).Length
+    if ($size -lt $expected -or $size -ge $expected + 64) { Stop-WithMessage "The saved network has $size bytes; a $Hidden-neuron network has $expected (plus up to 63 bytes of padding)." }
+    if ($DryRun) {
+        Write-Host ""
+        Write-Good "DRY RUN OK: convert, shuffle, train and save all worked (network file $size bytes, the right size). Now run New-Data-Network.bat for real (double-click it again)."
+        return
+    }
 
     # 4. Publish on a new branch on top of the engine branch (which can load
     #    the wider network) so it can be SPRT-tested against main.
@@ -144,7 +171,7 @@ try {
     Write-Host "---------------- copy from here ----------------" -ForegroundColor Cyan
     $summary | ForEach-Object { Write-Host $_ }
     Write-Host "---------------- to here ----------------" -ForegroundColor Cyan
-    Write-Good "Done. Paste the text between the lines to Coder 2 (it is also saved in sprt\coder2\results\newdata-$stamp.txt)."
+    Write-Good "Done. Paste the text between the lines to Claude (it is also saved in sprt\coder2\results\newdata-$stamp.txt)."
 } catch {
     Write-UnexpectedError $_
     exit 1

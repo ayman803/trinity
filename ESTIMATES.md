@@ -91,6 +91,22 @@ requests PC time in NETWORK.md; the Session adds it here.
 | 2 | Calibration of the new main, combo merged (5-Calibrate.bat) | Session | about 2.5 | DONE 14 October: about 3482 (+16) |
 | 3 | Wide network, 2048 neurons (tools/net/Wide-Network.bat; reviewed by the Session 15 October: deletes only its own unshuffled .raw parts in sprt\coder2\data, peak disk about 150 GB, touches nothing of the Session's) | Coder 2 | about 20 (GPU) + 2-3 (CPU) | after 2; owner said go. No calibration or SPRT on the PC meanwhile. Coder 2 compares the training loss at superbatch 300 with the 1024 run and reports; if 2048 is not clearly ahead, Ayman may stop it. Loss comparison script tools/net/Net-Loss.bat (reviewed: deletes nothing), run after training |
 
+Gates for the new-data network (owner, 16 October, before the run):
+1. Dry run of every stage first (tools/net/Dry-Run-New-Data.bat, about 2
+   minutes).
+2. After training: held-out loss (Net-Loss.bat) at least 1% better than
+   main's network (0.0828 -> 0.0820 or lower); then 400 quick games on
+   GitHub at 8+0.08, stop if the estimate is -10 or worse; only then the
+   full SPRT. Note: the logged prediction for held-out loss is 0.3-0.8%
+   better, so gate 2 as written stops the run even if it meets its
+   prediction; owner to confirm 1% or lower it to 0.3%.
+3. Training length: the 1024 run trained in about 5 hours (checkpoint
+   times); the 2048 run took 9.6 hours. Expect about 5-6 hours plus 1 hour
+   of conversion.
+4. The 117 GB in sprt\coder2\data (big-1..4.data) are the first Leela
+   file's 3.65B positions, the same ones main's network trained on; this
+   run reuses them, so they stay.
+
 ## Proposed (not yet run)
 
 | Idea | Predicted self-play | Predicted CCRL | GPU time |
