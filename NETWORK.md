@@ -157,6 +157,59 @@ error, or a finer output quantisation) only if the mean gap is above 8 cp
 or one bucket is far worse than the others, or if the layout check shows
 the files do not match. Expected Elo from step 2 even then: 0 to +2.
 
+Result (PC, 14 October 18:05 Pacific, sprt\coder2\results\quantcheck-2026-10-14_18-05.txt;
+20,000 positions from 39,200 calibration games, 42 PGN files):
+- Layout check: 100.000% of all 6.3 million numbers equal. The files
+  belong together and the layout is right.
+- Gap integer - float: mean |gap| 6.4 cp, median 5.2, 95th percentile
+  16.6, 99th 23.2, max 55; 21% of positions off by 10 cp or more; bias
+  +0.6 overall; 229 of 20,000 evals change sign (1.1%, all near zero).
+- Source: first layer alone 3.4 cp, output layer alone 5.4 cp (they add
+  in quadrature: sqrt(3.4^2 + 5.4^2) = 6.4, so the two errors are
+  independent). The output layer is the larger part, as predicted, but
+  the first layer is not negligible (predicted under 2).
+- By output bucket the mean |gap| is even (5.4 to 7.4), but the BIAS is
+  not: +5.2 cp at 6-9 pieces, +3.1 at 26-29, +2.9 at 2-5, -4.1 at 30-32,
+  -1.8 at 18-21. These are systematic shifts per piece-count range, so a
+  capture that crosses from 30-32 to 26-29 pieces looks about 7 cp better
+  to the integer network than to the float one.
+- Large evals are rounded worse: 7.3 cp at |eval| >= 200 vs 5.7 under 50.
+- Prediction vs actual: mean 4-8 (actual 6.4, right); 95th percentile
+  10-16 (16.6, just outside); bias within +/- 1 (overall +0.6, right, but
+  per bucket up to +/- 5, not foreseen); "almost all from the output
+  layer" (two thirds, not almost all).
+- Output weights in the file: mean |w| is 17 units of 1/64, 3.4% of them
+  are above 64 units (|w| > 1.0), max 127. A finer output scale (1/128)
+  would halve the output error but needs the weights clipped at 1.0 in
+  training (3.4% of them are larger) or a slower integer path; a
+  training-recipe question for a later run, not a patch.
+
+Verdict against the decision rule (act only above 8 cp mean or a bucket
+far worse): the random part is below the bar and costs under 1% extra
+evaluation error; the per-bucket bias is the one finding worth a cheap
+fix. Options for the owner:
+- (a) Nothing now. Cost 0.
+- (b) Step 2 light: re-round the output layer of main's network to match
+  the float output on positions (per bucket: the bias, and for each of
+  the 2048 output weights the rounding direction chosen to cancel the
+  error; fitted on half of the positions, checked on the other half).
+  No training, no speed cost, engine unchanged. Needs: an engine command
+  on a net-... branch, a tools\net script on the PC (the float weights
+  are only there; a minute of CPU), a branch with the re-rounded network,
+  and one GitHub SPRT in the network lane, which is idle while the PC
+  trains. Prediction: self-play 0 to +3, most likely about +1; a [0, 5]
+  SPRT will most likely end undecided. The procedure then also serves the
+  2048 network, whose output layer has twice the terms and so about 1.4x
+  the output error. Recommendation: (b) only if the Session has the
+  GitHub slot to spare; otherwise fold the procedure into the 2048
+  network's quantisation later, where it is tested for free.
+
+Training speed from the checkpoint times: superbatch 50 at 19:25,
+600 at 23:59 on 9 October = 0.50 minutes per superbatch, 5.0 hours for the
+whole 1024 run (not "under 10"). The 2048 run should take about 8-10
+hours of GPU, plus 2-3 hours of CPU for the data: started at 8:30 pm it
+is done by about 7-9 am.
+
 ### 2. Plan for the next training run (15 October)
 
 What the history says (ESTIMATES.md): capacity transferred to other
@@ -166,26 +219,27 @@ nothing (+6 / ~0; -3.8; weight averaging ~0). So the lever is capacity,
 and the honest unknown is how much of the +80 was the width rather than
 the from-scratch 600-superbatch run on the whole file.
 
-Measured here (cloud machine, main's code without the AVX2 output layer,
-the 1024 network padded with zero neurons so the search is identical,
-bench 780879 in all three):
+Measured here (cloud machine with AVX2, main's code of 15 October with
+the AVX2 output layer, builds for the machine's own processor, the 1024
+network padded with zero neurons so the search is identical: bench 780879
+in all three):
 
-| Hidden | nodes/s (mean of 3) | vs 1024 | Elo by the time-odds ruler (0.57 per 1%) |
+| Hidden | nodes/s (mean of 4) | vs 1024 | Elo by the time-odds ruler (0.57 per 1%) |
 |---|---|---|---|
-| 1024 | 827k | - | - |
-| 1536 | 619k | -25% | about -14 self-play |
-| 2048 | 501k | -39% | about -22 self-play |
+| 1024 | 1104k | - | - |
+| 1536 | 899k | -19% | about -11 self-play |
+| 2048 | 794k | -28% | about -16 self-play |
 
-(512 -> 1024 cost 28% on the PC and still gained +50 CCRL. The AVX2
-output layer, once merged, trims the width cost a little; the accumulator
-updates, which also double, it does not touch.)
+(Without the AVX2 output layer the costs were 25% and 39%. 512 -> 1024
+cost 28% on the PC and still gained +50 CCRL. The accumulator updates,
+which also double, are untouched by the AVX2 code; measure the cost on
+the PC and the GitHub machines before reading the test.)
 
 Training time: the 1024 run (600 superbatches, 3.65 billion positions,
-batch 16384) started 9 October 19:00 Pacific and had been tested by the
-next morning, so it took under 10 hours. The quantisation check prints
-the exact checkpoint times. Expect about 1.6-2x for 2048 (15-20 hours) and
-1.3-1.5x for 1536, plus 2-3 hours of CPU to convert and shuffle the
-Leela file again (it was deleted on 13 October).
+batch 16384) took 5.0 hours (checkpoint times from the quantisation
+check: 0.50 minutes per superbatch). Expect about 1.6-2x for 2048 (8-10
+hours) and 1.3-1.5x for 1536, plus 2-3 hours of CPU to convert and
+shuffle the Leela file again (it was deleted on 13 October).
 
 Disk: 4 parts x 32 GB = 117 GB of data (the file yields 3.65 billion
 positions) plus 32 GB while shuffling: within the 200 GB budget. All of
@@ -209,21 +263,22 @@ kept), so overfitting of the wider network on 16 passes over the same
 3.65 billion positions can be seen rather than guessed.
 
 Prediction (written before the run):
-- 2048: self-play vs main at 8+0.08 +10 to +40 (central +25: a raw gain of
-  about half of the 1024 run's +95-before-speed, minus 22 for speed);
-  CCRL-scale +5 to +25 (central +12). Chance to pass SPRT [0, 5]: about
-  65%. If the 1024 gain was mostly the recipe rather than the width, the
+- 2048: self-play vs main at 8+0.08 +15 to +45 (central +30: a raw gain
+  of about half of the 1024 run's +95-before-speed, minus 16 for speed);
+  CCRL-scale +5 to +25 (central +15). Chance to pass SPRT [0, 5]: about
+  70%. If the 1024 gain was mostly the recipe rather than the width, the
   result is -10 to +5 and the width path is closed; that is worth knowing
   either way, and 2048 gives a clearer answer than 1536.
 - 1536 (fallback if the PC time is too long or the risk unwanted):
-  self-play +5 to +25 (central +13); CCRL +3 to +15 (central +8).
+  self-play +5 to +30 (central +15); CCRL +3 to +15 (central +9).
 
 Skeptic's review of these numbers:
 - The +80 of the 1024 run bundled width, from-scratch training, 600
   superbatches and 3.65B positions; nobody knows the width's share.
-- The speed cost was measured on a cloud CPU without the AVX2 code; the PC
-  and the GitHub test machines may pay more or less. The ruler (0.57 Elo
-  per 1%) was measured at +12% time; a 39% change may not scale linearly.
+- The speed cost was measured on one cloud CPU; the PC and the GitHub
+  test machines may pay more or less (nnue-simd itself ranged from -3% to
+  +10% across machines). The ruler (0.57 Elo per 1%) was measured at +12%
+  time; a 28% change may not scale linearly.
 - A test that stops when it passes over-reads (SPRT #17: +13 that became
   +6 in the repeat). Calibration decides, not the SPRT number.
 - 16 passes over the same data: a wider network can memorise more; the
@@ -231,6 +286,72 @@ Skeptic's review of these numbers:
   flat would be the sign).
 - Everything downstream of the SPRT (calibration +/- 15 real uncertainty)
   can hide a +10 as easily as show it.
+
+Decision (owner, 15 October, evening): GO 2048. PC order: Quant-Check.bat,
+then Wide-Network.bat overnight (the calibration of the new main was
+already done on 14 October: about 3482, +16 over 3466; the 2048 network
+will be measured against that). Two conditions:
+1. Compare the training loss with the 1024 run at superbatch 300 and
+   report. The 1024 run's loss log was never saved (big.ps1 showed it on
+   screen only), so, as the owner allows, both runs' checkpoints are scored
+   on the same positions instead: tools\net\Net-Loss.bat runs the engine
+   command `trinity netloss` (branch net-quantcheck) on every saved
+   checkpoint of both runs. Two kinds of positions, both reported (advisor
+   and Session, 14 October evening: a wider network can win on training
+   positions by memorising them, and no held-out Leela positions exist
+   because both runs train on the whole file):
+   - held-out: 1,000,000 positions from Trinity's own calibration games
+     (39,200 games; ply 16 on, not in check), label = the game's result,
+     loss = (sigmoid(output) - result)^2. Neither network ever saw them.
+     This is the fair number.
+   - training: the first 1,000,000 positions of the shuffled part big-1,
+     the trainer's own loss (wdl 0.5) plus the pure-result and pure-score
+     losses and the mean cp error. Fit only; the gap between the two kinds
+     is the memorisation.
+   All 12 checkpoints of the 1024 run (50 to 600) still exist (listed by
+   the quantisation check), so the comparison is at every superbatch,
+   including 300. Prediction: held-out result loss of the 2048 run 0.5-1.5%
+   lower (relative) than the 1024 run's at the same superbatch; training
+   loss 1-3% lower at the same superbatch, 2-4% at 600. Held-out not lower
+   at all: the width is unused, expect no Elo. Training much lower but
+   held-out not: memorisation.
+   Same run, same positions (Scout, 15 October, idea 1, adopted): the
+   nine networks that were ever in main, read from the repository's
+   history (the engine reads their integer files; the two averaged
+   networks are gone with their branches). Their Elo steps, from
+   ESTIMATES.md, give the exchange rate between held-out loss and Elo:
+
+   | Network (commit) | Self-play step | CCRL step | Note |
+   |---|---|---|---|
+   | net3 -> net4 (39b8bd1 -> e0c0fee) | +25.9 | +4 | 256 -> 512 neurons, output buckets |
+   | net4 -> net5 (32dde25) | +217.8 | +169 | first Leela data |
+   | net5 -> net6 (3870ee6) | +29.1 | +3 | 120 instead of 40 Leela superbatches |
+   | net6 -> fresh (3aca207) | +6.0 | about 0 | fresh Leela data |
+   | fresh -> king buckets (b2fbbb4) | +19.1 | +17 | 8 king buckets, mirrored |
+   | king buckets -> big1024 (f3d46ea) | +80 (about +96 before the 28% speed cost) | +50 | 1024 from scratch |
+
+   Prediction for the exchange rate: the held-out result loss falls along
+   the whole sequence; the two steps that gained little against rated
+   engines (net6: +3, fresh: about 0) differ from their predecessors by
+   under 0.3% relative, and king buckets -> big1024 (+50 CCRL) by 2-4%.
+   If that holds, about 15-25 CCRL-scale Elo per 1% of relative held-out
+   loss, and the 2048 network's loss at 600 prices it before any test.
+   Checkpoint safety (Session, 14 October evening): Remove-OldCheckpoints
+   in scripts/common.ps1 runs only when 4-Train, 7-Drill, 8-Fresh-Leela or
+   11-Big-Network starts; it now never deletes big1024 folders and keeps
+   main's whole run. Coder 2's scripts never call it, and Coder 2's
+   checkpoints live in sprt\coder2\checkpoints, outside its reach.
+2. If 2048 lands between -5 and +5 at 30+0.3, one SPSA re-tune of the
+   search settings before the verdict.
+3. (Scout, 15 October, idea 2, adopted as the contingency.) If the 2048
+   run's held-out loss is not below the 1024 run's at superbatch 300 and
+   600, or its curve stalls, the width is not judged used up: the next run
+   is 2048 with the learning rate halved (0.0005), everything else the
+   same, judged on held-out loss at 300 and 600 before any SPRT. The
+   reasoning from first principles: with an Adam-type optimiser every
+   weight moves by about the learning rate, so a layer twice as wide moves
+   its output about twice as far per step; the rate tuned at 1024 is too
+   hot at 2048. Not started before tonight's curves are read.
 
 After a pass (for the Session's queue): v2 check (19-V2-Check.bat),
 calibration (5-Calibrate.bat, rule 2), then an SPSA re-tune of the search
@@ -244,14 +365,203 @@ deeper search (Scout, 13 October: on-policy data; datagen gives about 100
 million positions a day, 3% of the data; a fine-tune experiment only once
 the width run is banked); step 2 of the quantisation idea (after step 1).
 
+### 3. Loss comparison and exchange rate: result (PC, 15 October 17:56 Pacific, sprt\coder2\results\netloss-2026-10-15_17-56.txt)
+
+Held-out result loss (1,000,000 positions from Trinity's calibration games;
+lower is better; the 1024 run's checkpoint rows are still to be pasted):
+
+| Network | Held-out loss | Training loss (wdl 0.5) |
+|---|---|---|
+| 2048 run, superbatch 300 | 0.083505 | 0.025476 |
+| 2048 run, superbatch 600 | 0.081687 | 0.024974 |
+| 1024 run, superbatch 300 | 0.084320 | 0.025975 |
+| 1024 run, superbatch 600 (= main's network) | 0.082764 | 0.025627 |
+| king buckets (5 Oct) | 0.085218 | 0.027080 |
+| fresh (4 Oct) | 0.086187 | 0.027323 |
+| net6 (4 Oct) | 0.086201 | 0.027209 |
+| net5 (3 Oct) | 0.086343 | 0.027335 |
+| net4 (3 Oct) | 0.091305 | 0.030139 |
+| net3, net2, net1 | 0.092918, 0.094674, 0.097991 | 0.0306, 0.0313, 0.0335 |
+
+- Full table received (sprt\coder2\results\netloss-2026-10-15_17-56.txt).
+  At 300 (the owner's condition 1): held-out 0.083505 vs 0.084320, the
+  2048 run 1.0% below; training 0.025476 vs 0.025975, 1.9% below. At 600:
+  held-out 1.3% below (predicted 0.5-1.5%: right), training 2.5% below
+  (predicted 2-4%: right). The 2048 run is below the 1024 run at every
+  one of the 12 checkpoints, and reaches the 1024 run's final held-out
+  loss at about superbatch 400-450. Half of the training advantage does
+  not generalise (memorisation), but the held-out gain is real.
+- Two side findings from the same table. (1) The quantisation costs
+  nothing measurable: main's integer network scores 0.082764 against
+  0.082759 for the float checkpoint it came from (0.006%), which settles
+  the quantisation question (section 1): no step 2. (2) A floor for the
+  ruler: the "king buckets, longer" checkpoints of 7 October (kb-130 to
+  kb-160) score 0.3% BETTER on held-out loss than the network they
+  started from (kb-80: 0.084898 vs 0.085186) yet lost -13.8 and -3.8 in
+  self-play. So differences under about 0.4% (about 7 Elo by the ruler)
+  say nothing, and the result loss misses something the search needs
+  (those runs restarted at a high learning rate). The ruler is for
+  pricing steps of 1% and more.
+- Exchange rate (Scout idea 1), CCRL-scale Elo per 1% of relative
+  held-out loss, from the steps with a calibration: net5 -> net6 -0.16%
+  for +3 and net6 -> fresh -0.02% for about 0 (both at the noise floor, as
+  predicted); fresh -> king buckets -1.1% for +17 (15 per 1%); king
+  buckets -> 1024 -2.9% for +50 (17 per 1%, speed cost included);
+  net4 -> net5 -5.4% for +169 (31 per 1%); net3 -> net4 -1.7% for +4 (2
+  per 1%: the outlier, measured against the old, out-of-range opponents
+  and with a 512 network starved of data). Working figure: about 15-20
+  CCRL Elo per 1% (predicted 15-25).
+- Priced by the ruler: 2048's -1.3% is worth about +20-25 on the CCRL
+  scale before its speed cost (31% fewer nodes per second here; by the
+  time-odds ruler about -18 self-play, perhaps -10 to -15 CCRL), so net
+  about +5 to +15 CCRL and, by the self-play steps (17-33 per 1%), about
+  +5 to +25 self-play. Lower than the logged prediction (+15 to +45
+  self-play); the SPRT decides. The logged prediction stands as written.
+- Scout idea 2 (halved learning rate) is not triggered: the 2048 run is
+  below the 1024 run on held-out loss at 600 and its curve kept falling
+  (0.0837 at 250 to 0.0817 at 600, every checkpoint lower).
+
+### 4. Post-mortem of the 2048 network (16 October)
+
+Result: -29.8 +/- 4.2 in self-play (SPRT #23, 9000 games) against a
+prediction of +15 to +45 and a 70% chance to pass. Both wrong.
+
+Where the -30 comes from, by the measurements at hand:
+- Speed. 31% fewer nodes per second alone here, 34% with three copies
+  running at once (the PC runs 14 games and the GitHub machines 5 jobs;
+  the 25 MB network shares their caches worse than the 12.6 MB one). By
+  the time-odds ruler read as "Elo per doubling of time" (+6.8 for +12%
+  gives about 42 per doubling) a 31-34% slowdown costs 22-25 Elo. The
+  linear reading I used (0.57 per 1%, -18) understated it, and I never
+  measured the cost on the test machines, which ESTIMATES.md's own lesson
+  from nnue-simd told me to do.
+- Evaluation. The held-out loss gain of 1.3% was priced at +20-25 by the
+  new ruler. The result says the evaluation was worth about 0 to -8 after
+  the speed cost of -22 to -25. Either the ruler overprices small gains
+  (its floor finding in section 3 already said that differences under
+  0.4% can go either way; 1.3% was treated as safely above it), or part
+  of the gain is lost in the search. The evaluation scale is NOT it: the
+  Session measured both networks on 1,505 positions from the latest
+  calibration games (ratio 0.99, mean size 247 vs 240 cp); my own 15
+  bench positions had suggested 10-15% larger, too few to trust. So an
+  SPSA re-tune (owner's condition 2) has little to correct.
+- Not the cause, as far as can be checked from here: the engine uses the
+  new network (different scores and lines from main on the same
+  position), passes its tests at 2048 (incremental updates, refresh
+  cache, AVX2 output layer within its overflow bound), lost no games on
+  time, and quantisation cost the 1024 network 0.006% of held-out loss.
+  Scout's 16 October checks on the integer file: Quant-Check.bat can run
+  on the 2048 network with one command line (N4 below), a few minutes.
+
+Lessons (for ESTIMATES.md's calibration of future estimates):
+1. A network that costs speed must be priced with the speed cost measured
+   under test conditions, and on the log scale; a 30% slowdown is -22 to
+   -25, not -18.
+2. The held-out loss ruler, on its first real use, over-priced a 1.3%
+   gain by 20 Elo or more. Until it has more points, treat 1% as "worth
+   perhaps +5 to +15 before speed", not +15-20.
+3. Width at 2048 is used by training (every checkpoint better) but not
+   worth its per-node cost on this hardware. Capacity that costs no
+   per-node speed is what is left: training length, king buckets, data.
+4. Scout's "quick look" (16 October): a clearly bad network shows within
+   a few hundred games; the SPRT's first report can be read as that, so
+   no separate test is needed, but the next prediction should name a
+   stop-early threshold.
+
+Proposal for the next run (after #24 closes the width path; for the
+owner's decision, not started): the same 1024 recipe from scratch with
+1200 superbatches instead of 600 (one change; the cosine schedule
+stretched over the longer run). Why: zero speed cost; the 1024 run's
+held-out loss was still falling at the end (0.082862 at 550, 0.082759 at
+600), and the 2048 run needed only about 150 more superbatches' worth of
+capacity to pass it, which suggests training time, not width, is the
+cheaper lever. GPU: about 10 hours; disk: the data is already in
+sprt\coder2\data (nothing to convert). Prediction: held-out loss 0.5-1.0%
+below the 1024 run's; self-play +5 to +15 (with the corrected ruler: 1%
+is worth +5-15 and there is no speed cost); CCRL-scale +3 to +10; 55% to
+pass [0, 5]. Stop-early threshold: if the SPRT's first 1000 games show
+-10 or worse, stop. Alternative of the same cost: 16 king buckets at
+1024 (memory only, no per-node cost), predicted +3 to +10 self-play.
+
+### 5. Next run, decided (owner, 16 October): the 1024 recipe plus a second Leela file
+
+One change at a time: main's 1024 recipe exactly as it was (from scratch,
+600 superbatches, LR 0.001 cosine, WDL 0.5, 8 king buckets, 1024 neurons)
+with more data. Reason (owner and advisor): the 2048 run showed the
+networks memorise the file (2.5% gain on training positions, 1.3% on
+held-out games); fresh positions attack that directly, at zero speed
+cost. King buckets at 1024 (16 instead of 8) is the run after this one.
+
+Reuse and disk (checked 16 October):
+- The 4 parts in sprt\coder2\data (117 GB) are the same 3.65 billion
+  positions the 1024 run used (the conversion is deterministic; only the
+  shuffle differs) and are reused as they are: nothing to convert for
+  the first file.
+- A second file of the same kind holds about 3.65 billion usable
+  positions, but the whole of it does not fit: 162 GB free on 16
+  October. Per extra part of a billion positions: 32 GB, plus 32 GB
+  while shuffling, 13 GB for the download and 20 GB spare.
+
+  | Parts from the second file | Needs free | Data on disk after | Positions | Passes in 600 superbatches |
+  |---|---|---|---|---|
+  | 1 | 97 GB | 149 GB | 4.65 billion | 12.9 |
+  | 2 (default) | 129 GB | 181 GB | 5.65 billion | 10.6 |
+  | 3 | 161 GB | 213 GB | 6.65 billion | 9.0 (over the 200 GB budget) |
+
+  Default 2 parts (`New-Data-Network.bat`); 3 with `-SecondParts 3` if
+  the owner accepts 213 GB on disk. The 1024 run made 16.4 passes over
+  its data; with 2 extra parts every position is seen 10.6 times.
+- What Ayman must do first (the Session found the source, 16 October):
+  the first file is test80-2024-02-feb-2tb7p.min-v2.v6.binpack from the
+  Hugging Face dataset linrock/test80-2024; download a neighbouring
+  month's file of the same name pattern (about 13 GB) into a new folder
+  C:\Trinity\data\leela2 (the Session's scripts expect exactly one file
+  in data\leela, so the second one must not go there).
+- Reviewed by the Session (16 October): safe to run. Its suggestion is
+  in: the files are given to the trainer interleaved (big-1, second-1,
+  big-2, second-2, big-3, big-4), so the final low-learning-rate stretch
+  is not mostly one month.
+
+Script: tools\net\New-Data-Network.bat (newdata.ps1: wide.ps1 with the
+width back at 1024, the trainer and the published branch from main since
+the engine is unchanged, the second file converted into second-<n>.data,
+all parts given to the trainer). It deletes its own second-<n>.raw files
+after shuffling (rule 5: the Session's review before it runs). Time: about
+1 hour of CPU for 2 parts, then about 5-6 hours of GPU (the 1024 run took
+5.0 hours; 600 superbatches is the same work whatever the data size).
+
+Prediction (written before the run): held-out result loss 0.3-0.8% below
+the 1024 run's at 600 (less memorisation: the gap between training and
+held-out loss narrows); self-play +3 to +12 (central +6; the corrected
+ruler, no speed cost); CCRL-scale +2 to +8; about 50% to pass [0, 5].
+Stop-early threshold: -10 or worse after the first 1000 games. If the
+held-out loss is not lower at all, more of the same data is not the
+lever either, and king buckets come next.
+
 ## PC time requests (for the Session's PC queue in ESTIMATES.md)
 
 | # | Job | Script | PC time | Status |
 |---|---|---|---|---|
 | N1 | Quantisation check, step 1 | tools\net\Quant-Check.bat | a few minutes of CPU (any time nothing else heavy is running; a GitHub test does not matter) | ready; deletes nothing |
-| N2 | Wide network training (2048; or `-Hidden 1536`) | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 15-20 h GPU; no calibration or SPRT on the PC meanwhile | waiting for Ayman's go on the plan and the Session's review of wide.ps1 (it deletes its own raw data parts) |
+| N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 8-10 h GPU (the 1024 run took 5.0 h); no calibration or SPRT on the PC meanwhile | DONE 15 October 17:51 Pacific: branch net-wide2048-20261015-0709 (10.7 h of training, 72 s per superbatch = 2.4x the 1024 run, above the 1.6-2x guessed; the first start failed on a script bug of Coder 2's, fixed by the Session, data kept) |
+| N3 | Loss of every saved checkpoint on the same positions (condition 1): held-out game positions and training positions | tools\net\Net-Loss.bat | a minute or two of CPU, after N2 | DONE 15 October 17:56 (section 3) |
+| N5 | More-data 1024 network (section 5): after Ayman has put the second Leela file in C:\Trinity\data\leela2 | tools\net\New-Data-Network.bat | about 1 h CPU then 5-6 h GPU; no calibration or SPRT on the PC meanwhile | ready after the download and the Session's review of newdata.ps1 (deletes its own raw parts) |
+| N4 | Quantisation check of the 2048 network (Scout, 16 October): open a Command Prompt in C:\Trinity\tools\net and type `Quant-Check.bat -Branch net-wide2048-20261015-0709 -Checkpoint C:\Trinity\sprt\coder2\checkpoints\trinity-20261015-0709-wide2048-600` | tools\net\Quant-Check.bat | a few minutes of CPU, any time | optional; closes Scout's finding |
 
 ## Test requests (lane "network")
 
-(none yet; after N2 finishes, an SPRT of `net-wide2048-<date>` vs main at
-8+0.08, bounds [0, 5], after Coder 2 has updated the branch from main)
+| # | Branch | Test | Prediction (written before) | Status |
+|---|---|---|---|---|
+| T1 | net-wide2048-20261015-0709 (commit 028a643, main merged in on 16 October UTC; bench 781681; 2048 neurons; builds and passes the tests; about 31% fewer nodes per second than main here) | SPRT vs main at 8+0.08, bounds [0, 5] | self-play +15 to +45 (central +30); CCRL-scale +5 to +25; about 70% to pass | FAILED (#23): -29.8 +/- 4.2 after 9000 games, 0 time losses. Prediction badly wrong; post-mortem in section 4 |
+| T2 | same | 3000 games at 30+0.3 (the owner's condition 2 reads this result: -5 to +5 means one SPSA re-tune first; clearly negative closes the width path) | after #23: -20 to -35 (the 1024 network scored the same at both clocks); clearly negative, about 90% likely | running (#24, started by the Session 16 October) |
+
+Then, if it passes: v2 check, calibration, SPSA re-tune (CLAUDE.md,
+Coder 2 rule 4). The loss comparison (N3) runs on the PC meanwhile and
+does not block T1.
+
+(Earlier note: after N2 finishes and Coder 2 has updated the branch from main:
+an SPRT of `net-wide2048-<date>` vs main at 8+0.08, bounds [0, 5]; if it
+passes, 3000 games at 30+0.3 as for the 1024 network (the owner's
+condition 2 reads the 30+0.3 result).
+Branch state on 15 October: net-quantcheck and net-wide both carry main's
+combo merge of 15 October, build, pass the tests, bench 780879.)

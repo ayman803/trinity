@@ -2,6 +2,11 @@
 
 A UCI chess engine in Rust with an NNUE evaluation.
 
+**For testers:** the current release is
+[1.0.0](https://github.com/ayman803/trinity/releases/tag/v1.0.0). The
+`main` branch is ongoing development and is not meant for testing. The
+next release won't come before 1.0.0 has a CCRL rating.
+
 I want to build a better mousetrap. I'm not a programmer, so Claude writes the code and I call the shots. I'd rather try an original idea and fail than to have no original ideas at all.
 
 Claude (Anthropic's AI) writes the code in Claude Code. I run every test

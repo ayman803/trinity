@@ -17,3 +17,7 @@ One line per idea ever proposed: date | short name | status.
 2026-10-14 | Time-odds ruler: price speed changes from measured Elo per extra time (tm-control +6.8 at 1.12x) | proposed
 2026-10-14 | Equal-marginal-value test: extra time in one move band at a time | proposed
 2026-10-14 | Rounding-aware quantisation of the network (match float output) | proposed
+2026-10-15 | [network] Loss-to-Elo exchange rate from held-out loss of networks with known Elo | proposed
+2026-10-15 | [network] Width-scaled learning rate before judging the 2048 network | proposed
+2026-10-16 | [network] Finding: the 2048 integer network that lost (-29.8) was never scored; check quantisation, overflow and incremental eval at 2048 | proposed
+2026-10-16 | [network] First-article check: 200-400 games before a full network SPRT | proposed
