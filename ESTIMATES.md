@@ -94,12 +94,11 @@ requests PC time in NETWORK.md; the Session adds it here.
 Gates for the new-data network (owner, 16 October, before the run):
 1. Dry run of every stage first (tools/net/Dry-Run-New-Data.bat, about 2
    minutes).
-2. After training: held-out loss (Net-Loss.bat) at least 1% better than
-   main's network (0.0828 -> 0.0820 or lower); then 400 quick games on
+2. After training: held-out loss (Net-Loss.bat) at least 0.3% better than
+   main's network (0.0828 -> 0.0825 or lower; owner chose 0.3% over 1% on
+   16 October, before the run); then 400 quick games on
    GitHub at 8+0.08, stop if the estimate is -10 or worse; only then the
-   full SPRT. Note: the logged prediction for held-out loss is 0.3-0.8%
-   better, so gate 2 as written stops the run even if it meets its
-   prediction; owner to confirm 1% or lower it to 0.3%.
+   full SPRT.
 3. Training length: the 1024 run trained in about 5 hours (checkpoint
    times); the 2048 run took 9.6 hours. Expect about 5-6 hours plus 1 hour
    of conversion.
