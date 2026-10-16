@@ -374,7 +374,7 @@ lower is better; the 1024 run's checkpoint rows are still to be pasted):
 |---|---|---|
 | 2048 run, superbatch 300 | 0.083505 | 0.025476 |
 | 2048 run, superbatch 600 | 0.081687 | 0.024974 |
-| 1024 run, superbatch 300 | (to paste) | 0.026975 |
+| 1024 run, superbatch 300 | 0.084320 | 0.025975 |
 | 1024 run, superbatch 600 (= main's network) | 0.082764 | 0.025627 |
 | king buckets (5 Oct) | 0.085218 | 0.027080 |
 | fresh (4 Oct) | 0.086187 | 0.027323 |
@@ -383,12 +383,25 @@ lower is better; the 1024 run's checkpoint rows are still to be pasted):
 | net4 (3 Oct) | 0.091305 | 0.030139 |
 | net3, net2, net1 | 0.092918, 0.094674, 0.097991 | 0.0306, 0.0313, 0.0335 |
 
-- At 600 the 2048 network's held-out loss is 1.3% below the 1024's
-  (predicted 0.5-1.5%: right); its training loss is 2.5% below (predicted
-  2-4%: right). Half of the training advantage does not generalise
-  (memorisation), but the held-out gain is real. At 300 the 2048 run's
-  training loss was 5.6% below the 1024's; the held-out comparison at 300
-  waits for the 1024 row.
+- Full table received (sprt\coder2\results\netloss-2026-10-15_17-56.txt).
+  At 300 (the owner's condition 1): held-out 0.083505 vs 0.084320, the
+  2048 run 1.0% below; training 0.025476 vs 0.025975, 1.9% below. At 600:
+  held-out 1.3% below (predicted 0.5-1.5%: right), training 2.5% below
+  (predicted 2-4%: right). The 2048 run is below the 1024 run at every
+  one of the 12 checkpoints, and reaches the 1024 run's final held-out
+  loss at about superbatch 400-450. Half of the training advantage does
+  not generalise (memorisation), but the held-out gain is real.
+- Two side findings from the same table. (1) The quantisation costs
+  nothing measurable: main's integer network scores 0.082764 against
+  0.082759 for the float checkpoint it came from (0.006%), which settles
+  the quantisation question (section 1): no step 2. (2) A floor for the
+  ruler: the "king buckets, longer" checkpoints of 7 October (kb-130 to
+  kb-160) score 0.3% BETTER on held-out loss than the network they
+  started from (kb-80: 0.084898 vs 0.085186) yet lost -13.8 and -3.8 in
+  self-play. So differences under about 0.4% (about 7 Elo by the ruler)
+  say nothing, and the result loss misses something the search needs
+  (those runs restarted at a high learning rate). The ruler is for
+  pricing steps of 1% and more.
 - Exchange rate (Scout idea 1), CCRL-scale Elo per 1% of relative
   held-out loss, from the steps with a calibration: net5 -> net6 -0.16%
   for +3 and net6 -> fresh -0.02% for about 0 (both at the noise floor, as
