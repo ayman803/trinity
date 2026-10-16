@@ -1,0 +1,11 @@
+SPRT test #24, finished 2026-10-16 18:36 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/38910553719 (run id 38910553719)
+SPRT RESULT: FAILED - 'net-wide2048-20261015-0709' is not stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: net-wide2048-20261015-0709 (bench 781681) vs main (bench 780879), tc 30+0.3, bounds [0, 5]
+Games: 3000, Wins: 599, Losses: 769, Draws: 1632, Points: 1415.0 (47.17 %)
+Ptnml(0-2): [29, 426, 734, 308, 3]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -19.71 +/- 6.61, nElo: -37.15 +/- 12.43
+LLR: -4.93 (-2.94, 2.94) [0.00, 5.00]
