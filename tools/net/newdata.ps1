@@ -4,7 +4,8 @@
 # 8 output buckets, 1024 neurons) with ONE change: a second Leela file
 # added to the data. The first file's four converted parts in
 # sprt\coder2\data (the same positions the 1024 run used) are reused; the
-# second file (put it in C:\Trinity\data\leela2) is converted into
+# second file (put it in C:\Trinity\data\leela2; a .binpack.zst download
+# is unpacked automatically) is converted into
 # -SecondParts parts of a billion positions (default 2: disk budget).
 # Publishes a net-data1024-<date> branch for an SPRT test (the engine is
 # main's; no engine change). Double-click tools\net\New-Data-Network.bat.
@@ -55,8 +56,31 @@ try {
     # The first file's parts, made by Wide-Network.bat (same positions as the 1024 run).
     $firstParts = @(1..4 | ForEach-Object { Join-Path $dataDir "big-$_.data" } | Where-Object { Test-Path -LiteralPath $_ })
     if ($firstParts.Count -lt 4) { Stop-WithMessage "Expected the 4 converted parts big-1.data .. big-4.data in sprt\coder2\data (found $($firstParts.Count)). Wide-Network.bat makes them." }
-    $binpacks = @(Find-Files (Join-Path (Join-Path $script:Root "data") "leela2") "*.binpack")
-    if ($binpacks.Count -ne 1) { Stop-WithMessage "Expected exactly one .binpack file in data\leela2 (the second Leela file; found $($binpacks.Count))." }
+    $leela2 = Join-Path (Join-Path $script:Root "data") "leela2"
+    $binpacks = @(Find-Files $leela2 "*.binpack")
+    $packed = @(Find-Files $leela2 "*.binpack.zst")
+    if ($binpacks.Count -eq 0 -and $packed.Count -eq 1) {
+        # Hugging Face serves the files compressed (.binpack.zst): unpack it
+        # once with zstd (downloaded into sprt\tools\zstd). The .zst file is
+        # kept; the unpacked .binpack is written next to it.
+        $zstdDir = Join-Path (Join-Path (Join-Path $script:Root "sprt") "tools") "zstd"
+        $zstd = Find-File $zstdDir "zstd.exe"
+        if (-not $zstd) {
+            New-Item -ItemType Directory -Force -Path $zstdDir | Out-Null
+            $zip = Join-Path $zstdDir "zstd.zip"
+            Write-Step "Downloading zstd (to unpack the Leela file)"
+            Save-Download "https://github.com/facebook/zstd/releases/download/v1.5.6/zstd-v1.5.6-win64.zip" $zip
+            Expand-Archive -Path $zip -DestinationPath $zstdDir -Force
+            $zstd = Find-File $zstdDir "zstd.exe"
+            if (-not $zstd) { Stop-WithMessage "zstd.exe was not found after the download." }
+        }
+        $target = $packed[0] -replace "\.zst$", ""
+        Write-Step "Unpacking $(Split-Path $packed[0] -Leaf) (a few minutes)"
+        Invoke-Native $zstd @("-d", "--force", $packed[0], "-o", "$target.part")
+        Move-Item -LiteralPath "$target.part" -Destination $target -Force
+        $binpacks = @($target)
+    }
+    if ($binpacks.Count -ne 1) { Stop-WithMessage "Expected exactly one Leela file (.binpack or .binpack.zst) in data\leela2 (found $($binpacks.Count) .binpack and $($packed.Count) .zst)." }
     $utils = Join-Path (Join-Path (Join-Path (Join-Path (Join-Path $script:Root "sprt") "tools") "bullet") "bin") "bullet-utils$($script:ExeSuffix)"
     if (-not (Test-Path -LiteralPath $utils)) { Stop-WithMessage "$utils is missing (4-Train-Network.bat installs it)." }
 
