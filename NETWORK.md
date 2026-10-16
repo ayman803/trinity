@@ -365,13 +365,56 @@ deeper search (Scout, 13 October: on-policy data; datagen gives about 100
 million positions a day, 3% of the data; a fine-tune experiment only once
 the width run is banked); step 2 of the quantisation idea (after step 1).
 
+### 3. Loss comparison and exchange rate: result (PC, 15 October 17:56 Pacific, sprt\coder2\results\netloss-2026-10-15_17-56.txt)
+
+Held-out result loss (1,000,000 positions from Trinity's calibration games;
+lower is better; the 1024 run's checkpoint rows are still to be pasted):
+
+| Network | Held-out loss | Training loss (wdl 0.5) |
+|---|---|---|
+| 2048 run, superbatch 300 | 0.083505 | 0.025476 |
+| 2048 run, superbatch 600 | 0.081687 | 0.024974 |
+| 1024 run, superbatch 300 | (to paste) | 0.026975 |
+| 1024 run, superbatch 600 (= main's network) | 0.082764 | 0.025627 |
+| king buckets (5 Oct) | 0.085218 | 0.027080 |
+| fresh (4 Oct) | 0.086187 | 0.027323 |
+| net6 (4 Oct) | 0.086201 | 0.027209 |
+| net5 (3 Oct) | 0.086343 | 0.027335 |
+| net4 (3 Oct) | 0.091305 | 0.030139 |
+| net3, net2, net1 | 0.092918, 0.094674, 0.097991 | 0.0306, 0.0313, 0.0335 |
+
+- At 600 the 2048 network's held-out loss is 1.3% below the 1024's
+  (predicted 0.5-1.5%: right); its training loss is 2.5% below (predicted
+  2-4%: right). Half of the training advantage does not generalise
+  (memorisation), but the held-out gain is real. At 300 the 2048 run's
+  training loss was 5.6% below the 1024's; the held-out comparison at 300
+  waits for the 1024 row.
+- Exchange rate (Scout idea 1), CCRL-scale Elo per 1% of relative
+  held-out loss, from the steps with a calibration: net5 -> net6 -0.16%
+  for +3 and net6 -> fresh -0.02% for about 0 (both at the noise floor, as
+  predicted); fresh -> king buckets -1.1% for +17 (15 per 1%); king
+  buckets -> 1024 -2.9% for +50 (17 per 1%, speed cost included);
+  net4 -> net5 -5.4% for +169 (31 per 1%); net3 -> net4 -1.7% for +4 (2
+  per 1%: the outlier, measured against the old, out-of-range opponents
+  and with a 512 network starved of data). Working figure: about 15-20
+  CCRL Elo per 1% (predicted 15-25).
+- Priced by the ruler: 2048's -1.3% is worth about +20-25 on the CCRL
+  scale before its speed cost (31% fewer nodes per second here; by the
+  time-odds ruler about -18 self-play, perhaps -10 to -15 CCRL), so net
+  about +5 to +15 CCRL and, by the self-play steps (17-33 per 1%), about
+  +5 to +25 self-play. Lower than the logged prediction (+15 to +45
+  self-play); the SPRT decides. The logged prediction stands as written.
+- Scout idea 2 (halved learning rate) is not triggered: the 2048 run is
+  below the 1024 run on held-out loss at 600 and its curve kept falling
+  (0.0837 at 250 to 0.0817 at 600, every checkpoint lower).
+
 ## PC time requests (for the Session's PC queue in ESTIMATES.md)
 
 | # | Job | Script | PC time | Status |
 |---|---|---|---|---|
 | N1 | Quantisation check, step 1 | tools\net\Quant-Check.bat | a few minutes of CPU (any time nothing else heavy is running; a GitHub test does not matter) | ready; deletes nothing |
 | N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 8-10 h GPU (the 1024 run took 5.0 h); no calibration or SPRT on the PC meanwhile | DONE 15 October 17:51 Pacific: branch net-wide2048-20261015-0709 (10.7 h of training, 72 s per superbatch = 2.4x the 1024 run, above the 1.6-2x guessed; the first start failed on a script bug of Coder 2's, fixed by the Session, data kept) |
-| N3 | Loss of every saved checkpoint on the same positions (condition 1): held-out game positions and training positions | tools\net\Net-Loss.bat | a minute or two of CPU, after N2 | ready; deletes nothing |
+| N3 | Loss of every saved checkpoint on the same positions (condition 1): held-out game positions and training positions | tools\net\Net-Loss.bat | a minute or two of CPU, after N2 | DONE 15 October 17:56 (section 3) |
 
 ## Test requests (lane "network")
 
