@@ -62,7 +62,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-13 | weight averaging, bolder: mean of checkpoints 450, 500, 550, 600 (branch net-avg-450-600-20261012-2235, bench 859329) | self-play -5 to +8 | -1.3 +/- 4.3 after 7200 games (SPRT #12, one GitHub job lost; stopped, not merged) | - | no gain |
 | 2026-10-13 | tm-unsure: think up to 30% longer when the root's eval correction is large (Fable design B; bench unchanged) | self-play -2 to +6; CCRL 0 to +3 | +3.9 +/- 3.8 after 9000 games (SPRT #13, LLR 1.83; stopped, not merged) | - | no sign that the unsure signal helps beyond the extra time (+3.9 and +5.3 are statistically the same; both spent the same extra time on average, mean multiplier 1.12). Dropped; does not count for the Fable gate |
 | 2026-10-13 | tm-control: 12% more soft time on every move (control for tm-unsure: its measured mean multiplier is 1.12) | self-play -2 to +4 | +5.3 +/- 3.7 after 9000 games (SPRT #14, LLR 2.82); PASSED +6.76 +/- 2.65 after 18000 games (SPRT #15, continues #14; 0 time losses) | - | simply thinking 12% longer on every move gains about +5: confirms the unspent-time leak. Passed. Time-odds ruler (Scout, 14 October): 12% more time = about +6.8 here, so a speed-up of x% is worth about 0.57x Elo in self-play. 40/20 time-loss check done 14 October (40 local games vs main: 0 time losses, 19.5/40). Merge after testing it together with nnue-simd (owner) |
-| 2026-10-13 | tm-plan (part A, Fable gate change 1): the soft limit is scaled by plan/spend so far in the game (closed loop, prior 0.6, clamp 1-2.5x), and the whole increment is spent; hard limit at least 1.6x soft. Bench unchanged | 8+0.08 vs main: +4 to +10; gate test vs main of that moment (40/10 since 13 October, decided before any result; same prediction): +2 to +6, about a 50% chance to pass the capped test; CCRL-scale (40/20 calibration): +1 to +6 | pending | - | Safety check SPRT #18 vs main at 8+0.08: +4.29 +/- 3.77 after 9000 games (LLR 2.11, undecided, 0 time losses): no sign of harm; not continued (the 40/10 gate test decides). Below tm-control's +6.8 vs the same main at this clock. Validation (16 games at 10+0.1): first version overshot in sudden death, clock down to 0.09 s and 158 of 812 moves started under 1 s (main: 2); fixed by capping the loop at 1.25x and keeping 3/4 of the increment in sudden death (repeating controls keep 2.5x). PC data: Trinity spends 0.67 (10+0.1) and 0.48 (40/20) of its own plan; its rated opponents 0.84 and 0.63. Fixed-ratio alternative rejected: the ratio differs by clock, so the loop measures it |
+| 2026-10-13 | tm-plan (part A, Fable gate change 1): the soft limit is scaled by plan/spend so far in the game (closed loop, prior 0.6, clamp 1-2.5x), and the whole increment is spent; hard limit at least 1.6x soft. Bench unchanged | 8+0.08 vs main: +4 to +10; gate test vs main of that moment (40/10 since 13 October, decided before any result; same prediction): +2 to +6, about a 50% chance to pass the capped test; CCRL-scale (40/20 calibration): +1 to +6 | pending | gate test at 40/10 vs main with tm-control: +0.71 +/- 3.40 after 10800 games, undecided at the cap: gate loss, not merged | Prediction +2 to +6 missed. On top of tm-control's 12%, the closed loop adds nothing measurable: once the 12% is in, most of the leak's value is taken. Safety check SPRT #18 vs main at 8+0.08: +4.29 +/- 3.77 after 9000 games (LLR 2.11, undecided, 0 time losses): no sign of harm; not continued (the 40/10 gate test decides). Below tm-control's +6.8 vs the same main at this clock. Validation (16 games at 10+0.1): first version overshot in sudden death, clock down to 0.09 s and 158 of 812 moves started under 1 s (main: 2); fixed by capping the loop at 1.25x and keeping 3/4 of the increment in sudden death (repeating controls keep 2.5x). PC data: Trinity spends 0.67 (10+0.1) and 0.48 (40/20) of its own plan; its rated opponents 0.84 and 0.63. Fixed-ratio alternative rejected: the ratio differs by clock, so the loop measures it |
 | 2026-10-13 | nnue-simd: the network's output layer written with AVX2 instructions (same arithmetic, bench node count unchanged 780879); about 10% more nodes per second measured here (1.06M vs 0.97M) | self-play +3 to +6 (measured on 60 positions from real games at 300 ms: +7.3% nodes per second, less than the 10% on bench); CCRL +2 to +4 | SPRT #16 (+0.15 +/- 3.71, 9000 games) INVALID: the branch's only commit held the speed probe, not the AVX2 code, so both sides were the same engine (found by Scout, 14 October). Code committed 14 October (961b44b; median of 10 paired bench runs +7.7% nodes per second, ruler: about +4.4); re-test: PASSED +13.25 +/- 3.80 after 9000 games (SPRT #17, LLR 8.39, 0 time losses). Gate change 2 = gate WIN. #16 does not count for the gate. Side result: 9000 games of identical engines gave +0.15, so the GitHub setup favours neither side. The workflow now stops when both branches build the same engine file | - | v2 build (no AVX2) checked: falls back to the old code, bench 780879, no AVX2 instructions. Fable gate change 2 (owner: counts whether it passes or fails) |
 
 ## Test queue
@@ -74,10 +74,10 @@ at once. PC: one heavy job at a time, in the order Ayman chooses.
 | # | Test | Lane | Where | Status (15 October) |
 |---|---|---|---|---|
 | 1 | Merge combo (tm-control + nnue-simd) | search | - | DONE 15 October: v2 check passed (same bench 780879, 20 games, no errors); merged |
-| 2 | Part A (tm-plan) gate test vs the new main, repeating 40/10, cap 12000 games | search | GitHub | started 15 October (SPRT #21). Version tested, fixed before any result: tm-plan with the new main merged in, so it keeps tm-control's 12% as well (part A added to main, nothing removed). Local check: 20 games at 40/10, 0 time losses |
-| 3 | Calibration (5-Calibrate.bat) | search | PC CPU | owner, 14 October: after part A is merged, not now (combo alone is worth about +3 to +5 on the CCRL scale, below calibration's +/- 15) |
+| 2 | Part A (tm-plan) gate test vs the new main, repeating 40/10, cap 12000 games | search | GitHub | FINAL: +0.71 +/- 3.40 after 10800 games at the cap (#21 + #22; one GitHub job lost; undecided, 0 time losses). Gate change 1 = gate LOSS by the rule fixed in advance; not merged, main kept. Gate change 2 (nnue-simd) won, so the Fable gate does not trigger. #21 alone: +2.72 +/- 4.55 after 6000 games. Started 15 October (SPRT #21). Version tested, fixed before any result: tm-plan with the new main merged in, so it keeps tm-control's 12% as well (part A added to main, nothing removed). Local check: 20 games at 40/10, 0 time losses |
+| 3 | Calibration (5-Calibrate.bat) | search | PC CPU | owner, 15 October: now, on the main with combo (replaces the 14 October decision to wait for part A); part A needs its own calibration later |
 | 4 | Quantisation check (Scout 14 October, idea 2): float vs integer eval gap | network | PC CPU or GitHub | Coder 2 to design |
-| 5 | Next training run (data, size, length) | network | PC GPU | Coder 2 to design; disk budget about 200 GB |
+| 5 | Wide network (2048 neurons, same recipe as the 1024 run: 3.65B Leela positions, 600 superbatches, LR 0.001 cosine, WDL 0.5) | network | PC GPU, then GitHub SPRT | planned. Coder 2's prediction (logged before training): self-play +15 to +45, CCRL +5 to +25, about 70% chance to pass; speed cost -28% (AVX2 build). Owner's rule, fixed before training: if 2048 lands between -5 and +5 at 30+0.3, run one SPSA re-tune before the verdict; clearly negative closes the path. Session's review: test it at 8+0.08 and at 30+0.3 (a slower, bigger network is penalised more at a fast clock than at CCRL's 40/15, as with the 1024 net: +80 and +82); about 16 epochs over 3.65B positions for twice the weights, so under-training is the main risk |
 
 ## PC queue
 
@@ -86,8 +86,9 @@ requests PC time in NETWORK.md; the Session adds it here.
 
 | # | Job | Owner | Hours | Status (15 October) |
 |---|---|---|---|---|
-| 1 | Quantisation check, step 1 (script in tools/net/) | Coder 2 | under 1 | waiting for Coder 2's script |
-| 2 | Calibration (5-Calibrate.bat) | Session | about 24 | after part A is merged |
+| 1 | Quantisation check, step 1 (tools/net/Quant-Check.bat; reviewed by the Session 15 October: deletes nothing, writes only sprt\coder2) | Coder 2 | under 1 | next; Coder 2's prediction: mean gap 4-8 cp, 95th percentile 10-16 cp |
+| 2 | Calibration of the new main, combo merged (5-Calibrate.bat) | Session | about 2.5 | DONE 14 October: about 3482 (+16) |
+| 3 | Wide network, 2048 neurons (tools/net/Wide-Network.bat; reviewed by the Session 15 October: deletes only its own unshuffled .raw parts in sprt\coder2\data, peak disk about 150 GB, touches nothing of the Session's) | Coder 2 | about 20 (GPU) + 2-3 (CPU) | after 2; owner said go. No calibration or SPRT on the PC meanwhile. Coder 2 compares the training loss at superbatch 300 with the 1024 run and reports; if 2048 is not clearly ahead, Ayman may stop it. Loss comparison script tools/net/Net-Loss.bat (reviewed: deletes nothing), run after training |
 
 ## Proposed (not yet run)
 
@@ -125,6 +126,7 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
 | 2026-10-10 | 1024-neuron network (bench 626889) | 44.90% -> 3438 | 42.95% -> 3438 | 44.50% -> 3484 | 34.80% -> 3434 | - | about 3449 (6 games lost on time in 4000, worth watching) |
 | 2026-10-10 | same, at repeating 40/20 (300 games per opponent) | 48.17% -> 3461 | 47.33% -> 3468 | 48.67% -> 3513 | 40.67% -> 3477 | - | about 3480 (+/- 11); 0 games lost on time in 1200. Higher than at 10+0.1, not yet explained |
 | 2026-10-12 | release 1.0.0: + unsure-1024 + SPSA re-tune (bench 780879) | 47.00% -> 3453 | 45.75% -> 3458 | 45.80% -> 3493 | 38.45% -> 3461 | - | about 3466 (+17 over 3449; predicted +1 to +13). 3 games lost on time by Trinity in 4000 |
+| 2026-10-14 | main with combo merged: tm-control + nnue-simd (bench 780879) | 49.05% -> 3467 | 47.60% -> 3471 | 48.95% -> 3515 | 40.45% -> 3476 | - | about 3482 (+16 over 3466; predicted +5 to +12, lowered to +2 to +8 after #19). All four opponents up 13-22. 9 games lost on time by Trinity in 4000 (1.0.0: 3), worth watching |
 
 ## Lessons so far
 
@@ -273,6 +275,19 @@ passes catches upswings), and the speed-up is worth about what the ruler
 says (+3) or less. The gate rule was fixed in advance, so #17 still counts
 as the gate win, but future estimates should treat a single early pass as
 an overstatement. Self-play gain of combo vs main: about +6.
+Revised calibration prediction for combo (owner, 15 October, after #19 and
+before any calibration): +2 to +8 on the CCRL scale (was +5 to +12). The
+combo miss is logged: predicted self-play +10 to +18, got +5.6. Gate count
+unchanged: #17 stays the gate win, as decided in advance.
+Calibration of combo (14 October, 4000 games at 10+0.1): about 3482, +16
+over 1.0.0's 3466, above even the first prediction (+5 to +12) and far
+above the lowered one (+2 to +8); self-play said only +5.6. All four
+opponents agree (+13 to +22). Reading: time-management gains may carry
+over to rated engines more than 1:1, unlike network refinements (the
+opponents spend their time better, so Trinity's leak cost more against
+them). Statistical uncertainty of a difference of two calibrations is
+about +/- 10, so the true gain is likely +6 to +26. Lowering the
+prediction after #19 was the wrong correction for this kind of change.
 Merge conditions for combo (owner, 14 October): #19 passes; #20 shows no
 time losses; the x86-64-v2 build (no AVX2) gives the same bench as the
 AVX2 build and plays 20 games on the PC with no crash (19-V2-Check.bat).
