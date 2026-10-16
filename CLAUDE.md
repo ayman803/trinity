@@ -78,34 +78,20 @@ A scheduled task runs at 5:46 am Pacific and writes scout/YYYY-MM-DD.md
 plus one line per idea in scout/INDEX.md. It never touches code, tests or
 ESTIMATES.md. Read scout/INDEX.md before planning the next step.
 
-## Coder 2 (network work, set by the owner, 14-15 October 2026)
+## Coder 2 (folded back, 16 October 2026)
 
-A second coding session (Fable by default) owns the network: the design of
-the next training run (data, size, length) and Scout's quantisation check.
-1. Coder 2 may push to `main`, but only NETWORK.md and files under
-   `tools/net/` (so the PC can `git pull` its scripts and everyone can read
-   its notes). Engine code and .nnue files stay on `net-...` branches; only
-   the Session merges them. Coder 2 updates its branch from `main` before
-   every test request.
-2. Only the Session edits ESTIMATES.md. Coder 2 runs in the cloud and
-   cannot reach the PC: its PC work goes through double-click scripts in
-   `tools/net/`, and it requests PC time in NETWORK.md. The integer network
-   is in the repo (nets/default.nnue); the float weights exist only on the
-   PC (checkpoints\...\optimiser_state\weights.bin).
-3. The originality rule applies to Coder 2 too, including Coda by name.
-4. Tests: Coder 2 asks for a test in NETWORK.md; the Session adds it to the
-   test queue in ESTIMATES.md (lane "network") and runs it like any other.
-   Every network merge follows the usual steps: SPRT, a combination test if
-   needed, the v2 check (19-V2-Check.bat), and calibration (5-Calibrate.bat),
-   then an SPSA re-tune of the search settings (worth +5.9 after the 1024
-   network).
-5. GitHub test machines: at most 2 tests at once for the Session's lane
-   (search) and at most 1 for Coder 2's lane (network).
-6. The PC runs one heavy job at a time (training, data preparation or
-   calibration). Ayman decides the order. The Session keeps one PC queue in
-   ESTIMATES.md and gives Ayman one instruction at a time.
-8. Models: Fable for design, Opus for routine steps. Both coders share the
-   Fable limit; the 80% pause covers both together.
-7. Disk budget for training: about 200 GB (C: had 265 GB free on 15
-   October). Training data takes 32 GB per billion positions, plus about
-   52 GB for shuffling and spare (scripts/big.ps1).
+From 14 to 16 October a second coding session ("Coder 2") owned the
+network. By the owner's review rule its first trained network had to pass
+SPRT; the 2048-neuron network failed (-29.8 at 8+0.08, -19.7 at 30+0.3),
+so on 16 October the network work folded back into the Session. Its tools
+stay: NETWORK.md (notes, history) and the PC scripts in `tools/net/`
+(Quant-Check, Net-Loss, Wide-Network, New-Data-Network), now maintained
+by the Session. They write only inside C:\Trinity\sprt\coder2.
+Standing parts of that setup that still apply:
+- The PC runs one heavy job at a time; Ayman decides the order. The PC
+  queue is in ESTIMATES.md.
+- Every network merge: SPRT (8+0.08 and 30+0.3 for slower networks), the
+  v2 check (19-V2-Check.bat), calibration, then an SPSA re-tune.
+- Disk budget for training: about 200 GB. Training data takes 32 GB per
+  billion positions, plus about 52 GB for shuffling and spare.
+- The big1024 checkpoints are never deleted (reference run).

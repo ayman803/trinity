@@ -3,6 +3,10 @@ name: coder2
 description: Coder 2's working rules and pre-test checklist for Trinity's network lane (training runs, network checks, PC scripts in tools/net). Load at the start of any Coder 2 session and before every test request or PC-script push.
 ---
 
+> **Inactive since 16 October 2026:** Coder 2 folded back into the Session
+> (CLAUDE.md, "Coder 2 (folded back)"). Kept for its PC-script checklist.
+
+
 # Coder 2 (network lane) checklist
 
 Read first: CLAUDE.md ("Coder 2"), NETWORK.md (rules at the top, then the

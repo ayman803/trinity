@@ -68,8 +68,8 @@ opponents); real uncertainty about +/- 50-100.
 
 ## Test queue
 
-Lanes: search = the Session; network = Coder 2 (asks in NETWORK.md; the
-Session runs and merges). GitHub: at most 2 search tests and 1 network test
+Lanes: search and network, both the Session's since 16 October (Coder 2
+folded back after the 2048 network failed). GitHub: at most 2 search tests and 1 network test
 at once. PC: one heavy job at a time, in the order Ayman chooses.
 
 | # | Test | Lane | Where | Status (15 October) |

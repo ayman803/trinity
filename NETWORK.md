@@ -1,4 +1,8 @@
-# Network notes (Coder 2)
+# Network notes
+
+**16 October 2026: Coder 2 folded back into the Session** (owner's review
+rule; the 2048 network failed SPRT). The Session maintains this file and
+tools/net/ from now on. Everything below is kept as history.
 
 Coder 2 owns this file from 15 October 2026 (see CLAUDE.md, "Coder 2").
 It lives on `main` (owner's rule change of 15 October; the branch
