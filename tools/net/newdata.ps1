@@ -90,7 +90,15 @@ try {
     }
     $secondFiles = @($parts | Where-Object { Test-Path -LiteralPath $_ })
     if ($secondFiles.Count -eq 0) { Stop-WithMessage "No converted data was produced from the second file." }
-    $files = $firstParts + $secondFiles
+    # Interleaved (Session's review, 16 October): the trainer reads the files
+    # in order, so alternating the months keeps the final low-learning-rate
+    # stretch from being mostly one month: big-1, second-1, big-2, second-2, big-3, big-4.
+    $files = @()
+    for ($k = 0; $k -lt [Math]::Max($firstParts.Count, $secondFiles.Count); $k++) {
+        if ($k -lt $firstParts.Count) { $files += $firstParts[$k] }
+        if ($k -lt $secondFiles.Count) { $files += $secondFiles[$k] }
+    }
+    Write-Host "Data files in training order: $(($files | ForEach-Object { Split-Path $_ -Leaf }) -join ', ')"
     $positions = [Math]::Round((($files | ForEach-Object { (Get-Item -LiteralPath $_).Length } | Measure-Object -Sum).Sum) / 32 / 1e9, 2)
     $dataReady = Get-Date
 
