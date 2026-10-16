@@ -483,6 +483,56 @@ pass [0, 5]. Stop-early threshold: if the SPRT's first 1000 games show
 -10 or worse, stop. Alternative of the same cost: 16 king buckets at
 1024 (memory only, no per-node cost), predicted +3 to +10 self-play.
 
+### 5. Next run, decided (owner, 16 October): the 1024 recipe plus a second Leela file
+
+One change at a time: main's 1024 recipe exactly as it was (from scratch,
+600 superbatches, LR 0.001 cosine, WDL 0.5, 8 king buckets, 1024 neurons)
+with more data. Reason (owner and advisor): the 2048 run showed the
+networks memorise the file (2.5% gain on training positions, 1.3% on
+held-out games); fresh positions attack that directly, at zero speed
+cost. King buckets at 1024 (16 instead of 8) is the run after this one.
+
+Reuse and disk (checked 16 October):
+- The 4 parts in sprt\coder2\data (117 GB) are the same 3.65 billion
+  positions the 1024 run used (the conversion is deterministic; only the
+  shuffle differs) and are reused as they are: nothing to convert for
+  the first file.
+- A second file of the same kind holds about 3.65 billion usable
+  positions, but the whole of it does not fit: 162 GB free on 16
+  October. Per extra part of a billion positions: 32 GB, plus 32 GB
+  while shuffling, 13 GB for the download and 20 GB spare.
+
+  | Parts from the second file | Needs free | Data on disk after | Positions | Passes in 600 superbatches |
+  |---|---|---|---|---|
+  | 1 | 97 GB | 149 GB | 4.65 billion | 12.9 |
+  | 2 (default) | 129 GB | 181 GB | 5.65 billion | 10.6 |
+  | 3 | 161 GB | 213 GB | 6.65 billion | 9.0 (over the 200 GB budget) |
+
+  Default 2 parts (`New-Data-Network.bat`); 3 with `-SecondParts 3` if
+  the owner accepts 213 GB on disk. The 1024 run made 16.4 passes over
+  its data; with 2 extra parts every position is seen 10.6 times.
+- What Ayman must do first: download a second Leela file of the same
+  kind as the first (data\leela, 13.4 GB) from the same place, a
+  different month, into a new folder C:\Trinity\data\leela2 (the
+  Session's scripts expect exactly one file in data\leela, so the second
+  one must not go there).
+
+Script: tools\net\New-Data-Network.bat (newdata.ps1: wide.ps1 with the
+width back at 1024, the trainer and the published branch from main since
+the engine is unchanged, the second file converted into second-<n>.data,
+all parts given to the trainer). It deletes its own second-<n>.raw files
+after shuffling (rule 5: the Session's review before it runs). Time: about
+1 hour of CPU for 2 parts, then about 5-6 hours of GPU (the 1024 run took
+5.0 hours; 600 superbatches is the same work whatever the data size).
+
+Prediction (written before the run): held-out result loss 0.3-0.8% below
+the 1024 run's at 600 (less memorisation: the gap between training and
+held-out loss narrows); self-play +3 to +12 (central +6; the corrected
+ruler, no speed cost); CCRL-scale +2 to +8; about 50% to pass [0, 5].
+Stop-early threshold: -10 or worse after the first 1000 games. If the
+held-out loss is not lower at all, more of the same data is not the
+lever either, and king buckets come next.
+
 ## PC time requests (for the Session's PC queue in ESTIMATES.md)
 
 | # | Job | Script | PC time | Status |
@@ -490,6 +540,7 @@ pass [0, 5]. Stop-early threshold: if the SPRT's first 1000 games show
 | N1 | Quantisation check, step 1 | tools\net\Quant-Check.bat | a few minutes of CPU (any time nothing else heavy is running; a GitHub test does not matter) | ready; deletes nothing |
 | N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 8-10 h GPU (the 1024 run took 5.0 h); no calibration or SPRT on the PC meanwhile | DONE 15 October 17:51 Pacific: branch net-wide2048-20261015-0709 (10.7 h of training, 72 s per superbatch = 2.4x the 1024 run, above the 1.6-2x guessed; the first start failed on a script bug of Coder 2's, fixed by the Session, data kept) |
 | N3 | Loss of every saved checkpoint on the same positions (condition 1): held-out game positions and training positions | tools\net\Net-Loss.bat | a minute or two of CPU, after N2 | DONE 15 October 17:56 (section 3) |
+| N5 | More-data 1024 network (section 5): after Ayman has put the second Leela file in C:\Trinity\data\leela2 | tools\net\New-Data-Network.bat | about 1 h CPU then 5-6 h GPU; no calibration or SPRT on the PC meanwhile | ready after the download and the Session's review of newdata.ps1 (deletes its own raw parts) |
 | N4 | Quantisation check of the 2048 network (Scout, 16 October): open a Command Prompt in C:\Trinity\tools\net and type `Quant-Check.bat -Branch net-wide2048-20261015-0709 -Checkpoint C:\Trinity\sprt\coder2\checkpoints\trinity-20261015-0709-wide2048-600` | tools\net\Quant-Check.bat | a few minutes of CPU, any time | optional; closes Scout's finding |
 
 ## Test requests (lane "network")
