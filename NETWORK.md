@@ -421,6 +421,68 @@ lower is better; the 1024 run's checkpoint rows are still to be pasted):
   below the 1024 run on held-out loss at 600 and its curve kept falling
   (0.0837 at 250 to 0.0817 at 600, every checkpoint lower).
 
+### 4. Post-mortem of the 2048 network (16 October)
+
+Result: -29.8 +/- 4.2 in self-play (SPRT #23, 9000 games) against a
+prediction of +15 to +45 and a 70% chance to pass. Both wrong.
+
+Where the -30 comes from, by the measurements at hand:
+- Speed. 31% fewer nodes per second alone here, 34% with three copies
+  running at once (the PC runs 14 games and the GitHub machines 5 jobs;
+  the 25 MB network shares their caches worse than the 12.6 MB one). By
+  the time-odds ruler read as "Elo per doubling of time" (+6.8 for +12%
+  gives about 42 per doubling) a 31-34% slowdown costs 22-25 Elo. The
+  linear reading I used (0.57 per 1%, -18) understated it, and I never
+  measured the cost on the test machines, which ESTIMATES.md's own lesson
+  from nnue-simd told me to do.
+- Evaluation. The held-out loss gain of 1.3% was priced at +20-25 by the
+  new ruler. The result says the evaluation was worth about 0 to -8 after
+  the speed cost of -22 to -25. Either the ruler overprices small gains
+  (its floor finding in section 3 already said that differences under
+  0.4% can go either way; 1.3% was treated as safely above it), or part
+  of the gain is lost in the search: the 2048 network's scores are about
+  10-15% larger in magnitude than the 1024's on 15 ordinary positions
+  (mean |score| 278 vs 255 at depth 1; the search's margins and
+  corrections were tuned on the 1024 network). An SPSA re-tune (owner's
+  condition 2) would recover some of that, but not 25 Elo.
+- Not the cause, as far as can be checked from here: the engine uses the
+  new network (different scores and lines from main on the same
+  position), passes its tests at 2048 (incremental updates, refresh
+  cache, AVX2 output layer within its overflow bound), lost no games on
+  time, and quantisation cost the 1024 network 0.006% of held-out loss.
+  Scout's 16 October checks on the integer file: Quant-Check.bat can run
+  on the 2048 network with one command line (N4 below), a few minutes.
+
+Lessons (for ESTIMATES.md's calibration of future estimates):
+1. A network that costs speed must be priced with the speed cost measured
+   under test conditions, and on the log scale; a 30% slowdown is -22 to
+   -25, not -18.
+2. The held-out loss ruler, on its first real use, over-priced a 1.3%
+   gain by 20 Elo or more. Until it has more points, treat 1% as "worth
+   perhaps +5 to +15 before speed", not +15-20.
+3. Width at 2048 is used by training (every checkpoint better) but not
+   worth its per-node cost on this hardware. Capacity that costs no
+   per-node speed is what is left: training length, king buckets, data.
+4. Scout's "quick look" (16 October): a clearly bad network shows within
+   a few hundred games; the SPRT's first report can be read as that, so
+   no separate test is needed, but the next prediction should name a
+   stop-early threshold.
+
+Proposal for the next run (after #24 closes the width path; for the
+owner's decision, not started): the same 1024 recipe from scratch with
+1200 superbatches instead of 600 (one change; the cosine schedule
+stretched over the longer run). Why: zero speed cost; the 1024 run's
+held-out loss was still falling at the end (0.082862 at 550, 0.082759 at
+600), and the 2048 run needed only about 150 more superbatches' worth of
+capacity to pass it, which suggests training time, not width, is the
+cheaper lever. GPU: about 10 hours; disk: the data is already in
+sprt\coder2\data (nothing to convert). Prediction: held-out loss 0.5-1.0%
+below the 1024 run's; self-play +5 to +15 (with the corrected ruler: 1%
+is worth +5-15 and there is no speed cost); CCRL-scale +3 to +10; 55% to
+pass [0, 5]. Stop-early threshold: if the SPRT's first 1000 games show
+-10 or worse, stop. Alternative of the same cost: 16 king buckets at
+1024 (memory only, no per-node cost), predicted +3 to +10 self-play.
+
 ## PC time requests (for the Session's PC queue in ESTIMATES.md)
 
 | # | Job | Script | PC time | Status |
@@ -428,13 +490,14 @@ lower is better; the 1024 run's checkpoint rows are still to be pasted):
 | N1 | Quantisation check, step 1 | tools\net\Quant-Check.bat | a few minutes of CPU (any time nothing else heavy is running; a GitHub test does not matter) | ready; deletes nothing |
 | N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 8-10 h GPU (the 1024 run took 5.0 h); no calibration or SPRT on the PC meanwhile | DONE 15 October 17:51 Pacific: branch net-wide2048-20261015-0709 (10.7 h of training, 72 s per superbatch = 2.4x the 1024 run, above the 1.6-2x guessed; the first start failed on a script bug of Coder 2's, fixed by the Session, data kept) |
 | N3 | Loss of every saved checkpoint on the same positions (condition 1): held-out game positions and training positions | tools\net\Net-Loss.bat | a minute or two of CPU, after N2 | DONE 15 October 17:56 (section 3) |
+| N4 | Quantisation check of the 2048 network (Scout, 16 October): open a Command Prompt in C:\Trinity\tools\net and type `Quant-Check.bat -Branch net-wide2048-20261015-0709 -Checkpoint C:\Trinity\sprt\coder2\checkpoints\trinity-20261015-0709-wide2048-600` | tools\net\Quant-Check.bat | a few minutes of CPU, any time | optional; closes Scout's finding |
 
 ## Test requests (lane "network")
 
 | # | Branch | Test | Prediction (written before) | Status |
 |---|---|---|---|---|
-| T1 | net-wide2048-20261015-0709 (commit 028a643, main merged in on 16 October UTC; bench 781681; 2048 neurons; builds and passes the tests; about 31% fewer nodes per second than main here) | SPRT vs main at 8+0.08, bounds [0, 5] | self-play +15 to +45 (central +30); CCRL-scale +5 to +25; about 70% to pass | requested 16 October |
-| T2 | same | if T1 passes: 3000 games at 30+0.3 (as for the 1024 network; the owner's condition 2 reads this result) | +15 to +45 | after T1 |
+| T1 | net-wide2048-20261015-0709 (commit 028a643, main merged in on 16 October UTC; bench 781681; 2048 neurons; builds and passes the tests; about 31% fewer nodes per second than main here) | SPRT vs main at 8+0.08, bounds [0, 5] | self-play +15 to +45 (central +30); CCRL-scale +5 to +25; about 70% to pass | FAILED (#23): -29.8 +/- 4.2 after 9000 games, 0 time losses. Prediction badly wrong; post-mortem in section 4 |
+| T2 | same | 3000 games at 30+0.3 (the owner's condition 2 reads this result: -5 to +5 means one SPSA re-tune first; clearly negative closes the width path) | after #23: -20 to -35 (the 1024 network scored the same at both clocks); clearly negative, about 90% likely | running (#24, started by the Session 16 October) |
 
 Then, if it passes: v2 check, calibration, SPSA re-tune (CLAUDE.md,
 Coder 2 rule 4). The loss comparison (N3) runs on the PC meanwhile and
