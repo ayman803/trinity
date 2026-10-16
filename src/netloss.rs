@@ -2,8 +2,14 @@
 //! positions, computed the trainer's way, so two training runs can be
 //! compared at the same superbatch.
 //!
-//! Usage: trinity netloss <positions> <checkpoint dirs...>
-//!            [--games=<pgn file>]... [--train=<data file>]
+//! Usage: trinity netloss <positions> <checkpoint dirs or .nnue files...>
+//!            [--games=<pgn file>]... [--positions=<file>]... [--train=<data file>]
+//!            [--export=<file>]
+//!
+//! `--export` writes the sampled held-out positions as `<FEN> ; <result>`
+//! lines (about 70 bytes each), and `--positions` reads such a file back:
+//! a 150,000-position file lives in the repository (tools/net/data), so
+//! any network file can be scored without the PGN games.
 //!
 //! Two kinds of positions:
 //! - Held-out: Trinity's own games (fastchess PGN files, `--games`), which
@@ -263,7 +269,8 @@ fn mean_losses(f: &FloatNet, sample: &[ChessBoard]) -> [f64; 4] {
 /// Positions from Trinity's games (from ply 16 on, side to move not in
 /// check, at most `count`, spread evenly), labelled with the game's result
 /// and a score of 0 (unknown).
-fn read_games_sample(files: &[String], count: usize) -> Result<(Vec<ChessBoard>, usize, usize), String> {
+/// Every candidate position of Trinity's games with White's result.
+fn read_games_positions(files: &[String]) -> Result<(Vec<(Board, f32)>, usize), String> {
     let mut games: Vec<Game> = Vec::new();
     for f in files {
         let text = std::fs::read_to_string(f).map_err(|e| format!("{f}: {e}"))?;
@@ -277,13 +284,50 @@ fn read_games_sample(files: &[String], count: usize) -> Result<(Vec<ChessBoard>,
         })
         .filter(|(b, _)| !b.in_check())
         .collect();
+    Ok((all, games.len()))
+}
+
+/// At most `count` of the positions, spread evenly, as records with the
+/// result and a score of 0 (unknown).
+fn sample(all: &[(Board, f32)], count: usize) -> Vec<ChessBoard> {
     let total = all.len();
-    let chosen: Vec<ChessBoard> = if total > count && count > 0 {
+    if total > count && count > 0 {
         (0..count).map(|k| &all[k * total / count]).map(|(b, r)| to_bullet(b, 0, *r)).collect()
     } else {
         all.iter().map(|(b, r)| to_bullet(b, 0, *r)).collect()
-    };
-    Ok((chosen, games.len(), total))
+    }
+}
+
+/// A positions file: one line per position, `<FEN> ; <White's result>`
+/// (0, 0.5 or 1). Written by `--export`, read by `--positions`; small
+/// enough to live in the repository, so networks can be scored anywhere.
+fn write_positions_file(path: &str, all: &[(Board, f32)], count: usize) -> Result<usize, String> {
+    use std::io::Write;
+    let total = all.len();
+    let idx: Vec<usize> =
+        if total > count && count > 0 { (0..count).map(|k| k * total / count).collect() } else { (0..total).collect() };
+    let mut w = std::io::BufWriter::new(std::fs::File::create(path).map_err(|e| format!("{path}: {e}"))?);
+    for &i in &idx {
+        let (b, r) = &all[i];
+        writeln!(w, "{} ; {}", b.to_fen(), r).map_err(|e| format!("{path}: {e}"))?;
+    }
+    Ok(idx.len())
+}
+
+fn read_positions_file(path: &str) -> Result<Vec<(Board, f32)>, String> {
+    let text = std::fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?;
+    let mut out = Vec::new();
+    for (n, line) in text.lines().enumerate() {
+        let line = line.trim();
+        if line.is_empty() || line.starts_with('#') {
+            continue;
+        }
+        let (fen, result) = line.rsplit_once(';').ok_or(format!("{path} line {}: no ';'", n + 1))?;
+        let board = Board::from_fen(fen.trim()).map_err(|e| format!("{path} line {}: {e}", n + 1))?;
+        let result: f32 = result.trim().parse().map_err(|_| format!("{path} line {}: bad result", n + 1))?;
+        out.push((board, result));
+    }
+    Ok(out)
 }
 
 fn score_all(checkpoints: &[String], sample: &[ChessBoard], held_out: bool) {
@@ -316,23 +360,42 @@ fn score_all(checkpoints: &[String], sample: &[ChessBoard], held_out: bool) {
 
 pub fn run(count: usize, args: &[String]) -> Result<(), String> {
     let games: Vec<String> = args.iter().filter_map(|a| a.strip_prefix("--games=")).map(str::to_string).collect();
+    let positions: Vec<String> =
+        args.iter().filter_map(|a| a.strip_prefix("--positions=")).map(str::to_string).collect();
     let train: Option<&str> = args.iter().find_map(|a| a.strip_prefix("--train="));
+    let export: Option<&str> = args.iter().find_map(|a| a.strip_prefix("--export="));
     let checkpoints: Vec<String> = args.iter().filter(|a| !a.starts_with("--")).cloned().collect();
-    if checkpoints.is_empty() {
-        return Err("no checkpoint folders given".into());
+    if checkpoints.is_empty() && export.is_none() {
+        return Err("no checkpoint folders or network files given".into());
     }
-    if games.is_empty() && train.is_none() {
-        return Err("give at least one --games=<pgn file> or --train=<data file>".into());
+    if games.is_empty() && positions.is_empty() && train.is_none() {
+        return Err("give at least one --games=<pgn file>, --positions=<file> or --train=<data file>".into());
     }
+    let mut held_out: Vec<(Board, f32)> = Vec::new();
+    let mut source = Vec::new();
     if !games.is_empty() {
-        let (sample, n_games, total) = read_games_sample(&games, count)?;
-        if sample.is_empty() {
-            return Err("no positions found in the PGN files".into());
-        }
+        let (all, n_games) = read_games_positions(&games)?;
+        source.push(format!("{} candidates from {n_games} of Trinity's games (ply 16 on, not in check)", all.len()));
+        held_out.extend(all);
+    }
+    for p in &positions {
+        let all = read_positions_file(p)?;
+        source.push(format!("{} positions from {p}", all.len()));
+        held_out.extend(all);
+    }
+    if let Some(path) = export {
+        let written = write_positions_file(path, &held_out, count)?;
+        println!("Exported {written} held-out positions to {path}");
+    }
+    if checkpoints.is_empty() {
+        return Ok(());
+    }
+    if !held_out.is_empty() {
+        let sample = sample(&held_out, count);
         println!(
-            "HELD-OUT LOSS on {} positions from {n_games} of Trinity's games ({total} candidates, ply 16 on, not in check; \
-             label = game result; no network trained on these)",
-            sample.len()
+            "HELD-OUT LOSS on {} positions ({}; label = game result; no network trained on these)",
+            sample.len(),
+            source.join("; ")
         );
         score_all(&checkpoints, &sample, true);
     }
