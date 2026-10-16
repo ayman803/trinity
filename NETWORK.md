@@ -370,12 +370,21 @@ the width run is banked); step 2 of the quantisation idea (after step 1).
 | # | Job | Script | PC time | Status |
 |---|---|---|---|---|
 | N1 | Quantisation check, step 1 | tools\net\Quant-Check.bat | a few minutes of CPU (any time nothing else heavy is running; a GitHub test does not matter) | ready; deletes nothing |
-| N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 8-10 h GPU (the 1024 run took 5.0 h); no calibration or SPRT on the PC meanwhile | RUNNING since the evening of 14 October Pacific (conversion first, 57% of positions kept as before); expected to finish 7-9 am Pacific on 15 October |
+| N2 | Wide network training, 2048 | tools\net\Wide-Network.bat | 2-3 h CPU (convert + shuffle) then about 8-10 h GPU (the 1024 run took 5.0 h); no calibration or SPRT on the PC meanwhile | DONE 15 October 17:51 Pacific: branch net-wide2048-20261015-0709 (10.7 h of training, 72 s per superbatch = 2.4x the 1024 run, above the 1.6-2x guessed; the first start failed on a script bug of Coder 2's, fixed by the Session, data kept) |
 | N3 | Loss of every saved checkpoint on the same positions (condition 1): held-out game positions and training positions | tools\net\Net-Loss.bat | a minute or two of CPU, after N2 | ready; deletes nothing |
 
 ## Test requests (lane "network")
 
-(none yet; after N2 finishes and Coder 2 has updated the branch from main:
+| # | Branch | Test | Prediction (written before) | Status |
+|---|---|---|---|---|
+| T1 | net-wide2048-20261015-0709 (commit 028a643, main merged in on 16 October UTC; bench 781681; 2048 neurons; builds and passes the tests; about 31% fewer nodes per second than main here) | SPRT vs main at 8+0.08, bounds [0, 5] | self-play +15 to +45 (central +30); CCRL-scale +5 to +25; about 70% to pass | requested 16 October |
+| T2 | same | if T1 passes: 3000 games at 30+0.3 (as for the 1024 network; the owner's condition 2 reads this result) | +15 to +45 | after T1 |
+
+Then, if it passes: v2 check, calibration, SPSA re-tune (CLAUDE.md,
+Coder 2 rule 4). The loss comparison (N3) runs on the PC meanwhile and
+does not block T1.
+
+(Earlier note: after N2 finishes and Coder 2 has updated the branch from main:
 an SPRT of `net-wide2048-<date>` vs main at 8+0.08, bounds [0, 5]; if it
 passes, 3000 games at 30+0.3 as for the 1024 network (the owner's
 condition 2 reads the 30+0.3 result).
