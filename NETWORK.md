@@ -440,11 +440,11 @@ Where the -30 comes from, by the measurements at hand:
   the speed cost of -22 to -25. Either the ruler overprices small gains
   (its floor finding in section 3 already said that differences under
   0.4% can go either way; 1.3% was treated as safely above it), or part
-  of the gain is lost in the search: the 2048 network's scores are about
-  10-15% larger in magnitude than the 1024's on 15 ordinary positions
-  (mean |score| 278 vs 255 at depth 1; the search's margins and
-  corrections were tuned on the 1024 network). An SPSA re-tune (owner's
-  condition 2) would recover some of that, but not 25 Elo.
+  of the gain is lost in the search. The evaluation scale is NOT it: the
+  Session measured both networks on 1,505 positions from the latest
+  calibration games (ratio 0.99, mean size 247 vs 240 cp); my own 15
+  bench positions had suggested 10-15% larger, too few to trust. So an
+  SPSA re-tune (owner's condition 2) has little to correct.
 - Not the cause, as far as can be checked from here: the engine uses the
   new network (different scores and lines from main on the same
   position), passes its tests at 2048 (incremental updates, refresh
@@ -511,11 +511,16 @@ Reuse and disk (checked 16 October):
   Default 2 parts (`New-Data-Network.bat`); 3 with `-SecondParts 3` if
   the owner accepts 213 GB on disk. The 1024 run made 16.4 passes over
   its data; with 2 extra parts every position is seen 10.6 times.
-- What Ayman must do first: download a second Leela file of the same
-  kind as the first (data\leela, 13.4 GB) from the same place, a
-  different month, into a new folder C:\Trinity\data\leela2 (the
-  Session's scripts expect exactly one file in data\leela, so the second
-  one must not go there).
+- What Ayman must do first (the Session found the source, 16 October):
+  the first file is test80-2024-02-feb-2tb7p.min-v2.v6.binpack from the
+  Hugging Face dataset linrock/test80-2024; download a neighbouring
+  month's file of the same name pattern (about 13 GB) into a new folder
+  C:\Trinity\data\leela2 (the Session's scripts expect exactly one file
+  in data\leela, so the second one must not go there).
+- Reviewed by the Session (16 October): safe to run. Its suggestion is
+  in: the files are given to the trainer interleaved (big-1, second-1,
+  big-2, second-2, big-3, big-4), so the final low-learning-rate stretch
+  is not mostly one month.
 
 Script: tools\net\New-Data-Network.bat (newdata.ps1: wide.ps1 with the
 width back at 1024, the trainer and the published branch from main since
