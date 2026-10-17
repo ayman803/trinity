@@ -102,6 +102,12 @@ Gates for the new-data network (owner, 16 October, before the run):
 3. Training length: the 1024 run trained in about 5 hours (checkpoint
    times); the 2048 run took 9.6 hours. Expect about 5-6 hours plus 1 hour
    of conversion.
+Result (17 October): trained 5.0 h on 5.6B positions (branch
+net-data1024-20261016-1554). Gate 2a PASSED: held-out loss 0.08232 vs
+main's 0.08276 (-0.54%, inside the predicted 0.3-0.8%; the 2048 net was
+-1.3% but 33% slower). Training loss on the first file's positions is
+slightly worse (0.02589 vs 0.02564), as expected with fewer passes over
+them. Gate 2b: 400 games at 8+0.08 on GitHub, SPRT #25.
 4. The 117 GB in sprt\coder2\data (big-1..4.data) are the first Leela
    file's 3.65B positions, the same ones main's network trained on; this
    run reuses them, so they stay.
