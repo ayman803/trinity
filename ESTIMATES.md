@@ -115,6 +115,9 @@ passes the gate in force, not the 1% first proposed; at 1% it would have
 stopped here. Rule from now on (owner, 17 October): held-out loss at least
 1% better than main's for networks slower than main, at least 0.3% for
 networks of the same speed.
+Full SPRT cap for this network (owner, 17 October, before #25 finished):
+at most 18000 games at 8+0.08 (two GitHub runs); undecided at the cap =
+not merged.
 4. The 117 GB in sprt\coder2\data (big-1..4.data) are the first Leela
    file's 3.65B positions, the same ones main's network trained on; this
    run reuses them, so they stay.
