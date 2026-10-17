@@ -155,6 +155,23 @@ October: 4.07% of Trinity's moves started under 0.3 s (opponents 2.00%),
 were counted as moves that earn the increment, which overstated clocks;
 earlier time-use figures carry that small bias).
 
+## Parked ideas
+
+**PARKED (not started; Ayman's decision, 17 October 2026): train on
+Trinity's own self-play data.** Trinity plays itself on the PC, its deeper
+search scores the positions, and those are mixed into the Leela training
+data at 10-20%. Aim: the 68% of losses that are gradual misjudgements, in
+the positions Trinity actually reaches. Rough guess: 25-35% chance of +20
+to +40 Elo, otherwise nothing; about a week of PC time.
+Questions to answer before it ever runs:
+1. What happened with Trinity's earlier self-generated data, and why
+   should it work now?
+2. How many positions per day does the PC produce, and what share of the
+   training mix does one week give?
+3. A staged plan: one day of generation, a short retrain, gate at 0.3%
+   better held-out loss, and only then the full week. Give cost,
+   prediction and stop rule.
+
 ## Proposed (not yet run)
 
 | Idea | Predicted self-play | Predicted CCRL | GPU time |
