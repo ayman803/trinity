@@ -280,13 +280,16 @@ function Initialize-Account {
     }
 }
 
-# Keep the machine awake while the runner is on.
-if ($env:OS -eq "Windows_NT") {
-    Add-Type -Namespace TrinityRunner -Name Power -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint esFlags);'
-    [TrinityRunner.Power]::SetThreadExecutionState([uint32]"0x80000001") | Out-Null
-}
-
+# Any error that would stop the runner is written to the log first.
+trap { Write-Log "Runner stopped by an error: $($_.Exception.Message)"; break }
 Write-Log "Runner started on '$Machine' as $env:USERNAME"
+# Keep the machine awake while the runner is on (ES_CONTINUOUS | ES_SYSTEM_REQUIRED).
+if ($env:OS -eq "Windows_NT") {
+    try {
+        Add-Type -Namespace TrinityRunner -Name Power -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint esFlags);'
+        [TrinityRunner.Power]::SetThreadExecutionState([uint32]2147483649) | Out-Null
+    } catch { Write-Log "Could not keep the machine awake: $($_.Exception.Message)" }
+}
 try { Initialize-Account } catch { Write-Log "Setup problem: $($_.Exception.Message)" }
 # A job that was running when the machine went down is not restarted by
 # itself; it is reported, and the Session decides whether to queue it again.
