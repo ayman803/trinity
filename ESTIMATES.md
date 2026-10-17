@@ -118,6 +118,8 @@ networks of the same speed.
 Full SPRT cap for this network (owner, 17 October, before #25 finished):
 at most 18000 games at 8+0.08 (two GitHub runs); undecided at the cap =
 not merged.
+Gate 2b PASSED: -2.61 +/- 19.05 after 400 games (SPRT #25, 0 time
+losses). Full SPRT started 17 October 9:06 AM as #26.
 4. The 117 GB in sprt\coder2\data (big-1..4.data) are the first Leela
    file's 3.65B positions, the same ones main's network trained on; this
    run reuses them, so they stay.
