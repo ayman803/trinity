@@ -9,7 +9,7 @@
 #     GitHub key that only the account and Ayman can read;
 #  4. stores the trinity-results key Ayman copies (read from the clipboard,
 #     checked with GitHub, never shown);
-#  5. registers the runner to start at boot, and stops sleep and automatic
+#  5. lets it log on as a batch job, registers the runner to start at boot, and stops sleep and automatic
 #     update restarts.
 # Rerunning it is safe: it updates the installed copy and keeps the key.
 
@@ -37,6 +37,24 @@ function Run-Icacls([string[]]$IcaclsArgs) {
     if ($LASTEXITCODE -ne 0) { throw "icacls $($IcaclsArgs -join ' ') failed (exit code $LASTEXITCODE)" }
 }
 
+# Add or remove an account in the "Log on as a batch job" right, which a
+# task that runs whether or not anyone is signed in needs.
+function Set-BatchLogon([string]$Sid, [bool]$Allow) {
+    $tmp = Join-Path $env:TEMP "trinity-rights"
+    Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
+    New-Item -ItemType Directory -Force -Path $tmp | Out-Null
+    & secedit.exe /export /cfg "$tmp\now.inf" /areas USER_RIGHTS | Out-Null
+    $line = (Get-Content -LiteralPath "$tmp\now.inf" | Where-Object { $_ -match '^SeBatchLogonRight\s*=' }) -replace '^SeBatchLogonRight\s*=\s*', ''
+    $list = @("$line" -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ -and $_ -ne "*$Sid" })
+    if ($Allow) { $list += "*$Sid" }
+    Set-Content -LiteralPath "$tmp\new.inf" -Encoding Unicode -Value @("[Unicode]", "Unicode=yes", "[Version]", 'signature="$CHICAGO$"', "Revision=1",
+        "[Privilege Rights]", "SeBatchLogonRight = $($list -join ',')")
+    & secedit.exe /configure /db "$tmp\new.sdb" /cfg "$tmp\new.inf" /areas USER_RIGHTS /quiet | Out-Null
+    $code = $LASTEXITCODE
+    Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
+    if ($code -ne 0) { throw "secedit could not change the batch logon right (exit code $code)" }
+}
+
 try {
     Write-Host "Installing the Trinity job runner. Ayman's account: $Owner" -ForegroundColor Green
     if (-not (Test-Path -LiteralPath (Join-Path $Repo "runner\runner.ps1"))) { throw "$Repo\runner\runner.ps1 not found. Update C:\Trinity first (any .bat does it)." }
@@ -58,6 +76,8 @@ try {
         Add-LocalGroupMember -Group (Get-LocalGroup -SID "S-1-5-32-545").Name -Member $Account   # Users
         Write-Host "Created (standard account)."
     }
+    Set-BatchLogon (Get-LocalUser -Name $Account).SID.Value $true
+    Write-Host "Allowed to run as a background task (log on as a batch job)."
     $hide = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList"
     New-Item -Path $hide -Force | Out-Null
     New-ItemProperty -Path $hide -Name $Account -Value 0 -PropertyType DWord -Force | Out-Null
@@ -151,6 +171,13 @@ try {
     Stop-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
     Start-ScheduledTask -TaskName $TaskName
 
+    Write-Host "Checking that the runner starts (20 seconds)..."
+    Start-Sleep -Seconds 20
+    $info = Get-ScheduledTaskInfo -TaskName $TaskName
+    Write-Host ("Task: {0}; last result 0x{1:X8}" -f (Get-ScheduledTask -TaskName $TaskName).State, $info.LastTaskResult)
+    $log = "$RunnerDir\state\runner.log"
+    if (Test-Path -LiteralPath $log) { Get-Content -LiteralPath $log -Tail 5 }
+    else { throw "The runner did not start (no log). Send Claude a screenshot of this window." }
     Write-Host ""
     Write-Host "INSTALLED on '$machine'. The runner is running as $Account." -ForegroundColor Green
     Write-Host "It runs nothing until you approve the scripts: double-click 'Trinity Approve-Scripts' on the desktop." -ForegroundColor Green

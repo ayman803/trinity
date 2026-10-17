@@ -2,7 +2,8 @@
 # Install-Runner changed (Ayman runs it as administrator by double-clicking
 # runner\Uninstall-Runner.bat):
 #  - stops and removes the "Trinity Runner" task and the trinity-runner
-#    account (and its hidden-account entry), deletes the stored GitHub key;
+#    account (and its hidden-account entry and batch logon right), deletes
+#    the stored GitHub key;
 #  - removes the account's no-write rule on C:\Trinity;
 #  - puts back the sleep and Windows Update settings saved at install time;
 #  - removes the desktop shortcuts.
@@ -18,10 +19,31 @@ if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administra
     exit
 }
 $Account = "trinity-runner"
+
+# Add or remove an account in the "Log on as a batch job" right, which a
+# task that runs whether or not anyone is signed in needs.
+function Set-BatchLogon([string]$Sid, [bool]$Allow) {
+    $tmp = Join-Path $env:TEMP "trinity-rights"
+    Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
+    New-Item -ItemType Directory -Force -Path $tmp | Out-Null
+    & secedit.exe /export /cfg "$tmp\now.inf" /areas USER_RIGHTS | Out-Null
+    $line = (Get-Content -LiteralPath "$tmp\now.inf" | Where-Object { $_ -match '^SeBatchLogonRight\s*=' }) -replace '^SeBatchLogonRight\s*=\s*', ''
+    $list = @("$line" -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ -and $_ -ne "*$Sid" })
+    if ($Allow) { $list += "*$Sid" }
+    Set-Content -LiteralPath "$tmp\new.inf" -Encoding Unicode -Value @("[Unicode]", "Unicode=yes", "[Version]", 'signature="$CHICAGO$"', "Revision=1",
+        "[Privilege Rights]", "SeBatchLogonRight = $($list -join ',')")
+    & secedit.exe /configure /db "$tmp\new.sdb" /cfg "$tmp\new.inf" /areas USER_RIGHTS /quiet | Out-Null
+    $code = $LASTEXITCODE
+    Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
+    if ($code -ne 0) { throw "secedit could not change the batch logon right (exit code $code)" }
+}
+
 Stop-ScheduledTask -TaskName "Trinity Runner" -ErrorAction SilentlyContinue
 Unregister-ScheduledTask -TaskName "Trinity Runner" -Confirm:$false -ErrorAction SilentlyContinue
 Get-Process -IncludeUserName -ErrorAction SilentlyContinue | Where-Object { $_.UserName -like "*\$Account" } | Stop-Process -Force -ErrorAction SilentlyContinue
 & icacls.exe $Repo /remove:d $Account /C /Q | Out-Null
+$user = Get-LocalUser -Name $Account -ErrorAction SilentlyContinue
+if ($user) { try { Set-BatchLogon $user.SID.Value $false } catch { Write-Host $_.Exception.Message -ForegroundColor Yellow } }
 Remove-LocalUser -Name $Account -ErrorAction SilentlyContinue
 Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList" -Name $Account -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath "$RunnerDir\secret" -Recurse -Force -ErrorAction SilentlyContinue
