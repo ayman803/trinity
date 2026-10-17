@@ -103,6 +103,20 @@ try {
     }
 
     Step "Start at boot, no sleep, no automatic restarts"
+    # Remember the current settings once, so Uninstall-Runner can put them back.
+    $saved = "$RunnerDir\state\settings-before-install.txt"
+    if (-not (Test-Path -LiteralPath $saved)) { try {
+        $sleepAc = ((& powercfg.exe /query SCHEME_CURRENT SUB_SLEEP STANDBYIDLE) -match "Current AC Power Setting Index") -replace ".*:\s*", ""
+        $hibAc = ((& powercfg.exe /query SCHEME_CURRENT SUB_SLEEP HIBERNATEIDLE) -match "Current AC Power Setting Index") -replace ".*:\s*", ""
+        $auOld = (Get-ItemProperty "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name NoAutoRebootWithLoggedOnUsers -ErrorAction SilentlyContinue).NoAutoRebootWithLoggedOnUsers
+        $uxOld = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings" -ErrorAction SilentlyContinue
+        Set-Content -LiteralPath $saved -Value @(
+            "sleep_ac_seconds=$([Convert]::ToInt32("$sleepAc".Trim(), 16))",
+            "hibernate_ac_seconds=$([Convert]::ToInt32("$hibAc".Trim(), 16))",
+            "no_auto_reboot=$auOld",
+            "active_hours_start=$($uxOld.ActiveHoursStart)",
+            "active_hours_end=$($uxOld.ActiveHoursEnd)")
+    } catch { Write-Host "Could not read the current sleep settings; the uninstaller will leave them as they are." -ForegroundColor Yellow } }
     $action = New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" `
         -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$RunnerDir\runner.ps1`""
     $trigger = New-ScheduledTaskTrigger -AtStartup
