@@ -1,0 +1,13 @@
+CALIBRATION RESULT for 'tm-reserve' (bench 780879)
+Machine: DESKTOP-K61E7PJ (14 games at a time), tc 10+0.1, 1 thread each
+vs akimbo 1.0.0 (CCRL 3474): Elo difference -13 +/- 14 -> Trinity about 3461
+   Games: 1000, Wins: 200, Losses: 238, Draws: 562, Points: 481.0 (48.10 %)
+vs Patricia 5.1 (CCRL 3488): Elo difference -30 +/- 13 -> Trinity about 3458
+   Games: 1000, Wins: 152, Losses: 238, Draws: 610, Points: 457.0 (45.70 %)
+vs Bread 4.0.0 (CCRL 3522): Elo difference -23 +/- 13 -> Trinity about 3499
+   Games: 1000, Wins: 168, Losses: 234, Draws: 598, Points: 467.0 (46.70 %)
+vs Prune 4.0.1 (CCRL 3543): Elo difference -77 +/- 12 -> Trinity about 3466
+   Games: 1000, Wins: 90, Losses: 308, Draws: 602, Points: 391.0 (39.10 %)
+ESTIMATED CCRL RATING (1 CPU): about 3471 (statistical +/- 7; real uncertainty about +/- 50-100)
+Top-100 line: 3455 (#100 on the CCRL 40/15 list of 9 October 2026). Difference: +16 Elo
+Duration: 2.3 hours. Logs: sprt\results\2026-10-17_09-41_calibration_*
