@@ -6,3 +6,4 @@
 # arguments: optional, separated by spaces. Each id runs once per machine,
 # in the order listed. A job whose script is not in the approved commit
 # waits until Ayman runs Approve-Scripts.
+2026-10-18-01 | pc | runner/jobs/hello.ps1
