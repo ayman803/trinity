@@ -48,6 +48,33 @@ Windows. Every instruction must be concrete:
    ESTIMATES.md (lessons, parked ideas) and proposes fresh ideas under the
    same rules.
 
+## PC job runner (owner, 17 October 2026; design in docs/runner-design.md)
+
+A runner on the PC (and optionally the laptop) takes jobs from
+`runner/queue.txt` on `main` and runs them unattended. Rules, fixed
+before any code:
+1. It runs under a separate standard (non-administrator) Windows account,
+   `trinity-runner`, which may modify only `C:\Trinity` and its own
+   folders. Ayman's files are closed to it by Windows.
+2. It runs only scripts listed in `C:\TrinityRunner\approved.txt`, which
+   only Ayman edits (never in GitHub). Each entry holds the script's
+   fingerprint (with the shared helper files) and a time limit; a changed
+   script stops running until Ayman approves it again.
+3. Its GitHub key is a fine-grained token for `ayman803/trinity` only
+   (Contents: read and write), stored outside the repository.
+4. One job at a time; each job stopped at its time limit; no job starts
+   below 50 GB free and a running job is stopped below 30 GB; queue
+   arguments are checked against a simple pattern.
+5. It deletes nothing outside its own folders; job scripts keep their own
+   rules (never the big1024 checkpoints).
+6. If `C:\TrinityRunner\STOP` exists it starts nothing new
+   (Stop-Runner / Start-Runner shortcuts on Ayman's desktop).
+7. Every job is logged to `runner/log/` on GitHub.
+8. The installed runner is a copy outside the repository; changes in
+   `runner/` on GitHub reach the PC only when Ayman reinstalls.
+The Session adds jobs to `runner/queue.txt`; it never gets a connection
+into the PC.
+
 ## Release checklist (before any CCRL submission)
 
 1. Check the source for close similarity to major open-source engines,
