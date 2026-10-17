@@ -1,7 +1,8 @@
 # PC job runner: design (PROPOSAL, not approved, nothing built)
 
-Status: design only, written 17 October 2026 at the owner's request.
-No code, no CLAUDE.md change, nothing on the PC until Ayman approves.
+Status: phase 0 approved 17 October 2026 with three additions (results
+repository, Windows-enforced read-only files, no forced restarts); the
+rules are in CLAUDE.md, which wins where this file differs. Building.
 
 ## Why
 

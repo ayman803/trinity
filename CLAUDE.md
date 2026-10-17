@@ -60,18 +60,26 @@ before any code:
    only Ayman edits (never in GitHub). Each entry holds the script's
    fingerprint (with the shared helper files) and a time limit; a changed
    script stops running until Ayman approves it again.
-3. Its GitHub key is a fine-grained token for `ayman803/trinity` only
-   (Contents: read and write), stored outside the repository.
+3. Results go to a separate repository, `ayman803/trinity-results`. The
+   runner's GitHub key is a fine-grained token for that repository only
+   (Contents: read and write), stored outside both repositories; it can
+   read the public `trinity` repository but never change it, so no job
+   can push code that a later job builds.
 4. One job at a time; each job stopped at its time limit; no job starts
    below 50 GB free and a running job is stopped below 30 GB; queue
    arguments are checked against a simple pattern.
 5. It deletes nothing outside its own folders; job scripts keep their own
-   rules (never the big1024 checkpoints).
+   rules. Irreplaceable files (the big1024 checkpoints, main's network
+   checkpoint, the Leela source files) are read-only for the runner
+   account, enforced by Windows permissions, not by promises.
 6. If `C:\TrinityRunner\STOP` exists it starts nothing new
    (Stop-Runner / Start-Runner shortcuts on Ayman's desktop).
 7. Every job is logged to `runner/log/` on GitHub.
 8. The installed runner is a copy outside the repository; changes in
    `runner/` on GitHub reach the PC only when Ayman reinstalls.
+9. Windows Update may not restart the machine on its own, the machine does
+   not sleep while the runner is on, and no job starts while a restart is
+   pending (Ayman restarts when convenient).
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
 
