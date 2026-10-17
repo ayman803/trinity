@@ -190,6 +190,8 @@ pub struct Searcher {
     start: Instant,
     soft_ms: u64,
     hard_ms: u64,
+    /// Sudden death with the clock under 10 increments: keep a reserve.
+    low_clock: bool,
     root_depth: i32,
 
     history: Box<History>,
@@ -228,6 +230,7 @@ impl Searcher {
             limits: Limits::default(),
             start: Instant::now(),
             soft_ms: u64::MAX,
+            low_clock: false,
             hard_ms: u64::MAX,
             root_depth: 0,
             history: zeroed_box(),
@@ -262,14 +265,21 @@ impl Searcher {
         let l = &self.limits;
         self.soft_ms = u64::MAX;
         self.hard_ms = u64::MAX;
+        self.low_clock = false;
         if let Some(mt) = l.movetime {
             // Fixed time per move: use all of it (only the hard limit applies).
             self.hard_ms = mt.saturating_sub(l.move_overhead).max(1);
         } else if let Some(time) = stm_time {
             let t = time.saturating_sub(l.move_overhead).max(1);
+            // With the clock under 10 increments (1 s without increment),
+            // spend only half the increment so the clock settles at about
+            // 1 s instead of a few tenths, where a short delay on a busy
+            // machine loses on time.
+            self.low_clock = l.movestogo.is_none() && t < if l.inc > 0 { 10 * l.inc } else { 1000 };
+            let inc_part = if self.low_clock { l.inc / 2 } else { l.inc * 3 / 4 };
             let base = match l.movestogo {
-                Some(mtg) => t / (mtg.clamp(1, 50) + 1) + l.inc * 3 / 4,
-                None => t / 25 + l.inc * 3 / 4,
+                Some(mtg) => t / (mtg.clamp(1, 50) + 1) + inc_part,
+                None => t / 25 + inc_part,
             };
             self.soft_ms = base.min(t / 2).max(1);
             self.hard_ms = (base * 3).min(t * 3 / 5).max(1);
@@ -941,7 +951,7 @@ impl Searcher {
         }
         // Control for branch tm-unsure: think 12% longer on every move, the
         // average extra time tm-unsure gives (measured: mean multiplier 1.12).
-        if self.soft_ms != u64::MAX {
+        if self.soft_ms != u64::MAX && !self.low_clock {
             self.soft_ms = self.soft_ms * 112 / 100;
         }
 
