@@ -89,6 +89,13 @@ function Get-LostGames($PgnFiles) {
 function Publish-CalibrationRecord($Stamp, $Ref, $SummaryText, $PgnFiles) {
     $lost = Get-LostGames $PgnFiles
     $safeRef = $Ref -replace '[^A-Za-z0-9._-]', '_'
+    if ($env:TRINITY_RESULTS_DIR) {
+        Publish-ToResultsRepo "Calibration of '$Ref' ($Stamp): summary and Trinity's $($lost[1]) lost games" @{
+            "test-results/calibration-$Stamp-$safeRef.txt" = $SummaryText
+            "games/calibration-$Stamp-$safeRef-losses.pgn" = $lost[0]
+        }
+        return
+    }
     $tree = Join-Path $script:Work "publish-calibration"
     if (Test-Path $tree) { Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree) }
     Invoke-Native git @("-C", $script:Root, "worktree", "prune")

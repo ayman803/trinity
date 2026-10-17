@@ -298,6 +298,8 @@ function Get-OpeningBook([string]$BookFile = $script:BookName) {
 $script:CommitIdentity = @("-c", "user.name=ayman803", "-c", "user.email=7761579+ayman803@users.noreply.github.com")
 
 function Update-Repository {
+    # Under the PC job runner the code is pinned to an approved commit.
+    if ($env:TRINITY_NO_UPDATE) { return }
     Write-Step "Getting the latest code from GitHub"
     Invoke-Native git @("-C", $script:Root, "fetch", "--prune", "origin")
     $branch = Get-NativeOutput git @("-C", $script:Root, "rev-parse", "--abbrev-ref", "HEAD")
@@ -405,9 +407,34 @@ function Invoke-Housekeeping([switch]$Training) {
     }
 }
 
+# Under the PC job runner (CLAUDE.md, "PC job runner") results go to the
+# separate repository trinity-results instead: $env:TRINITY_RESULTS_DIR is
+# a clone of it kept by the runner, whose key cannot write to trinity.
+# $Files maps paths to text, $Copies maps paths to files to copy.
+function Publish-ToResultsRepo([string]$Message, [hashtable]$Files, [hashtable]$Copies = @{}) {
+    $dir = $env:TRINITY_RESULTS_DIR
+    Invoke-Native git @("-C", $dir, "pull", "-q", "--rebase", "origin", "main")
+    foreach ($path in $Files.Keys) {
+        $full = Join-Path $dir $path
+        New-Item -ItemType Directory -Force -Path (Split-Path $full) | Out-Null
+        Set-Content -Path $full -Value $Files[$path]
+        Invoke-Native git @("-C", $dir, "add", $path)
+    }
+    foreach ($path in $Copies.Keys) {
+        $full = Join-Path $dir $path
+        New-Item -ItemType Directory -Force -Path (Split-Path $full) | Out-Null
+        Copy-Item -LiteralPath $Copies[$path] -Destination $full -Force
+        Invoke-Native git @("-C", $dir, "add", $path)
+    }
+    Invoke-Native git ($script:CommitIdentity + @("-C", $dir, "commit", "-q", "-m", $Message))
+    Invoke-Native git @("-C", $dir, "push", "-q", "origin", "HEAD:main")
+    Write-Good "Saved in trinity-results: $(@($Files.Keys) + @($Copies.Keys) -join ', ')"
+}
+
 # Commit files to main on GitHub through a temporary worktree (so the main
 # folder's own state does not matter). $Files maps repository paths to text.
 function Publish-RepoFiles([string]$Message, [hashtable]$Files) {
+    if ($env:TRINITY_RESULTS_DIR) { Publish-ToResultsRepo $Message $Files; return }
     $tree = Join-Path $script:Work "publish-files"
     if (Test-Path $tree) { Invoke-Native git @("-C", $script:Root, "worktree", "remove", "--force", $tree) }
     Invoke-Native git @("-C", $script:Root, "worktree", "prune")

@@ -1,0 +1,8 @@
+# Jobs for the PC job runner (CLAUDE.md, "PC job runner"). Only the Session
+# edits this file. One job per line:
+#   id | machine | script | arguments
+# id: unique, letters/digits/._- (date first, e.g. 2026-10-18-01); machine:
+# pc or laptop; script: a path in this repository the runner has cleared;
+# arguments: optional, separated by spaces. Each id runs once per machine,
+# in the order listed. A job whose script is not in the approved commit
+# waits until Ayman runs Approve-Scripts.

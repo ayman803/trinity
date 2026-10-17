@@ -101,6 +101,12 @@ function Find-NetCheckpoint([string]$NetFile) {
 # from origin/<BaseBranch>, without checking anything out: a private index
 # file in the output folder, git's own object store, one commit, one push.
 function Publish-NetBranch([string]$BaseBranch, [string]$NewBranch, [string]$NetFile, [string]$Message) {
+    if ($env:TRINITY_RESULTS_DIR) {
+        # Under the runner: the network file goes to trinity-results
+        # (nets/<branch>.nnue); the Session makes the branch in trinity.
+        Publish-ToResultsRepo $Message @{} @{ "nets/$NewBranch.nnue" = $NetFile }
+        return "trinity-results:nets/$NewBranch.nnue"
+    }
     Write-Step "Publishing the network on GitHub as branch '$NewBranch' (from $BaseBranch)"
     Invoke-Native git @("-C", $script:Root, "fetch", "origin", $BaseBranch)
     $index = Join-Path (Get-OutDir "publish") "$NewBranch.index"
