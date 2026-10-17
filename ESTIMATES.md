@@ -108,6 +108,13 @@ main's 0.08276 (-0.54%, inside the predicted 0.3-0.8%; the 2048 net was
 -1.3% but 33% slower). Training loss on the first file's positions is
 slightly worse (0.02589 vs 0.02564), as expected with fewer passes over
 them. Gate 2b: 400 games at 8+0.08 on GitHub, SPRT #25.
+Note on the gate (advisor, 17 October): the first proposal was 1% (about
+0.0819); the owner set 0.3% (0.0825) on 16 October, before training
+started (commit b4003df, which the run itself built from). So the network
+passes the gate in force, not the 1% first proposed; at 1% it would have
+stopped here. Rule from now on (owner, 17 October): held-out loss at least
+1% better than main's for networks slower than main, at least 0.3% for
+networks of the same speed.
 4. The 117 GB in sprt\coder2\data (big-1..4.data) are the first Leela
    file's 3.65B positions, the same ones main's network trained on; this
    run reuses them, so they stay.
