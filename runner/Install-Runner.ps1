@@ -104,7 +104,7 @@ try {
 
     Step "Start at boot, no sleep, no automatic restarts"
     # Remember the current settings once, so Uninstall-Runner can put them back.
-    $saved = "$RunnerDir\state\settings-before-install.txt"
+    $saved = "$RunnerDir\settings-before-install.txt"   # not in state: the runner can write there, and the uninstaller reads this as administrator
     if (-not (Test-Path -LiteralPath $saved)) { try {
         $sleepAc = ((& powercfg.exe /query SCHEME_CURRENT SUB_SLEEP STANDBYIDLE) -match "Current AC Power Setting Index") -replace ".*:\s*", ""
         $hibAc = ((& powercfg.exe /query SCHEME_CURRENT SUB_SLEEP HIBERNATEIDLE) -match "Current AC Power Setting Index") -replace ".*:\s*", ""

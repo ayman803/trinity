@@ -26,7 +26,7 @@ Remove-LocalUser -Name $Account -ErrorAction SilentlyContinue
 Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList" -Name $Account -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath "$RunnerDir\secret" -Recurse -Force -ErrorAction SilentlyContinue
 
-$saved = "$RunnerDir\state\settings-before-install.txt"
+$saved = "$RunnerDir\settings-before-install.txt"   # not in state: the runner can write there, and the uninstaller reads this as administrator
 if (Test-Path -LiteralPath $saved) {
     $v = @{}
     foreach ($l in Get-Content -LiteralPath $saved) { $k, $x = $l -split "=", 2; $v[$k] = $x }
