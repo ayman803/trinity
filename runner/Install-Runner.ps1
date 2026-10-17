@@ -7,7 +7,8 @@
 #  3. creates C:\TrinityRunner: the installed runner (read-only for the
 #     account), its own folders (state, repo), and a secret folder for the
 #     GitHub key that only the account and Ayman can read;
-#  4. stores the trinity-results key Ayman pastes (it is never shown again);
+#  4. stores the trinity-results key Ayman copies (read from the clipboard,
+#     checked with GitHub, never shown);
 #  5. registers the runner to start at boot, and stops sleep and automatic
 #     update restarts.
 # Rerunning it is safe: it updates the installed copy and keeps the key.
@@ -95,11 +96,24 @@ try {
     $creds = "$RunnerDir\secret\git-credentials"
     $keep = (Test-Path -LiteralPath $creds) -and ((Read-Host "A key is already stored. Press Enter to keep it, or type N to paste a new one").Trim().ToUpper() -ne "N")
     if (-not $keep) {
-        $tokenSecure = Read-Host "Paste the GitHub key (it will not be shown) and press Enter" -AsSecureString
-        $token = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($tokenSecure))
-        if ($token.Length -lt 20) { throw "That does not look like a GitHub key." }
+        # Read the key from the clipboard: pasting into a hidden prompt proved unreliable.
+        $token = ""
+        for ($try = 1; $try -le 3 -and -not $token; $try++) {
+            Read-Host "In the browser, click the copy button next to the key, then come back here and press Enter" | Out-Null
+            $clip = "$(Get-Clipboard -Raw)".Trim()
+            if ($clip -match '^(github_pat_|ghp_)[A-Za-z0-9_]{30,}$') { $token = $clip }
+            else { Write-Host "The clipboard does not hold a GitHub key (it holds $($clip.Length) characters). Copy it again." -ForegroundColor Yellow }
+        }
+        if (-not $token) { throw "No GitHub key found on the clipboard." }
+        Set-Clipboard -Value " "
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        try {
+            $r = Invoke-RestMethod -Uri "https://api.github.com/repos/ayman803/trinity-results" -Headers @{ Authorization = "Bearer $token"; "User-Agent" = "trinity-runner" }
+        } catch { throw "GitHub did not accept the key ($($_.Exception.Message))." }
+        if ($r.permissions -and $r.permissions.push -eq $false) { throw "The key works but cannot write to trinity-results. Check that Contents is set to Read and write." }
         [IO.File]::WriteAllText($creds, "https://x-access-token:$token@github.com`n")
-        Write-Host "Stored (readable only by $Account and you)."
+        $token = $null; $clip = $null
+        Write-Host "Checked with GitHub and stored (readable only by $Account and you)."
     }
 
     Step "Start at boot, no sleep, no automatic restarts"

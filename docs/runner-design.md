@@ -63,7 +63,7 @@ update if nobody is signed in.
    Generate, and copy the key (it is shown once).
 3. Check that two-factor sign-in is on for the GitHub account.
 4. PC: double-click `C:\Trinity\runner\Install-Runner.bat`, answer Yes to
-   the administrator question, type `pc`, paste the key.
+   the administrator question, type `pc`, copy the key in the browser and press Enter (the installer reads it from the clipboard and checks it with GitHub).
 5. Double-click "Trinity Approve-Scripts" on the desktop and type Y.
 
 ## Phase 3: tests (harmless first)
