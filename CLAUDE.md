@@ -41,6 +41,12 @@ Windows. Every instruction must be concrete:
    testers.
 7. Before each next step, briefly review the plan as a skeptic: what could
    be wrong with these numbers?
+8. Revive rule (owner, 17 October 2026): once the goal is met, or progress
+   flattens (no merged gain over several weeks of steady testing), park
+   Trinity rather than force big bets, and revive it when a new generation
+   of Claude models is available. The revived session starts by reading
+   ESTIMATES.md (lessons, parked ideas) and proposes fresh ideas under the
+   same rules.
 
 ## Release checklist (before any CCRL submission)
 
