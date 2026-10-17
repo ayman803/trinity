@@ -158,6 +158,10 @@ losses). Both rules met (Elo estimate -2 or better; at most 5 time
 losses): MERGED 17 October. The time-loss condition for 1.1 is met. The
 calibration's -11 against main stays a watch item for the next
 calibration.
+The sensitive check (advisor), all 4000 games each, book moves skipped:
+moves started with under 0.3 s on the clock fell from 2.03% (14 October)
+to 0.32% (tm-reserve), six times fewer; under 1 s 8.74% -> 7.89%. Time
+use otherwise unchanged (12% unused at game end; opponents 7-8%).
 Decision rule, fixed before results: merge tm-reserve only if (a) SPRT #27
 (9000 games at 8+0.08) gives an Elo estimate of -2 or better, and (b) a PC
 calibration of the branch shows at most 5 Trinity time losses in 4000
