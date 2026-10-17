@@ -190,7 +190,8 @@ function Select-ApprovedCommit($Approval) {
 }
 
 function Stop-Tree([int]$ProcessId) {
-    & taskkill.exe /PID $ProcessId /T /F 2>&1 | Out-Null
+    $old = $ErrorActionPreference; $ErrorActionPreference = "Continue"
+    try { & taskkill.exe /PID $ProcessId /T /F 2>&1 | Out-Null } finally { $ErrorActionPreference = $old }
 }
 
 function Invoke-Job($Job, $Hours) {
@@ -269,15 +270,30 @@ function Initialize-Account {
     $creds = (Join-Path $RunnerDir "secret\git-credentials") -replace '\\', '/'
     & git config --global credential.helper "store --file=$creds"
     & git config --global core.autocrlf true
+    # The installer (an administrator) created the clone's folder, so git
+    # would refuse to work in it without this.
+    $safe = $Clone -replace '\\', '/'
+    if (@(& git config --global --get-all safe.directory) -notcontains $safe) { & git config --global --add safe.directory $safe }
     $cargoBin = Join-Path $env:USERPROFILE ".cargo\bin"
     if (-not ($env:PATH -split ';' -contains $cargoBin)) { $env:PATH = "$cargoBin;$env:PATH" }
-    if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
+    if (-not (Test-Cargo)) {
         Write-Log "Installing Rust for this account (one time)"
         $init = Join-Path $StateDir "rustup-init.exe"
         Invoke-WebRequest -Uri "https://win.rustup.rs/x86_64" -OutFile $init -UseBasicParsing
-        & $init -y --profile minimal --default-toolchain stable 2>&1 | Out-Null
-        if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) { throw "Rust could not be installed for $env:USERNAME." }
+        $old = $ErrorActionPreference
+        $ErrorActionPreference = "Continue"     # rustup reports progress on stderr
+        try { & $init -y --profile minimal --default-toolchain stable 2>&1 | Out-Null } finally { $ErrorActionPreference = $old }
+        if (-not (Test-Cargo)) { throw "Rust could not be installed for $env:USERNAME." }
+        Write-Log "Rust installed"
     }
+}
+
+# True if cargo runs (a half-finished install has cargo but no toolchain).
+function Test-Cargo {
+    if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) { return $false }
+    $old = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try { & cargo --version 2>&1 | Out-Null; return ($LASTEXITCODE -eq 0) } finally { $ErrorActionPreference = $old }
 }
 
 # Any error that would stop the runner is written to the log first.
