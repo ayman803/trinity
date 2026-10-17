@@ -1,0 +1,11 @@
+SPRT test #26, finished 2026-10-17 19:58 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39047936652 (run id 39047936652)
+SPRT RESULT: FAILED - 'net-data1024-20261016-1554' is not stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: net-data1024-20261016-1554 (bench 895589) vs main (bench 780879), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 2042, Losses: 2323, Draws: 4635, Points: 4359.5 (48.44 %)
+Ptnml(0-2): [130, 1154, 2141, 1017, 58]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -10.85 +/- 4.08, nElo: -19.09 +/- 7.18
+LLR: -8.05 (-2.94, 2.94) [0.00, 5.00]
