@@ -53,7 +53,7 @@ try {
         Write-Host "Exists; new random password set."
     } else {
         New-LocalUser -Name $Account -Password $secure -PasswordNeverExpires -UserMayNotChangePassword `
-            -Description "Runs Trinity jobs (standard account, no administrator rights)" | Out-Null
+            -Description "Runs Trinity jobs (standard account, no admin)" | Out-Null
         Add-LocalGroupMember -Group (Get-LocalGroup -SID "S-1-5-32-545").Name -Member $Account   # Users
         Write-Host "Created (standard account)."
     }
