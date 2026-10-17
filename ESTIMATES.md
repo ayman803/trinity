@@ -120,6 +120,15 @@ at most 18000 games at 8+0.08 (two GitHub runs); undecided at the cap =
 not merged.
 Gate 2b PASSED: -2.61 +/- 19.05 after 400 games (SPRT #25, 0 time
 losses). Full SPRT started 17 October 9:06 AM as #26.
+RESULT: SPRT #26 FAILED, -10.85 +/- 4.08 after 9000 games (LLR -8.05,
+0 time losses). Not merged. Eval scale checked (1504 positions from
+calibration games): new/main 1.00, so not a scale problem. Prediction
+(self-play +3 to +12) wrong in sign.
+Lesson: held-out loss on Trinity's games did not predict playing strength
+twice in a row (2048 net: -1.3% loss, -30 Elo; this one: -0.54% loss,
+-11 Elo). The loss gate can stop bad runs early but cannot pass good ones;
+only games decide. Every network attempt since the 1024 run (9 October)
+has failed: refinements, averaging, 2048, more data.
 4. The 117 GB in sprt\coder2\data (big-1..4.data) are the first Leela
    file's 3.65B positions, the same ones main's network trained on; this
    run reuses them, so they stay.
@@ -140,6 +149,11 @@ Overhead default 30 ms. Bench unchanged.
 Local stress test (3+0.05, 8 games at once on 4 cores, 400 games): 0 time
 losses for either side, so the failure did not reproduce here; Elo
 -21.7 +/- 19.9 (noise or a real cost, to be settled by #27).
+PC calibration of tm-reserve (17 October, 4000 games): 0 time losses
+(14 October main: 9), so rule (b) is met. Rating about 3471 against
+main's 3482 (-11; the difference of two calibrations has about +/- 10 of
+noise, but all four opponents were lower by 6 to 16). #27 decides the
+strength question.
 Decision rule, fixed before results: merge tm-reserve only if (a) SPRT #27
 (9000 games at 8+0.08) gives an Elo estimate of -2 or better, and (b) a PC
 calibration of the branch shows at most 5 Trinity time losses in 4000
