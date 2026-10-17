@@ -1,25 +1,27 @@
 Calibration games of 2026-10-03_10-48
 TIME USE: 3000 games of Trinity, time control 10+0.1
-Trinity: 3000 games, 199080 moves
-  time left unused at the end of the game: median 23% of the time available
-  moves stopped very early (under 35% of the soft limit): 27%; near the hard limit: 1%
-  move time as a share of the soft limit: mean 0.64, median 0.48 (the budget rule plans for about 1.0)
-  time ratio (move time / this game's average): median 0.73 over all moves, 30% of moves below 0.5
-  ...for the 8166 moves after which the mover's own eval fell by 100+ cp: median 0.71
-  median seconds per move by move number: 1-10: 0.00s, 11-20: 0.28s, 21-30: 0.21s, 31-40: 0.16s, 41-60: 0.12s, 61+: 0.09s
-  by phase: opening 34% of moves, 0.23s each; middlegame 40% of moves, 0.21s each; endgame 26% of moves, 0.12s each
-  moves played after a quiet opponent move: 79%
-  own moves still to come, median (and 80th percentile) by move number: 1-10: 55 (80%: 79), 11-20: 45 (80%: 69), 21-30: 35 (80%: 59), 31-40: 27 (80%: 51), 41-60: 21 (80%: 46), 61+: 19 (80%: 47)
-  ...by pieces on the board: 25-32 pieces: 48 (80%: 72), 17-24: 31 (80%: 55), 9-16: 22 (80%: 49), 8 or fewer: 15 (80%: 41)
-Opponents: 3000 games, 199050 moves
-  time left unused at the end of the game: median 12% of the time available
-  moves stopped very early (under 35% of the soft limit): 14%; near the hard limit: 1%
-  move time as a share of the soft limit: mean 0.86, median 0.81 (the budget rule plans for about 1.0)
-  time ratio (move time / this game's average): median 0.80 over all moves, 27% of moves below 0.5
-  ...for the 3876 moves after which the mover's own eval fell by 100+ cp: median 0.57
-  median seconds per move by move number: 1-10: 0.00s, 11-20: 0.36s, 21-30: 0.30s, 31-40: 0.21s, 41-60: 0.14s, 61+: 0.10s
-  by phase: opening 34% of moves, 0.26s each; middlegame 40% of moves, 0.23s each; endgame 26% of moves, 0.12s each
-  moves played after a quiet opponent move: 79%
-  own moves still to come, median (and 80th percentile) by move number: 1-10: 55 (80%: 79), 11-20: 45 (80%: 69), 21-30: 35 (80%: 59), 31-40: 28 (80%: 52), 41-60: 21 (80%: 46), 61+: 19 (80%: 47)
-  ...by pieces on the board: 25-32 pieces: 48 (80%: 73), 17-24: 31 (80%: 56), 9-16: 22 (80%: 50), 8 or fewer: 15 (80%: 41)
+Trinity: 3000 games, 175080 moves
+  time left unused at the end of the game: median 18% of the time available
+  moves stopped very early (under 35% of the soft limit): 8%; near the hard limit: 3%
+  moves started with under 0.3 s on the clock: 228 (0.13%); under 1 s: 2579 (1.47%)
+  move time as a share of the soft limit: mean 0.83, median 0.61 (the budget rule plans for about 1.0)
+  time ratio (move time / this game's average): median 0.72 over all moves, 27% of moves below 0.5
+  ...for the 8166 moves after which the mover's own eval fell by 100+ cp: median 0.60
+  median seconds per move by move number: 1-10: 0.32s, 11-20: 0.28s, 21-30: 0.21s, 31-40: 0.16s, 41-60: 0.12s, 61+: 0.09s
+  by phase: opening 25% of moves, 0.36s each; middlegame 46% of moves, 0.21s each; endgame 30% of moves, 0.13s each
+  moves played after a quiet opponent move: 78%
+  own moves still to come, median (and 80th percentile) by move number: 1-10: 50 (80%: 74), 11-20: 45 (80%: 69), 21-30: 35 (80%: 59), 31-40: 27 (80%: 51), 41-60: 21 (80%: 46), 61+: 19 (80%: 47)
+  ...by pieces on the board: 25-32 pieces: 43 (80%: 67), 17-24: 31 (80%: 55), 9-16: 22 (80%: 49), 8 or fewer: 15 (80%: 41)
+Opponents: 3000 games, 175050 moves
+  time left unused at the end of the game: median 7% of the time available
+  moves stopped very early (under 35% of the soft limit): 1%; near the hard limit: 13%
+  moves started with under 0.3 s on the clock: 22043 (12.59%); under 1 s: 44743 (25.56%)
+  move time as a share of the soft limit: mean 1.27, median 1.09 (the budget rule plans for about 1.0)
+  time ratio (move time / this game's average): median 0.79 over all moves, 23% of moves below 0.5
+  ...for the 3876 moves after which the mover's own eval fell by 100+ cp: median 0.50
+  median seconds per move by move number: 1-10: 0.39s, 11-20: 0.36s, 21-30: 0.30s, 31-40: 0.21s, 41-60: 0.14s, 61+: 0.10s
+  by phase: opening 25% of moves, 0.40s each; middlegame 45% of moves, 0.24s each; endgame 30% of moves, 0.12s each
+  moves played after a quiet opponent move: 78%
+  own moves still to come, median (and 80th percentile) by move number: 1-10: 51 (80%: 75), 11-20: 45 (80%: 69), 21-30: 35 (80%: 59), 31-40: 28 (80%: 52), 41-60: 21 (80%: 46), 61+: 19 (80%: 47)
+  ...by pieces on the board: 25-32 pieces: 43 (80%: 67), 17-24: 31 (80%: 56), 9-16: 22 (80%: 50), 8 or fewer: 15 (80%: 41)
 Trinity's score in these games: 51.3%
