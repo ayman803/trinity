@@ -41,7 +41,7 @@ impl Engine {
             handle: None,
             hash_mb,
             threads: 1,
-            move_overhead: 10,
+            move_overhead: 30,
         }
     }
 
@@ -79,7 +79,7 @@ impl Engine {
                 println!("id author {AUTHOR}");
                 println!("option name Hash type spin default 16 min 1 max 65536");
                 println!("option name Threads type spin default 1 min 1 max 1024");
-                println!("option name Move Overhead type spin default 10 min 0 max 5000");
+                println!("option name Move Overhead type spin default 30 min 0 max 5000");
                 println!("option name SyzygyPath type string default <empty>");
                 #[cfg(feature = "tune")]
                 for (name, default, min, max, _) in crate::tune::LIST {
