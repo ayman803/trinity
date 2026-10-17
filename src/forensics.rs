@@ -114,7 +114,7 @@ fn parse_comment(c: &str) -> (Option<i32>, f64) {
             e.parse::<f64>().ok().map(|p| (p * 100.0).round() as i32)
         }
     });
-    let secs = parts.next().and_then(|t| t.trim_end_matches('s').parse::<f64>().ok()).unwrap_or(0.0);
+    let secs = parts.next().and_then(|t| t.trim_end_matches(',').trim_end_matches('s').parse::<f64>().ok()).unwrap_or(0.0);
     (eval, secs)
 }
 

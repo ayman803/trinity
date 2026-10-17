@@ -48,6 +48,9 @@ struct SideStats {
     period_left: Vec<f64>,
     quick: usize,
     near_hard: usize,
+    /// Moves started with under 0.3 s / under 1 s on the clock.
+    under_03: usize,
+    under_1: usize,
     /// Move time as a fraction of Trinity's soft limit for that move.
     soft_fractions: Vec<f64>,
     ratios: Vec<f64>,
@@ -113,7 +116,11 @@ fn phase_index(p: &str) -> usize {
 
 /// Walk one game for one side (Trinity or its opponent) and add to `s`.
 fn walk(game: &Game, side: usize, tc: TimeControl, s: &mut SideStats) {
-    let own: Vec<usize> = (0..game.plies.len()).filter(|&i| game.plies[i].board.stm == side).collect();
+    // Book moves ({book}: no eval, no time) are played before the clocks
+    // start, so they neither use time nor earn the increment.
+    let own: Vec<usize> = (0..game.plies.len())
+        .filter(|&i| game.plies[i].board.stm == side && !(game.plies[i].eval.is_none() && game.plies[i].secs == 0.0))
+        .collect();
     if own.is_empty() {
         return;
     }
@@ -128,6 +135,12 @@ fn walk(game: &Game, side: usize, tc: TimeControl, s: &mut SideStats) {
         let (soft, hard) = limits(tc, clock, made);
         let t = ply.secs;
         s.moves += 1;
+        if clock < 0.3 {
+            s.under_03 += 1;
+        }
+        if clock < 1.0 {
+            s.under_1 += 1;
+        }
         if t <= 0.35 * soft {
             s.quick += 1;
         }
@@ -187,6 +200,13 @@ fn report(name: &str, s: &mut SideStats) {
         "  moves stopped very early (under 35% of the soft limit): {:.0}%; near the hard limit: {:.0}%",
         pct(s.quick, s.moves),
         pct(s.near_hard, s.moves)
+    );
+    println!(
+        "  moves started with under 0.3 s on the clock: {} ({:.2}%); under 1 s: {} ({:.2}%)",
+        s.under_03,
+        pct(s.under_03, s.moves),
+        s.under_1,
+        pct(s.under_1, s.moves)
     );
     let mean_fraction = s.soft_fractions.iter().sum::<f64>() / s.soft_fractions.len().max(1) as f64;
     println!(

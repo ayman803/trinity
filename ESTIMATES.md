@@ -142,8 +142,18 @@ losses for either side, so the failure did not reproduce here; Elo
 -21.7 +/- 19.9 (noise or a real cost, to be settled by #27).
 Decision rule, fixed before results: merge tm-reserve only if (a) SPRT #27
 (9000 games at 8+0.08) gives an Elo estimate of -2 or better, and (b) a PC
-calibration of the branch shows at most 3 Trinity time losses in 4000
-games. Target before 1.1: no more than 1.0.0's rate.
+calibration of the branch shows at most 5 Trinity time losses in 4000
+games (changed from 3 on 17 October, before any result: with a true rate
+of 3, "at most 3" fails a working fix about 35% of the time; "at most 5"
+passes it about 92% of the time and still catches an unchanged rate of 9
+about 88% of the time). Target before 1.1: no more than 1.0.0's rate.
+More sensitive check (advisor): share of Trinity's moves started with
+under 0.3 s on the clock, before (calibration of 14 October) and after
+(18-Time-Use.bat now prints it). Baseline from the 949 lost games of 14
+October: 4.07% of Trinity's moves started under 0.3 s (opponents 2.00%),
+13.95% under 1 s (opponents 12.29%). The tool now skips book moves (they
+were counted as moves that earn the increment, which overstated clocks;
+earlier time-use figures carry that small bias).
 
 ## Proposed (not yet run)
 
