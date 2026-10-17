@@ -157,20 +157,18 @@ earlier time-use figures carry that small bias).
 
 ## Parked ideas
 
-**PARKED (not started; Ayman's decision, 17 October 2026): train on
-Trinity's own self-play data.** Trinity plays itself on the PC, its deeper
-search scores the positions, and those are mixed into the Leela training
-data at 10-20%. Aim: the 68% of losses that are gradual misjudgements, in
-the positions Trinity actually reaches. Rough guess: 25-35% chance of +20
-to +40 Elo, otherwise nothing; about a week of PC time.
-Questions to answer before it ever runs:
-1. What happened with Trinity's earlier self-generated data, and why
-   should it work now?
-2. How many positions per day does the PC produce, and what share of the
-   training mix does one week give?
-3. A staged plan: one day of generation, a short retrain, gate at 0.3%
-   better held-out loss, and only then the full week. Give cost,
-   prediction and stop rule.
+**PARKED (not started; Ayman's decision, 17 October 2026): idea 6,
+teacher-student.** Use the existing 2048 network (held-out loss 1.3% below
+main's 1024, but 33% slower) to re-score the training positions, then
+train a 1024 network on those scores: the better judgement without the
+speed cost. Distillation is standard machine learning, not taken from any
+engine. Replaces the self-play idea parked earlier the same day.
+Why not self-play data: it was already tried. Networks #1 to #4 (30
+September - 3 October) were trained on Trinity's own self-play games
+(3-Generate-Training-Data.bat: 5000 nodes per move, about 120M
+positions; README: "Trained first on Trinity's own games"). Switching to
+Leela data gave +218 in self-play and +169 on the CCRL scale (network #5),
+so self-generated data at this strength is far worse than Leela's.
 
 ## Proposed (not yet run)
 
