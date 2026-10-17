@@ -124,6 +124,27 @@ losses). Full SPRT started 17 October 9:06 AM as #26.
    file's 3.65B positions, the same ones main's network trained on; this
    run reuses them, so they stay.
 
+## Time losses before 1.1 (17 October 2026)
+
+Calibration of 14 October: Trinity lost 9 games on time in 4000 (1.0.0: 3).
+All 9 were long games (53-96 moves), 8 of them already lost or drawn on
+the board, ending with overruns of 2 to 103 ms. Rebuilding the clocks from
+the PGN: in every one Trinity had played for many moves with only a few
+tenths of a second left. Cause: in sudden death the plan spends t/25 plus
+3/4 of the increment, so at 10+0.1 the clock settles near 0.6 s; the 12%
+from tm-control lowers that to about 0.35 s. At 14 games at once on the
+PC, a delay of 0.1 s then forfeits. Move Overhead was only 10 ms.
+Fix, branch tm-reserve: with the clock under 10 increments, spend half
+the increment and skip the 12% (the clock settles near 1 s); Move
+Overhead default 30 ms. Bench unchanged.
+Local stress test (3+0.05, 8 games at once on 4 cores, 400 games): 0 time
+losses for either side, so the failure did not reproduce here; Elo
+-21.7 +/- 19.9 (noise or a real cost, to be settled by #27).
+Decision rule, fixed before results: merge tm-reserve only if (a) SPRT #27
+(9000 games at 8+0.08) gives an Elo estimate of -2 or better, and (b) a PC
+calibration of the branch shows at most 3 Trinity time losses in 4000
+games. Target before 1.1: no more than 1.0.0's rate.
+
 ## Proposed (not yet run)
 
 | Idea | Predicted self-play | Predicted CCRL | GPU time |
