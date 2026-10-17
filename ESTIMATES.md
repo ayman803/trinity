@@ -152,8 +152,12 @@ losses for either side, so the failure did not reproduce here; Elo
 PC calibration of tm-reserve (17 October, 4000 games): 0 time losses
 (14 October main: 9), so rule (b) is met. Rating about 3471 against
 main's 3482 (-11; the difference of two calibrations has about +/- 10 of
-noise, but all four opponents were lower by 6 to 16). #27 decides the
-strength question.
+noise, but all four opponents were lower by 6 to 16). #27 decided the
+strength question: -0.85 +/- 3.71 after 9000 games (undecided, 0 time
+losses). Both rules met (Elo estimate -2 or better; at most 5 time
+losses): MERGED 17 October. The time-loss condition for 1.1 is met. The
+calibration's -11 against main stays a watch item for the next
+calibration.
 Decision rule, fixed before results: merge tm-reserve only if (a) SPRT #27
 (9000 games at 8+0.08) gives an Elo estimate of -2 or better, and (b) a PC
 calibration of the branch shows at most 5 Trinity time losses in 4000
