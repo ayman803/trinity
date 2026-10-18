@@ -7,7 +7,10 @@ visible, C:\Trinity read-only for it, links readable, result published to
 trinity-results). Install fixes found on the way: 48-character account
 description, key read from the clipboard, batch logon right, safe.directory
 for the clone, rustup stderr, and git's credential manager switched off.
-Next: Phase 3 (a first real job).
+Same evening: the PC may now sleep when idle; the wake timer test woke it
+at the predicted time (8:28 pm). First real jobs (07-09) failed in the
+scripts' housekeeping before any game (fixed, waiting for the next
+approval). Next: Phase 3 (a first real job).
 
 ## Why
 
