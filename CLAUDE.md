@@ -87,6 +87,17 @@ before any code (with the advisor's and Scout's additions):
 9. Windows Update may not restart the machine on its own, the machine does
    not sleep while the runner is on, and no job starts while a restart is
    pending (Ayman restarts when convenient).
+10. (Advisor, 17 October) Approve-Scripts itself lists new risky lines
+   (deletes, moves, downloads, git push, Windows settings), so Ayman does
+   not rely only on the Session's summary. At most one approval a day (a
+   second one needs typing AGAIN). Every job's log line names the approved
+   commit. trinity-results is public: no user names, personal paths or
+   device ids in it.
+11. Real jobs (all but the hello test) start only after 30 minutes without
+   keyboard or mouse use, or between 11 pm and 7 am.
+12. First real jobs: a 200-game calibration of release 1.0.0 (plumbing
+   check), then a full known-answer calibration of 1.0.0 (expected about
+   3466), then current `main`.
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
 

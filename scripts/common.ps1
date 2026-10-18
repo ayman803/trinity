@@ -8,6 +8,19 @@ $script:OnWindows = ($env:OS -eq "Windows_NT")
 # script-level variable $exesuffix / $root / $work.
 $script:ExeSuffix = if ($script:OnWindows) { ".exe" } else { "" }
 $script:Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+# How results name this machine: its processor, not its Windows name
+# (results are public).
+function Get-MachineLabel {
+    try {
+        $cpu = (Get-CimInstance Win32_Processor -ErrorAction Stop | Select-Object -First 1).Name
+        if ($cpu) { return ($cpu -replace '\s+', ' ').Trim() }
+    } catch { }
+    if (Test-Path -LiteralPath "/proc/cpuinfo") {
+        $line = Get-Content -LiteralPath "/proc/cpuinfo" | Where-Object { $_ -match '^model name' } | Select-Object -First 1
+        if ($line) { return (($line -split ':', 2)[1] -replace '\s+', ' ').Trim() }
+    }
+    return "unknown processor"
+}
 $script:Work = Join-Path $script:Root "sprt"   # all downloads and builds live here (ignored by git)
 
 # Pinned downloads (update deliberately).

@@ -69,7 +69,7 @@ try {
     $crashes = (& $count "disconnect") + (& $count "stall")
     $passed = $sameBench -and $games -ge 2 * $Rounds -and $timeLosses -eq 0 -and $illegal -eq 0 -and $crashes -eq 0
     $summary = @(
-        "V2 CHECK: '$Ref' on $([Environment]::MachineName) - $(if ($passed) { 'PASSED' } else { 'FAILED' })",
+        "V2 CHECK: '$Ref' on $(Get-MachineLabel) - $(if ($passed) { 'PASSED' } else { 'FAILED' })",
         "bench AVX2 build: $($benchText['AVX2'])",
         "bench v2 build:   $($benchText['v2'])",
         "Same bench node count: $(if ($sameBench) { 'yes' } else { 'NO' })",

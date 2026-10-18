@@ -91,7 +91,7 @@ try {
     $crashes = (& $count "disconnect") + (& $count "stall")
     $hours = [Math]::Round(((Get-Date) - $started).TotalHours, 1)
     $summary = @("THREADS TEST: '$Ref' (bench $bench), $Threads threads vs 1 thread",
-        "Machine: $([Environment]::MachineName), $physical cores / $logical threads, $Concurrency game(s) at a time, tc $TC, hash $Hash MB") +
+        "Machine: $(Get-MachineLabel), $physical cores / $logical threads, $Concurrency game(s) at a time, tc $TC, hash $Hash MB") +
         $lines + @(
         "Games lost on time: $timeLosses; illegal moves: $illegal; crashes or hangs: $crashes",
         "(Elo is from the $Threads-thread side's point of view.)",

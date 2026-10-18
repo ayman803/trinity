@@ -126,7 +126,16 @@ function Set-JobStatus([string]$Id, [string]$Status) {
 
 # Append a line to runner/log/<machine>.txt in trinity-results (and the
 # job's output to runner/output/<id>.txt), then push.
+# trinity-results is public: no user names, personal paths or device ids.
+function Get-Scrubbed([string]$Text) {
+    $t = $Text -replace '(?i)C:\\Users\\[^\\\s]+', 'C:\Users\<user>' -replace '(?i)GPU-[0-9a-f-]{36}', 'GPU-<id>'
+    if ($env:COMPUTERNAME) { $t = $t -replace [regex]::Escape($env:COMPUTERNAME), '<pc>' }
+    return $t
+}
+
 function Publish-Log([string]$Line, [string]$JobId = "", [string[]]$Output = @()) {
+    $Line = Get-Scrubbed $Line
+    $Output = @($Output | ForEach-Object { Get-Scrubbed $_ })
     for ($try = 1; $try -le 3; $try++) {
         try {
             if (-not (Test-Path -LiteralPath (Join-Path $ResultsDir ".git"))) { Invoke-Git $StateDir @("clone", "-q", $ResultsUrl, $ResultsDir) | Out-Null }
@@ -179,6 +188,47 @@ function Initialize-Clone {
             & cmd.exe /c mklink /J "$link" "$target" | Out-Null
         }
     }
+    # Calibration opponents Ayman saved by hand: copied (the job may add its own builds there).
+    $from = Join-Path $Data "sprt\opponents"
+    $to = Join-Path $Clone "sprt\opponents"
+    if (Test-Path -LiteralPath $from) {
+        New-Item -ItemType Directory -Force -Path $to | Out-Null
+        foreach ($f in Get-ChildItem -LiteralPath $from -Filter "*.exe" -File) {
+            $dest = Join-Path $to $f.Name
+            if (-not (Test-Path -LiteralPath $dest) -or (Get-Item -LiteralPath $dest).Length -ne $f.Length) { Copy-Item -LiteralPath $f.FullName -Destination $dest -Force }
+        }
+    }
+}
+
+# Minutes since anyone used the keyboard or mouse in a signed-in session
+# (a large number if nobody is signed in; $null if Windows does not say).
+function Get-IdleMinutes {
+    $old = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try { $lines = @(& quser.exe 2>&1 | ForEach-Object { "$_" }) } catch { return $null } finally { $ErrorActionPreference = $old }
+    if (($lines -join " ") -match "No User exists") { return 100000 }
+    $least = $null
+    foreach ($l in $lines) {
+        if ($l -notmatch '\s\d+\s+(Active|Disc)\s+(\S+)\s+\d') { continue }
+        if ($Matches[1] -ne "Active") { if ($null -eq $least) { $least = 100000 }; continue }
+        $i = $Matches[2]
+        $m = if ($i -in @("none", ".")) { 0 }
+            elseif ($i -match '^(\d+)\+(\d+):(\d+)$') { [int]$Matches[1] * 1440 + [int]$Matches[2] * 60 + [int]$Matches[3] }
+            elseif ($i -match '^(\d+):(\d+)$') { [int]$Matches[1] * 60 + [int]$Matches[2] }
+            elseif ($i -match '^\d+$') { [int]$i }
+            else { return $null }
+        if ($null -eq $least -or $m -lt $least) { $least = $m }
+    }
+    return $least
+}
+
+# Real jobs start only when the PC is free for them (the advisor's rule):
+# 30 minutes without keyboard or mouse use, or overnight (11 pm to 7 am).
+function Test-PcFree {
+    $h = (Get-Date).Hour
+    if ($h -ge 23 -or $h -lt 7) { return $true }
+    $idle = Get-IdleMinutes
+    return ($null -ne $idle -and $idle -ge 30)
 }
 
 # Check out exactly the approved commit. Returns $false (and says why) if
@@ -196,7 +246,8 @@ function Stop-Tree([int]$ProcessId) {
     try { & taskkill.exe /PID $ProcessId /T /F 2>&1 | Out-Null } finally { $ErrorActionPreference = $old }
 }
 
-function Invoke-Job($Job, $Hours) {
+function Invoke-Job($Job, $Hours, [string]$Commit) {
+    $short = $Commit.Substring(0, [Math]::Min(10, $Commit.Length))
     $scriptPath = Join-Path $Clone $Job.Script
     $runArgs = @($Job.Args)
     if ((Get-Content -LiteralPath $scriptPath -Raw) -match '\[switch\]\$NoUpdate') { $runArgs += "-NoUpdate" }
@@ -206,7 +257,7 @@ function Invoke-Job($Job, $Hours) {
     $psArgs = @("-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", $scriptPath) + $runArgs
     Set-JobStatus $Job.Id "STARTED"
     Write-Log "Starting $($Job.Id): $($Job.Script) $($runArgs -join ' ') (limit $Hours h)"
-    Publish-Log "STARTED $($Job.Id): $($Job.Script) $($runArgs -join ' ')"
+    Publish-Log "STARTED $($Job.Id): $($Job.Script) $($runArgs -join ' ') (approved commit $short)"
     $started = Get-Date
     $env:TRINITY_RESULTS_DIR = $ResultsDir   # job scripts publish into trinity-results (scripts/common.ps1)
     $env:TRINITY_NO_UPDATE = "1"             # and never pull newer code mid-job
@@ -227,7 +278,7 @@ function Invoke-Job($Job, $Hours) {
     Write-Log "$status $($Job.Id) after $minutes min"
     $tail = @()
     foreach ($f in @($out, $err)) { if (Test-Path -LiteralPath $f) { $tail += @(Get-Content -LiteralPath $f -Tail 80) } }
-    Publish-Log "$status $($Job.Id) after $minutes min" $Job.Id $tail
+    Publish-Log "$status $($Job.Id) after $minutes min (approved commit $short)" $Job.Id $tail
 }
 
 function Invoke-Cycle {
@@ -262,8 +313,12 @@ function Invoke-Cycle {
         Write-Note "Waiting: no time limit approved for $($next.Script) (job $($next.Id)); Ayman runs Approve-Scripts."
         return $false
     }
+    if ($next.Script -ne "runner/jobs/hello.ps1" -and -not (Test-PcFree)) {
+        Write-Note "Waiting: $($next.Id) starts after 30 minutes without keyboard or mouse use, or between 11 pm and 7 am."
+        return $false
+    }
     $script:LastNote = ""
-    Invoke-Job $next $approval.Limits[$next.Script]
+    Invoke-Job $next $approval.Limits[$next.Script] $approval.Commit
     return $true
 }
 

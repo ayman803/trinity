@@ -234,7 +234,7 @@ try {
     $hours = [Math]::Round(((Get-Date) - $started).TotalHours, 1)
     $title = if ($Vs) { "MATCH RESULT" } else { "CALIBRATION RESULT" }
     $summary = @("$title for '$Ref' (bench $bench)",
-        "Machine: $([Environment]::MachineName) ($Concurrency games at a time), tc $TC, 1 thread each") + $lines
+        "Machine: $(Get-MachineLabel) ($Concurrency games at a time), tc $TC, 1 thread each") + $lines
     if ($sumW -gt 0) {
         $estimate = $sumWR / $sumW
         $error95 = 1.0 / [Math]::Sqrt($sumW)

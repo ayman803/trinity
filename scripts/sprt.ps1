@@ -118,7 +118,7 @@ try {
 
     $summary = @(
         "SPRT RESULT: $verdict",
-        "Machine: $([Environment]::MachineName) ($Concurrency games at a time)",
+        "Machine: $(Get-MachineLabel) ($Concurrency games at a time)",
         "Test: $Dev (bench $devBench) vs $Base (bench $baseBench), tc $TC, bounds [$Elo0, $Elo1]",
         "$gamesLine".Trim(), "$eloLine".Trim(), "$llrLine".Trim(),
         "Duration: $hours hours. Full log: sprt\results\$name.log"
