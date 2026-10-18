@@ -91,6 +91,8 @@ requests PC time in NETWORK.md; the Session adds it here.
 | 2 | Calibration of the new main, combo merged (5-Calibrate.bat) | Session | about 2.5 | DONE 14 October: about 3482 (+16) |
 | 3 | Wide network, 2048 neurons (tools/net/Wide-Network.bat; reviewed by the Session 15 October: deletes only its own unshuffled .raw parts in sprt\coder2\data, peak disk about 150 GB, touches nothing of the Session's) | Coder 2 | about 20 (GPU) + 2-3 (CPU) | after 2; owner said go. No calibration or SPRT on the PC meanwhile. Coder 2 compares the training loss at superbatch 300 with the 1024 run and reports; if 2048 is not clearly ahead, Ayman may stop it. Loss comparison script tools/net/Net-Loss.bat (reviewed: deletes nothing), run after training |
 
+| 4 | 16 king buckets (tools/net/Dry-Run-KB16.bat, then KB16-Network.bat; owner's decision 18 October; reviewed by the Session: deletes only its own dry-run folder, converts nothing, writes only sprt\coder2) | Session | 5-8 (GPU) | ready. Runner jobs wait while it trains (the runner starts nothing while a trinity* program runs). Prediction and gates: NETWORK.md section 6 (self-play -8 to +10, central +2; about 30% to pass) |
+
 Gates for the new-data network (owner, 16 October, before the run):
 1. Dry run of every stage first (tools/net/Dry-Run-New-Data.bat, about 2
    minutes).

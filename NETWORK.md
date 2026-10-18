@@ -542,6 +542,46 @@ Stop-early threshold: -10 or worse after the first 1000 games. If the
 held-out loss is not lower at all, more of the same data is not the
 lever either, and king buckets come next.
 
+### 6. 16 king buckets (owner, 18 October; the Session)
+Decided after the skeptic review set teacher-student aside (ESTIMATES.md,
+parked ideas). One change to main's 1024 recipe: 16 king buckets instead
+of 8, from scratch on the same 3.65 billion positions (sprt\coder2\data,
+nothing to convert), 600 superbatches, LR 0.001 cosine, WDL 0.5.
+Layout (own king, mirrored onto files a-d): rank 1 and rank 2 one bucket
+per square; ranks 3 and 4 one bucket per pair of files; ranks 5-6 and
+7-8 one bucket per half-board. Every new bucket lies inside one old
+bucket, so the shared "factoriser" part still carries what all buckets
+have in common, and main's network copied into the new layout
+(tools/net/expand_kb16.py) gives exactly main's bench (780879): the
+engine side is checked without any training.
+Speed: no measurable cost here (bench of the copied network, 4 runs and
+3 copies at once, within the machine's +/- 10% noise; the input weights
+double to 25 MB, but a position only touches its own bucket's 1.5 MB).
+GitHub's machines: speed check of `kb16-speed` (main's network copied)
+against main, 3 copies at once (run of 18 October).
+Branches: `net-kb16` (engine + trainer support; main's network, bench
+780879), `kb16-speed` (speed check only, not for merging).
+Script: tools\net\KB16-Network.bat (kb16.ps1), dry run
+Dry-Run-KB16.bat (1 superbatch, save, load in the engine, bench). Writes
+only in sprt\coder2; deletes only its own dry-run folder.
+Prediction (written before the run):
+- Training time 5-8 hours (the optimiser updates twice the input weights).
+- Held-out loss: 0.1-0.6% below main's 0.08276.
+- Self-play vs main at 8+0.08: -8 to +10, central +2; CCRL-scale -5 to +7.
+  About 30% to pass [0, 5] (lower than the 40% first quoted to the owner:
+  the more-data network had a better loss and still lost 11, and nobody
+  knows how much two from-scratch runs of the same recipe differ).
+- Stop-early threshold: -10 or worse after 400 games.
+Gates (the owner's rules of 16-17 October): held-out loss at least 0.3%
+better than main's (same speed); 400 games at 8+0.08 on GitHub, stop at
+-10 or worse; full SPRT [0, 5] capped at 18000 games; then calibration on
+the runner the same night as 1.0.0 (rule 13), the v2 check and an SPSA
+re-tune before merging.
+Skeptic's note: if it fails narrowly, the next useful run is a control
+(main's recipe, unchanged, new random start) to measure how much two
+from-scratch runs differ; without that number every network result
+since 9 October is hard to read.
+
 ## PC time requests (for the Session's PC queue in ESTIMATES.md)
 
 | # | Job | Script | PC time | Status |
