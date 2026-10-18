@@ -208,7 +208,10 @@ function Get-IdleMinutes {
     $old = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
     try { $lines = @(& quser.exe 2>&1 | ForEach-Object { "$_" }) } catch { return $null } finally { $ErrorActionPreference = $old }
-    if (($lines -join " ") -match "No User exists") { return 100000 }
+    $script:QuserText = ($lines -join ' ').Trim()
+    # "No User exists" from the runner's background session does not prove the
+    # PC is free (17 October: a job started while Ayman was at the PC).
+    if (($lines -join " ") -match "No User exists") { return $null }
     $least = $null
     foreach ($l in $lines) {
         if ($l -notmatch '\s\d+\s+(Active|Disc)\s+(\S+)\s+\d') { continue }
@@ -230,6 +233,7 @@ function Test-PcFree {
     $h = (Get-Date).Hour
     if ($h -ge 23 -or $h -lt 7) { return $true }
     $idle = Get-IdleMinutes
+    if ($null -eq $idle) { Write-Note "Idle time unknown (quser: $script:QuserText); waiting for 11 pm." }
     return ($null -ne $idle -and $idle -ge 30)
 }
 

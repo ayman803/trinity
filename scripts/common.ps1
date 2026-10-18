@@ -350,7 +350,7 @@ function Remove-Leftover([string]$Path) {
 # found at the start, an earlier run was interrupted.
 function Clear-TempFiles {
     $prepared = Join-Path (Join-Path $script:Root "data") "prepared"
-    if (Test-Path -LiteralPath $prepared) {
+    if ((Test-Path -LiteralPath $prepared) -and -not $env:TRINITY_RESULTS_DIR) {   # runner: see Invoke-Housekeeping
         foreach ($d in [IO.Directory]::GetDirectories($prepared, "*.tmp")) { Remove-Leftover $d }   # shuffle temp folders
         foreach ($name in @("combined.data", "leela-combined.data", "leela-fresh-raw.data", "drill-mix.data", "drill-shuffled.data")) {
             Remove-Leftover (Join-Path $prepared $name)
@@ -414,7 +414,9 @@ function Remove-OldLeelaBlocks {
 function Invoke-Housekeeping([switch]$Training) {
     Show-DiskSpace
     Clear-TempFiles
-    if ($Training) {
+    # Under the job runner, data and checkpoints are Ayman's folders reached
+    # read-only through links: tidying them is his scripts' job, not the runner's.
+    if ($Training -and -not $env:TRINITY_RESULTS_DIR) {
         Remove-OldCheckpoints
         Remove-OldLeelaBlocks
     }

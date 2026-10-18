@@ -94,7 +94,7 @@ try {
     if ($LASTEXITCODE -ne 0) { Write-Host "Some files could not be changed: $($out[-1])" -ForegroundColor Yellow }
     # Folders the runner copies from may have their own permissions (a folder
     # moved in from elsewhere keeps them): give the runner read access there.
-    foreach ($sub in @("sprt\opponents")) {
+    foreach ($sub in @("sprt\opponents", "data", "checkpoints", "syzygy", "sprt\coder2\data")) {
         $p = Join-Path $Repo $sub
         if (Test-Path -LiteralPath $p) { & icacls.exe $p /grant "${Account}:(OI)(CI)RX" /T /C /Q 2>&1 | Out-Null }
     }
