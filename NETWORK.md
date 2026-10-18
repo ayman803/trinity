@@ -557,8 +557,11 @@ engine side is checked without any training.
 Speed: no measurable cost here (bench of the copied network, 4 runs and
 3 copies at once, within the machine's +/- 10% noise; the input weights
 double to 25 MB, but a position only touches its own bucket's 1.5 MB).
-GitHub's machines: speed check of `kb16-speed` (main's network copied)
-against main, 3 copies at once (run of 18 October).
+GitHub's machines (speed check of `kb16-speed`, main's network copied,
+against main, 3 copies at once, 30 runs each, 18 October): -1.8%, -0.9%
+and -1.9% on the three machines, about -1.5%, i.e. about -1 Elo by the
+time-odds ruler (42 per doubling). Counted as a same-speed network for
+the loss gate (0.3%).
 Branches: `net-kb16` (engine + trainer support; main's network, bench
 780879), `kb16-speed` (speed check only, not for merging).
 Script: tools\net\KB16-Network.bat (kb16.ps1), dry run
