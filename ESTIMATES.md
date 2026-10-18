@@ -248,7 +248,7 @@ runner rules 11-12). Same PC, opponents, book, Syzygy and 10+0.1 as before.
 | Job | What | Prediction | Result |
 |---|---|---|---|
 | 2026-10-18-14 | time use, the three runner calibrations of 18 Oct | main: under 0.3 s about 0.3-0.6% of moves (tm-reserve by day: 0.32%), at most 5 time losses in 4000; 1.0.0: about 2% (by day 2.03%) | |
-| 2026-10-18-15 | loss forensics, main's runner calibration (200 losses) | close to 1.0.0's mix of 13 Oct: gradual 60-75%, search 15-25%, evaluation 4-10%, time 1% or less (fewer than 1.0.0 after tm-reserve). Stockfish referee only if copied into the runner's clone; otherwise Trinity judges itself and the mix is less reliable | |
+| 2026-10-18-15 | loss forensics, main's runner calibration (800 losses, 4x the usual sample) | close to 1.0.0's mix of 13 Oct: gradual 60-75%, search 15-25%, evaluation 4-10%, time 1% or less (fewer than 1.0.0 after tm-reserve). Stockfish referee only if copied into the runner's clone; otherwise Trinity judges itself and the mix is less reliable | |
 
 Method from 18 October (CLAUDE.md runner rule 13): report each version as
 its gap over 1.0.0 calibrated the same night on the runner. Lesson: the
