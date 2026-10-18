@@ -191,13 +191,15 @@ function Initialize-Clone {
     # Calibration opponents Ayman saved by hand: copied (the job may add its own builds there).
     $from = Join-Path $Data "sprt\opponents"
     $to = Join-Path $Clone "sprt\opponents"
-    if (Test-Path -LiteralPath $from) {
-        New-Item -ItemType Directory -Force -Path $to | Out-Null
-        foreach ($f in Get-ChildItem -LiteralPath $from -Filter "*.exe" -File) {
-            $dest = Join-Path $to $f.Name
-            if (-not (Test-Path -LiteralPath $dest) -or (Get-Item -LiteralPath $dest).Length -ne $f.Length) { Copy-Item -LiteralPath $f.FullName -Destination $dest -Force }
+    try {
+        if (Test-Path -LiteralPath $from) {
+            New-Item -ItemType Directory -Force -Path $to | Out-Null
+            foreach ($f in Get-ChildItem -LiteralPath $from -Filter "*.exe" -File) {
+                $dest = Join-Path $to $f.Name
+                if (-not (Test-Path -LiteralPath $dest) -or (Get-Item -LiteralPath $dest).Length -ne $f.Length) { Copy-Item -LiteralPath $f.FullName -Destination $dest -Force }
+            }
         }
-    }
+    } catch { Write-Note "Could not copy the calibration opponents: $($_.Exception.Message)" }
 }
 
 # Minutes since anyone used the keyboard or mouse in a signed-in session

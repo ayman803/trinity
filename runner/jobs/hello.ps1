@@ -14,16 +14,22 @@ foreach ($tool in @("git", "cargo", "rustc")) {
 $smi = Get-Command nvidia-smi -ErrorAction SilentlyContinue
 if ($smi) { Write-Host "GPU: $((& nvidia-smi -L 2>&1) -join ' ')" } else { Write-Host "GPU: nvidia-smi not found" }
 Write-Host "CUDA_PATH: $env:CUDA_PATH"
-# The runner account must NOT be able to write to Ayman's folder.
-$probe = "C:\Trinity\runner-write-test.txt"
-try {
-    Set-Content -LiteralPath $probe -Value "test" -ErrorAction Stop
-    Remove-Item -LiteralPath $probe -ErrorAction SilentlyContinue
-    Write-Host "WRITE CHECK: C:\Trinity is WRITABLE for this account (should not be!)"
-    exit 2
-} catch {
-    Write-Host "WRITE CHECK: C:\Trinity is read-only for this account (good)"
+# The runner account must NOT be able to write to Ayman's folder, including
+# subfolders that keep their own permissions.
+$writable = 0
+foreach ($dir in @("C:\Trinity", "C:\Trinity\sprt", "C:\Trinity\sprt\opponents", "C:\Trinity\sprt\results", "C:\Trinity\data")) {
+    if (-not (Test-Path -LiteralPath $dir)) { continue }
+    $probe = Join-Path $dir "runner-write-test.txt"
+    try {
+        Set-Content -LiteralPath $probe -Value "test" -ErrorAction Stop
+        Remove-Item -LiteralPath $probe -ErrorAction SilentlyContinue
+        Write-Host "WRITE CHECK: $dir is WRITABLE for this account (should not be!)"
+        $writable++
+    } catch {
+        Write-Host "WRITE CHECK: $dir is read-only for this account (good)"
+    }
 }
+if ($writable -gt 0) { exit 2 }
 foreach ($l in @("data", "checkpoints", "syzygy")) {
     Write-Host "link $l : $(if (Test-Path $l) { 'readable' } else { 'missing' })"
 }

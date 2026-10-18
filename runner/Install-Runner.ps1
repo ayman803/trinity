@@ -87,7 +87,18 @@ try {
     Run-Icacls @($Repo, "/remove:g", "*S-1-5-11")                      # Authenticated Users: drop the default write access
     Run-Icacls @($Repo, "/grant", "*S-1-5-32-545:(OI)(CI)RX")          # Users: read
     Run-Icacls @($Repo, "/grant", "${Owner}:(OI)(CI)F", "/grant", "*S-1-5-32-544:(OI)(CI)F", "/grant", "*S-1-5-18:(OI)(CI)F")
-    Run-Icacls @($Repo, "/deny", "${Account}:(OI)(CI)(W,D,DC,WDAC,WO)") # the wall: no write, delete or permission change
+    # The wall: no write, delete or permission change. /T also puts it on any
+    # subfolder that does not inherit from C:\Trinity (one moved in from elsewhere).
+    $ErrorActionPreference = "Continue"     # icacls reports single failures on stderr
+    $out = @(& icacls.exe $Repo /deny "${Account}:(OI)(CI)(W,D,DC,WDAC,WO)" /T /C /Q 2>&1 | ForEach-Object { "$_" })
+    if ($LASTEXITCODE -ne 0) { Write-Host "Some files could not be changed: $($out[-1])" -ForegroundColor Yellow }
+    # Folders the runner copies from may have their own permissions (a folder
+    # moved in from elsewhere keeps them): give the runner read access there.
+    foreach ($sub in @("sprt\opponents")) {
+        $p = Join-Path $Repo $sub
+        if (Test-Path -LiteralPath $p) { & icacls.exe $p /grant "${Account}:(OI)(CI)RX" /T /C /Q 2>&1 | Out-Null }
+    }
+    $ErrorActionPreference = "Stop"
 
     Step "Folder $RunnerDir"
     foreach ($d in @($RunnerDir, "$RunnerDir\state", "$RunnerDir\repo", "$RunnerDir\secret")) { New-Item -ItemType Directory -Force -Path $d | Out-Null }

@@ -41,7 +41,7 @@ function Set-BatchLogon([string]$Sid, [bool]$Allow) {
 Stop-ScheduledTask -TaskName "Trinity Runner" -ErrorAction SilentlyContinue
 Unregister-ScheduledTask -TaskName "Trinity Runner" -Confirm:$false -ErrorAction SilentlyContinue
 Get-Process -IncludeUserName -ErrorAction SilentlyContinue | Where-Object { $_.UserName -like "*\$Account" } | Stop-Process -Force -ErrorAction SilentlyContinue
-& icacls.exe $Repo /remove:d $Account /C /Q | Out-Null
+& icacls.exe $Repo /remove:d $Account /T /C /Q | Out-Null
 $user = Get-LocalUser -Name $Account -ErrorAction SilentlyContinue
 if ($user) { try { Set-BatchLogon $user.SID.Value $false } catch { Write-Host $_.Exception.Message -ForegroundColor Yellow } }
 Remove-LocalUser -Name $Account -ErrorAction SilentlyContinue
