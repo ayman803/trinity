@@ -36,7 +36,12 @@ Windows. Every instruction must be concrete:
 4. Log every predicted gain next to the actual result in `ESTIMATES.md`,
    and use that history to calibrate future estimates.
 5. Protect credit: no scheduled check-ins or PR watching. Wait for the
-   owner to paste results.
+   owner to paste results. One exception (owner, 18 October 2026): a daily
+   morning check-in (scheduled task "Trinity morning check-in", 6:20 am
+   Pacific) reads trinity-results, updates ESTIMATES.md, queues next jobs
+   only from already-approved scripts and already-planned work, and sends
+   a short phone summary. It never merges, never changes scripts that need
+   approval, and never starts training or data generation.
 6. When Trinity is near top-100 strength, prepare a release for the CCRL
    testers.
 7. Before each next step, briefly review the plan as a skeptic: what could

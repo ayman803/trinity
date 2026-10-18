@@ -248,6 +248,13 @@ its gap over 1.0.0 calibrated the same night on the runner. Lesson: the
 earlier daytime gains (+17 for 1.0.0, +16 for combo) were measured under
 changing conditions and carry more noise than their +/- 7 suggests.
 
+## Runner check-ins
+
+One line per morning check-in (CLAUDE.md rule 5 exception): date, what
+was read in trinity-results (last runner log line covered), what was queued.
+
+- 2026-10-18 (set up by the Session): read up to "03:29 STARTED 2026-10-18-13". Nothing queued.
+
 ## Lessons so far
 
 - Self-play gains shrink against other engines by a varying factor
