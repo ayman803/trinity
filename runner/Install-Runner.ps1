@@ -9,8 +9,9 @@
 #     GitHub key that only the account and Ayman can read;
 #  4. stores the trinity-results key Ayman copies (read from the clipboard,
 #     checked with GitHub, never shown);
-#  5. lets it log on as a batch job, registers the runner to start at boot, and stops sleep and automatic
-#     update restarts.
+#  5. lets it log on as a batch job, registers the runner to start at boot,
+#     lets the PC sleep after an hour unused (never during a job), wakes it
+#     at 11 pm and 6 am to check the queue, and stops automatic update restarts.
 # Rerunning it is safe: it updates the installed copy and keeps the key.
 
 param(
@@ -147,7 +148,7 @@ try {
         Write-Host "Checked with GitHub and stored (readable only by $Account and you)."
     }
 
-    Step "Start at boot, no sleep, no automatic restarts"
+    Step "Start at boot, sleep only when idle, wake at 11 pm and 6 am, no automatic restarts"
     # Remember the current settings once, so Uninstall-Runner can put them back.
     $saved = "$RunnerDir\settings-before-install.txt"   # not in state: the runner can write there, and the uninstaller reads this as administrator
     if (-not (Test-Path -LiteralPath $saved)) { try {
@@ -162,6 +163,11 @@ try {
             "active_hours_start=$($uxOld.ActiveHoursStart)",
             "active_hours_end=$($uxOld.ActiveHoursEnd)")
     } catch { Write-Host "Could not read the current sleep settings; the uninstaller will leave them as they are." -ForegroundColor Yellow } }
+    # Added later (wake timers): remembered separately so older installs get it too.
+    if ((Test-Path -LiteralPath $saved) -and -not (Select-String -LiteralPath $saved -Pattern '^rtcwake_ac=' -Quiet)) { try {
+        $wakeAc = ((& powercfg.exe /query SCHEME_CURRENT SUB_SLEEP RTCWAKE) -match "Current AC Power Setting Index") -replace ".*:\s*", ""
+        Add-Content -LiteralPath $saved -Value "rtcwake_ac=$([Convert]::ToInt32("$wakeAc".Trim(), 16))"
+    } catch { } }
     $action = New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" `
         -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$RunnerDir\runner.ps1`""
     $trigger = New-ScheduledTaskTrigger -AtStartup
@@ -170,8 +176,24 @@ try {
     Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings `
         -User $Account -Password $password -RunLevel Limited -Force | Out-Null
     $password = $null
-    & powercfg.exe /change standby-timeout-ac 0
+    # Sleep after an hour without use (the runner holds the PC awake while a
+    # job runs), never hibernate, and allow wake timers.
+    & powercfg.exe /change standby-timeout-ac 60
     & powercfg.exe /change hibernate-timeout-ac 0
+    & powercfg.exe /setacvalueindex SCHEME_CURRENT SUB_SLEEP RTCWAKE 1
+    & powercfg.exe /setactive SCHEME_CURRENT
+    # Wake the PC at 11 pm and 6 am (and once, 6 minutes from now, as a test)
+    # and hold it awake 3 minutes so the runner can check the queue. Runs as
+    # SYSTEM, with the command written here: it reads no file the runner can change.
+    $hold = 'Add-Type -Namespace W -Name P -MemberDefinition ''[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint f);''; [W.P]::SetThreadExecutionState([uint32]2147483649) | Out-Null; Start-Sleep -Seconds 180'
+    $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($hold))
+    $wakeAction = New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" `
+        -Argument "-NoProfile -NonInteractive -WindowStyle Hidden -EncodedCommand $encoded"
+    $testWake = (Get-Date).AddMinutes(6)
+    $wakeTriggers = @((New-ScheduledTaskTrigger -Daily -At "11:00 PM"), (New-ScheduledTaskTrigger -Daily -At "6:00 AM"), (New-ScheduledTaskTrigger -Once -At $testWake))
+    $wakeSettings = New-ScheduledTaskSettingsSet -WakeToRun -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
+    Register-ScheduledTask -TaskName "Trinity Runner Wake" -Action $wakeAction -Trigger $wakeTriggers -Settings $wakeSettings `
+        -User "SYSTEM" -RunLevel Highest -Force | Out-Null
     $au = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
     New-Item -Path $au -Force | Out-Null
     New-ItemProperty -Path $au -Name "NoAutoRebootWithLoggedOnUsers" -Value 1 -PropertyType DWord -Force | Out-Null
@@ -195,6 +217,9 @@ try {
     Write-Host "INSTALLED on '$machine'. The runner is running as $Account." -ForegroundColor Green
     Write-Host "It runs nothing until you approve the scripts: double-click 'Trinity Approve-Scripts' on the desktop." -ForegroundColor Green
     Write-Host "Keep your own account signed in (locking the screen is fine): Windows only holds back update restarts while someone is signed in." -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host ("WAKE TEST: put the PC to sleep now (Start, Power, Sleep). It should wake by itself at about {0}." -f $testWake.ToString("h:mm tt")) -ForegroundColor Cyan
+    Write-Host "Then open 'Trinity Runner-Status': the last line should say 'The PC woke from sleep'." -ForegroundColor Cyan
 } catch {
     Write-Host "PROBLEM: $($_.Exception.Message)" -ForegroundColor Red
     Write-Host "Send Claude a screenshot of this window." -ForegroundColor Yellow

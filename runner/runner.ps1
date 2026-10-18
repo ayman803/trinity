@@ -4,7 +4,7 @@
 # Install-Runner.bat; changes to this file on GitHub reach the machine only
 # when he installs again. It runs as the standard account trinity-runner,
 # started by Windows at boot, in its own clone C:\TrinityRunner\repo.
-# Every few minutes it reads runner/queue.txt from the latest main, checks
+# Every few minutes while the PC is awake it reads runner/queue.txt from the latest main, checks
 # out exactly the commit Ayman approved (C:\TrinityRunner\approved.txt) and
 # verifies its fingerprint, runs the first queued job for this machine with
 # self-update off, and logs the result in the trinity-results repository.
@@ -261,6 +261,7 @@ function Invoke-Job($Job, $Hours, [string]$Commit) {
     $out = Join-Path $StateDir "job-$($Job.Id).out.txt"
     $err = Join-Path $StateDir "job-$($Job.Id).err.txt"
     $psArgs = @("-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", $scriptPath) + $runArgs
+    Set-Awake $true
     Set-JobStatus $Job.Id "STARTED"
     Write-Log "Starting $($Job.Id): $($Job.Script) $($runArgs -join ' ') (limit $Hours h)"
     Publish-Log "STARTED $($Job.Id): $($Job.Script) $($runArgs -join ' ') (approved commit $short)"
@@ -364,15 +365,25 @@ function Test-Cargo {
     try { & cargo --version 2>&1 | Out-Null; return ($LASTEXITCODE -eq 0) } finally { $ErrorActionPreference = $old }
 }
 
+# ES_CONTINUOUS, plus ES_SYSTEM_REQUIRED while a job runs.
+function Set-Awake([bool]$On) {
+    if (-not $script:CanHoldAwake) { return }
+    $flags = if ($On) { [uint32]2147483649 } else { [uint32]2147483648 }
+    [TrinityRunner.Power]::SetThreadExecutionState($flags) | Out-Null
+}
+
 # Any error that would stop the runner is written to the log first.
 trap { Write-Log "Runner stopped by an error: $($_.Exception.Message)"; break }
 Write-Log "Runner started on '$Machine' as $env:USERNAME"
-# Keep the machine awake while the runner is on (ES_CONTINUOUS | ES_SYSTEM_REQUIRED).
+# The PC may sleep when the runner has nothing to do; it is kept awake only
+# while a job runs (Set-Awake), and a Windows wake timer (installed task
+# "Trinity Runner Wake", 11 pm and 6 am) wakes it to check the queue.
+$script:CanHoldAwake = $false
 if ($env:OS -eq "Windows_NT") {
     try {
         Add-Type -Namespace TrinityRunner -Name Power -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint esFlags);'
-        [TrinityRunner.Power]::SetThreadExecutionState([uint32]2147483649) | Out-Null
-    } catch { Write-Log "Could not keep the machine awake: $($_.Exception.Message)" }
+        $script:CanHoldAwake = $true
+    } catch { Write-Log "Cannot hold the PC awake during jobs: $($_.Exception.Message)" }
 }
 try { Initialize-Account } catch { Write-Log "Setup problem: $($_.Exception.Message)" }
 # A job that was running when the machine went down is not restarted by
@@ -388,6 +399,16 @@ foreach ($id in @($status.Keys)) {
 while ($true) {
     $ran = $false
     try { $ran = Invoke-Cycle } catch { Write-Log "Cycle error: $($_.Exception.Message)" }
+    if (-not $ran) { Set-Awake $false }   # nothing running: Windows may let the PC sleep
     if ($Once) { break }
-    Start-Sleep -Seconds $(if ($ran) { 30 } else { $PollSeconds })
+    # Wait by the wall clock in short steps, so a check follows soon after
+    # the PC wakes (Windows puts it back to sleep a few minutes after a timer wake).
+    $due = (Get-Date).AddSeconds($(if ($ran) { 30 } else { $PollSeconds }))
+    $tick = Get-Date
+    while ((Get-Date) -lt $due) {
+        Start-Sleep -Seconds 15
+        $now = Get-Date
+        if (($now - $tick).TotalSeconds -gt 120) { Write-Log "The PC woke from sleep (asleep since about $($tick.ToString('HH:mm')))"; break }
+        $tick = $now
+    }
 }

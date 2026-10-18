@@ -84,9 +84,12 @@ before any code (with the advisor's and Scout's additions):
 8. The installed runner is a copy in `C:\TrinityRunner` (read-only for the
    runner account); changes in `runner/` on GitHub reach the PC only when
    Ayman reinstalls.
-9. Windows Update may not restart the machine on its own, the machine does
-   not sleep while the runner is on, and no job starts while a restart is
-   pending (Ayman restarts when convenient).
+9. Windows Update may not restart the machine on its own, the machine
+   never sleeps while a job runs, and no job starts while a restart is
+   pending (Ayman restarts when convenient). (Owner and advisor, 17
+   October:) otherwise the PC may sleep after an hour unused; a wake timer
+   wakes it at 11 pm and 6 am to check the queue, so a job queued in the
+   day may wait until 11 pm.
 10. (Advisor, 17 October) Approve-Scripts itself lists new risky lines
    (deletes, moves, downloads, git push, Windows settings), so Ayman does
    not rely only on the Session's summary. At most one approval a day (a

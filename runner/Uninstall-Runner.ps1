@@ -1,7 +1,7 @@
 # Remove the Trinity job runner from this machine and undo what
 # Install-Runner changed (Ayman runs it as administrator by double-clicking
 # runner\Uninstall-Runner.bat):
-#  - stops and removes the "Trinity Runner" task and the trinity-runner
+#  - stops and removes the "Trinity Runner" and "Trinity Runner Wake" tasks and the trinity-runner
 #    account (and its hidden-account entry and batch logon right), deletes
 #    the stored GitHub key;
 #  - removes the account's no-write rule on C:\Trinity;
@@ -40,6 +40,7 @@ function Set-BatchLogon([string]$Sid, [bool]$Allow) {
 
 Stop-ScheduledTask -TaskName "Trinity Runner" -ErrorAction SilentlyContinue
 Unregister-ScheduledTask -TaskName "Trinity Runner" -Confirm:$false -ErrorAction SilentlyContinue
+Unregister-ScheduledTask -TaskName "Trinity Runner Wake" -Confirm:$false -ErrorAction SilentlyContinue
 Get-Process -IncludeUserName -ErrorAction SilentlyContinue | Where-Object { $_.UserName -like "*\$Account" } | Stop-Process -Force -ErrorAction SilentlyContinue
 & icacls.exe $Repo /remove:d $Account /T /C /Q | Out-Null
 $user = Get-LocalUser -Name $Account -ErrorAction SilentlyContinue
@@ -56,6 +57,7 @@ if (Test-Path -LiteralPath $saved) {
     else {
     & powercfg.exe /setacvalueindex SCHEME_CURRENT SUB_SLEEP STANDBYIDLE $v["sleep_ac_seconds"]
     & powercfg.exe /setacvalueindex SCHEME_CURRENT SUB_SLEEP HIBERNATEIDLE $v["hibernate_ac_seconds"]
+    if ($v["rtcwake_ac"] -match '^\d+$') { & powercfg.exe /setacvalueindex SCHEME_CURRENT SUB_SLEEP RTCWAKE $v["rtcwake_ac"] }
     & powercfg.exe /setactive SCHEME_CURRENT
     }
     $au = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
