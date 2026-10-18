@@ -150,7 +150,8 @@ that engine works.
 
 ## Scout (daily idea task)
 
-A scheduled task runs at 5:46 am Pacific and writes scout/YYYY-MM-DD.md
+A scheduled task runs at 6:44 am Pacific (after the 6:20 am morning
+check-in has filled in the overnight results) and writes scout/YYYY-MM-DD.md
 plus one line per idea in scout/INDEX.md. It never touches code, tests or
 ESTIMATES.md. Read scout/INDEX.md before planning the next step.
 
