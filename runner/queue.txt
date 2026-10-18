@@ -16,3 +16,5 @@
 2026-10-18-11 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -Rounds 25
 2026-10-18-12 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0
 2026-10-18-13 | pc | scripts/calibrate.ps1 | -Ref main
+2026-10-18-14 | pc | scripts/timeuse.ps1
+2026-10-18-15 | pc | scripts/forensics.ps1

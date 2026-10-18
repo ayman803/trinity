@@ -243,6 +243,13 @@ runner rules 11-12). Same PC, opponents, book, Syzygy and 10+0.1 as before.
 
 17 October, 5:46-5:49 pm: all three FAILED within a minute, before any game: the approved scripts' housekeeping tried to tidy `data\prepared` through the read-only link and could not even list it. No measurement; queued again as 11-13 after the approval of dabb545 (18 October, about 12:50 am). Also, job 07 started while Ayman was at the PC: the idle check took "No User exists" (what quser tells the background account) as idle. Both fixed (scripts: no housekeeping of linked folders under the runner; runner: unknown idle time means wait for 11 pm). The read-only wall did its job: the scripts could not touch Ayman's data.
 
+### Runner analysis jobs (queued 18 October, predictions written first)
+
+| Job | What | Prediction | Result |
+|---|---|---|---|
+| 2026-10-18-14 | time use, the three runner calibrations of 18 Oct | main: under 0.3 s about 0.3-0.6% of moves (tm-reserve by day: 0.32%), at most 5 time losses in 4000; 1.0.0: about 2% (by day 2.03%) | |
+| 2026-10-18-15 | loss forensics, main's runner calibration (200 losses) | close to 1.0.0's mix of 13 Oct: gradual 60-75%, search 15-25%, evaluation 4-10%, time 1% or less (fewer than 1.0.0 after tm-reserve). Stockfish referee only if copied into the runner's clone; otherwise Trinity judges itself and the mix is less reliable | |
+
 Method from 18 October (CLAUDE.md runner rule 13): report each version as
 its gap over 1.0.0 calibrated the same night on the runner. Lesson: the
 earlier daytime gains (+17 for 1.0.0, +16 for combo) were measured under
