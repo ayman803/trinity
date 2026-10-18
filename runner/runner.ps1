@@ -34,6 +34,8 @@ $ArgPattern = '^[A-Za-z0-9_.+/:=-]+$'
 $IdPattern = '^[A-Za-z0-9_.-]+$'
 $MinFreeStartGB = 50
 $MinFreeRunGB = 30
+$env:GIT_TERMINAL_PROMPT = "0"    # git never waits for typed input: nobody is there
+$env:GCM_INTERACTIVE = "never"
 $Identity = @("-c", "user.name=ayman803", "-c", "user.email=7761579+ayman803@users.noreply.github.com")
 New-Item -ItemType Directory -Force -Path $StateDir | Out-Null
 $Machine = (Get-Content -LiteralPath (Join-Path $RunnerDir "machine.txt") -TotalCount 1).Trim()
@@ -268,7 +270,12 @@ function Invoke-Cycle {
 # --- first start for this account: tools and git settings -----------------
 function Initialize-Account {
     $creds = (Join-Path $RunnerDir "secret\git-credentials") -replace '\\', '/'
-    & git config --global credential.helper "store --file=$creds"
+    # Only the stored key: an empty entry first switches off Git for Windows'
+    # own credential manager, which would wait for a sign-in window nobody sees.
+    & git config --global --unset-all credential.helper
+    $empty = if ($PSVersionTable.PSVersion.Major -le 5) { '""' } else { "" }   # Windows PowerShell drops a bare empty argument
+    & git config --global --add credential.helper $empty
+    & git config --global --add credential.helper "store --file=$creds"
     & git config --global core.autocrlf true
     # The installer (an administrator) created the clone's folder, so git
     # would refuse to work in it without this.

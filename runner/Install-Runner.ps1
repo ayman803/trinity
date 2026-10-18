@@ -169,6 +169,8 @@ try {
     New-ItemProperty -Path $ux -Name "ActiveHoursStart" -Value 6 -PropertyType DWord -Force | Out-Null
     New-ItemProperty -Path $ux -Name "ActiveHoursEnd" -Value 0 -PropertyType DWord -Force | Out-Null
     Stop-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+    # Also stop anything the old runner left running (a job, git).
+    Get-Process -IncludeUserName -ErrorAction SilentlyContinue | Where-Object { $_.UserName -like "*\$Account" } | Stop-Process -Force -ErrorAction SilentlyContinue
     Start-ScheduledTask -TaskName $TaskName
 
     Write-Host "Checking that the runner starts (20 seconds)..."
