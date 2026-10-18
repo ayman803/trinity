@@ -301,7 +301,12 @@ fn main() {
         usage();
     }
 
+    // Random start of the weights: bullet's fixed default unless TRINITY_SEED
+    // is set (the control run's new random start, 18 October).
+    let seed = std::env::var("TRINITY_SEED").ok().and_then(|v| v.parse().ok()).unwrap_or(198_273_612);
+    println!("Weight seed: {seed}");
     let mut trainer = ValueTrainerBuilder::default()
+        .seed(seed)
         .dual_perspective()
         .optimiser(AdamW)
         .inputs(ChessBucketsMirrored::new(layout))
