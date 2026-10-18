@@ -111,7 +111,9 @@ before any code (with the advisor's and Scout's additions):
    candidate is calibrated. A version's strength is reported as its gap
    over 1.0.0 measured the same night, not as a single number (1.0.0 gave
    3466 by day on 12 October and 3478 overnight on the runner). Daytime
-   and runner numbers are not mixed. When CCRL publishes its own rating
+   and runner numbers are not mixed. A gap against a 1.0.0 run from another
+   night is labelled "reference from <date>" (conditions alone moved 1.0.0
+   by 12). When CCRL publishes its own rating
    for 1.0.0, that becomes the anchor for converting gaps to the CCRL scale.
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
