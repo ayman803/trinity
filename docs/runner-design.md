@@ -1,8 +1,13 @@
 # PC job runner
 
 Status (17 October 2026): rules approved and in CLAUDE.md ("PC job
-runner"), which wins where this file differs. Code written (runner/),
-not installed. Phase 1 needs Ayman at the PC.
+runner"), which wins where this file differs. Installed on the PC on 17
+October; test job 2026-10-18-03 passed (runs as trinity-runner, RTX 3080
+visible, C:\Trinity read-only for it, links readable, result published to
+trinity-results). Install fixes found on the way: 48-character account
+description, key read from the clipboard, batch logon right, safe.directory
+for the clone, rustup stderr, and git's credential manager switched off.
+Next: Phase 3 (a first real job).
 
 ## Why
 
