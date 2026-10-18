@@ -237,9 +237,9 @@ runner rules 11-12). Same PC, opponents, book, Syzygy and 10+0.1 as before.
 
 | Job | What | Prediction | Pass rule | Result |
 |---|---|---|---|---|
-| 2026-10-18-04 | release 1.0.0, 200 games (plumbing check) | about 3466 | within +/- 35 (200 games: 1 sigma about 16) | |
-| 2026-10-18-05 | release 1.0.0, 4000 games (known answer) | 3466 | within +/- 20 (two 4000-game runs differ by about 10 at 1 sigma, so the advisor's +/- 10 would fail a correct runner about 1 time in 3) | |
-| 2026-10-18-06 | main (= tm-reserve merged), 4000 games | about 3476 (3471 and 3482 measured this week) | for information; a result under 3456 would repeat the watch item (-11 on 17 Oct) | |
+| 2026-10-18-07 | release 1.0.0, 200 games (plumbing check) | about 3466 | within +/- 35 (200 games: 1 sigma about 16) | |
+| 2026-10-18-08 | release 1.0.0, 4000 games (known answer) | 3466 | within +/- 20 (two 4000-game runs differ by about 10 at 1 sigma, so the advisor's +/- 10 would fail a correct runner about 1 time in 3) | |
+| 2026-10-18-09 | main (= tm-reserve merged), 4000 games | about 3476 (3471 and 3482 measured this week) | for information; a result under 3456 would repeat the watch item (-11 on 17 Oct) | |
 
 ## Lessons so far
 
