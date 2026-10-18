@@ -38,9 +38,10 @@ Windows. Every instruction must be concrete:
 5. Protect credit: no scheduled check-ins or PR watching. Wait for the
    owner to paste results. One exception (owner, 18 October 2026): a daily
    morning check-in (scheduled task "Trinity morning check-in", 6:20 am
-   Pacific) reads trinity-results, updates ESTIMATES.md, queues next jobs
-   only from already-approved scripts and already-planned work, and sends
-   a short phone summary. It never merges, never changes scripts that need
+   Pacific, in a persistent session with the repository attached) reads
+   trinity-results, updates ESTIMATES.md, and queues next jobs only from
+   already-approved scripts and already-planned work; a read-only task
+   ("Trinity phone summary", 6:35 am) sends the owner a short phone summary. It never merges, never changes scripts that need
    approval, and never starts training or data generation.
 6. When Trinity is near top-100 strength, prepare a release for the CCRL
    testers.
