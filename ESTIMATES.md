@@ -243,6 +243,11 @@ runner rules 11-12). Same PC, opponents, book, Syzygy and 10+0.1 as before.
 
 17 October, 5:46-5:49 pm: all three FAILED within a minute, before any game: the approved scripts' housekeeping tried to tidy `data\prepared` through the read-only link and could not even list it. No measurement; queued again as 11-13 after the approval of dabb545 (18 October, about 12:50 am). Also, job 07 started while Ayman was at the PC: the idle check took "No User exists" (what quser tells the background account) as idle. Both fixed (scripts: no housekeeping of linked folders under the runner; runner: unknown idle time means wait for 11 pm). The read-only wall did its job: the scripts could not touch Ayman's data.
 
+Method from 18 October (CLAUDE.md runner rule 13): report each version as
+its gap over 1.0.0 calibrated the same night on the runner. Lesson: the
+earlier daytime gains (+17 for 1.0.0, +16 for combo) were measured under
+changing conditions and carry more noise than their +/- 7 suggests.
+
 ## Lessons so far
 
 - Self-play gains shrink against other engines by a varying factor

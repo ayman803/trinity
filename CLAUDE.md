@@ -101,6 +101,13 @@ before any code (with the advisor's and Scout's additions):
 12. First real jobs: a 200-game calibration of release 1.0.0 (plumbing
    check), then a full known-answer calibration of 1.0.0 (expected about
    3466), then current `main`.
+13. (Advisor and Scout, 18 October) Release 1.0.0 is the standing reference:
+   re-calibrated on the runner once or twice a week, and on any night a
+   candidate is calibrated. A version's strength is reported as its gap
+   over 1.0.0 measured the same night, not as a single number (1.0.0 gave
+   3466 by day on 12 October and 3478 overnight on the runner). Daytime
+   and runner numbers are not mixed. When CCRL publishes its own rating
+   for 1.0.0, that becomes the anchor for converting gaps to the CCRL scale.
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
 
