@@ -580,6 +580,31 @@ better than main's (same speed); 400 games at 8+0.08 on GitHub, stop at
 -10 or worse; full SPRT [0, 5] capped at 18000 games; then calibration on
 the runner the same night as 1.0.0 (rule 13), the v2 check and an SPSA
 re-tune before merging.
+Gate for THIS run (Ayman's decision via the advisor, 18 October, before
+any result; replaces the 0.3% loss gate for this run only): held-out
+loss worse than main's -> stop; 0-0.3% better -> still play the 400 quick
+games at 8+0.08; more than 0.3% better -> as planned. The games decide.
+0.3% stays the rule for later networks until the control run gives the
+run-to-run noise. A full SPRT of it may not hold up search-idea SPRTs on
+GitHub for more than one day.
+Data (checked 18 October): the real run reads exactly big-1..4.data in
+sprt\coder2\data, 3.65 billion positions; the dry run's "1 billion" is
+its single file (it trains 1 superbatch on big-1.data only). These are
+the same positions main's network learned from, converted the same way,
+but shuffled anew (main's own shuffled files were deleted on 13 October),
+so the order differs from main's run; the control run below uses these
+same files, which makes control vs 16 buckets a clean one-change pair.
+Dry run (PC, 18 October 9:01): 42 s per superbatch (the 8-bucket network
+about 30), file 25200704 bytes, loads in the engine (bench runs): the
+real run takes about 7 hours.
+Control run (advisor, owner, 18 October: the next GPU job whatever this
+run gives): main's recipe unchanged (8 king buckets) with a new random
+start (weight seed 20261018; bullet's default is fixed, and main used
+it) on the same files as this run: tools\net\Control-Network.bat
+(kb16.ps1 -KingBuckets 8 -Seed 20261018 -Tag control; branch
+net-control-<date>). About 5 hours. Its SPRT against main measures how
+much two from-scratch runs of one recipe differ (seed and shuffle);
+16 buckets is then judged against the control as well as against main.
 Skeptic's note: if it fails narrowly, the next useful run is a control
 (main's recipe, unchanged, new random start) to measure how much two
 from-scratch runs differ; without that number every network result
