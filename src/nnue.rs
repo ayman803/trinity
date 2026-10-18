@@ -28,6 +28,7 @@ const INPUTS: usize = 768;
 /// mirroring onto files a-d (index = rank * 4 + file). MUST match the
 /// trainer. Fine near the home corner where kings usually stand, coarse
 /// further up.
+#[cfg(not(trinity_kb16))]
 #[rustfmt::skip]
 pub const KING_BUCKET_LAYOUT: [usize; 32] = [
     0, 1, 2, 3,
@@ -39,7 +40,29 @@ pub const KING_BUCKET_LAYOUT: [usize; 32] = [
     7, 7, 7, 7,
     7, 7, 7, 7,
 ];
+#[cfg(not(trinity_kb16))]
 pub const KING_BUCKETS: usize = 8;
+
+/// The finer layout with 16 buckets, chosen at build time from the size of
+/// the embedded network (build.rs). Every one of its buckets lies inside one
+/// bucket of the 8-bucket layout (16-bucket b sits in 8-bucket
+/// [0, 1, 2, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7][b]), so an 8-bucket
+/// network copied into it evaluates exactly the same
+/// (tools/net/expand_kb16.py; used to check the layout and measure speed).
+#[cfg(trinity_kb16)]
+#[rustfmt::skip]
+pub const KING_BUCKET_LAYOUT: [usize; 32] = [
+     0,  1,  2,  3,
+     4,  5,  6,  7,
+     8,  8,  9,  9,
+    10, 10, 11, 11,
+    12, 12, 13, 13,
+    12, 12, 13, 13,
+    14, 14, 15, 15,
+    14, 14, 15, 15,
+];
+#[cfg(trinity_kb16)]
+pub const KING_BUCKETS: usize = 16;
 
 /// (bucket offset, square xor for mirroring) of a king on `rel_ksq` (a
 /// square seen from the king's own side).

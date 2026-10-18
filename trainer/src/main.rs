@@ -1,7 +1,8 @@
 //! Trains Trinity's NNUE with the bullet library.
 //!
 //! Network: (768x8 -> 512)x2 -> 1 with SCReLU, 8 king input buckets
-//! (horizontally mirrored) and 8 output buckets chosen by piece count. The
+//! (horizontally mirrored; 16 with TRINITY_KING_BUCKETS=16) and 8 output
+//! buckets chosen by piece count. The
 //! sizes, bucket layout and quantisation constants below MUST match
 //! `src/nnue.rs` in the engine.
 //!
@@ -66,7 +67,7 @@ const QB: i16 = 64;
 /// a-d; index = rank * 4 + file). MUST match `KING_BUCKET_LAYOUT` in
 /// `src/nnue.rs`.
 #[rustfmt::skip]
-const KING_BUCKET_LAYOUT: [usize; 32] = [
+const KING_BUCKET_LAYOUT_8: [usize; 32] = [
     0, 1, 2, 3,
     4, 4, 5, 5,
     6, 6, 6, 6,
@@ -76,7 +77,28 @@ const KING_BUCKET_LAYOUT: [usize; 32] = [
     7, 7, 7, 7,
     7, 7, 7, 7,
 ];
-const KING_BUCKETS: usize = get_num_buckets(&KING_BUCKET_LAYOUT);
+/// The finer 16-bucket layout (the engine picks it from the network file's
+/// size); each of its buckets lies inside one bucket of the 8-bucket layout.
+#[rustfmt::skip]
+const KING_BUCKET_LAYOUT_16: [usize; 32] = [
+     0,  1,  2,  3,
+     4,  5,  6,  7,
+     8,  8,  9,  9,
+    10, 10, 11, 11,
+    12, 12, 13, 13,
+    12, 12, 13, 13,
+    14, 14, 15, 15,
+    14, 14, 15, 15,
+];
+
+/// The king bucket layout: 8 buckets unless the environment variable
+/// TRINITY_KING_BUCKETS is 16.
+fn king_bucket_layout() -> [usize; 32] {
+    match std::env::var("TRINITY_KING_BUCKETS").ok().as_deref() {
+        Some("16") => KING_BUCKET_LAYOUT_16,
+        _ => KING_BUCKET_LAYOUT_8,
+    }
+}
 
 /// Weights file format used in bullet checkpoints: per tensor, its name and
 /// a newline, its length as a little-endian u64, then f32 values.
@@ -122,7 +144,7 @@ fn warm_start_weights(checkpoint: &str) -> Option<String> {
     for (name, vals) in old {
         if name == "l0w" {
             assert_eq!(vals.len(), 768 * hidden_size(), "unexpected input layer size in {checkpoint}");
-            new.push(("l0w".to_string(), vec![0.0; vals.len() * KING_BUCKETS]));
+            new.push(("l0w".to_string(), vec![0.0; vals.len() * get_num_buckets(&king_bucket_layout())]));
             new.push(("l0f".to_string(), vals));
         } else {
             new.push((name, vals));
@@ -268,7 +290,9 @@ fn main() {
         usage();
     }
     let hidden = hidden_size();
-    println!("Hidden layer size: {hidden}");
+    let layout = king_bucket_layout();
+    let king_buckets = get_num_buckets(&layout);
+    println!("Hidden layer size: {hidden}, king buckets: {king_buckets}");
     let finetune = mode == Some("finetune");
     // Hidden check: `kbcheck <old checkpoint> <out file>` saves the warm-started
     // king-bucket network without training (to verify the layout).
@@ -280,13 +304,13 @@ fn main() {
     let mut trainer = ValueTrainerBuilder::default()
         .dual_perspective()
         .optimiser(AdamW)
-        .inputs(ChessBucketsMirrored::new(KING_BUCKET_LAYOUT))
+        .inputs(ChessBucketsMirrored::new(layout))
         .output_buckets(MaterialCount::<OUTPUT_BUCKETS>)
         .save_format(&[
             // Each bucket's weights = its own part + the shared part.
             SavedFormat::id("l0w")
-                .transform(|store, weights| {
-                    let shared = store.get("l0f").values.f32().repeat(KING_BUCKETS);
+                .transform(move |store, weights| {
+                    let shared = store.get("l0f").values.f32().repeat(king_buckets);
                     weights.into_iter().zip(shared).map(|(a, b)| a + b).collect()
                 })
                 .round()
@@ -299,8 +323,8 @@ fn main() {
         .loss_fn(|output, target| output.sigmoid().squared_error(target))
         .build(move |builder, stm_inputs, ntm_inputs, output_buckets| {
             let l0f = builder.new_weights("l0f", Shape::new(hidden, 768), InitSettings::Zeroed);
-            let mut l0 = builder.new_affine("l0", 768 * KING_BUCKETS, hidden);
-            l0.weights = l0.weights + l0f.repeat(KING_BUCKETS);
+            let mut l0 = builder.new_affine("l0", 768 * king_buckets, hidden);
+            l0.weights = l0.weights + l0f.repeat(king_buckets);
             let l1 = builder.new_affine("l1", 2 * hidden, OUTPUT_BUCKETS);
             let stm_hidden = l0.forward(stm_inputs).screlu();
             let ntm_hidden = l0.forward(ntm_inputs).screlu();
