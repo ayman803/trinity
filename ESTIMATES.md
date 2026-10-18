@@ -237,8 +237,8 @@ runner rules 11-12). Same PC, opponents, book, Syzygy and 10+0.1 as before.
 
 | Job | What | Prediction | Pass rule | Result |
 |---|---|---|---|---|
-| 2026-10-18-11 | release 1.0.0, 200 games (plumbing check) | about 3466 | within +/- 35 (200 games: 1 sigma about 16) | |
-| 2026-10-18-12 | release 1.0.0, 4000 games (known answer) | 3466 | within +/- 20 (two 4000-game runs differ by about 10 at 1 sigma, so the advisor's +/- 10 would fail a correct runner about 1 time in 3) | |
+| 2026-10-18-11 | release 1.0.0, 200 games (plumbing check) | about 3466 | within +/- 35 (200 games: 1 sigma about 16) | 3472 (+/- 27): PASS. 9 minutes, all four opponents played |
+| 2026-10-18-12 | release 1.0.0, 4000 games (known answer) | 3466 | within +/- 20 (two 4000-game runs differ by about 10 at 1 sigma, so the advisor's +/- 10 would fail a correct runner about 1 time in 3) | 3478 (+/- 6): PASS, +12 over 3466. Per opponent vs 12 Oct: akimbo 3454 (3453), Patricia 3469 (3458), Bread 3510 (3493), Prune 3481 (3461): all four up, so part of the +12 may be the conditions (overnight, PC otherwise idle) rather than noise. Compare runner results with runner results |
 | 2026-10-18-13 | main (= tm-reserve merged), 4000 games | about 3476 (3471 and 3482 measured this week) | for information; a result under 3456 would repeat the watch item (-11 on 17 Oct) | |
 
 17 October, 5:46-5:49 pm: all three FAILED within a minute, before any game: the approved scripts' housekeeping tried to tidy `data\prepared` through the read-only link and could not even list it. No measurement; queued again as 11-13 after the approval of dabb545 (18 October, about 12:50 am). Also, job 07 started while Ayman was at the PC: the idle check took "No User exists" (what quser tells the background account) as idle. Both fixed (scripts: no housekeeping of linked folders under the runner; runner: unknown idle time means wait for 11 pm). The read-only wall did its job: the scripts could not touch Ayman's data.
