@@ -230,6 +230,17 @@ From 4 October 2026 the opponents changed (rule 2: keep scores within 25-75%).
 | 2026-10-12 | release 1.0.0: + unsure-1024 + SPSA re-tune (bench 780879) | 47.00% -> 3453 | 45.75% -> 3458 | 45.80% -> 3493 | 38.45% -> 3461 | - | about 3466 (+17 over 3449; predicted +1 to +13). 3 games lost on time by Trinity in 4000 |
 | 2026-10-14 | main with combo merged: tm-control + nnue-simd (bench 780879) | 49.05% -> 3467 | 47.60% -> 3471 | 48.95% -> 3515 | 40.45% -> 3476 | - | about 3482 (+16 over 3466; predicted +5 to +12, lowered to +2 to +8 after #19). All four opponents up 13-22. 9 games lost on time by Trinity in 4000 (1.0.0: 3), worth watching |
 
+### First runner calibrations (queued 17 October 2026, predictions written first)
+
+Run by the PC job runner, overnight or after 30 idle minutes (CLAUDE.md,
+runner rules 11-12). Same PC, opponents, book, Syzygy and 10+0.1 as before.
+
+| Job | What | Prediction | Pass rule | Result |
+|---|---|---|---|---|
+| 2026-10-18-04 | release 1.0.0, 200 games (plumbing check) | about 3466 | within +/- 35 (200 games: 1 sigma about 16) | |
+| 2026-10-18-05 | release 1.0.0, 4000 games (known answer) | 3466 | within +/- 20 (two 4000-game runs differ by about 10 at 1 sigma, so the advisor's +/- 10 would fail a correct runner about 1 time in 3) | |
+| 2026-10-18-06 | main (= tm-reserve merged), 4000 games | about 3476 (3471 and 3482 measured this week) | for information; a result under 3456 would repeat the watch item (-11 on 17 Oct) | |
+
 ## Lessons so far
 
 - Self-play gains shrink against other engines by a varying factor
