@@ -192,6 +192,18 @@ positions; README: "Trained first on Trinity's own games"). Switching to
 Leela data gave +218 in self-play and +169 on the CCRL scale (network #5),
 so self-generated data at this strength is far worse than Leela's.
 
+Skeptic review before un-parking (Session, 18 October, owner said "go"):
+(1) the training labels are already deep engine scores (the Leela data's
+scores), far stronger than any static network; re-scoring with the 2048
+network's static eval would replace good labels with weaker ones, so the
+only gain left is distillation's "easier target", typically a fraction
+of the teacher's 1.3% held-out edge; (2) held-out loss did not predict
+Elo twice (2048: -1.3% and -30; more data: -0.54% and -11), so even a
+student that inherits part of the edge is a coin flip; (3) disk: a
+re-scored copy of the 3.65B positions needs another 117 GB (125 GB free).
+Estimate if built: self-play -10 to +8, about 15-20% to pass. Put back to
+the owner with the alternative below before any work.
+
 ## Proposed (not yet run)
 
 | Idea | Predicted self-play | Predicted CCRL | GPU time |
