@@ -617,6 +617,11 @@ played (SPRT #28, 80 games x 5 jobs at 8+0.08, started 5:21 pm). The
 loss-blend column favours main (0.019911 vs 0.019966), as expected when
 the scores come from main's own search; it is not the gate. Under 0.4%
 the ruler says nothing (section 3): the games decide.
+Screen (SPRT #28, 400 games at 8+0.08, finished 5:32 pm): +18.3 +/- 18.9
+(W 109, L 88, D 203; 0 time losses, 0 illegal moves, 0 crashes), well
+above the -10 stop line. A quick look over-reads (#17: +13 became +6);
+the full SPRT decides. Full SPRT continued from #28 at 5:33 pm (1800
+games per job; cap 18000 games and one day of GitHub time).
 How to read the control (advisor, 18 October, before its result): main's
 recipe was trained once and passed by +80, so main is not a "lucky
 draw" picked from several runs; the control should land near main on
