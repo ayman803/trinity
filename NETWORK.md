@@ -622,6 +622,17 @@ Screen (SPRT #28, 400 games at 8+0.08, finished 5:32 pm): +18.3 +/- 18.9
 above the -10 stop line. A quick look over-reads (#17: +13 became +6);
 the full SPRT decides. Full SPRT continued from #28 at 5:33 pm (1800
 games per job; cap 18000 games and one day of GitHub time).
+Advisor's notes on the screen (18 October evening), logged before the
+full SPRT ends: (1) first case where the 0.3% loss gate would have
+stopped a network that then passed the 400-game screen; it feeds the
+decision on the gate after the control run. Caveat: the 0.27% was
+measured on fresh self-play positions, not on the calibration games the
+0.3% gate was defined on, so "would have stopped" is likely, not
+certain. (2) A pass against main makes it mergeable; "the buckets caused
+it" needs 16 buckets vs the control (the clean one-change pair); no plan
+for 32 buckets before that. (3) Expect the +18 to shrink toward the
+central prediction (+2; range -8 to +10); no announcement as a win until
+the full SPRT and the slower-clock test are done.
 How to read the control (advisor, 18 October, before its result): main's
 recipe was trained once and passed by +80, so main is not a "lucky
 draw" picked from several runs; the control should land near main on
