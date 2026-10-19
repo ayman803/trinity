@@ -642,6 +642,11 @@ Session's caution: two 400-game screens each carry +/- 19, so their
 difference carries about +/- 27; a control at +10 vs 16 buckets' +18
 cannot separate "buckets" from "new shuffle and start". If 16 buckets
 passes, the clean test is a direct match 16 buckets vs control.
+Advisor, 18 October late (not a merge gate): if 16 buckets passes, it
+joins the runner's 40/60 nights next to main and 1.0.0, to see how it
+holds at long clocks before CCRL does. Noted: the 5% line was set after
+16 buckets' speed (1.5%) was known, so it did decide that case; accepted
+as reasonable on its own terms (1.5% is worth about 1 Elo).
 How to read the control (advisor, 18 October, before its result): main's
 recipe was trained once and passed by +80, so main is not a "lucky
 draw" picked from several runs; the control should land near main on
