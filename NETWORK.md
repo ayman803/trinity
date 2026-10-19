@@ -647,6 +647,16 @@ joins the runner's 40/60 nights next to main and 1.0.0, to see how it
 holds at long clocks before CCRL does. Noted: the 5% line was set after
 16 buckets' speed (1.5%) was known, so it did decide that case; accepted
 as reasonable on its own terms (1.5% is worth about 1 Elo).
+SPRT #29 (continues #28; finished 19 October 4:21 UTC): 9400 games,
+-2.00 +/- 3.96 (W 2239, L 2293, D 4868), LLR -2.35 of -2.94, 0 time
+losses. The +18 of the screen shrank as the advisor expected. Continued
+to the 18000-game cap (#30, 1720 games per job, 19 October 3:35 am
+Pacific; no search SPRT is waiting, and the one-day limit ends about
+5:20 pm). Most likely outcome: FAIL; an undecided result at the cap also
+means not merged.
+Control run (PC, 18 October 17:02-22:06, 5.1 hours, 30.4 s per superbatch):
+branch net-control-20261018-1702, bench 846777. 400-game screen vs main
+started 19 October 3:34 am Pacific.
 How to read the control (advisor, 18 October, before its result): main's
 recipe was trained once and passed by +80, so main is not a "lucky
 draw" picked from several runs; the control should land near main on
