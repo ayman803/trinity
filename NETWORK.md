@@ -654,6 +654,11 @@ to the 18000-game cap (#30, 1720 games per job, 19 October 3:35 am
 Pacific; no search SPRT is waiting, and the one-day limit ends about
 5:20 pm). Most likely outcome: FAIL; an undecided result at the cap also
 means not merged.
+RESULT (SPRT #31, 19 October 7:15 am Pacific, at the 18000-game cap):
+FAILED, -2.10 +/- 2.85 (W 4265, L 4374, D 9361; LLR -4.66; 0 time
+losses). Not merged. Prediction -8 to +10, central +2: inside the range,
+below the centre; "about 30% to pass" was too high. Held-out loss 0.27%
+better and +18 on the screen: neither predicted the result, again.
 Control run (PC, 18 October 17:02-22:06, 5.1 hours, 30.4 s per superbatch):
 branch net-control-20261018-1702, bench 846777. 400-game screen vs main
 started 19 October 3:34 am Pacific.
