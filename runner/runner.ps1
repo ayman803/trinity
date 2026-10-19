@@ -111,13 +111,22 @@ function Get-Queue {
 
 function Get-JobStatus {
     $status = @{}
+    $script:Disturbed = @{}
     if (Test-Path -LiteralPath $JobsFile) {
         foreach ($l in Get-Content -LiteralPath $JobsFile) {
             $id, $rest = $l -split ' ', 2
             if ($id) { $status[$id] = $rest }
+            if ($id -and $rest -like "DISTURBED*") { $script:Disturbed[$id] = 1 + $(if ($script:Disturbed.ContainsKey($id)) { $script:Disturbed[$id] } else { 0 }) }
         }
     }
     return $status
+}
+
+# A job still to run: never started, or stopped because Ayman came back
+# (at most 3 such stops; after that it is reported and left).
+function Test-JobPending($Status, [string]$Id) {
+    if (-not $Status.ContainsKey($Id)) { return $true }
+    return ($Status[$Id] -like "DISTURBED*" -and $script:Disturbed[$Id] -lt 3)
 }
 
 function Set-JobStatus([string]$Id, [string]$Status) {
@@ -202,39 +211,34 @@ function Initialize-Clone {
     } catch { Write-Note "Could not copy the calibration opponents: $($_.Exception.Message)" }
 }
 
-# Minutes since anyone used the keyboard or mouse in a signed-in session
-# (a large number if nobody is signed in; $null if Windows does not say).
+# Minutes since Ayman last used the keyboard or mouse, from the idle beacon
+# that runs in his own account (runner\beacon.ps1, task "Trinity Idle
+# Beacon"; this account can only read its file). $null when the beacon has
+# not written for 3 minutes (not signed in, or the beacon stopped): unknown.
+$BeaconFile = Join-Path $RunnerDir "beacon\last-input.txt"
 function Get-IdleMinutes {
-    $old = $ErrorActionPreference
-    $ErrorActionPreference = "Continue"
-    try { $lines = @(& quser.exe 2>&1 | ForEach-Object { "$_" }) } catch { return $null } finally { $ErrorActionPreference = $old }
-    $script:QuserText = ($lines -join ' ').Trim()
-    # "No User exists" from the runner's background session does not prove the
-    # PC is free (17 October: a job started while Ayman was at the PC).
-    if (($lines -join " ") -match "No User exists") { return $null }
-    $least = $null
-    foreach ($l in $lines) {
-        if ($l -notmatch '\s\d+\s+(Active|Disc)\s+(\S+)\s+\d') { continue }
-        if ($Matches[1] -ne "Active") { if ($null -eq $least) { $least = 100000 }; continue }
-        $i = $Matches[2]
-        $m = if ($i -in @("none", ".")) { 0 }
-            elseif ($i -match '^(\d+)\+(\d+):(\d+)$') { [int]$Matches[1] * 1440 + [int]$Matches[2] * 60 + [int]$Matches[3] }
-            elseif ($i -match '^(\d+):(\d+)$') { [int]$Matches[1] * 60 + [int]$Matches[2] }
-            elseif ($i -match '^\d+$') { [int]$i }
-            else { return $null }
-        if ($null -eq $least -or $m -lt $least) { $least = $m }
-    }
-    return $least
+    try {
+        if (-not (Test-Path -LiteralPath $BeaconFile)) { return $null }
+        $parts = ([IO.File]::ReadAllText($BeaconFile)).Trim() -split ' '
+        if ($parts.Count -ne 2) { return $null }
+        $styles = [Globalization.DateTimeStyles]::AdjustToUniversal -bor [Globalization.DateTimeStyles]::AssumeUniversal
+        $last = [DateTime]::Parse($parts[0], [Globalization.CultureInfo]::InvariantCulture, $styles)
+        $written = [DateTime]::Parse($parts[1], [Globalization.CultureInfo]::InvariantCulture, $styles)
+        $now = [DateTime]::UtcNow
+        if (($now - $written).TotalMinutes -gt 3) { return $null }
+        return [Math]::Max(0, ($now - $last).TotalMinutes)
+    } catch { return $null }
 }
 
-# Real jobs start only when the PC is free for them (the advisor's rule):
-# 30 minutes without keyboard or mouse use, or overnight (11 pm to 7 am).
+# Real jobs start only when the PC is free for them (owner and advisor,
+# 19 October): 30 minutes without keyboard or mouse use, at any hour. If
+# the beacon is silent (idle time unknown), only between 11 pm and 7 am.
 function Test-PcFree {
-    $h = (Get-Date).Hour
-    if ($h -ge 23 -or $h -lt 7) { return $true }
     $idle = Get-IdleMinutes
-    if ($null -eq $idle) { Write-Note "Idle time unknown (quser: $script:QuserText); waiting for 11 pm." }
-    return ($null -ne $idle -and $idle -ge 30)
+    if ($null -ne $idle) { return ($idle -ge 30) }
+    Write-Note "Idle time unknown (the idle beacon has not written for 3 minutes); real jobs wait for 11 pm."
+    $h = (Get-Date).Hour
+    return ($h -ge 23 -or $h -lt 7)
 }
 
 # Check out exactly the approved commit. Returns $false (and says why) if
@@ -277,8 +281,26 @@ function Invoke-Job($Job, $Hours, [string]$Commit) {
         Start-Sleep -Seconds 30
         if ((Get-Date) -gt $deadline) { $reason = "STOPPED (over the $Hours h limit)"; Stop-Tree $p.Id; break }
         if ((Get-FreeGB) -lt $MinFreeRunGB) { $reason = "STOPPED (under $MinFreeRunGB GB free)"; Stop-Tree $p.Id; break }
+        # The PC is Ayman's again as soon as he uses it: the job stops, does
+        # not count, and runs again from the start later (at most 3 times).
+        $idle = Get-IdleMinutes
+        if ($Job.Script -ne "runner/jobs/hello.ps1" -and $null -ne $idle -and $idle -lt 1) {
+            $reason = "DISTURBED (keyboard or mouse used; stopped, not counted, runs again later)"
+            Stop-Tree $p.Id
+            break
+        }
     }
     $p.WaitForExit()
+    if ($reason -and $Job.Script -eq "scripts/calibrate.ps1") {
+        # A stopped calibration's partial games must not be read later as the
+        # newest calibration (time use, forensics): moved aside, in our own clone.
+        $res = Join-Path $Clone "sprt\results"
+        $aside = Join-Path $res "incomplete"
+        New-Item -ItemType Directory -Force -Path $aside | Out-Null
+        Get-ChildItem -LiteralPath $res -File -Filter "*_calibration_*" -ErrorAction SilentlyContinue |
+            Where-Object { $_.LastWriteTime -ge $started } |
+            ForEach-Object { Move-Item -LiteralPath $_.FullName -Destination $aside -Force }
+    }
     $minutes = [Math]::Round(((Get-Date) - $started).TotalMinutes)
     $status = if ($reason) { $reason } elseif ($p.ExitCode -eq 0) { "DONE" } else { "FAILED (exit code $($p.ExitCode))" }
     Set-JobStatus $Job.Id $status
@@ -298,7 +320,7 @@ function Invoke-Cycle {
     $status = Get-JobStatus
     $next = $null
     foreach ($job in Get-Queue) {
-        if ($job.Machine -ne $Machine -or $status.ContainsKey($job.Id)) { continue }
+        if ($job.Machine -ne $Machine -or -not (Test-JobPending $status $job.Id)) { continue }
         $next = $job
         break
     }
@@ -321,7 +343,7 @@ function Invoke-Cycle {
         return $false
     }
     if ($next.Script -ne "runner/jobs/hello.ps1" -and -not (Test-PcFree)) {
-        Write-Note "Waiting: $($next.Id) starts after 30 minutes without keyboard or mouse use, or between 11 pm and 7 am."
+        Write-Note "Waiting: $($next.Id) starts after 30 minutes without keyboard or mouse use."
         return $false
     }
     $script:LastNote = ""
