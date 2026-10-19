@@ -605,6 +605,18 @@ it) on the same files as this run: tools\net\Control-Network.bat
 net-control-<date>). About 5 hours. Its SPRT against main measures how
 much two from-scratch runs of one recipe differ (seed and shuffle);
 16 buckets is then judged against the control as well as against main.
+Result, training (PC, 18 October): 6.0 hours (38 s per superbatch), branch
+net-kb16-20261018-0919, bench 928782 (same on the PC and here).
+Gate 1, held-out loss (Session, 18 October 5:20 pm Pacific; the calibration
+PGNs are on the PC only, so measured here on 150,341 positions from fresh
+Trinity self-play games, 5000 nodes per move, played by main's build;
+pure game-result loss, the fair column, because the other labels are
+main's own search scores): main 0.064102, 16 buckets 0.063929, i.e.
+0.27% better. Inside Ayman's 0-0.3% band, so the 400 quick games are
+played (SPRT #28, 80 games x 5 jobs at 8+0.08, started 5:21 pm). The
+loss-blend column favours main (0.019911 vs 0.019966), as expected when
+the scores come from main's own search; it is not the gate. Under 0.4%
+the ruler says nothing (section 3): the games decide.
 How to read the control (advisor, 18 October, before its result): main's
 recipe was trained once and passed by +80, so main is not a "lucky
 draw" picked from several runs; the control should land near main on
