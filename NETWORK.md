@@ -633,6 +633,15 @@ it" needs 16 buckets vs the control (the clean one-change pair); no plan
 for 32 buckets before that. (3) Expect the +18 to shrink toward the
 central prediction (+2; range -8 to +10); no announcement as a win until
 the full SPRT and the slower-clock test are done.
+Two more rules (owner, 18 October evening, before any further result):
+(a) "slower network" = more than 5% fewer nodes per second than main on
+GitHub's speed check with 3 copies at once; only those also need 30+0.3.
+16 buckets measured 1.5% slower, so 8+0.08 decides for it. (b) The
+control network gets the same 400 quick games at 8+0.08 against main.
+Session's caution: two 400-game screens each carry +/- 19, so their
+difference carries about +/- 27; a control at +10 vs 16 buckets' +18
+cannot separate "buckets" from "new shuffle and start". If 16 buckets
+passes, the clean test is a direct match 16 buckets vs control.
 How to read the control (advisor, 18 October, before its result): main's
 recipe was trained once and passed by +80, so main is not a "lucky
 draw" picked from several runs; the control should land near main on

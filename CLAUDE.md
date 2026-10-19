@@ -168,7 +168,9 @@ by the Session. They write only inside C:\Trinity\sprt\coder2.
 Standing parts of that setup that still apply:
 - The PC runs one heavy job at a time; Ayman decides the order. The PC
   queue is in ESTIMATES.md.
-- Every network merge: SPRT (8+0.08 and 30+0.3 for slower networks), the
+- Every network merge: SPRT (8+0.08, and 30+0.3 for slower networks:
+  more than 5% fewer nodes per second than main on GitHub's speed check
+  with 3 copies at once; owner, 18 October, before the 16-bucket result), the
   v2 check (19-V2-Check.bat), calibration, then an SPSA re-tune.
 - Disk budget for training: about 200 GB. Training data takes 32 GB per
   billion positions, plus about 52 GB for shuffling and spare.
