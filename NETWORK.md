@@ -657,6 +657,16 @@ means not merged.
 Control run (PC, 18 October 17:02-22:06, 5.1 hours, 30.4 s per superbatch):
 branch net-control-20261018-1702, bench 846777. 400-game screen vs main
 started 19 October 3:34 am Pacific.
+Control's longer test, what each outcome means (advisor and Session,
+19 October 7:15 am Pacific, before any result beyond the 400-game
+screen's -14.8 +/- 18.8): the control's SPRT against main is continued to
+about 3000 games (+/- 7 at that length), after the 16-bucket test ends.
+- Within +/- 5 of main: run-to-run luck is small; the failed networks
+  were really worse, and new networks keep being judged against main.
+- -10 or worse: luck is large; any new recipe needs two training runs
+  (two seeds) before a verdict.
+- Between -5 and -10 (or anything the +/- 7 cannot place): extend to
+  about 6000 games before reading it.
 How to read the control (advisor, 18 October, before its result): main's
 recipe was trained once and passed by +80, so main is not a "lucky
 draw" picked from several runs; the control should land near main on
