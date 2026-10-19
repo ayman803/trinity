@@ -1,0 +1,12 @@
+SPRT test #31, finished 2026-10-19 14:15 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39238463803 (run id 39238463803)
+Continues run id 39181284392; the totals below include it.
+SPRT RESULT: FAILED - 'net-kb16-20261018-0919' is not stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: net-kb16-20261018-0919 (bench 928782) vs main (bench 780879), tc 8+0.08, bounds [0, 5]
+Games: 18000, Wins: 4265, Losses: 4374, Draws: 9361, Points: 8945.5 (49.70 %)
+Ptnml(0-2): [169, 2255, 4214, 2240, 122]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -2.10 +/- 2.85, nElo: -3.75 +/- 5.08
+LLR: -4.66 (-2.94, 2.94) [0.00, 5.00]
