@@ -685,6 +685,15 @@ Added by the advisor, 19 October, before the result:
   pessimistic: +/- 10 is the 95% range at 2000 games (sigma about 5), and
   with a true run-to-run spread of about 10, the best of 4 still gains
   about +9 (100 / sqrt(100 + 25) x 1.03); with a spread of about 3, about +2.
+Control's extended test, step 1 (SPRT #32, 19 October 8:55 am Pacific,
+3000 games): -8.92 +/- 7.02 (W 680, L 757, D 1563; 0 time losses).
+By the rules written before it: between -5 and -10 -> extended to about
+6000 games (#33, started 9:00 am); best-of-N trigger (-8 or worse):
+MET at this length, so best of several starts is un-parked (plan and
+prediction to follow, after the 6000-game reading, before any training).
+Reading for now, as advised: "run-to-run differences may be large"; if
+it holds, main is a high draw of its recipe and 16 buckets (-2 vs main)
+may be about +7 over the same data and start: the head-to-head decides.
 How to read the control (advisor, 18 October, before its result;
 wording corrected 19 October): main's recipe was trained once and
 passed by +80, so main was not SELECTED for luck from several runs. It
