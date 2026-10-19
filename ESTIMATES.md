@@ -207,6 +207,12 @@ re-scored copy of the 3.65B positions needs another 117 GB (125 GB free).
 Estimate if built: self-play -10 to +8, about 15-20% to pass. Put back to
 the owner with the alternative below before any work.
 
+**PARKED with a trigger (19 October): best of several random starts**
+(Scout, scout/2026-10-19.md). Train the best recipe with 3-4 weight seeds,
+keep the best on about 2000 games each, confirm with a fresh SPRT.
+Taken up if the control's extended test (about 3000 games) shows -8 or
+worse against main; dropped if within +/- 4 (NETWORK.md section 6).
+
 ## Proposed (not yet run)
 
 | Idea | Predicted self-play | Predicted CCRL | GPU time |

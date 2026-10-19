@@ -667,10 +667,24 @@ about 3000 games (+/- 7 at that length), after the 16-bucket test ends.
   (two seeds) before a verdict.
 - Between -5 and -10 (or anything the +/- 7 cannot place): extend to
   about 6000 games before reading it.
-How to read the control (advisor, 18 October, before its result): main's
-recipe was trained once and passed by +80, so main is not a "lucky
-draw" picked from several runs; the control should land near main on
-average. One control run is one sample with its own test error: a
+Added by the advisor, 19 October, before the result:
+- 16 buckets vs the control, head to head (same data order, one change),
+  is played after the control's extended test, whatever 16 buckets did
+  against main: if the control is really about -10, the buckets may be
+  worth about +8 over the same data and start. It decides the next
+  network run, not a merge.
+- Best of several starts (Scout, 19 October; parked in ESTIMATES.md):
+  if the control's extended test shows -8 or worse against main, it is
+  taken up with the idle graphics card; within +/- 4 it is dropped.
+  The Session's first objection ("mostly picks the luckiest") was too
+  pessimistic: +/- 10 is the 95% range at 2000 games (sigma about 5), and
+  with a true run-to-run spread of about 10, the best of 4 still gains
+  about +9 (100 / sqrt(100 + 25) x 1.03); with a spread of about 3, about +2.
+How to read the control (advisor, 18 October, before its result;
+wording corrected 19 October): main's recipe was trained once and
+passed by +80, so main was not SELECTED for luck from several runs. It
+is still one draw of its recipe and may have landed high by chance; the
+control measures exactly that. One control run is one sample with its own test error: a
 control at -5 to -10 means "run-to-run differences may be large", not
 that they explain the 2048 and more-data failures, which most likely
 stand. A second control run would be needed to say more.
