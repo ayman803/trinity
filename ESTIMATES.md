@@ -289,6 +289,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-10-18 (set up by the Session): read up to "03:29 STARTED 2026-10-18-13". Nothing queued.
 - 2026-10-18 6:20 am: the scheduled check-in ran without the repository (it could not attach it) and wrote nothing; the Session logged job 13 by hand: read up to "05:50 DONE 2026-10-18-13". Nothing queued. The check-in moves to a persistent session with the repository attached (as Scout).
 - 2026-10-19 6:27 am: read up to "03:17 DONE 2026-10-18-17" (jobs 14-17, all done, 0 time losses). Nothing queued: scripts/calibrate.ps1 differs from the approved commit dabb545 (1a03ff6, -Affinity), so 40/60 night 2 waits for a new approval.
+- 2026-10-19 7:10 am (Session): 40/60 night 2 queued (2026-10-19-01/02). The approved calibrate.ps1 (dabb545) runs these arguments as they are; the newer -Affinity option is only needed on the laptop, so no new approval is needed for the PC.
 
 ## Lessons so far
 
