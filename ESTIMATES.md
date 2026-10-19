@@ -262,8 +262,8 @@ runner rules 11-12). Same PC, opponents, book, Syzygy and 10+0.1 as before.
 
 | Job | What | Prediction | Result |
 |---|---|---|---|
-| 2026-10-18-14 | time use, the three runner calibrations of 18 Oct | main: under 0.3 s about 0.3-0.6% of moves (tm-reserve by day: 0.32%), at most 5 time losses in 4000; 1.0.0: about 2% (by day 2.03%) | |
-| 2026-10-18-15 | loss forensics, main's runner calibration (800 losses, 4x the usual sample) | close to 1.0.0's mix of 13 Oct: gradual 60-75%, search 15-25%, evaluation 4-10%, time 1% or less (fewer than 1.0.0 after tm-reserve). Stockfish referee only if copied into the runner's clone; otherwise Trinity judges itself and the mix is less reliable | |
+| 2026-10-18-14 | time use, the three runner calibrations of 18 Oct | main: under 0.3 s about 0.3-0.6% of moves (tm-reserve by day: 0.32%), at most 5 time losses in 4000; 1.0.0: about 2% (by day 2.03%) || main (03:29 run): 0.06% of moves under 0.3 s (better than predicted 0.3-0.6%), 6.29% under 1 s; 0 time losses in 4000. 1.0.0 (01:07 run): 0.51%, not the predicted ~2% (by day 2.03%): the idle overnight PC clearly helps 1.0.0's clock too; 0 time losses in 4000. Opponents 7.2-7.6% under 0.3 s. Prediction for main: PASS (better); for 1.0.0: MISS (4x fewer) |
+| 2026-10-18-15 | loss forensics, main's runner calibration (800 losses, 4x the usual sample) | close to 1.0.0's mix of 13 Oct: gradual 60-75%, search 15-25%, evaluation 4-10%, time 1% or less (fewer than 1.0.0 after tm-reserve). Stockfish referee only if copied into the runner's clone; otherwise Trinity judges itself and the mix is less reliable || 800 of 876 losses, Stockfish referee, 13 minutes (not the expected ~2 h). Gradual 75% (top of 60-75%), search 16% (low end of 15-25%), evaluation 6.5%, time 0% (predicted 1% or less), lost from the book 2%. Inside the prediction on every line. Search mistakes: median time ratio 0.77 (128 cases), again the base rate, so not under-thought. Gradual losses' worst moves at 10x time: search 568 / evaluation 487 |
 
 ### Slower time control on the runner (owner's decision, 18 October)
 
@@ -274,7 +274,7 @@ pooled until the gap's error is under about +/- 10.
 
 | Job | What | Prediction | Result |
 |---|---|---|---|
-| 2026-10-18-16/17 | main and 1.0.0 at 40/60, 480 games each | gap over 1.0.0 +5 to +15 (+14 at 10+0.1; time-management gains may shrink with more time); one night is about +/- 21, so no verdict before 3 nights; 0-2 time losses per 480 games | |
+| 2026-10-18-16/17 | main and 1.0.0 at 40/60, 480 games each | gap over 1.0.0 +5 to +15 (+14 at 10+0.1; time-management gains may shrink with more time); one night is about +/- 21, so no verdict before 3 nights; 0-2 time losses per 480 games || Night 1 (18-19 Oct): main 3511, 1.0.0 3490 (each +/- 17): gap +21 +/- 24, above the +5 to +15 range but well inside one night's noise; no verdict (1 of 3 nights). Per opponent main minus 1.0.0: akimbo +41, Patricia -3, Bread +32, Prune +17, so akimbo drives most of it. 0 time losses for either (480 games each). Night 2 NOT queued 19 Oct: scripts/calibrate.ps1 changed since approved commit dabb545 (new -Affinity option, 1a03ff6), so the check-in may not queue it until a newer commit is approved |
 
 Method from 18 October (CLAUDE.md runner rule 13): report each version as
 its gap over 1.0.0 calibrated the same night on the runner. Lesson: the
@@ -288,6 +288,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 
 - 2026-10-18 (set up by the Session): read up to "03:29 STARTED 2026-10-18-13". Nothing queued.
 - 2026-10-18 6:20 am: the scheduled check-in ran without the repository (it could not attach it) and wrote nothing; the Session logged job 13 by hand: read up to "05:50 DONE 2026-10-18-13". Nothing queued. The check-in moves to a persistent session with the repository attached (as Scout).
+- 2026-10-19 6:27 am: read up to "03:17 DONE 2026-10-18-17" (jobs 14-17, all done, 0 time losses). Nothing queued: scripts/calibrate.ps1 differs from the approved commit dabb545 (1a03ff6, -Affinity), so 40/60 night 2 waits for a new approval.
 
 ## Lessons so far
 
