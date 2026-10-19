@@ -42,7 +42,12 @@ Windows. Every instruction must be concrete:
    trinity-results, updates ESTIMATES.md, and queues next jobs only from
    already-approved scripts and already-planned work; a read-only task
    ("Trinity phone summary", 6:35 am) sends the owner a short phone summary. It never merges, never changes scripts that need
-   approval, and never starts training or data generation.
+   approval, and never starts training or data generation. When it
+   queues, a script edited after the last approval is not a reason to
+   wait: the runner always runs the approved version, so it is enough that
+   the approved version accepts the job's parameters (19 October;
+   this overrides the stricter "unchanged since the approved commit" test
+   in the check-in's own instructions).
 6. When Trinity is near top-100 strength, prepare a release for the CCRL
    testers.
 7. Before each next step, briefly review the plan as a skeptic: what could
