@@ -605,6 +605,13 @@ it) on the same files as this run: tools\net\Control-Network.bat
 net-control-<date>). About 5 hours. Its SPRT against main measures how
 much two from-scratch runs of one recipe differ (seed and shuffle);
 16 buckets is then judged against the control as well as against main.
+How to read the control (advisor, 18 October, before its result): main's
+recipe was trained once and passed by +80, so main is not a "lucky
+draw" picked from several runs; the control should land near main on
+average. One control run is one sample with its own test error: a
+control at -5 to -10 means "run-to-run differences may be large", not
+that they explain the 2048 and more-data failures, which most likely
+stand. A second control run would be needed to say more.
 Skeptic's note: if it fails narrowly, the next useful run is a control
 (main's recipe, unchanged, new random start) to measure how much two
 from-scratch runs differ; without that number every network result
