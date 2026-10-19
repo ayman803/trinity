@@ -694,6 +694,14 @@ prediction to follow, after the 6000-game reading, before any training).
 Reading for now, as advised: "run-to-run differences may be large"; if
 it holds, main is a high draw of its recipe and 16 buckets (-2 vs main)
 may be about +7 over the same data and start: the head-to-head decides.
+Second control run (19 October, owner's daytime-GPU plan with the
+advisor): tools\net\Control2-Network.bat (main's recipe unchanged, weight
+seed 20261019, same data files; branch net-control2-<date>), about 5
+hours, run in the day. It is both a second sample of the run-to-run
+spread and a best-of-several candidate. Prediction (before training):
+vs main -9 +/- 10 (if the spread is real, it lands anywhere from about
+-20 to +2); vs the first control within +/- 10. It gets the same
+400-game screen, then the extended test only if the screen is above -10.
 How to read the control (advisor, 18 October, before its result;
 wording corrected 19 October): main's recipe was trained once and
 passed by +80, so main was not SELECTED for luck from several runs. It
