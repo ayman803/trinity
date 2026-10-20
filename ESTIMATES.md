@@ -103,10 +103,12 @@ make_move 3%. Top 3 speed-ups:
    the picker still scanned every remaining quiet for each capture left.
    In speed-picker. Together with 1: 11% fewer instructions per node,
    +5.6% nodes per second.
-3. Next: SEE is computed twice for most captures in quiescence (once to
-   order, once to prune, with different thresholds); one SEE that returns
-   the exchange value would serve both. About 2% of instructions; worth
-   about +1. Not started.
+3. SEE computed twice for captures in quiescence (once to order, once to
+   prune). Checked 20 October: reusing the ordering answer where it
+   decides the pruning one keeps the bench identical (780879) but saves
+   nothing (instructions +0.1%; timing +1.3%, within noise): the history
+   lookup needed to reuse it costs as much as the SEE calls it avoids.
+   Dropped before any games.
 Not proposed: deferring accumulator updates until a node is evaluated (a
 known technique elsewhere; dropped under the originality rule, as on 13
 October).
