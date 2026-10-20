@@ -705,6 +705,21 @@ Head-to-head 16 buckets vs control (same data, same order, one change):
 SPRT [0, 5] at 8+0.08, up to 9000 games, started 19 October 5:24 pm
 Pacific (#34). Prediction (before it): +7 +/- 7 (16 buckets -2 vs main,
 control -10 vs main); about 50% to pass.
+Advisor, 19 October evening, before Control2's result:
+(1) Rule out setup drift before more starts. Code check (Session, done):
+today's trainer differs from main's (8b4d54f) only by the 16-bucket
+option and the seed option, both no-ops at 8 buckets and the default
+seed; Cargo.lock and the conversion are unchanged; same command line as
+big.ps1. Empirical check, to run on the PC after Control2:
+tools\net\Drift-Check.bat trains 1 superbatch with each trainer (1024,
+8 buckets, default seed, big-1.data) and compares loss and files.
+Prediction: identical, or the same loss within GPU rounding. If not, the
+-10 may be a setup change, and extra starts would not fix it.
+(2) "About 10 Elo of run-to-run luck" is one sample: estimated range
+3-15 until Control2 and the drift check are in. Best of several starts
+on the 8-bucket recipe is expected to recover main's level, not beat it
+by much; the real lever is 16 buckets, if it beats the control head to
+head, in which case further starts use 16 buckets.
 Second control run (19 October, owner's daytime-GPU plan with the
 advisor): tools\net\Control2-Network.bat (main's recipe unchanged, weight
 seed 20261019, same data files; branch net-control2-<date>), about 5
