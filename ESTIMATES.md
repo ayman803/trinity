@@ -88,6 +88,14 @@ network, and the second week merged nothing):
   gets the full test.
 - Calibration nights for candidates that passed on GitHub come before
   runner tuning nights (docs/spsa-runner-design.md).
+- Runner tuning (planned work, built 20 October, commit ff3d4a6; needs
+  Ayman's approval of that commit or later): on a night with no
+  candidate calibration and no 40/60 pair queued, queue
+  `scripts/calibrate.ps1 | -Tune -Chain A -Minutes 270` and then the same
+  with `-Chain B`. Stop after 6 nights per chain, or at night 3 if chains
+  A and B move fewer than 3 of the 4 settings the same way. Prediction:
+  CCRL scale 0 to +6, about 35% to pass Scout's rule; the unseen-opponent
+  check decides.
 - Weekly count (for the phone summary): week of 19 October: tested 2
   (speed-picker, unsure-spread), merged 0.
 
