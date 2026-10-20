@@ -733,6 +733,22 @@ Next GPU run (20 October): 16 buckets, second random start
 vs main about +2 +/- 10 (seed 1 gave -2.1; the recipe is worth about +4
 over an average 8-bucket run, and main sits about +10 above that
 average); about 30% to beat main by +3 or more in a full test.
+Control2 extended (SPRT #37, 6000 games, 20 October): vs main -0.23 +/-
+4.98 (W 1457, L 1461, D 3082). Three runs of main's recipe now: main 0,
+control -9.7, control2 -0.2. Spread (sample sd) about 5.5; main sits
+about +3 above the three-run mean (-3.3), so it is not an unusually
+high draw.
+CORRECTION (Session, 20 October, before KB16-Seed2 starts): the
+16-buckets-vs-control head-to-head was NOT one change. The control used
+weight seed 20261018; 16 buckets used bullet's default seed. So its
++4.5 +/- 2.9 mixes the buckets with the luck of two different starts
+(about +/- 8 between two runs). Across all runs: 8-bucket mean about
+-3.3 +/- 3.2 vs main, the one 16-bucket run -2.1, i.e. buckets about
++1 +/- 7: not established. The rule "further starts use 16 buckets" was
+read from a confounded test; KB16-Seed2 still goes ahead as a second
+16-bucket sample and a best-of candidate. Revised prediction for it
+(before training): vs main -1 +/- 8, about 25% to beat main by +3 or
+more. Lesson: a one-change comparison must fix the seed too.
 Drift check (PC, 20 October): old trainer (8b4d54f) loss 0.042848, new
 trainer (net-kb16) loss 0.042848 after 1 superbatch, same data and seed:
 equal to all printed digits; the saved files differ only by GPU
