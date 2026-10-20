@@ -76,5 +76,17 @@ or the other nights); one new runner job script (runner/jobs/spsa.ps1,
 with a results-repository mode) and an `--opponents` mode in spsa.py;
 one approval.
 
-Next: build runner/jobs/spsa.ps1 and the opponents mode of spsa.py; one
-approval.
+Built 20 October as a mode of the already-approved calibration script
+(no runner reinstall): `scripts/calibrate.ps1 -Tune -Chain A|B -Minutes
+270` (code in scripts/tune-opponents.ps1; PowerShell, since the PC has
+no Python). Each step: "up" and "down" each play 2 x 14 games (both
+colours, same openings) against one opponent, in turn; settings move by
+the difference of their scores (the spsa.py schedule, 11,000 planned
+pairs per chain). Progress saved after every step, so a disturbed job
+loses one step; state and a summary go to trinity-results spsa/.
+Dry run in the cloud (20 October, 1+0.01, a stand-in opponent): 6
+steps over two jobs, resumed from the saved state, settings reach the
+engine as UCI options. Queue lines, after Ayman's approval, on nights
+without a candidate calibration:
+`<id> | pc | scripts/calibrate.ps1 | -Tune -Chain A -Minutes 270` and the
+same with `-Chain B`.

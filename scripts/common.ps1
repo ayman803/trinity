@@ -213,12 +213,13 @@ function Stop-KeepAwake($Handle) {
 # the processor level to build for: "native" (this PC, fastest) or, for
 # example, "x86-64-v2" (the release build for older processors).
 function Build-Trinity {
-    param([Parameter(Mandatory)][string]$Ref, [string]$Cpu = "native")
+    param([Parameter(Mandatory)][string]$Ref, [string]$Cpu = "native", [string]$Features = "")
     $sha = Get-NativeOutput git @("-C", $script:Root, "rev-parse", "--short=10", $Ref)
     $safe = ($Ref -replace "^origin/", "") -replace "[^A-Za-z0-9._-]", "_"
     $engines = Join-Path $script:Work "engines"
     New-Item -ItemType Directory -Force -Path $engines | Out-Null
     $cpuTag = if ($Cpu -eq "native") { "" } else { "-$Cpu" }
+    if ($Features) { $cpuTag += "-$Features" }   # for example "tune": search settings as UCI options
     $enginePath = Join-Path $engines "trinity-$safe-$sha$cpuTag$($script:ExeSuffix)"
     if (Test-Path $enginePath) {
         Write-Host "Using cached build of $Ref ($sha)."
@@ -234,8 +235,9 @@ function Build-Trinity {
     try {
         $oldFlags = $env:RUSTFLAGS
         $env:RUSTFLAGS = "-C target-cpu=$Cpu"
-        Invoke-Native cargo @("build", "--release", "--manifest-path", (Join-Path $tree "Cargo.toml"),
-            "--target-dir", (Join-Path $script:Work "target"))
+        $featureArgs = if ($Features) { @("--features", $Features) } else { @() }
+        Invoke-Native cargo (@("build", "--release", "--manifest-path", (Join-Path $tree "Cargo.toml"),
+            "--target-dir", (Join-Path $script:Work "target")) + $featureArgs)
     } finally {
         $env:RUSTFLAGS = $oldFlags
     }

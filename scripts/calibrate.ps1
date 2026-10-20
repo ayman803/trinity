@@ -20,10 +20,16 @@ param(
     [switch]$NoUpdate,
     # One-off match instead of calibration: the name of an unrated opponent
     # whose Windows build is saved as sprt\opponents\<name>.exe.
-    [string]$Vs = ""
+    [string]$Vs = "",
+    # Re-tuning instead of calibration (docs/spsa-runner-design.md): one
+    # SPSA chain (A or B) against the same rated opponents, for -Minutes.
+    [switch]$Tune,
+    [ValidateSet("A", "B")][string]$Chain = "A",
+    [int]$Minutes = 270
 )
 
 . (Join-Path $PSScriptRoot "common.ps1")
+. (Join-Path $PSScriptRoot "tune-opponents.ps1")
 
 # CCRL 40/15 ratings (single CPU), list of 9 October 2026.
 $opponents = @(
@@ -135,7 +141,7 @@ try {
         Read-Host "Press Enter to continue anyway, or close this window to wait"
     }
 
-    $trinity = Build-Trinity "origin/$Ref"
+    $trinity = if ($Tune) { Build-Trinity "origin/$Ref" -Features "tune" } else { Build-Trinity "origin/$Ref" }
     $bench = Get-BenchNodes $trinity
     $built = @()
     $opponentDir = Join-Path $script:Work "opponents"
@@ -167,6 +173,14 @@ try {
     $syzygy = Join-Path $script:Root "syzygy"
     $syzygyArg = if (Test-Path -LiteralPath $syzygy) { "option.SyzygyPath=$syzygy" } else { "option.Hash=$Hash" }
     if (Test-Path -LiteralPath $syzygy) { Write-Host "Using Syzygy tablebases from $syzygy for all engines." }
+    if ($Tune) {
+        $keepAwake = Start-KeepAwake
+        $sha = Get-NativeOutput git @("-C", $script:Root, "rev-parse", "origin/$Ref")
+        $opps = @($built | ForEach-Object { @{ Name = $_[0].Name; Exe = $_[1] } })
+        Invoke-OpponentTune -Engine $trinity -Sha "$sha".Trim() -Ref $Ref -Opponents $opps -Fastchess $fastchess `
+            -Book $book -TC $TC -SyzygyArg $syzygyArg -Concurrency $Concurrency -Chain $Chain -Minutes $Minutes
+        return
+    }
     $results = Join-Path $script:Work "results"
     New-Item -ItemType Directory -Force -Path $results | Out-Null
     $stamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
