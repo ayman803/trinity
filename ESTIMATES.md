@@ -311,7 +311,9 @@ fine.
   week ends about 24 October, after which training can become a runner
   job (fewer visits).
   Visits so far (week of 19 October): 19 Oct, 4 pm (git pull, reinstall,
-  Control2).
+  Control2); 19 Oct, about 11:45 pm (Drift-Check, run twice); 20 Oct
+  (KB16-Seed2 start, planned). Training is the main reason for visits;
+  after the clean week (about 24 October) it can become a runner job.
 
 ## Runner check-ins
 
