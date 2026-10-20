@@ -136,6 +136,9 @@ fn init_lmr(lmr: &mut [[[i32; 64]; 64]; 2]) {
 /// written for existing moves, so nothing is cleared up front.
 /// Ordering score of a quiet move not scored yet (see `score_moves`).
 const QUIET_PENDING: i32 = 600_000_000;
+/// Ordering score of every move but the hash move until the hash move has
+/// been searched (most nodes with one end right there).
+const REST_PENDING: i32 = 1_500_000_000;
 
 struct ScoredMoves {
     list: MoveList,
@@ -452,14 +455,14 @@ impl Searcher {
     /// the placeholder `QUIET_PENDING` (below killers, above bad captures);
     /// `score_quiets` replaces it once the first of them is picked, so
     /// nodes that cut off earlier never pay for their history lookups.
-    fn score_moves(&self, b: &Board, moves: &mut ScoredMoves, tt_move: Move, ply: usize, lazy: bool) {
+    fn score_moves(&self, b: &Board, moves: &mut ScoredMoves, tt_move: Move, ply: usize, lazy: bool, from: usize) {
         let counter = if ply > 0 {
             let f = self.frames[ply - 1];
             if f.piece != NO_PIECE { self.counters[f.piece as usize][f.mv.to()] } else { Move::NONE }
         } else {
             Move::NONE
         };
-        for i in 0..moves.len() {
+        for i in from..moves.len() {
             let m = moves.list[i];
             let score = if m == tt_move {
                 2_000_000_000
@@ -669,7 +672,15 @@ impl Searcher {
             return if in_check { -MATE + ply as i32 } else { 0 };
         }
         let mut moves = ScoredMoves::new(list);
-        self.score_moves(b, &mut moves, tt_move, ply, true);
+        if !tt_move.is_none() && moves.list.contains(tt_move) {
+            // Search the hash move first; score the rest only if needed,
+            // with the history its search has just updated.
+            for j in 0..moves.len() {
+                moves.scores[j].write(if moves.list[j] == tt_move { 2_000_000_000 } else { REST_PENDING });
+            }
+        } else {
+            self.score_moves(b, &mut moves, tt_move, ply, true, 0);
+        }
 
         let orig_alpha = alpha;
         let mut best_score = -INF;
@@ -682,6 +693,10 @@ impl Searcher {
         let mut i = 0;
         while i < moves.len() {
             let mut m = moves.pick(i);
+            if moves.score(i) == REST_PENDING {
+                self.score_moves(b, &mut moves, tt_move, ply, true, i);
+                m = moves.pick(i);
+            }
             if moves.score(i) == QUIET_PENDING {
                 // First quiet move reached: only now are quiets worth scoring.
                 self.score_quiets(b, &mut moves, i, ply);
@@ -919,7 +934,7 @@ impl Searcher {
         movegen::generate(b, &mut list, !in_check);
         let tt_move = tt_entry.map_or(Move::NONE, |e| e.mv);
         let mut moves = ScoredMoves::new(list);
-        self.score_moves(b, &mut moves, tt_move, ply, false);
+        self.score_moves(b, &mut moves, tt_move, ply, false, 0);
 
         let mut best_move = Move::NONE;
         let mut searched = 0;

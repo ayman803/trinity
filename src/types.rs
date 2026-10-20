@@ -236,7 +236,6 @@ impl MoveList {
         self.len = self.len.min(len);
     }
 
-    #[cfg_attr(not(test), allow(dead_code))]
     pub fn contains(&self, m: Move) -> bool {
         self.as_slice().contains(&m)
     }
