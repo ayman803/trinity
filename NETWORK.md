@@ -720,6 +720,19 @@ Prediction: identical, or the same loss within GPU rounding. If not, the
 on the 8-bucket recipe is expected to recover main's level, not beat it
 by much; the real lever is 16 buckets, if it beats the control head to
 head, in which case further starts use 16 buckets.
+Head-to-head FINAL (SPRT #35, 18000 games): 16 buckets vs control
+PASSED, +4.46 +/- 2.87 (W 4501, L 4270, D 9229; LLR 4.01). The buckets
+help by about +4 on the same data and start (prediction +7 +/- 7: right
+direction, lower). By the rule set before: further starts use 16 buckets.
+Control2 screen (SPRT #36, 400 games): +15.7 +/- 19.8 vs main; above
+-10, so extended to 6000 games (20 October 7:05 am). Screens over-read
+(16 buckets: +18 on its screen, -2 at 18000).
+Next GPU run (20 October): 16 buckets, second random start
+(tools\net\KB16-Seed2-Network.bat: kb16.ps1 -KingBuckets 16 -Seed
+20261020 -Tag kb16s2; about 6-7 hours). Prediction (before training):
+vs main about +2 +/- 10 (seed 1 gave -2.1; the recipe is worth about +4
+over an average 8-bucket run, and main sits about +10 above that
+average); about 30% to beat main by +3 or more in a full test.
 Drift check (PC, 20 October): old trainer (8b4d54f) loss 0.042848, new
 trainer (net-kb16) loss 0.042848 after 1 superbatch, same data and seed:
 equal to all printed digits; the saved files differ only by GPU
