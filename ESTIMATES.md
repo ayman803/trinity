@@ -80,7 +80,10 @@ Pace rules (owner with the advisor, 20 October; tests #28-#37 were all
 network, and the second week merged nothing):
 - Network lane: about 20% of GitHub test time at most, one experiment at
   a time. Current one: KB16-Seed2 (stopping rule: no third 16-bucket run
-  unless Seed2 passes against main).
+  unless Seed2 passes against main). Main changed after Seed2 started
+  (speed-picker, +21.5), and Seed2's published branch carries the older
+  search: before its screen, merge main into that branch (checked: merges
+  cleanly), so the test compares networks only.
 - Search/speed lane: at least 2 new candidates tested per day, from the
   forensics, Scout's list and the speed profile below. Predictions in the
   Changes table before any game.
