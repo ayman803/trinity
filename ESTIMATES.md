@@ -212,7 +212,9 @@ the owner with the alternative below before any work.
 (Scout, scout/2026-10-19.md). Train the best recipe with 3-4 weight seeds,
 keep the best on about 2000 games each, confirm with a fresh SPRT.
 Taken up if the control's extended test (about 3000 games) shows -8 or
-worse against main; dropped if within +/- 4 (NETWORK.md section 6).
+worse against main; dropped if within +/- 4 (NETWORK.md section 6). Taken up 19 October (control -9.7); with
+three runs (0, -9.7, -0.2) the spread is about +/- 5.5, so its value is
+small: it ends with KB16-Seed2 unless Seed2 passes against main.
 
 ## Proposed (not yet run)
 

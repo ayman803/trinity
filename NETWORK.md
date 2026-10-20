@@ -749,6 +749,16 @@ read from a confounded test; KB16-Seed2 still goes ahead as a second
 16-bucket sample and a best-of candidate. Revised prediction for it
 (before training): vs main -1 +/- 8, about 25% to beat main by +3 or
 more. Lesson: a one-change comparison must fix the seed too.
+Stopping point (advisor, 20 October; logged before Seed2 starts, for
+the owner to confirm): if KB16-Seed2 does not pass against main, no third
+16-bucket run, and no more random starts of either recipe (with a spread
+of about +/- 5.5, best of several gains little). The next network test
+then tries something new, with the data files and the weight seed fixed
+so only the one change differs. Caveat: an architecture change (like 8
+vs 16 buckets) gives the input layer a different shape, so even the same
+seed cannot give the two networks the same start there; the other
+layers and the data order can be identical, which removes most of the
+luck.
 Drift check (PC, 20 October): old trainer (8b4d54f) loss 0.042848, new
 trainer (net-kb16) loss 0.042848 after 1 superbatch, same data and seed:
 equal to all printed digits; the saved files differ only by GPU
