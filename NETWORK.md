@@ -694,6 +694,17 @@ prediction to follow, after the 6000-game reading, before any training).
 Reading for now, as advised: "run-to-run differences may be large"; if
 it holds, main is a high draw of its recipe and 16 buckets (-2 vs main)
 may be about +7 over the same data and start: the head-to-head decides.
+Control's extended test, final (SPRT #33, 6000 games): -9.67 +/- 4.92
+(W 1346, L 1513, D 3141). By the rules written before: about -10, so
+run-to-run luck is large: a new recipe needs two training runs before a
+verdict, and best of several starts stays un-parked. Reading, kept
+modest (one control run): main is probably a high draw of its recipe,
+or the reshuffled data costs a little; the 2048 and more-data failures
+(-30, -11) are still mostly real, but part of the -11 may be this.
+Head-to-head 16 buckets vs control (same data, same order, one change):
+SPRT [0, 5] at 8+0.08, up to 9000 games, started 19 October 5:24 pm
+Pacific (#34). Prediction (before it): +7 +/- 7 (16 buckets -2 vs main,
+control -10 vs main); about 50% to pass.
 Second control run (19 October, owner's daytime-GPU plan with the
 advisor): tools\net\Control2-Network.bat (main's recipe unchanged, weight
 seed 20261019, same data files; branch net-control2-<date>), about 5
