@@ -42,7 +42,9 @@ Windows. Every instruction must be concrete:
    trinity-results, updates ESTIMATES.md, and queues next jobs only from
    already-approved scripts and already-planned work; a read-only task
    ("Trinity phone summary", 6:35 am) sends the owner a short phone summary. It never merges, never changes scripts that need
-   approval, and never starts training or data generation. When it
+   approval, and never starts training or data generation. It also keeps
+   the "Weekly count" line (Pace rules, ESTIMATES.md Test queue) current:
+   candidates tested and merged this week (owner, 20 October). When it
    queues, a script edited after the last approval is not a reason to
    wait: the runner always runs the approved version, so it is enough that
    the approved version accepts the job's parameters (19 October;
@@ -168,6 +170,13 @@ A scheduled task runs at 6:44 am Pacific (after the 6:20 am morning
 check-in has filled in the overnight results) and writes scout/YYYY-MM-DD.md
 plus one line per idea in scout/INDEX.md. It never touches code, tests or
 ESTIMATES.md. Read scout/INDEX.md before planning the next step.
+
+## Pace rules (owner with the advisor, 20 October 2026)
+
+Network lane: about 20% of GitHub test time at most, one experiment at a
+time. Search/speed lane: at least 2 new candidates tested per day
+(forensics, Scout's list, the speed profile), predictions first. Details
+in ESTIMATES.md, Test queue.
 
 ## Coder 2 (folded back, 16 October 2026)
 
