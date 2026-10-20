@@ -88,8 +88,8 @@ network, and the second week merged nothing):
   gets the full test.
 - Calibration nights for candidates that passed on GitHub come before
   runner tuning nights (docs/spsa-runner-design.md).
-- Runner tuning (planned work, built 20 October, commit ff3d4a6; needs
-  Ayman's approval of that commit or later): on a night with no
+- Runner tuning (planned work, built 20 October, commit ff3d4a6;
+  approved by Ayman 20 October, commit 58841ba): on a night with no
   candidate calibration and no 40/60 pair queued, queue
   `scripts/calibrate.ps1 | -Tune -Chain A -Minutes 270` and then the same
   with `-Chain B`. Stop after 6 nights per chain, or at night 3 if chains
