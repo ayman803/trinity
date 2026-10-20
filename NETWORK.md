@@ -720,6 +720,15 @@ Prediction: identical, or the same loss within GPU rounding. If not, the
 on the 8-bucket recipe is expected to recover main's level, not beat it
 by much; the real lever is 16 buckets, if it beats the control head to
 head, in which case further starts use 16 buckets.
+Head-to-head result, first half (SPRT #34, 9000 games, finished 19
+October): 16 buckets vs control +2.47 +/- 4.09 (W 2217, L 2153, D 4630),
+undecided. Prediction +7 +/- 7: lower than predicted. With the two tests
+against main (16 buckets -2.1, control -9.7, implying about +7.6 +/- 5.7)
+the best joint guess for the buckets' effect is about +4, small and
+uncertain. Continued to 18000 games (cap; no search test waiting).
+Control2 (PC, 19 October 17:25-22:24, 5.0 hours, 29.9 s per superbatch):
+branch net-control2-20261019-1725, bench 850479. 400-game screen vs main
+started 11:44 pm.
 Second control run (19 October, owner's daytime-GPU plan with the
 advisor): tools\net\Control2-Network.bat (main's recipe unchanged, weight
 seed 20261019, same data files; branch net-control2-<date>), about 5
