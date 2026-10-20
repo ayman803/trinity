@@ -376,6 +376,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-10-19 6:27 am: read up to "03:17 DONE 2026-10-18-17" (jobs 14-17, all done, 0 time losses). Nothing queued: scripts/calibrate.ps1 differs from the approved commit dabb545 (1a03ff6, -Affinity), so 40/60 night 2 waits for a new approval.
 - 2026-10-19 7:10 am (Session): 40/60 night 2 queued (2026-10-19-01/02). The approved calibrate.ps1 (dabb545) runs these arguments as they are; the newer -Affinity option is only needed on the laptop, so no new approval is needed for the PC.
 - 2026-10-20 6:21 am: read up to "04:31 DONE 2026-10-19-02" (40/60 night 2; one DISTURBED restart, then done). Queued 40/60 night 3: 2026-10-20-01 main, 2026-10-20-02 release-1.0.0 (approved dabb545 accepts these arguments; CLAUDE.md rule 5).
+- 2026-10-20 4:30 pm (Session): 40/60 night 3 already ran by day (8:10 am - 12:18 pm, idle PC); results for the next check-in. Queue was empty, so tuning night 1 queued: 2026-10-20-03 chain A, 2026-10-20-04 chain B (approved 58841ba). They start after Seed2's training ends.
 
 ## Lessons so far
 
