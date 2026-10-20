@@ -228,10 +228,10 @@ try {
     Write-Host ("Task: {0}; last result 0x{1:X8}" -f (Get-ScheduledTask -TaskName $TaskName).State, $info.LastTaskResult)
     $log = "$RunnerDir\state\runner.log"
     if (Test-Path -LiteralPath $log) { Get-Content -LiteralPath $log -Tail 5 }
+    else { throw "The runner did not start (no log). Send Claude a screenshot of this window." }
     $beaconFile = "$RunnerDir\beacon\last-input.txt"
     if (Test-Path -LiteralPath $beaconFile) { Write-Host "Idle beacon: $(Get-Content -LiteralPath $beaconFile) (last keyboard or mouse use, written; UTC)" }
     else { Write-Host "Idle beacon: no file yet. Send Claude a screenshot of this window." -ForegroundColor Yellow }
-    else { throw "The runner did not start (no log). Send Claude a screenshot of this window." }
     Write-Host ""
     Write-Host "INSTALLED on '$machine'. The runner is running as $Account." -ForegroundColor Green
     Write-Host "It runs nothing until you approve the scripts: double-click 'Trinity Approve-Scripts' on the desktop." -ForegroundColor Green
