@@ -32,12 +32,28 @@ gap over main at least +5 on two nights, held-out opponent not worse.
   and the external-validity argument is right: self-play tuning shrank
   3-4x on the calibration scale.
 
-## Proposal
+Advisor's correction (20 October): "the earlier tune didn't carry over"
+rests on a single calibration, +3 with error bars of about +/- 14. That
+is no evidence either way, so this is an experiment, not a known fix.
+
+## Decision (Ayman with the advisor, 20 October): 4 settings
+
+Chosen as the 4 that moved most in the two earlier tunes, in step sizes
+(7 October first tune, then the 11 October 1024 re-tune); each moved the
+same way both times:
+QS_FUTILITY 150 -> 162 -> 171 (+1.0, +0.8 steps), LMP_BASE 300 -> 349
+-> 359 (+1.2, +0.2), RAZOR_MUL 250 -> 266 -> 279 (+0.8, +0.7),
+RFP_MARGIN 75 -> 81 -> 85 (+0.8, +0.5). (The Session's first guess,
+FUT_BASE and LMR_QUIET_BASE, barely moved: 0.2 and 0 steps; replaced.)
+Conditions: (1) the unseen-opponent check decides; (2) calibration
+nights for search/speed candidates that passed on GitHub come before
+tuning nights; (3) experiment, not fix (above).
+
+## Proposal (as reviewed)
 
 1. Same idea, fewer settings: tune 4, not 8-10. The ones whose best value
-   most plausibly differs against other engines are the pruning margins
-   that decide what Trinity refuses to look at: RFP_MARGIN, FUT_BASE,
-   LMP_BASE, LMR_QUIET_BASE. Fewer settings need fewer games for the same
+   most plausibly differs against other engines (superseded by the
+   decision above: the 4 that moved most in the earlier tunes). Fewer settings need fewer games for the same
    accuracy (the noise in each estimated direction grows with the number
    of settings moved at once).
 2. Paired games: "up" and "down" play the same opening, same colour,
@@ -60,5 +76,5 @@ or the other nights); one new runner job script (runner/jobs/spsa.ps1,
 with a results-repository mode) and an `--opponents` mode in spsa.py;
 one approval.
 
-Decision for Ayman and the advisor: build the 4-setting version (above),
-Scout's 8-10-setting version, or neither.
+Next: build runner/jobs/spsa.ps1 and the opponents mode of spsa.py; one
+approval.

@@ -82,6 +82,12 @@ network, and the second week merged nothing):
 - Search/speed lane: at least 2 new candidates tested per day, from the
   forensics, Scout's list and the speed profile below. Predictions in the
   Changes table before any game.
+- Pure speed-ups with an identical bench get a short no-regression test
+  (SPRT bounds [-4, 1], 600 games per job, continued if undecided)
+  instead of a full [0, 5] test (advisor, 20 October). A changed bench
+  gets the full test.
+- Calibration nights for candidates that passed on GitHub come before
+  runner tuning nights (docs/spsa-runner-design.md).
 - Weekly count (for the phone summary): week of 19 October: tested 2
   (speed-picker, unsure-spread), merged 0.
 
