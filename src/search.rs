@@ -574,8 +574,12 @@ impl Searcher {
         }
         self.frames[ply].static_eval = static_eval;
         // "Unsure" node: the learned correction moves the network's opinion
-        // a lot here, so the evaluation is less trustworthy; reduce less.
-        let unsure = raw_eval > -INF && (static_eval - raw_eval).abs() >= 12;
+        // a lot here, or a neighbouring output bucket of the network
+        // disagrees (only checked where reductions happen), so the
+        // evaluation is less trustworthy; reduce less.
+        let unsure = raw_eval > -INF
+            && ((static_eval - raw_eval).abs() >= 12
+                || (depth >= 3 && self.net.is_some_and(|net| nnue::bucket_spread(net, &self.acc[ply], b) >= 61)));
         let improving = !in_check && ply >= 2 && static_eval > self.frames[ply - 2].static_eval;
         self.killers[ply + 1] = [Move::NONE; 2];
 

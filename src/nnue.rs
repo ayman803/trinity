@@ -413,6 +413,31 @@ pub fn evaluate(net: &Network, pair: &AccPair, b: &Board) -> i32 {
     out * SCALE / (QA * QB)
 }
 
+/// How much the evaluation changes if the output layer of a neighbouring
+/// material bucket is used instead (the larger of the two neighbours): a
+/// second opinion from the same network, large where it is unsure (Scout,
+/// 12 October 2026; checked offline on 2908 game positions, 20 October).
+pub fn bucket_spread(net: &Network, pair: &AccPair, b: &Board) -> i32 {
+    let bucket = output_bucket(b);
+    let at = |k: usize| {
+        let weights = &net.output_weights[k];
+        let mut out = screlu_dot(&pair.acc[b.stm].vals, &weights[..HIDDEN])
+            + screlu_dot(&pair.acc[b.stm ^ 1].vals, &weights[HIDDEN..]);
+        out /= QA;
+        out += i32::from(net.output_bias[k]);
+        out * SCALE / (QA * QB)
+    };
+    let own = at(bucket);
+    let mut spread = 0;
+    if bucket > 0 {
+        spread = spread.max((own - at(bucket - 1)).abs());
+    }
+    if bucket + 1 < OUTPUT_BUCKETS {
+        spread = spread.max((own - at(bucket + 1)).abs());
+    }
+    spread
+}
+
 #[cfg(test)]
 pub mod tests {
     use super::*;
