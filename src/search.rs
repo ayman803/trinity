@@ -497,6 +497,18 @@ impl Searcher {
         }
     }
 
+    /// Fresh history scores for the ordinary quiet moves from position `i`
+    /// on (killers and the counter move keep their fixed places, and are
+    /// tried before these anyway).
+    fn rescore_quiets(&self, b: &Board, moves: &mut ScoredMoves, i: usize, ply: usize) {
+        for j in i..moves.len() {
+            let score = moves.score(j);
+            if !moves.list[j].is_noisy() && score < 700_000_000 && score != QUIET_PENDING {
+                moves.scores[j].write(self.quiet_score(b, moves.list[j], ply));
+            }
+        }
+    }
+
     fn update_pv(&mut self, ply: usize, m: Move) {
         self.pv[ply][ply] = m;
         let child_len = self.pv_len[ply + 1];
@@ -676,6 +688,7 @@ impl Searcher {
         let mut best_move = Move::NONE;
         let mut moves_searched = 0usize;
         let mut skip_quiets = false;
+        let mut quiets_searched = 0usize;
         let mut quiets_tried = MoveList::new();
         let mut noisies_tried = MoveList::new();
 
@@ -756,6 +769,9 @@ impl Searcher {
             let child = self.make(b, m, ply);
             let nodes_before = self.nodes;
             moves_searched += 1;
+            if quiet {
+                quiets_searched += 1;
+            }
             let new_depth = depth - 1 + extension;
             let mut score;
             if moves_searched == 1 {
@@ -789,6 +805,12 @@ impl Searcher {
             self.unmake();
             if root {
                 self.root_nodes[m.from()][m.to()] += self.nodes - nodes_before;
+            }
+            // After the 2nd, 4th, 8th... quiet move, re-score the quiets
+            // still waiting: their histories have learned from the searches
+            // just done (speed-picker showed fresher ordering pays).
+            if quiet && depth >= 5 && quiets_searched >= 2 && quiets_searched.is_power_of_two() {
+                self.rescore_quiets(b, &mut moves, i, ply);
             }
             if self.stopped() {
                 return 0;
