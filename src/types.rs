@@ -230,6 +230,12 @@ impl MoveList {
         self.moves.swap(i, j);
     }
 
+    /// Keep only the first `len` moves.
+    #[inline(always)]
+    pub fn truncate(&mut self, len: usize) {
+        self.len = self.len.min(len);
+    }
+
     #[cfg_attr(not(test), allow(dead_code))]
     pub fn contains(&self, m: Move) -> bool {
         self.as_slice().contains(&m)

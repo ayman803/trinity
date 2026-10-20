@@ -134,6 +134,9 @@ fn init_lmr(lmr: &mut [[[i32; 64]; 64]; 2]) {
 
 /// The moves of one node with their ordering scores. Scores are only
 /// written for existing moves, so nothing is cleared up front.
+/// Ordering score of a quiet move not scored yet (see `score_moves`).
+const QUIET_PENDING: i32 = 600_000_000;
+
 struct ScoredMoves {
     list: MoveList,
     scores: [std::mem::MaybeUninit<i32>; 256],
@@ -155,6 +158,21 @@ impl ScoredMoves {
         debug_assert!(i < self.len());
         // SAFETY: `score_moves` writes a score for every move in the list.
         unsafe { self.scores[i].assume_init() }
+    }
+
+    /// Remove the quiet moves after position `i` (they will all be pruned),
+    /// keeping the order of the rest, so later picks scan fewer moves.
+    #[inline(always)]
+    fn drop_quiets_after(&mut self, i: usize) {
+        let mut k = i + 1;
+        for j in i + 1..self.len() {
+            if self.list[j].is_noisy() {
+                self.list.swap(k, j);
+                self.scores.swap(k, j);
+                k += 1;
+            }
+        }
+        self.list.truncate(k);
     }
 
     /// Selection sort step: bring the best remaining move to position `i`.
@@ -430,7 +448,11 @@ impl Searcher {
     }
 
     /// Assign every move an ordering score (higher = searched earlier).
-    fn score_moves(&self, b: &Board, moves: &mut ScoredMoves, tt_move: Move, ply: usize) {
+    /// Score every move for ordering. With `lazy`, ordinary quiet moves get
+    /// the placeholder `QUIET_PENDING` (below killers, above bad captures);
+    /// `score_quiets` replaces it once the first of them is picked, so
+    /// nodes that cut off earlier never pay for their history lookups.
+    fn score_moves(&self, b: &Board, moves: &mut ScoredMoves, tt_move: Move, ply: usize, lazy: bool) {
         let counter = if ply > 0 {
             let f = self.frames[ply - 1];
             if f.piece != NO_PIECE { self.counters[f.piece as usize][f.mv.to()] } else { Move::NONE }
@@ -456,10 +478,22 @@ impl Searcher {
                 800_000_000
             } else if m == counter {
                 700_000_000
+            } else if lazy {
+                QUIET_PENDING
             } else {
                 self.quiet_score(b, m, ply)
             };
             moves.scores[i].write(score);
+        }
+    }
+
+    /// Replace the placeholder of every quiet move from position `i` on by
+    /// its history score.
+    fn score_quiets(&self, b: &Board, moves: &mut ScoredMoves, i: usize, ply: usize) {
+        for j in i..moves.len() {
+            if moves.score(j) == QUIET_PENDING {
+                moves.scores[j].write(self.quiet_score(b, moves.list[j], ply));
+            }
         }
     }
 
@@ -635,7 +669,7 @@ impl Searcher {
             return if in_check { -MATE + ply as i32 } else { 0 };
         }
         let mut moves = ScoredMoves::new(list);
-        self.score_moves(b, &mut moves, tt_move, ply);
+        self.score_moves(b, &mut moves, tt_move, ply, true);
 
         let orig_alpha = alpha;
         let mut best_score = -INF;
@@ -645,8 +679,15 @@ impl Searcher {
         let mut quiets_tried = MoveList::new();
         let mut noisies_tried = MoveList::new();
 
-        for i in 0..moves.len() {
-            let m = moves.pick(i);
+        let mut i = 0;
+        while i < moves.len() {
+            let mut m = moves.pick(i);
+            if moves.score(i) == QUIET_PENDING {
+                // First quiet move reached: only now are quiets worth scoring.
+                self.score_quiets(b, &mut moves, i, ply);
+                m = moves.pick(i);
+            }
+            i += 1;
             if m == excluded {
                 continue;
             }
@@ -665,11 +706,13 @@ impl Searcher {
                         >= (tune::LMP_BASE() + tune::LMP_MUL() * depth * depth) / (100 * (2 - i32::from(improving)))
                     {
                         skip_quiets = true;
+                        moves.drop_quiets_after(i - 1);
                         continue;
                     }
                     // Futility pruning: this quiet move can't lift us to alpha.
                     if !in_check && lmr_depth <= 8 && eval + tune::FUT_BASE() + tune::FUT_MUL() * lmr_depth <= alpha {
                         skip_quiets = true;
+                        moves.drop_quiets_after(i - 1);
                         continue;
                     }
                     // SEE pruning: the move hangs material.
@@ -876,7 +919,7 @@ impl Searcher {
         movegen::generate(b, &mut list, !in_check);
         let tt_move = tt_entry.map_or(Move::NONE, |e| e.mv);
         let mut moves = ScoredMoves::new(list);
-        self.score_moves(b, &mut moves, tt_move, ply);
+        self.score_moves(b, &mut moves, tt_move, ply, false);
 
         let mut best_move = Move::NONE;
         let mut searched = 0;
