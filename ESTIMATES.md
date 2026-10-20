@@ -288,6 +288,24 @@ its gap over 1.0.0 calibrated the same night on the runner. Lesson: the
 earlier daytime gains (+17 for 1.0.0, +16 for combo) were measured under
 changing conditions and carry more noise than their +/- 7 suggests.
 
+## Dated checks
+
+- **26 October 2026: PC link decision** (owner and advisor, 19 October).
+  Count the week's PC visits Ayman had to make for Trinity (clicks,
+  pastes at the PC). Two or fewer: keep the current setup, no link. Three
+  or more: set up a Claude session that can work in C:\Trinity, with the
+  rule that it reads files and starts only approved scripts, never edits
+  the runner, never trains without Ayman's "go". Correction to the
+  advice: this cloud session cannot be linked to the PC; the option is a
+  session running on the PC itself (desktop app or `claude
+  remote-control` in C:\Trinity), which runs as Ayman, so the rule is a
+  promise, not a Windows wall. Brought forward if Ayman will be away for
+  days while the work needs his clicks. Before it: the runner's clean
+  week ends about 24 October, after which training can become a runner
+  job (fewer visits).
+  Visits so far (week of 19 October): 19 Oct, 4 pm (git pull, reinstall,
+  Control2).
+
 ## Runner check-ins
 
 One line per morning check-in (CLAUDE.md rule 5 exception): date, what
