@@ -288,6 +288,13 @@ its gap over 1.0.0 calibrated the same night on the runner. Lesson: the
 earlier daytime gains (+17 for 1.0.0, +16 for combo) were measured under
 changing conditions and carry more noise than their +/- 7 suggests.
 
+## PC use: usefulness, not hours (owner and advisor, 19 October)
+
+There is no hours target (the 80-90% use mentioned in chat is withdrawn;
+it was never written here). Flag it only when useful work is waiting
+and the PC is not doing it; an idle PC with nothing worth testing is
+fine.
+
 ## Dated checks
 
 - **26 October 2026: PC link decision** (owner and advisor, 19 October).
