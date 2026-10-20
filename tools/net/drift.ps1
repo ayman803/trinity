@@ -28,7 +28,8 @@ function Build-TrainerAt([string]$Ref, [string]$Label) {
     }
     Write-Step "Building the $Label trainer ($sha)"
     $features = if ($script:OnWindows) { @("--features", "cuda") } else { @() }
-    $target = Get-OutDir "target-trainer"
+    # A target folder per trainer, so cargo cannot mistake one for the other.
+    $target = Get-OutDir "target-drift-$Label"
     Invoke-Native cargo (@("build", "--release", "--manifest-path", (Join-Path (Join-Path $dir "trainer") "Cargo.toml"),
             "--target-dir", $target) + $features)
     $built = Join-Path (Join-Path $target "release") "trinity-trainer$($script:ExeSuffix)"
@@ -65,10 +66,15 @@ try {
                 $text = (& $trainers[$k] @("scratch", "1", "drift", "0.001", "0.5", $data) 2>&1 | ForEach-Object { "$_" })
                 $ErrorActionPreference = $old
             } finally { Pop-Location }
-            $text | Set-Content -LiteralPath (Join-Path $workDir "$k.log")
-            $line = $text | Where-Object { $_ -match 'superbatch 1 \|' } | Select-Object -Last 1
-            if ($line -notmatch 'running loss ([0-9.]+)') { Stop-WithMessage "The $k trainer printed no loss (see sprt\coder2\drift\$k.log)." }
-            $losses[$k] = [double]$Matches[1]
+            # The trainer colours its numbers: strip the colour codes before reading them.
+            $plain = (@($text) -join "`n") -replace "\x1b\[[0-9;]*m", ""
+            $plain | Set-Content -LiteralPath (Join-Path $workDir "$k.log")
+            $m = [regex]::Matches($plain, 'running loss ([0-9.]+)')
+            if ($m.Count -eq 0) {
+                Write-Host ($plain -split "`n" | Select-Object -Last 15 | Out-String)
+                Stop-WithMessage "The $k trainer printed no loss (its output is above and in sprt\coder2\drift\$k.log)."
+            }
+            $losses[$k] = [double]::Parse($m[$m.Count - 1].Groups[1].Value, [Globalization.CultureInfo]::InvariantCulture)
             $q = Join-Path (Join-Path (Join-Path $dir "checkpoints") "drift-1") "quantised.bin"
             $hashes[$k] = if (Test-Path -LiteralPath $q) { (Get-FileHash -LiteralPath $q -Algorithm SHA256).Hash } else { "missing" }
         }
