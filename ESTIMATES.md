@@ -65,12 +65,45 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-15 | wide network: 2048 neurons, same recipe as the 1024 run (3.65B Leela positions, 600 superbatches; Coder 2) | self-play +15 to +45, CCRL +5 to +25, 70% to pass | -29.76 +/- 4.16 at 8+0.08 (9000 games, SPRT #23); -19.71 +/- 6.61 at 30+0.3 (3000 games, SPRT #24); both FAILED | - | held-out loss only 1.3% lower than the 1024's; 33% fewer nodes per second. At this amount of data, width does not pay for its speed. Path closed |
 | 2026-10-13 | tm-plan (part A, Fable gate change 1): the soft limit is scaled by plan/spend so far in the game (closed loop, prior 0.6, clamp 1-2.5x), and the whole increment is spent; hard limit at least 1.6x soft. Bench unchanged | 8+0.08 vs main: +4 to +10; gate test vs main of that moment (40/10 since 13 October, decided before any result; same prediction): +2 to +6, about a 50% chance to pass the capped test; CCRL-scale (40/20 calibration): +1 to +6 | pending | gate test at 40/10 vs main with tm-control: +0.71 +/- 3.40 after 10800 games, undecided at the cap: gate loss, not merged | Prediction +2 to +6 missed. On top of tm-control's 12%, the closed loop adds nothing measurable: once the 12% is in, most of the leak's value is taken. Safety check SPRT #18 vs main at 8+0.08: +4.29 +/- 3.77 after 9000 games (LLR 2.11, undecided, 0 time losses): no sign of harm; not continued (the 40/10 gate test decides). Below tm-control's +6.8 vs the same main at this clock. Validation (16 games at 10+0.1): first version overshot in sudden death, clock down to 0.09 s and 158 of 812 moves started under 1 s (main: 2); fixed by capping the loop at 1.25x and keeping 3/4 of the increment in sudden death (repeating controls keep 2.5x). PC data: Trinity spends 0.67 (10+0.1) and 0.48 (40/20) of its own plan; its rated opponents 0.84 and 0.63. Fixed-ratio alternative rejected: the ratio differs by clock, so the loop measures it |
 | 2026-10-13 | nnue-simd: the network's output layer written with AVX2 instructions (same arithmetic, bench node count unchanged 780879); about 10% more nodes per second measured here (1.06M vs 0.97M) | self-play +3 to +6 (measured on 60 positions from real games at 300 ms: +7.3% nodes per second, less than the 10% on bench); CCRL +2 to +4 | SPRT #16 (+0.15 +/- 3.71, 9000 games) INVALID: the branch's only commit held the speed probe, not the AVX2 code, so both sides were the same engine (found by Scout, 14 October). Code committed 14 October (961b44b; median of 10 paired bench runs +7.7% nodes per second, ruler: about +4.4); re-test: PASSED +13.25 +/- 3.80 after 9000 games (SPRT #17, LLR 8.39, 0 time losses). Gate change 2 = gate WIN. #16 does not count for the gate. Side result: 9000 games of identical engines gave +0.15, so the GitHub setup favours neither side. The workflow now stops when both branches build the same engine file | - | v2 build (no AVX2) checked: falls back to the old code, bench 780879, no AVX2 instructions. Fable gate change 2 (owner: counts whether it passes or fails) |
+| 2026-10-20 | speed-picker (speed lane): quiet moves scored only when the first is reached; quiets removed from the list once pruning skips them (bench 828267; the order changes a little because the history is fresher) | 11% fewer instructions per node; +5.6% nodes per second (median of 15 paired bench runs). Ruler: about +3. Self-play +1 to +5, about 45% to pass [0, 5]; CCRL about 60% of that | pending (SPRT 8+0.08) | - | predicted before any game |
+| 2026-10-20 | unsure-spread (Scout 12 October, bucket spread): a node is also "unsure" (LMR one ply less) when a neighbouring output bucket's eval differs by >= 61 cp (the 80th percentile, fixed before the test). Offline gate passed: rank correlation with the eval's error 0.23-0.30 among positions within 150 cp, beyond what eval size explains (2908 positions). Costs 1.7% nodes per second. Bench 786552 | self-play -2 to +5, about 30% to pass (corr-unsure gave +10.8 on the same mechanism; this signal overlaps with it and pays 1.7% speed); CCRL about half | pending (SPRT 8+0.08) | - | predicted before any game |
 
 ## Test queue
 
 Lanes: search and network, both the Session's since 16 October (Coder 2
 folded back after the 2048 network failed). GitHub: at most 2 search tests and 1 network test
 at once. PC: one heavy job at a time, in the order Ayman chooses.
+
+Pace rules (owner with the advisor, 20 October; tests #28-#37 were all
+network, and the second week merged nothing):
+- Network lane: about 20% of GitHub test time at most, one experiment at
+  a time. Current one: KB16-Seed2 (stopping rule: no third 16-bucket run
+  unless Seed2 passes against main).
+- Search/speed lane: at least 2 new candidates tested per day, from the
+  forensics, Scout's list and the speed profile below. Predictions in the
+  Changes table before any game.
+- Weekly count (for the phone summary): week of 19 October: tested 2
+  (speed-picker, unsure-spread), merged 0.
+
+### Speed profile (20 October; callgrind on bench, AVX2 build)
+
+Instructions: search logic 20%, accumulator updates 13% (inlined in
+negamax), move picking (selection scan) about 10%, quiet history scoring
+8%, evaluate 8%, move generation 4%, SEE 4%, king refreshes 3.5%,
+make_move 3%. Top 3 speed-ups:
+1. Lazy quiet scoring: score quiets only when reached (most nodes cut off
+   on the hash move or a capture). In speed-picker.
+2. Drop pruned quiets from the list: after late-move or futility pruning
+   the picker still scanned every remaining quiet for each capture left.
+   In speed-picker. Together with 1: 11% fewer instructions per node,
+   +5.6% nodes per second.
+3. Next: SEE is computed twice for most captures in quiescence (once to
+   order, once to prune, with different thresholds); one SEE that returns
+   the exchange value would serve both. About 2% of instructions; worth
+   about +1. Not started.
+Not proposed: deferring accumulator updates until a node is evaluated (a
+known technique elsewhere; dropped under the originality rule, as on 13
+October).
 
 | # | Test | Lane | Where | Status (15 October) |
 |---|---|---|---|---|
