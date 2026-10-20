@@ -720,6 +720,12 @@ Prediction: identical, or the same loss within GPU rounding. If not, the
 on the 8-bucket recipe is expected to recover main's level, not beat it
 by much; the real lever is 16 buckets, if it beats the control head to
 head, in which case further starts use 16 buckets.
+Drift check (PC, 20 October): old trainer (8b4d54f) loss 0.042848, new
+trainer (net-kb16) loss 0.042848 after 1 superbatch, same data and seed:
+equal to all printed digits; the saved files differ only by GPU
+rounding. Verdict: NO setup drift, as predicted. The control's -10 is
+run-to-run variation (random start and/or the new data order), not a
+setup change.
 Head-to-head result, first half (SPRT #34, 9000 games, finished 19
 October): 16 buckets vs control +2.47 +/- 4.09 (W 2217, L 2153, D 4630),
 undecided. Prediction +7 +/- 7: lower than predicted. With the two tests
