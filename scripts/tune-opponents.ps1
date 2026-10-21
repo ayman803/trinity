@@ -6,16 +6,18 @@
 # and "down" versions do not play each other. Each plays the same openings
 # (same seed, both colours) against the same rated opponent, and the
 # difference of their two scores moves the settings. One opponent per
-# step, in turn. Two independent chains (A and B, own openings) run as
-# separate jobs; at night 3 they must agree in direction on at least 3 of
+# step, in turn. Two independent chains (A and B, own openings; C and D
+# since razoring was removed on 21 October) run as separate jobs; at night 3 they must agree in direction on at least 3 of
 # the 4 settings, or the experiment stops.
 #
 # Progress is saved after every step (sprt\spsa\state-<chain>.json), so a
 # job stopped because Ayman came back loses at most one step. Under the
 # runner the state and a summary are published in trinity-results (spsa\).
 
-# The 4 settings that moved most, in the same direction, in both earlier tunes.
-$script:TuneNames = @("QS_FUTILITY", "LMP_BASE", "RAZOR_MUL", "RFP_MARGIN")
+# The 4 settings that moved most, in the same direction, in both earlier
+# tunes. RAZOR_MUL (third) was replaced by the fifth, LMR_HIST_DIV, when
+# razoring was removed (21 October; RAZOR_BASE, fourth, went with it).
+$script:TuneNames = @("QS_FUTILITY", "LMP_BASE", "LMR_HIST_DIV", "RFP_MARGIN")
 # Planned pairs per chain (about 6 nights of one 4.5-hour job per chain);
 # sets the step-size schedule, as --total-pairs does in spsa.py.
 $script:TuneTotalPairs = 11000
@@ -101,7 +103,7 @@ function Invoke-OpponentTune {
     $n = $script:TuneTotalPairs
     $bigA = 0.1 * $n
     $pairs = [Math]::Max(1, $Concurrency)        # pairs per side per step: one game per slot, both colours
-    $chainSeed = if ($Chain -eq "A") { 1 } else { 2 }
+    $chainSeed = @{ A = 1; B = 2; C = 3; D = 4 }[$Chain]
     $rng = New-Object System.Random ($chainSeed * 1000003 + $state.steps)
     $common = @("-each", "proto=uci", "tc=$TC", "option.Hash=16", "option.Threads=1", $SyzygyArg,
         "-openings", "file=$Book", "format=pgn", "order=random",

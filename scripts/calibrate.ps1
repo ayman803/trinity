@@ -24,7 +24,7 @@ param(
     # Re-tuning instead of calibration (docs/spsa-runner-design.md): one
     # SPSA chain (A or B) against the same rated opponents, for -Minutes.
     [switch]$Tune,
-    [ValidateSet("A", "B")][string]$Chain = "A",
+    [ValidateSet("A", "B", "C", "D")][string]$Chain = "A",
     [int]$Minutes = 270
 )
 

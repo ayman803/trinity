@@ -45,6 +45,9 @@ QS_FUTILITY 150 -> 162 -> 171 (+1.0, +0.8 steps), LMP_BASE 300 -> 349
 -> 359 (+1.2, +0.2), RAZOR_MUL 250 -> 266 -> 279 (+0.8, +0.7),
 RFP_MARGIN 75 -> 81 -> 85 (+0.8, +0.5). (The Session's first guess,
 FUT_BASE and LMR_QUIET_BASE, barely moved: 0.2 and 0 steps; replaced.)
+21 October: razoring was removed (no-razor, +58), so RAZOR_MUL was
+replaced by the fifth most moved, LMR_HIST_DIV (-0.3, -0.2 steps; RAZOR_BASE,
+fourth, belongs to razoring too). Fresh chains C and D tune the new engine.
 Conditions: (1) the unseen-opponent check decides; (2) calibration
 nights for search/speed candidates that passed on GitHub come before
 tuning nights; (3) experiment, not fix (above).
@@ -89,4 +92,4 @@ steps over two jobs, resumed from the saved state, settings reach the
 engine as UCI options. Queue lines, after Ayman's approval, on nights
 without a candidate calibration:
 `<id> | pc | scripts/calibrate.ps1 | -Tune -Chain A -Minutes 270` and the
-same with `-Chain B`.
+same with `-Chain B` (from 21 October: chains C and D).
