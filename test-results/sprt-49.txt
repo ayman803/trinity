@@ -1,0 +1,11 @@
+SPRT test #49, finished 2026-10-21 17:07 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39628904103 (run id 39628904103)
+SPRT RESULT: PASSED - 'no-razor' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: no-razor (bench 892727) vs main (bench 828267), tc 8+0.08, bounds [-4, 1]
+Games: 3000, Wins: 964, Losses: 465, Draws: 1571, Points: 1749.5 (58.32 %)
+Ptnml(0-2): [9, 192, 642, 605, 52]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 58.33 +/- 6.91, nElo: 107.01 +/- 12.43
+LLR: 13.48 (-2.94, 2.94) [-4.00, 1.00]
