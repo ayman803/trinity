@@ -12,10 +12,23 @@ Windows. Every instruction must be concrete:
   guessing.
 - Never guess elapsed time. Check the clock with `date -u` and use the
   times shown in their screenshots. The owner is on US Pacific time.
-- Keep replies short: credit is limited. Only message results that need
-  a decision; batch steps where possible.
+- Keep replies short so they are easy to follow. Only message results
+  that need a decision; batch steps where possible.
 - Effort setting: Medium ("Recommended") for routine steps; High only for
   errors or new design work.
+
+## Usage (owner, 20 October 2026)
+
+Ayman manages his own Claude usage. No agent (Session, Scout, the
+check-in, the phone summary or the advisor) should hold back, shorten
+work, skip checks, or wait in order to save usage. Don't mention usage in
+reports. Do the full job: complete predictions, full tests, proper
+verification. "Don't ration" doesn't mean "keep busy": no busy work, and
+no extra runs that don't help a decision. If a limit is reached, stop
+cleanly, leave a note in ESTIMATES.md saying where the work stopped and
+what comes next, and carry on when usage is available again. (Rule 5's
+schedule, one check-in, one phone summary and Scout, stays as it is; this
+rule governs how fully each one works.)
 
 ## Machines
 
