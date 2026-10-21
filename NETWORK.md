@@ -759,6 +759,14 @@ vs 16 buckets) gives the input layer a different shape, so even the same
 seed cannot give the two networks the same start there; the other
 layers and the data order can be identical, which removes most of the
 luck.
+KB16-Seed2 trained (PC, 20 October 16:01-21:56, 5.9 hours; branch
+net-kb16s2-20261020-1601, final running loss 0.025074). Main gained
+speed-picker (+21.5) meanwhile, and the network branch carries the older
+search, so main was merged into it (branch net-kb16s2-main, bench
+884959): the test compares networks only. Screen (400 games) started 21
+October 6 am; above -10 it extends to 6000 games, as for Control2.
+Prediction unchanged (written before training): vs main -1 +/- 8, about
+25% to beat main by +3 or more.
 Drift check (PC, 20 October): old trainer (8b4d54f) loss 0.042848, new
 trainer (net-kb16) loss 0.042848 after 1 superbatch, same data and seed:
 equal to all printed digits; the saved files differ only by GPU
