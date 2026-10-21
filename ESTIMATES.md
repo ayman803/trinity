@@ -71,6 +71,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-20 | rescore-quiets (lesson of speed-picker): at depth >= 5, the quiet moves still waiting are re-scored after the 2nd, 4th, 8th... quiet searched. Bench 804532 (2.9% fewer nodes, 0.2% fewer instructions in total) | self-play 0 to +6, about 40% to pass (the freshness effect was large once; a second dose should be smaller). Advisor, before any result: 0 to +3, since it overlaps with speed-picker's re-sorting; both kept, scored separately | FAILED -6.37 +/- 3.87 after 9000 games (SPRT #41, LLR -5.34, 0 time losses); not merged | - | below both predictions (Session 0 to +6, advisor 0 to +3). More re-sorting by fresher history hurts, so "fresher is better" does not explain speed-picker's +18 on its own; the cause of that gain is not understood yet |
 | 2026-10-21 | speed-pick2 (speed lane, from the new profile): the move picker keeps the best score in hand while scanning; moves generated straight into the sorted list (no copy). Same search, bench 828267 unchanged; 4.8% fewer instructions, +4.6% nodes per second (median of 15 paired runs) | no-regression test [-4, 1] (advisor's rule for identical-bench speed-ups): about 85% to pass; true value by the ruler about +2.6 (self-play +1 to +4) | pending (SPRT 8+0.08, [-4, 1], 3000 games first) | - | predicted before any game |
 | 2026-10-21 | tm-stable-floor (forensics: search mistakes were played with 0.75x the game's average move time): a best move that stays the same no longer shortens the think below plan (stability scale 0.9/0.8 -> 1.0/1.0). Bench unchanged (time only) | self-play -2 to +4, about 30% to pass; spends more time on "easy" moves, so later moves get less in sudden death; 40/15 may gain more than 8+0.08. Advisor (21 October, before any result): also test at 40/10 (repeating, as CCRL), as for tm-plan; the 0.75x clue may be confident-and-wrong positions that more time does not fix. Decision rule, fixed now: merge only if the 40/10 test passes ([0, 5], cap 12000 games) and the 8+0.08 test does not fail. 40/10 prediction: -3 to +4 (the old main's +14 at 10+0.1 shrank to +4 +/- 13 at 40/60, so time gains have not carried to repeating controls) | pending (SPRT 8+0.08; SPRT 40/10) | - | predicted before any game |
+| 2026-10-22 | no-razor (ablation audit, 21 October): razoring removed. Audit net +42 at equal nodes, but only about +21 +/- 28 above the no-change baseline. Bench 892727 | self-play -4 to +4, about 20% to pass (weak evidence; razoring was never tested on its own in Trinity, so its value is unknown either way) | pending (SPRT 8+0.08) | - | predicted before any game; started 21 October, counted as 22 October's first |
 
 ## Test queue
 
@@ -603,9 +604,18 @@ One rule switched off at a time (net = positions fixed - broken; sd about
   -27, unsure term -31, LMP off -36, RFP off -61 (these rules help).
 Caveats: the reference is Trinity's own deeper search, so it shares
 Trinity's blind spots; 14 rules were tested, so one 2-sd result can be
-chance. No-change baseline (Scout): same engine with only the hash size
-or 4% of the nodes changed, running now; razoring counts only if +42
-clearly beats what that shows.
+chance.
+No-change baseline (Scout): the same engine with only the hash size
+changed: 8 MB net +20 (fixed 190, broken 170), 64 MB net +22 (184 /
+162); with 4% fewer or more nodes almost nothing moves (+0 from 12 flips,
++2 from 26), because the move comes from the last finished iteration.
+So a change that touches nothing still flips about 350 of 2000 moves and
+nets about +20, and most rules sit below that (mean of the 14 about
+-13). Razoring off (+42) is only about +21 +/- 28 above the no-change
+level: weak evidence, not a finding. RFP (-61) and LMP (-36) are the
+rules most clearly worth keeping. Lesson: at equal nodes the move choice
+is chaotic; an audit like this ranks rules only coarsely, and needs at
+least 4x the positions to separate effects of +20.
 
 ## Loss forensics
 
