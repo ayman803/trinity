@@ -163,6 +163,7 @@ impl ScoredMoves {
     /// Remove the quiet moves after position `i` (they will all be pruned),
     /// keeping the order of the rest, so later picks scan fewer moves.
     #[inline(always)]
+    #[allow(dead_code)]
     fn drop_quiets_after(&mut self, i: usize) {
         let mut k = i + 1;
         for j in i + 1..self.len() {
@@ -706,13 +707,11 @@ impl Searcher {
                         >= (tune::LMP_BASE() + tune::LMP_MUL() * depth * depth) / (100 * (2 - i32::from(improving)))
                     {
                         skip_quiets = true;
-                        moves.drop_quiets_after(i - 1);
                         continue;
                     }
                     // Futility pruning: this quiet move can't lift us to alpha.
                     if !in_check && lmr_depth <= 8 && eval + tune::FUT_BASE() + tune::FUT_MUL() * lmr_depth <= alpha {
                         skip_quiets = true;
-                        moves.drop_quiets_after(i - 1);
                         continue;
                     }
                     // SEE pruning: the move hangs material.
