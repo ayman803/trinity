@@ -390,6 +390,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-10-20 4:50 pm (Session): speed-picker passed (+21.5) and is merged. Calibration of the new main comes before tuning (pace rules): tuning jobs 03/04 replaced by 05 main and 06 release-1.0.0 (10+0.1, 500 rounds each, the same night, rule 13), then 07/08 tuning chains A and B (they now tune the new main).
 - 2026-10-20 5:00 pm (Session, advisor's check): #40 and #41 are built on and tested against the new main (both contain the merge 22cdaf1; base at dispatch c44a99a). Added a 40/60 pair for the new main (09 main, 10 release-1.0.0), after tuning chain A: order 05, 06, 07, 09, 10, 08. Chain A takes the early-morning slot because a stopped tuning job loses at most one step, while a stopped 40/60 game is lost.
 - 2026-10-21 6:40 am (Session, Scout's points): (1) the 40/60 nights are treated as the CCRL-relevant number (old main: +14 at 10+0.1, +4 +/- 13 at 40/60). Prediction for the new main's 40/60 pair (jobs 09/10), written before it runs: gap over 1.0.0 +4 to +20, central +12 (Scout: +8 to +12); ordering gains should carry to slower clocks better than the time-management gains did, the speed part less. (2) The ablation audit gets a no-change baseline (the same engine with a different hash size, or 4% more or fewer nodes); a rule counts only if its net effect clearly beats that.
+- 2026-10-21 7:00 am (Session): Scout's split of #38 started on GitHub: split38-lazy (lazy quiet scoring only, no dropping) vs base-before-38 (df7be94), 4000 games. Scout's description had the halves reversed: dropping pruned quiets is pure speed (the old code already skipped them); lazy scoring is the ordering change. Prediction: +14 to +22 (if the ordering is the cause; dropping is worth about +1-2 by the ruler).
 - 2026-10-21 6:22 am: read up to "05:55 DISTURBED 2026-10-20-07" (40/60 night 3 logged: old main +4 +/- 13 over 3 nights; 05/06 already logged by the Session; tuning chain A stopped at 05:55 by keyboard use, reruns by itself). Nothing queued: 07 (rerun), 09, 10 and 08 are still waiting.
 
 ## Lessons so far
@@ -586,6 +587,25 @@ with a timing probe (`cargo test --release speed_probe -- --ignored
   on the forensics mistake positions, 8 minutes of PC time) is the right
   next measurement before designing any search change, given that search
   tweaks have transferred poorly so far.
+
+## Ablation audit (21 October 2026; Scout's idea of 13 October)
+
+2000 positions from Trinity's lost calibration games (Trinity to move,
+move 9 on, not in check, 12+ pieces, |eval| <= 300). Each version
+searches 250,000 nodes (equal nodes, not equal depth: advisor); its move
+is compared with main's own search at 16x the nodes. Main agrees on 1228.
+One rule switched off at a time (net = positions fixed - broken; sd about
+21 from the counts alone):
+- razoring off: net +42 (fixed 250, broken 208), the only clear gain;
+- IIR off +11; history term in LMR off -2; singular extension off -3;
+  futility off -6; QS futility off -7 (all within noise);
+- null move off -17, SEE quiet -18, LMR off -20, SEE capture -24, QS SEE
+  -27, unsure term -31, LMP off -36, RFP off -61 (these rules help).
+Caveats: the reference is Trinity's own deeper search, so it shares
+Trinity's blind spots; 14 rules were tested, so one 2-sd result can be
+chance. No-change baseline (Scout): same engine with only the hash size
+or 4% of the nodes changed, running now; razoring counts only if +42
+clearly beats what that shows.
 
 ## Loss forensics
 
