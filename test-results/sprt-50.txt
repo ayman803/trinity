@@ -1,0 +1,12 @@
+SPRT test #50, finished 2026-10-21 18:03 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39628938276 (run id 39628938276)
+Continues run id 39604746005; the totals below include it.
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: speed-pick2 (bench 828267) vs main (bench 828267), tc 8+0.08, bounds [-4, 1]
+Games: 6000, Wins: 1347, Losses: 1291, Draws: 3362, Points: 3028.0 (50.47 %)
+Ptnml(0-2): [21, 655, 1604, 687, 33]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 3.24 +/- 4.48, nElo: 6.37 +/- 8.79
+LLR: 1.95 (-2.94, 2.94) [-4.00, 1.00]
