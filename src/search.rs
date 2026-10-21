@@ -134,6 +134,13 @@ fn init_lmr(lmr: &mut [[[i32; 64]; 64]; 2]) {
 
 /// The moves of one node with their ordering scores. Scores are only
 /// written for existing moves, so nothing is cleared up front.
+/// Ablation audit (scratch branch): bit k set switches rule k off.
+pub static ABLATE: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
+#[inline(always)]
+fn off(bit: u32) -> bool {
+    ABLATE.load(Ordering::Relaxed) & (1 << bit) != 0
+}
+
 /// Ordering score of a quiet move not scored yet (see `score_moves`).
 const QUIET_PENDING: i32 = 600_000_000;
 
@@ -616,13 +623,13 @@ impl Searcher {
         if !pv_node && !in_check && excluded.is_none() {
             // Reverse futility pruning: we are so far ahead that even a
             // generous margin keeps us above beta.
-            if depth <= 8 && eval.abs() < TB_BOUND && eval - tune::RFP_MARGIN() * (depth - i32::from(improving)) >= beta
+            if !off(0) && depth <= 8 && eval.abs() < TB_BOUND && eval - tune::RFP_MARGIN() * (depth - i32::from(improving)) >= beta
             {
                 return (eval + beta) / 2;
             }
 
             // Razoring: hopelessly behind; check if captures can save us.
-            if depth <= 3 && eval + tune::RAZOR_BASE() + tune::RAZOR_MUL() * depth <= alpha {
+            if !off(1) && depth <= 3 && eval + tune::RAZOR_BASE() + tune::RAZOR_MUL() * depth <= alpha {
                 let q = self.qsearch(b, alpha, alpha + 1, ply);
                 if q <= alpha {
                     return q;
@@ -631,7 +638,8 @@ impl Searcher {
 
             // Null move pruning: give the opponent a free move. If we are
             // still above beta, this node is almost surely a cut-off.
-            if depth >= 3
+            if !off(2)
+                && depth >= 3
                 && eval >= beta
                 && static_eval >= beta
                 && ply > 0
@@ -659,7 +667,7 @@ impl Searcher {
 
         // Internal iterative reduction: without a hash move our ordering is
         // poor, so spend less effort here.
-        if tt_move.is_none() && depth >= 4 && (pv_node || cut_node) {
+        if !off(3) && tt_move.is_none() && depth >= 4 && (pv_node || cut_node) {
             depth -= 1;
         }
 
@@ -702,7 +710,7 @@ impl Searcher {
                 if quiet {
                     // Late move pruning: after enough quiet moves, the rest
                     // are very unlikely to be good.
-                    if moves_searched as i32
+                    if !off(4) && moves_searched as i32
                         >= (tune::LMP_BASE() + tune::LMP_MUL() * depth * depth) / (100 * (2 - i32::from(improving)))
                     {
                         skip_quiets = true;
@@ -710,16 +718,16 @@ impl Searcher {
                         continue;
                     }
                     // Futility pruning: this quiet move can't lift us to alpha.
-                    if !in_check && lmr_depth <= 8 && eval + tune::FUT_BASE() + tune::FUT_MUL() * lmr_depth <= alpha {
+                    if !off(5) && !in_check && lmr_depth <= 8 && eval + tune::FUT_BASE() + tune::FUT_MUL() * lmr_depth <= alpha {
                         skip_quiets = true;
                         moves.drop_quiets_after(i - 1);
                         continue;
                     }
                     // SEE pruning: the move hangs material.
-                    if lmr_depth <= 8 && !b.see_ge(m, -tune::SEE_QUIET() * lmr_depth * lmr_depth) {
+                    if !off(6) && lmr_depth <= 8 && !b.see_ge(m, -tune::SEE_QUIET() * lmr_depth * lmr_depth) {
                         continue;
                     }
-                } else if depth <= 8 && !b.see_ge(m, -tune::SEE_NOISY() * depth) {
+                } else if !off(7) && depth <= 8 && !b.see_ge(m, -tune::SEE_NOISY() * depth) {
                     continue;
                 }
             }
@@ -728,7 +736,8 @@ impl Searcher {
             // alternative, search it deeper.
             let mut extension = 0;
             if let Some(e) = tt_entry {
-                if !root
+                if !off(8)
+                    && !root
                     && m == tt_move
                     && excluded.is_none()
                     && depth >= 8
@@ -763,15 +772,17 @@ impl Searcher {
             } else {
                 // Late move reductions.
                 let mut r = 0;
-                if depth >= 3 && moves_searched > 1 + usize::from(root) {
+                if !off(9) && depth >= 3 && moves_searched > 1 + usize::from(root) {
                     r = self.lmr[usize::from(quiet)][depth.min(63) as usize][moves_searched.min(63)];
                     r -= i32::from(pv_node);
                     r += i32::from(cut_node);
                     r += i32::from(!improving);
                     r -= i32::from(child.in_check());
-                    r -= i32::from(unsure);
+                    r -= i32::from(unsure && !off(12));
                     if quiet {
-                        r -= self.quiet_score(b, m, ply) / tune::LMR_HIST_DIV();
+                        if !off(13) {
+                            r -= self.quiet_score(b, m, ply) / tune::LMR_HIST_DIV();
+                        }
                         if m == self.killers[ply][0] || m == self.killers[ply][1] {
                             r -= 1;
                         }
@@ -928,13 +939,13 @@ impl Searcher {
 
             if !in_check {
                 // Skip captures that lose material or can't reach alpha.
-                if !b.see_ge(m, 0) {
+                if !off(11) && !b.see_ge(m, 0) {
                     continue;
                 }
                 if !m.is_promotion() {
                     let cap = b.captured_piece(m);
                     let gain = crate::board::SEE_VALUES[piece_type(cap)];
-                    if static_eval + tune::QS_FUTILITY() + gain <= alpha {
+                    if !off(10) && static_eval + tune::QS_FUTILITY() + gain <= alpha {
                         best = best.max(static_eval + tune::QS_FUTILITY() + gain);
                         continue;
                     }

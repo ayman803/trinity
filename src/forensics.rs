@@ -551,3 +551,95 @@ mod tests {
         assert_eq!(out[0].opponent, "akimbo");
     }
 }
+
+#[cfg(test)]
+mod ablation {
+    use super::*;
+    use crate::search::{self, Limits, Searcher, Shared, ABLATE};
+    use std::sync::atomic::Ordering as O;
+
+    const RULES: &[(&str, u32)] = &[
+        ("RFP", 0), ("razoring", 1), ("null move", 2), ("IIR", 3), ("LMP", 4), ("futility", 5),
+        ("SEE quiet prune", 6), ("SEE capture prune", 7), ("singular ext", 8), ("LMR (all)", 9),
+        ("QS futility", 10), ("QS SEE prune", 11), ("LMR unsure term", 12), ("LMR history term", 13),
+    ];
+
+    fn best_moves(boards: &[Board], nodes: u64) -> Vec<Move> {
+        let threads = 4;
+        let chunks: Vec<Vec<(usize, Board)>> = (0..threads)
+            .map(|t| boards.iter().copied().enumerate().filter(|(i, _)| i % threads == t).collect())
+            .collect();
+        let mut out = vec![Move::NONE; boards.len()];
+        std::thread::scope(|sc| {
+            let hs: Vec<_> = chunks
+                .into_iter()
+                .map(|c| {
+                    sc.spawn(move || {
+                        let mut s = Searcher::new(Shared::new(16), 0);
+                        s.silent = true;
+                        let mut r = Vec::new();
+                        for (i, b) in c {
+                            s.clear();
+                            let lim = Limits { nodes: Some(nodes), ..Default::default() };
+                            r.push((i, search::search_once(&mut s, &b, &[], &lim).best_move));
+                        }
+                        r
+                    })
+                })
+                .collect();
+            for h in hs {
+                for (i, m) in h.join().unwrap() {
+                    out[i] = m;
+                }
+            }
+        });
+        out
+    }
+
+    #[test]
+    #[ignore]
+    fn ablation_audit() {
+        let n: usize = std::env::var("N").ok().and_then(|v| v.parse().ok()).unwrap_or(800);
+        let base: u64 = std::env::var("BASE").ok().and_then(|v| v.parse().ok()).unwrap_or(250_000);
+        let mult: u64 = std::env::var("MULT").ok().and_then(|v| v.parse().ok()).unwrap_or(16);
+        let mut games = Vec::new();
+        for f in ["games/calibration-2026-10-14_18-06-main-losses.pgn", "games/calibration-2026-10-17_09-41-tm-reserve-losses.pgn"] {
+            if let Ok(text) = std::fs::read_to_string(f) {
+                read_games(&text, &mut games, false);
+            }
+        }
+        let mut boards = Vec::new();
+        for g in &games {
+            for (i, p) in g.plies.iter().enumerate() {
+                let mine = p.board.stm == g.trinity;
+                let pieces = p.board.occupied().count_ones();
+                if mine && i >= 16 && !p.board.in_check() && pieces >= 12 && p.eval.is_some_and(|e| e.abs() <= 300) {
+                    boards.push(p.board);
+                }
+            }
+        }
+        let step = (boards.len() / n).max(1);
+        let boards: Vec<Board> = boards.into_iter().step_by(step).take(n).collect();
+        println!("ABL positions {} from {} games; base {} nodes, reference {}x", boards.len(), games.len(), base, mult);
+        ABLATE.store(0, O::Relaxed);
+        let reference = best_moves(&boards, base * mult);
+        let baseline = best_moves(&boards, base);
+        let agree = |v: &[Move]| v.iter().zip(&reference).filter(|(a, b)| a == b).count();
+        let b0 = agree(&baseline);
+        println!("ABL baseline agrees with reference: {b0} / {}", boards.len());
+        for &(name, bit) in RULES {
+            ABLATE.store(1 << bit, O::Relaxed);
+            let v = best_moves(&boards, base);
+            let fixed = (0..boards.len()).filter(|&i| baseline[i] != reference[i] && v[i] == reference[i]).count();
+            let broken = (0..boards.len()).filter(|&i| baseline[i] == reference[i] && v[i] != reference[i]).count();
+            println!(
+                "ABL {name:<18} off: agrees {} ({:+}), fixed {fixed}, broken {broken}, net {:+} (sd about {:.0})",
+                agree(&v),
+                agree(&v) as i64 - b0 as i64,
+                fixed as i64 - broken as i64,
+                ((fixed + broken) as f64).sqrt()
+            );
+        }
+        ABLATE.store(0, O::Relaxed);
+    }
+}
