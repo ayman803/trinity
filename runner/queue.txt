@@ -20,3 +20,13 @@
 2026-10-18-15 | pc | scripts/forensics.ps1 | -Losses 800
 2026-10-18-16 | pc | scripts/calibrate.ps1 | -Ref main -TC 40/60 -Rounds 60
 2026-10-18-17 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60
+2026-10-19-01 | pc | scripts/calibrate.ps1 | -Ref main -TC 40/60 -Rounds 60
+2026-10-19-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60
+2026-10-20-01 | pc | scripts/calibrate.ps1 | -Ref main -TC 40/60 -Rounds 60
+2026-10-20-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60
+2026-10-20-05 | pc | scripts/calibrate.ps1 | -Ref main
+2026-10-20-06 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0
+2026-10-20-07 | pc | scripts/calibrate.ps1 | -Tune -Chain A -Minutes 270
+2026-10-20-09 | pc | scripts/calibrate.ps1 | -Ref main -TC 40/60 -Rounds 60
+2026-10-20-10 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60
+2026-10-20-08 | pc | scripts/calibrate.ps1 | -Tune -Chain B -Minutes 270

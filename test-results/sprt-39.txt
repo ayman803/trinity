@@ -1,0 +1,11 @@
+SPRT test #39, finished 2026-10-20 23:37 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39486051505 (run id 39486051505)
+SPRT RESULT: FAILED - 'unsure-spread' is not stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: unsure-spread (bench 786552) vs main (bench 780879), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 2022, Losses: 2137, Draws: 4841, Points: 4442.5 (49.36 %)
+Ptnml(0-2): [57, 1174, 2150, 1065, 54]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -4.44 +/- 3.92, nElo: -8.14 +/- 7.18
+LLR: -3.96 (-2.94, 2.94) [0.00, 5.00]

@@ -29,6 +29,11 @@ on:
       tc:
         description: "Time control: 8+0.08 (usual), a longer one such as 30+0.3, or repeating like CCRL's: 40/60 = 40 moves per 60 s (fewer games fit in a run)"
         default: "8+0.08"
+      bounds:
+        description: "Elo bounds: 0 5 proves a gain (usual); -4 1 only checks a pure speed-up (same bench) is no worse, and settles in fewer games"
+        type: choice
+        options: ["0 5", "-4 1"]
+        default: "0 5"
       continue_from:
         description: "Continue from run (optional): the number at the end of an earlier run's web address"
         default: ""
@@ -41,8 +46,7 @@ env:
   FASTCHESS_URL: https://github.com/Disservin/fastchess/releases/download/v1.8.2-alpha/fastchess-linux-x86-64.tar
   BOOK_URL: https://github.com/official-stockfish/books/raw/master/UHO_Lichess_4852_v1.epd.zip
   TC: ${{ inputs.tc }}
-  ELO0: "0"
-  ELO1: "5"
+  BOUNDS: ${{ inputs.bounds || '0 5' }}
   JOBS: "5"
 
 jobs:
@@ -158,6 +162,7 @@ jobs:
           github-token: ${{ github.token }}
       - name: Combine
         run: |
+          read -r ELO0 ELO1 <<< "$BOUNDS"
           python3 -I scripts/sprt_combine.py results "$DEV" "$BASE" "$TC" "$ELO0" "$ELO1" "$JOBS"
           # Also as a notice: readable through GitHub's API, not only on the page.
           echo "::notice title=SPRT result::$(sed ':a;N;$!ba;s/\n/%0A/g' result.txt)"

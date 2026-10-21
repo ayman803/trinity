@@ -10,6 +10,8 @@
 #  4. stores the trinity-results key Ayman copies (read from the clipboard,
 #     checked with GitHub, never shown);
 #  5. lets it log on as a batch job, registers the runner to start at boot,
+#     starts the idle beacon in Ayman's account (beacon.ps1: the time of his
+#     last keyboard or mouse use, for the runner to read),
 #     lets the PC sleep after an hour unused (never during a job), wakes it
 #     at 11 pm and 6 am to check the queue, and stops automatic update restarts.
 # Rerunning it is safe: it updates the installed copy and keeps the key.
@@ -102,14 +104,14 @@ try {
     $ErrorActionPreference = "Stop"
 
     Step "Folder $RunnerDir"
-    foreach ($d in @($RunnerDir, "$RunnerDir\state", "$RunnerDir\repo", "$RunnerDir\secret")) { New-Item -ItemType Directory -Force -Path $d | Out-Null }
+    foreach ($d in @($RunnerDir, "$RunnerDir\state", "$RunnerDir\repo", "$RunnerDir\secret", "$RunnerDir\beacon")) { New-Item -ItemType Directory -Force -Path $d | Out-Null }
     Run-Icacls @($RunnerDir, "/inheritance:r", "/grant", "*S-1-5-32-544:(OI)(CI)F", "/grant", "*S-1-5-18:(OI)(CI)F",
         "/grant", "${Owner}:(OI)(CI)M", "/grant", "${Account}:(OI)(CI)RX")
     Run-Icacls @("$RunnerDir\state", "/grant", "${Account}:(OI)(CI)M")
     Run-Icacls @("$RunnerDir\repo", "/grant", "${Account}:(OI)(CI)M")
     Run-Icacls @("$RunnerDir\secret", "/inheritance:r", "/grant", "*S-1-5-32-544:(OI)(CI)F", "/grant", "*S-1-5-18:(OI)(CI)F",
         "/grant", "${Owner}:(OI)(CI)F", "/grant", "${Account}:(OI)(CI)R")
-    foreach ($f in @("runner.ps1", "Approve-Scripts.ps1")) { Copy-Item -LiteralPath (Join-Path $Repo "runner\$f") -Destination $RunnerDir -Force }
+    foreach ($f in @("runner.ps1", "Approve-Scripts.ps1", "beacon.ps1")) { Copy-Item -LiteralPath (Join-Path $Repo "runner\$f") -Destination $RunnerDir -Force }
     Set-Content -LiteralPath "$RunnerDir\machine.txt" -Value $machine
     $ps = "%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
     Set-Content -LiteralPath "$RunnerDir\Approve-Scripts.bat" -Value "@echo off`r`n`"$ps`" -NoProfile -ExecutionPolicy Bypass -File `"$RunnerDir\Approve-Scripts.ps1`"`r`npause"
@@ -206,6 +208,20 @@ try {
     Get-Process -IncludeUserName -ErrorAction SilentlyContinue | Where-Object { $_.UserName -like "*\$Account" } | Stop-Process -Force -ErrorAction SilentlyContinue
     Start-ScheduledTask -TaskName $TaskName
 
+    # The idle beacon: runs in Ayman's own account from his sign-in and writes
+    # the time of his last keyboard or mouse use into $RunnerDir\beacon (his
+    # to write, the runner's only to read). It reads only beacon.ps1 in
+    # $RunnerDir, which the runner account cannot change.
+    $beaconAction = New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" `
+        -Argument "-NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$RunnerDir\beacon.ps1`""
+    $beaconTrigger = New-ScheduledTaskTrigger -AtLogOn -User $Owner
+    $beaconPrincipal = New-ScheduledTaskPrincipal -UserId $Owner -LogonType Interactive -RunLevel Limited
+    $beaconSettings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit ([TimeSpan]::Zero) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew
+    Register-ScheduledTask -TaskName "Trinity Idle Beacon" -Action $beaconAction -Trigger $beaconTrigger -Principal $beaconPrincipal `
+        -Settings $beaconSettings -Force | Out-Null
+    Stop-ScheduledTask -TaskName "Trinity Idle Beacon" -ErrorAction SilentlyContinue
+    Start-ScheduledTask -TaskName "Trinity Idle Beacon"
+
     Write-Host "Checking that the runner starts (20 seconds)..."
     Start-Sleep -Seconds 20
     $info = Get-ScheduledTaskInfo -TaskName $TaskName
@@ -213,6 +229,9 @@ try {
     $log = "$RunnerDir\state\runner.log"
     if (Test-Path -LiteralPath $log) { Get-Content -LiteralPath $log -Tail 5 }
     else { throw "The runner did not start (no log). Send Claude a screenshot of this window." }
+    $beaconFile = "$RunnerDir\beacon\last-input.txt"
+    if (Test-Path -LiteralPath $beaconFile) { Write-Host "Idle beacon: $(Get-Content -LiteralPath $beaconFile) (last keyboard or mouse use, written; UTC)" }
+    else { Write-Host "Idle beacon: no file yet. Send Claude a screenshot of this window." -ForegroundColor Yellow }
     Write-Host ""
     Write-Host "INSTALLED on '$machine'. The runner is running as $Account." -ForegroundColor Green
     Write-Host "It runs nothing until you approve the scripts: double-click 'Trinity Approve-Scripts' on the desktop." -ForegroundColor Green

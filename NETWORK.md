@@ -542,6 +542,259 @@ Stop-early threshold: -10 or worse after the first 1000 games. If the
 held-out loss is not lower at all, more of the same data is not the
 lever either, and king buckets come next.
 
+### 6. 16 king buckets (owner, 18 October; the Session)
+Decided after the skeptic review set teacher-student aside (ESTIMATES.md,
+parked ideas). One change to main's 1024 recipe: 16 king buckets instead
+of 8, from scratch on the same 3.65 billion positions (sprt\coder2\data,
+nothing to convert), 600 superbatches, LR 0.001 cosine, WDL 0.5.
+Layout (own king, mirrored onto files a-d): rank 1 and rank 2 one bucket
+per square; ranks 3 and 4 one bucket per pair of files; ranks 5-6 and
+7-8 one bucket per half-board. Every new bucket lies inside one old
+bucket, so the shared "factoriser" part still carries what all buckets
+have in common, and main's network copied into the new layout
+(tools/net/expand_kb16.py) gives exactly main's bench (780879): the
+engine side is checked without any training.
+Speed: no measurable cost here (bench of the copied network, 4 runs and
+3 copies at once, within the machine's +/- 10% noise; the input weights
+double to 25 MB, but a position only touches its own bucket's 1.5 MB).
+GitHub's machines (speed check of `kb16-speed`, main's network copied,
+against main, 3 copies at once, 30 runs each, 18 October): -1.8%, -0.9%
+and -1.9% on the three machines, about -1.5%, i.e. about -1 Elo by the
+time-odds ruler (42 per doubling). Counted as a same-speed network for
+the loss gate (0.3%).
+Branches: `net-kb16` (engine + trainer support; main's network, bench
+780879), `kb16-speed` (speed check only, not for merging).
+Script: tools\net\KB16-Network.bat (kb16.ps1), dry run
+Dry-Run-KB16.bat (1 superbatch, save, load in the engine, bench). Writes
+only in sprt\coder2; deletes only its own dry-run folder.
+Prediction (written before the run):
+- Training time 5-8 hours (the optimiser updates twice the input weights).
+- Held-out loss: 0.1-0.6% below main's 0.08276.
+- Self-play vs main at 8+0.08: -8 to +10, central +2; CCRL-scale -5 to +7.
+  About 30% to pass [0, 5] (lower than the 40% first quoted to the owner:
+  the more-data network had a better loss and still lost 11, and nobody
+  knows how much two from-scratch runs of the same recipe differ).
+- Stop-early threshold: -10 or worse after 400 games.
+Gates (the owner's rules of 16-17 October): held-out loss at least 0.3%
+better than main's (same speed); 400 games at 8+0.08 on GitHub, stop at
+-10 or worse; full SPRT [0, 5] capped at 18000 games; then calibration on
+the runner the same night as 1.0.0 (rule 13), the v2 check and an SPSA
+re-tune before merging.
+Gate for THIS run (Ayman's decision via the advisor, 18 October, before
+any result; replaces the 0.3% loss gate for this run only): held-out
+loss worse than main's -> stop; 0-0.3% better -> still play the 400 quick
+games at 8+0.08; more than 0.3% better -> as planned. The games decide.
+0.3% stays the rule for later networks until the control run gives the
+run-to-run noise. A full SPRT of it may not hold up search-idea SPRTs on
+GitHub for more than one day.
+Data (checked 18 October): the real run reads exactly big-1..4.data in
+sprt\coder2\data, 3.65 billion positions; the dry run's "1 billion" is
+its single file (it trains 1 superbatch on big-1.data only). These are
+the same positions main's network learned from, converted the same way,
+but shuffled anew (main's own shuffled files were deleted on 13 October),
+so the order differs from main's run; the control run below uses these
+same files, which makes control vs 16 buckets a clean one-change pair.
+Dry run (PC, 18 October 9:01): 42 s per superbatch (the 8-bucket network
+about 30), file 25200704 bytes, loads in the engine (bench runs): the
+real run takes about 7 hours.
+Control run (advisor, owner, 18 October: the next GPU job whatever this
+run gives): main's recipe unchanged (8 king buckets) with a new random
+start (weight seed 20261018; bullet's default is fixed, and main used
+it) on the same files as this run: tools\net\Control-Network.bat
+(kb16.ps1 -KingBuckets 8 -Seed 20261018 -Tag control; branch
+net-control-<date>). About 5 hours. Its SPRT against main measures how
+much two from-scratch runs of one recipe differ (seed and shuffle);
+16 buckets is then judged against the control as well as against main.
+Result, training (PC, 18 October): 6.0 hours (38 s per superbatch), branch
+net-kb16-20261018-0919, bench 928782 (same on the PC and here).
+Gate 1, held-out loss (Session, 18 October 5:20 pm Pacific; the calibration
+PGNs are on the PC only, so measured here on 150,341 positions from fresh
+Trinity self-play games, 5000 nodes per move, played by main's build;
+pure game-result loss, the fair column, because the other labels are
+main's own search scores): main 0.064102, 16 buckets 0.063929, i.e.
+0.27% better. Inside Ayman's 0-0.3% band, so the 400 quick games are
+played (SPRT #28, 80 games x 5 jobs at 8+0.08, started 5:21 pm). The
+loss-blend column favours main (0.019911 vs 0.019966), as expected when
+the scores come from main's own search; it is not the gate. Under 0.4%
+the ruler says nothing (section 3): the games decide.
+Screen (SPRT #28, 400 games at 8+0.08, finished 5:32 pm): +18.3 +/- 18.9
+(W 109, L 88, D 203; 0 time losses, 0 illegal moves, 0 crashes), well
+above the -10 stop line. A quick look over-reads (#17: +13 became +6);
+the full SPRT decides. Full SPRT continued from #28 at 5:33 pm (1800
+games per job; cap 18000 games and one day of GitHub time).
+Advisor's notes on the screen (18 October evening), logged before the
+full SPRT ends: (1) first case where the 0.3% loss gate would have
+stopped a network that then passed the 400-game screen; it feeds the
+decision on the gate after the control run. Caveat: the 0.27% was
+measured on fresh self-play positions, not on the calibration games the
+0.3% gate was defined on, so "would have stopped" is likely, not
+certain. (2) A pass against main makes it mergeable; "the buckets caused
+it" needs 16 buckets vs the control (the clean one-change pair); no plan
+for 32 buckets before that. (3) Expect the +18 to shrink toward the
+central prediction (+2; range -8 to +10); no announcement as a win until
+the full SPRT and the slower-clock test are done.
+Two more rules (owner, 18 October evening, before any further result):
+(a) "slower network" = more than 5% fewer nodes per second than main on
+GitHub's speed check with 3 copies at once; only those also need 30+0.3.
+16 buckets measured 1.5% slower, so 8+0.08 decides for it. (b) The
+control network gets the same 400 quick games at 8+0.08 against main.
+Session's caution: two 400-game screens each carry +/- 19, so their
+difference carries about +/- 27; a control at +10 vs 16 buckets' +18
+cannot separate "buckets" from "new shuffle and start". If 16 buckets
+passes, the clean test is a direct match 16 buckets vs control.
+Advisor, 18 October late (not a merge gate): if 16 buckets passes, it
+joins the runner's 40/60 nights next to main and 1.0.0, to see how it
+holds at long clocks before CCRL does. Noted: the 5% line was set after
+16 buckets' speed (1.5%) was known, so it did decide that case; accepted
+as reasonable on its own terms (1.5% is worth about 1 Elo).
+SPRT #29 (continues #28; finished 19 October 4:21 UTC): 9400 games,
+-2.00 +/- 3.96 (W 2239, L 2293, D 4868), LLR -2.35 of -2.94, 0 time
+losses. The +18 of the screen shrank as the advisor expected. Continued
+to the 18000-game cap (#30, 1720 games per job, 19 October 3:35 am
+Pacific; no search SPRT is waiting, and the one-day limit ends about
+5:20 pm). Most likely outcome: FAIL; an undecided result at the cap also
+means not merged.
+RESULT (SPRT #31, 19 October 7:15 am Pacific, at the 18000-game cap):
+FAILED, -2.10 +/- 2.85 (W 4265, L 4374, D 9361; LLR -4.66; 0 time
+losses). Not merged. Prediction -8 to +10, central +2: inside the range,
+below the centre; "about 30% to pass" was too high. Held-out loss 0.27%
+better and +18 on the screen: neither predicted the result, again.
+Control run (PC, 18 October 17:02-22:06, 5.1 hours, 30.4 s per superbatch):
+branch net-control-20261018-1702, bench 846777. 400-game screen vs main
+started 19 October 3:34 am Pacific.
+Control's longer test, what each outcome means (advisor and Session,
+19 October 7:15 am Pacific, before any result beyond the 400-game
+screen's -14.8 +/- 18.8): the control's SPRT against main is continued to
+about 3000 games (+/- 7 at that length), after the 16-bucket test ends.
+- Within +/- 5 of main: run-to-run luck is small; the failed networks
+  were really worse, and new networks keep being judged against main.
+- -10 or worse: luck is large; any new recipe needs two training runs
+  (two seeds) before a verdict.
+- Between -5 and -10 (or anything the +/- 7 cannot place): extend to
+  about 6000 games before reading it.
+Added by the advisor, 19 October, before the result:
+- 16 buckets vs the control, head to head (same data order, one change),
+  is played after the control's extended test, whatever 16 buckets did
+  against main: if the control is really about -10, the buckets may be
+  worth about +8 over the same data and start. It decides the next
+  network run, not a merge.
+- Best of several starts (Scout, 19 October; parked in ESTIMATES.md):
+  if the control's extended test shows -8 or worse against main, it is
+  taken up with the idle graphics card; within +/- 4 it is dropped.
+  The Session's first objection ("mostly picks the luckiest") was too
+  pessimistic: +/- 10 is the 95% range at 2000 games (sigma about 5), and
+  with a true run-to-run spread of about 10, the best of 4 still gains
+  about +9 (100 / sqrt(100 + 25) x 1.03); with a spread of about 3, about +2.
+Control's extended test, step 1 (SPRT #32, 19 October 8:55 am Pacific,
+3000 games): -8.92 +/- 7.02 (W 680, L 757, D 1563; 0 time losses).
+By the rules written before it: between -5 and -10 -> extended to about
+6000 games (#33, started 9:00 am); best-of-N trigger (-8 or worse):
+MET at this length, so best of several starts is un-parked (plan and
+prediction to follow, after the 6000-game reading, before any training).
+Reading for now, as advised: "run-to-run differences may be large"; if
+it holds, main is a high draw of its recipe and 16 buckets (-2 vs main)
+may be about +7 over the same data and start: the head-to-head decides.
+Control's extended test, final (SPRT #33, 6000 games): -9.67 +/- 4.92
+(W 1346, L 1513, D 3141). By the rules written before: about -10, so
+run-to-run luck is large: a new recipe needs two training runs before a
+verdict, and best of several starts stays un-parked. Reading, kept
+modest (one control run): main is probably a high draw of its recipe,
+or the reshuffled data costs a little; the 2048 and more-data failures
+(-30, -11) are still mostly real, but part of the -11 may be this.
+Head-to-head 16 buckets vs control (same data, same order, one change):
+SPRT [0, 5] at 8+0.08, up to 9000 games, started 19 October 5:24 pm
+Pacific (#34). Prediction (before it): +7 +/- 7 (16 buckets -2 vs main,
+control -10 vs main); about 50% to pass.
+Advisor, 19 October evening, before Control2's result:
+(1) Rule out setup drift before more starts. Code check (Session, done):
+today's trainer differs from main's (8b4d54f) only by the 16-bucket
+option and the seed option, both no-ops at 8 buckets and the default
+seed; Cargo.lock and the conversion are unchanged; same command line as
+big.ps1. Empirical check, to run on the PC after Control2:
+tools\net\Drift-Check.bat trains 1 superbatch with each trainer (1024,
+8 buckets, default seed, big-1.data) and compares loss and files.
+Prediction: identical, or the same loss within GPU rounding. If not, the
+-10 may be a setup change, and extra starts would not fix it.
+(2) "About 10 Elo of run-to-run luck" is one sample: estimated range
+3-15 until Control2 and the drift check are in. Best of several starts
+on the 8-bucket recipe is expected to recover main's level, not beat it
+by much; the real lever is 16 buckets, if it beats the control head to
+head, in which case further starts use 16 buckets.
+Head-to-head FINAL (SPRT #35, 18000 games): 16 buckets vs control
+PASSED, +4.46 +/- 2.87 (W 4501, L 4270, D 9229; LLR 4.01). The buckets
+help by about +4 on the same data and start (prediction +7 +/- 7: right
+direction, lower). By the rule set before: further starts use 16 buckets.
+Control2 screen (SPRT #36, 400 games): +15.7 +/- 19.8 vs main; above
+-10, so extended to 6000 games (20 October 7:05 am). Screens over-read
+(16 buckets: +18 on its screen, -2 at 18000).
+Next GPU run (20 October): 16 buckets, second random start
+(tools\net\KB16-Seed2-Network.bat: kb16.ps1 -KingBuckets 16 -Seed
+20261020 -Tag kb16s2; about 6-7 hours). Prediction (before training):
+vs main about +2 +/- 10 (seed 1 gave -2.1; the recipe is worth about +4
+over an average 8-bucket run, and main sits about +10 above that
+average); about 30% to beat main by +3 or more in a full test.
+Control2 extended (SPRT #37, 6000 games, 20 October): vs main -0.23 +/-
+4.98 (W 1457, L 1461, D 3082). Three runs of main's recipe now: main 0,
+control -9.7, control2 -0.2. Spread (sample sd) about 5.5; main sits
+about +3 above the three-run mean (-3.3), so it is not an unusually
+high draw.
+CORRECTION (Session, 20 October, before KB16-Seed2 starts): the
+16-buckets-vs-control head-to-head was NOT one change. The control used
+weight seed 20261018; 16 buckets used bullet's default seed. So its
++4.5 +/- 2.9 mixes the buckets with the luck of two different starts
+(about +/- 8 between two runs). Across all runs: 8-bucket mean about
+-3.3 +/- 3.2 vs main, the one 16-bucket run -2.1, i.e. buckets about
++1 +/- 7: not established. The rule "further starts use 16 buckets" was
+read from a confounded test; KB16-Seed2 still goes ahead as a second
+16-bucket sample and a best-of candidate. Revised prediction for it
+(before training): vs main -1 +/- 8, about 25% to beat main by +3 or
+more. Lesson: a one-change comparison must fix the seed too.
+Stopping point (advisor, 20 October; logged before Seed2 starts, for
+the owner to confirm): if KB16-Seed2 does not pass against main, no third
+16-bucket run, and no more random starts of either recipe (with a spread
+of about +/- 5.5, best of several gains little). The next network test
+then tries something new, with the data files and the weight seed fixed
+so only the one change differs. Caveat: an architecture change (like 8
+vs 16 buckets) gives the input layer a different shape, so even the same
+seed cannot give the two networks the same start there; the other
+layers and the data order can be identical, which removes most of the
+luck.
+Drift check (PC, 20 October): old trainer (8b4d54f) loss 0.042848, new
+trainer (net-kb16) loss 0.042848 after 1 superbatch, same data and seed:
+equal to all printed digits; the saved files differ only by GPU
+rounding. Verdict: NO setup drift, as predicted. The control's -10 is
+run-to-run variation (random start and/or the new data order), not a
+setup change.
+Head-to-head result, first half (SPRT #34, 9000 games, finished 19
+October): 16 buckets vs control +2.47 +/- 4.09 (W 2217, L 2153, D 4630),
+undecided. Prediction +7 +/- 7: lower than predicted. With the two tests
+against main (16 buckets -2.1, control -9.7, implying about +7.6 +/- 5.7)
+the best joint guess for the buckets' effect is about +4, small and
+uncertain. Continued to 18000 games (cap; no search test waiting).
+Control2 (PC, 19 October 17:25-22:24, 5.0 hours, 29.9 s per superbatch):
+branch net-control2-20261019-1725, bench 850479. 400-game screen vs main
+started 11:44 pm.
+Second control run (19 October, owner's daytime-GPU plan with the
+advisor): tools\net\Control2-Network.bat (main's recipe unchanged, weight
+seed 20261019, same data files; branch net-control2-<date>), about 5
+hours, run in the day. It is both a second sample of the run-to-run
+spread and a best-of-several candidate. Prediction (before training):
+vs main -9 +/- 10 (if the spread is real, it lands anywhere from about
+-20 to +2); vs the first control within +/- 10. It gets the same
+400-game screen, then the extended test only if the screen is above -10.
+How to read the control (advisor, 18 October, before its result;
+wording corrected 19 October): main's recipe was trained once and
+passed by +80, so main was not SELECTED for luck from several runs. It
+is still one draw of its recipe and may have landed high by chance; the
+control measures exactly that. One control run is one sample with its own test error: a
+control at -5 to -10 means "run-to-run differences may be large", not
+that they explain the 2048 and more-data failures, which most likely
+stand. A second control run would be needed to say more.
+Skeptic's note: if it fails narrowly, the next useful run is a control
+(main's recipe, unchanged, new random start) to measure how much two
+from-scratch runs differ; without that number every network result
+since 9 October is hard to read.
+
 ## PC time requests (for the Session's PC queue in ESTIMATES.md)
 
 | # | Job | Script | PC time | Status |

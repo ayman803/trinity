@@ -65,12 +65,68 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-15 | wide network: 2048 neurons, same recipe as the 1024 run (3.65B Leela positions, 600 superbatches; Coder 2) | self-play +15 to +45, CCRL +5 to +25, 70% to pass | -29.76 +/- 4.16 at 8+0.08 (9000 games, SPRT #23); -19.71 +/- 6.61 at 30+0.3 (3000 games, SPRT #24); both FAILED | - | held-out loss only 1.3% lower than the 1024's; 33% fewer nodes per second. At this amount of data, width does not pay for its speed. Path closed |
 | 2026-10-13 | tm-plan (part A, Fable gate change 1): the soft limit is scaled by plan/spend so far in the game (closed loop, prior 0.6, clamp 1-2.5x), and the whole increment is spent; hard limit at least 1.6x soft. Bench unchanged | 8+0.08 vs main: +4 to +10; gate test vs main of that moment (40/10 since 13 October, decided before any result; same prediction): +2 to +6, about a 50% chance to pass the capped test; CCRL-scale (40/20 calibration): +1 to +6 | pending | gate test at 40/10 vs main with tm-control: +0.71 +/- 3.40 after 10800 games, undecided at the cap: gate loss, not merged | Prediction +2 to +6 missed. On top of tm-control's 12%, the closed loop adds nothing measurable: once the 12% is in, most of the leak's value is taken. Safety check SPRT #18 vs main at 8+0.08: +4.29 +/- 3.77 after 9000 games (LLR 2.11, undecided, 0 time losses): no sign of harm; not continued (the 40/10 gate test decides). Below tm-control's +6.8 vs the same main at this clock. Validation (16 games at 10+0.1): first version overshot in sudden death, clock down to 0.09 s and 158 of 812 moves started under 1 s (main: 2); fixed by capping the loop at 1.25x and keeping 3/4 of the increment in sudden death (repeating controls keep 2.5x). PC data: Trinity spends 0.67 (10+0.1) and 0.48 (40/20) of its own plan; its rated opponents 0.84 and 0.63. Fixed-ratio alternative rejected: the ratio differs by clock, so the loop measures it |
 | 2026-10-13 | nnue-simd: the network's output layer written with AVX2 instructions (same arithmetic, bench node count unchanged 780879); about 10% more nodes per second measured here (1.06M vs 0.97M) | self-play +3 to +6 (measured on 60 positions from real games at 300 ms: +7.3% nodes per second, less than the 10% on bench); CCRL +2 to +4 | SPRT #16 (+0.15 +/- 3.71, 9000 games) INVALID: the branch's only commit held the speed probe, not the AVX2 code, so both sides were the same engine (found by Scout, 14 October). Code committed 14 October (961b44b; median of 10 paired bench runs +7.7% nodes per second, ruler: about +4.4); re-test: PASSED +13.25 +/- 3.80 after 9000 games (SPRT #17, LLR 8.39, 0 time losses). Gate change 2 = gate WIN. #16 does not count for the gate. Side result: 9000 games of identical engines gave +0.15, so the GitHub setup favours neither side. The workflow now stops when both branches build the same engine file | - | v2 build (no AVX2) checked: falls back to the old code, bench 780879, no AVX2 instructions. Fable gate change 2 (owner: counts whether it passes or fails) |
+| 2026-10-20 | speed-picker (speed lane): quiet moves scored only when the first is reached; quiets removed from the list once pruning skips them (bench 828267; the order changes a little because the history is fresher) | 11% fewer instructions per node; +5.6% nodes per second (median of 15 paired bench runs). Ruler: about +3. Self-play +1 to +5, about 45% to pass [0, 5]; CCRL about 60% of that | PASSED +21.45 +/- 3.83 after 9000 games (SPRT #38, LLR 14.1, 0 time losses); merged 20 October, bench 828267 | calibration queued (main and 1.0.0 the same night) | far above the prediction (+1 to +5). The speed part is worth about +3 by the ruler, so about +18 comes from the changed order: quiet moves are now ordered by history that already includes what the searches of the hash move, captures and killers at this node just learned. Fresher ordering information was undervalued. Expect shrinkage against other engines (the calibration decides). Advisor's prediction for the rated engines (before the calibration): +5 to +15 (self-play has shrunk 1.3-6x before). It changed the search order, not only the speed, so it also gets a 40/60 night |
+| 2026-10-20 | unsure-spread (Scout 12 October, bucket spread): a node is also "unsure" (LMR one ply less) when a neighbouring output bucket's eval differs by >= 61 cp (the 80th percentile, fixed before the test). Offline gate passed: rank correlation with the eval's error 0.23-0.30 among positions within 150 cp, beyond what eval size explains (2908 positions). Costs 1.7% nodes per second. Bench 786552 | self-play -2 to +5, about 30% to pass (corr-unsure gave +10.8 on the same mechanism; this signal overlaps with it and pays 1.7% speed); CCRL about half | FAILED -4.44 +/- 3.92 after 9000 games (SPRT #39, LLR -3.96, 0 time losses); not merged | - | below the predicted range (-2 to +5). The offline correlation was real, but reducing less on 20% more nodes costs more depth than the better-placed effort earns, plus 1.7% speed. Lesson: an offline signal check is necessary, not sufficient. First Scout idea to reach a strength test |
+| 2026-10-20 | lazy-noisy (lesson of speed-picker): with a hash move, every other move (captures, killers, counter) is scored only after the hash move's search; fresher capture history, and nodes that cut off on the hash move skip SEE and scoring. Instructions per node -0.8%, timing +2.3%. Bench 879832 | self-play -2 to +4, about 30% to pass (capture order is mostly decided by SEE and the victim, which do not change; the history part is small) | pending (SPRT 8+0.08) | - | predicted before any game |
+| 2026-10-20 | rescore-quiets (lesson of speed-picker): at depth >= 5, the quiet moves still waiting are re-scored after the 2nd, 4th, 8th... quiet searched. Bench 804532 (2.9% fewer nodes, 0.2% fewer instructions in total) | self-play 0 to +6, about 40% to pass (the freshness effect was large once; a second dose should be smaller). Advisor, before any result: 0 to +3, since it overlaps with speed-picker's re-sorting; both kept, scored separately | pending (SPRT 8+0.08) | - | predicted before any game |
 
 ## Test queue
 
 Lanes: search and network, both the Session's since 16 October (Coder 2
 folded back after the 2048 network failed). GitHub: at most 2 search tests and 1 network test
 at once. PC: one heavy job at a time, in the order Ayman chooses.
+
+Pace rules (owner with the advisor, 20 October; tests #28-#37 were all
+network, and the second week merged nothing):
+- Network lane: about 20% of GitHub test time at most, one experiment at
+  a time. Current one: KB16-Seed2 (stopping rule: no third 16-bucket run
+  unless Seed2 passes against main). Main changed after Seed2 started
+  (speed-picker, +21.5), and Seed2's published branch carries the older
+  search: before its screen, merge main into that branch (checked: merges
+  cleanly), so the test compares networks only.
+- Search/speed lane: at least 2 new candidates tested per day, from the
+  forensics, Scout's list and the speed profile below. Predictions in the
+  Changes table before any game.
+- Pure speed-ups with an identical bench get a short no-regression test
+  (SPRT bounds [-4, 1], 600 games per job, continued if undecided)
+  instead of a full [0, 5] test (advisor, 20 October). A changed bench
+  gets the full test.
+- Calibration nights for candidates that passed on GitHub come before
+  runner tuning nights (docs/spsa-runner-design.md).
+- Runner tuning (planned work, built 20 October, commit ff3d4a6;
+  approved by Ayman 20 October, commit 58841ba): on a night with no
+  candidate calibration and no 40/60 pair queued, queue
+  `scripts/calibrate.ps1 | -Tune -Chain A -Minutes 270` and then the same
+  with `-Chain B`. Stop after 6 nights per chain, or at night 3 if chains
+  A and B move fewer than 3 of the 4 settings the same way. Prediction:
+  CCRL scale 0 to +6, about 35% to pass Scout's rule; the unseen-opponent
+  check decides.
+- Weekly count (for the phone summary): week of 19 October: tested 4
+  (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
+  started 20 October evening as 21 October's pair), merged 1
+  (speed-picker, +21.5).
+
+### Speed profile (20 October; callgrind on bench, AVX2 build)
+
+Instructions: search logic 20%, accumulator updates 13% (inlined in
+negamax), move picking (selection scan) about 10%, quiet history scoring
+8%, evaluate 8%, move generation 4%, SEE 4%, king refreshes 3.5%,
+make_move 3%. Top 3 speed-ups:
+1. Lazy quiet scoring: score quiets only when reached (most nodes cut off
+   on the hash move or a capture). In speed-picker.
+2. Drop pruned quiets from the list: after late-move or futility pruning
+   the picker still scanned every remaining quiet for each capture left.
+   In speed-picker. Together with 1: 11% fewer instructions per node,
+   +5.6% nodes per second.
+3. SEE computed twice for captures in quiescence (once to order, once to
+   prune). Checked 20 October: reusing the ordering answer where it
+   decides the pruning one keeps the bench identical (780879) but saves
+   nothing (instructions +0.1%; timing +1.3%, within noise): the history
+   lookup needed to reuse it costs as much as the SEE calls it avoids.
+   Dropped before any games.
+Not proposed: deferring accumulator updates until a node is evaluated (a
+known technique elsewhere; dropped under the originality rule, as on 13
+October).
 
 | # | Test | Lane | Where | Status (15 October) |
 |---|---|---|---|---|
@@ -90,6 +146,10 @@ requests PC time in NETWORK.md; the Session adds it here.
 | 1 | Quantisation check, step 1 (tools/net/Quant-Check.bat; reviewed by the Session 15 October: deletes nothing, writes only sprt\coder2) | Coder 2 | under 1 | next; Coder 2's prediction: mean gap 4-8 cp, 95th percentile 10-16 cp |
 | 2 | Calibration of the new main, combo merged (5-Calibrate.bat) | Session | about 2.5 | DONE 14 October: about 3482 (+16) |
 | 3 | Wide network, 2048 neurons (tools/net/Wide-Network.bat; reviewed by the Session 15 October: deletes only its own unshuffled .raw parts in sprt\coder2\data, peak disk about 150 GB, touches nothing of the Session's) | Coder 2 | about 20 (GPU) + 2-3 (CPU) | after 2; owner said go. No calibration or SPRT on the PC meanwhile. Coder 2 compares the training loss at superbatch 300 with the 1024 run and reports; if 2048 is not clearly ahead, Ayman may stop it. Loss comparison script tools/net/Net-Loss.bat (reviewed: deletes nothing), run after training |
+
+| 5 | Control run: main's recipe unchanged, new random start, same data files as 4 (tools/net/Control-Network.bat; same script as 4; advisor and owner, 18 October) | Session | about 5 (GPU) | next GPU job after 4, whatever 4 gives. Measures run-to-run noise; prediction: self-play vs main within +/- 10 (nobody knows; this run is the measurement) |
+| 4 (result) | 16 king buckets: FAILED, SPRT #28/#29/#31, -2.10 +/- 2.85 after 18000 games (screen +18 +/- 19; held-out loss -0.27%). Not merged. Head-to-head vs the control follows the control's extended test (NETWORK.md 6) | Session | - | done 19 October |
+| 4 | 16 king buckets (tools/net/Dry-Run-KB16.bat, then KB16-Network.bat; owner's decision 18 October; reviewed by the Session: deletes only its own dry-run folder, converts nothing, writes only sprt\coder2) | Session | 5-8 (GPU) | ready. Runner jobs wait while it trains (the runner starts nothing while a trinity* program runs). Prediction and gates: NETWORK.md section 6 (self-play -8 to +10, central +2; about 30% to pass) |
 
 Gates for the new-data network (owner, 16 October, before the run):
 1. Dry run of every stage first (tools/net/Dry-Run-New-Data.bat, about 2
@@ -204,6 +264,14 @@ re-scored copy of the 3.65B positions needs another 117 GB (125 GB free).
 Estimate if built: self-play -10 to +8, about 15-20% to pass. Put back to
 the owner with the alternative below before any work.
 
+**PARKED with a trigger (19 October): best of several random starts**
+(Scout, scout/2026-10-19.md). Train the best recipe with 3-4 weight seeds,
+keep the best on about 2000 games each, confirm with a fresh SPRT.
+Taken up if the control's extended test (about 3000 games) shows -8 or
+worse against main; dropped if within +/- 4 (NETWORK.md section 6). Taken up 19 October (control -9.7); with
+three runs (0, -9.7, -0.2) the spread is about +/- 5.5, so its value is
+small: it ends with KB16-Seed2 unless Seed2 passes against main.
+
 ## Proposed (not yet run)
 
 | Idea | Predicted self-play | Predicted CCRL | GPU time |
@@ -259,8 +327,8 @@ runner rules 11-12). Same PC, opponents, book, Syzygy and 10+0.1 as before.
 
 | Job | What | Prediction | Result |
 |---|---|---|---|
-| 2026-10-18-14 | time use, the three runner calibrations of 18 Oct | main: under 0.3 s about 0.3-0.6% of moves (tm-reserve by day: 0.32%), at most 5 time losses in 4000; 1.0.0: about 2% (by day 2.03%) | |
-| 2026-10-18-15 | loss forensics, main's runner calibration (800 losses, 4x the usual sample) | close to 1.0.0's mix of 13 Oct: gradual 60-75%, search 15-25%, evaluation 4-10%, time 1% or less (fewer than 1.0.0 after tm-reserve). Stockfish referee only if copied into the runner's clone; otherwise Trinity judges itself and the mix is less reliable | |
+| 2026-10-18-14 | time use, the three runner calibrations of 18 Oct | main: under 0.3 s about 0.3-0.6% of moves (tm-reserve by day: 0.32%), at most 5 time losses in 4000; 1.0.0: about 2% (by day 2.03%) | main (03:29 run): 0.06% of moves under 0.3 s (better than predicted 0.3-0.6%), 6.29% under 1 s; 0 time losses in 4000. 1.0.0 (01:07 run): 0.51%, not the predicted ~2% (by day 2.03%): the idle overnight PC clearly helps 1.0.0's clock too; 0 time losses in 4000. Opponents 7.2-7.6% under 0.3 s. Prediction for main: PASS (better); for 1.0.0: MISS (4x fewer) |
+| 2026-10-18-15 | loss forensics, main's runner calibration (800 losses, 4x the usual sample) | close to 1.0.0's mix of 13 Oct: gradual 60-75%, search 15-25%, evaluation 4-10%, time 1% or less (fewer than 1.0.0 after tm-reserve). Stockfish referee only if copied into the runner's clone; otherwise Trinity judges itself and the mix is less reliable | 800 of 876 losses, Stockfish referee, 13 minutes (not the expected ~2 h). Gradual 75% (top of 60-75%), search 16% (low end of 15-25%), evaluation 6.5%, time 0% (predicted 1% or less), lost from the book 2%. Inside the prediction on every line. Search mistakes: median time ratio 0.77 (128 cases), again the base rate, so not under-thought. Gradual losses' worst moves at 10x time: search 568 / evaluation 487 |
 
 ### Slower time control on the runner (owner's decision, 18 October)
 
@@ -271,12 +339,39 @@ pooled until the gap's error is under about +/- 10.
 
 | Job | What | Prediction | Result |
 |---|---|---|---|
-| 2026-10-18-16/17 | main and 1.0.0 at 40/60, 480 games each | gap over 1.0.0 +5 to +15 (+14 at 10+0.1; time-management gains may shrink with more time); one night is about +/- 21, so no verdict before 3 nights; 0-2 time losses per 480 games | |
+| 2026-10-18-16/17 | main and 1.0.0 at 40/60, 480 games each | gap over 1.0.0 +5 to +15 (+14 at 10+0.1; time-management gains may shrink with more time); one night is about +/- 21, so no verdict before 3 nights; 0-2 time losses per 480 games | Night 1 (18-19 Oct): main 3511, 1.0.0 3490 (each +/- 17): gap +21 +/- 24, above the +5 to +15 range but well inside one night's noise; no verdict (1 of 3 nights). Per opponent main minus 1.0.0: akimbo +41, Patricia -3, Bread +32, Prune +17, so akimbo drives most of it. 0 time losses for either (480 games each). Night 2 NOT queued 19 Oct: scripts/calibrate.ps1 changed since approved commit dabb545 (new -Affinity option, 1a03ff6), so the check-in may not queue it until a newer commit is approved Night 2 (19-20 Oct, jobs 2026-10-19-01/02): main 3514, 1.0.0 3506 (+/- 15-16): gap +8 +/- 22, inside +5 to +15. Main's first try was DISTURBED at 23:42 (keyboard used) and re-ran idle from 00:28, so both counted runs were idle throughout. Per opponent main minus 1.0.0: akimbo -15, Patricia +14, Bread +9, Prune +13. 0 time losses. Pooled over 2 nights (weighted): about +14 +/- 16 (2 of 3 nights; still no verdict). Night 3 queued 20 Oct (2026-10-20-01/02) |
 
 Method from 18 October (CLAUDE.md runner rule 13): report each version as
 its gap over 1.0.0 calibrated the same night on the runner. Lesson: the
 earlier daytime gains (+17 for 1.0.0, +16 for combo) were measured under
 changing conditions and carry more noise than their +/- 7 suggests.
+
+## PC use: usefulness, not hours (owner and advisor, 19 October)
+
+There is no hours target (the 80-90% use mentioned in chat is withdrawn;
+it was never written here). Flag it only when useful work is waiting
+and the PC is not doing it; an idle PC with nothing worth testing is
+fine.
+
+## Dated checks
+
+- **26 October 2026: PC link decision** (owner and advisor, 19 October).
+  Count the week's PC visits Ayman had to make for Trinity (clicks,
+  pastes at the PC). Two or fewer: keep the current setup, no link. Three
+  or more: set up a Claude session that can work in C:\Trinity, with the
+  rule that it reads files and starts only approved scripts, never edits
+  the runner, never trains without Ayman's "go". Correction to the
+  advice: this cloud session cannot be linked to the PC; the option is a
+  session running on the PC itself (desktop app or `claude
+  remote-control` in C:\Trinity), which runs as Ayman, so the rule is a
+  promise, not a Windows wall. Brought forward if Ayman will be away for
+  days while the work needs his clicks. Before it: the runner's clean
+  week ends about 24 October, after which training can become a runner
+  job (fewer visits).
+  Visits so far (week of 19 October): 19 Oct, 4 pm (git pull, reinstall,
+  Control2); 19 Oct, about 11:45 pm (Drift-Check, run twice); 20 Oct
+  (KB16-Seed2 start, planned). Training is the main reason for visits;
+  after the clean week (about 24 October) it can become a runner job.
 
 ## Runner check-ins
 
@@ -285,6 +380,12 @@ was read in trinity-results (last runner log line covered), what was queued.
 
 - 2026-10-18 (set up by the Session): read up to "03:29 STARTED 2026-10-18-13". Nothing queued.
 - 2026-10-18 6:20 am: the scheduled check-in ran without the repository (it could not attach it) and wrote nothing; the Session logged job 13 by hand: read up to "05:50 DONE 2026-10-18-13". Nothing queued. The check-in moves to a persistent session with the repository attached (as Scout).
+- 2026-10-19 6:27 am: read up to "03:17 DONE 2026-10-18-17" (jobs 14-17, all done, 0 time losses). Nothing queued: scripts/calibrate.ps1 differs from the approved commit dabb545 (1a03ff6, -Affinity), so 40/60 night 2 waits for a new approval.
+- 2026-10-19 7:10 am (Session): 40/60 night 2 queued (2026-10-19-01/02). The approved calibrate.ps1 (dabb545) runs these arguments as they are; the newer -Affinity option is only needed on the laptop, so no new approval is needed for the PC.
+- 2026-10-20 6:21 am: read up to "04:31 DONE 2026-10-19-02" (40/60 night 2; one DISTURBED restart, then done). Queued 40/60 night 3: 2026-10-20-01 main, 2026-10-20-02 release-1.0.0 (approved dabb545 accepts these arguments; CLAUDE.md rule 5).
+- 2026-10-20 4:30 pm (Session): 40/60 night 3 already ran by day (8:10 am - 12:18 pm, idle PC); results for the next check-in. Queue was empty, so tuning night 1 queued: 2026-10-20-03 chain A, 2026-10-20-04 chain B (approved 58841ba). They start after Seed2's training ends.
+- 2026-10-20 4:50 pm (Session): speed-picker passed (+21.5) and is merged. Calibration of the new main comes before tuning (pace rules): tuning jobs 03/04 replaced by 05 main and 06 release-1.0.0 (10+0.1, 500 rounds each, the same night, rule 13), then 07/08 tuning chains A and B (they now tune the new main).
+- 2026-10-20 5:00 pm (Session, advisor's check): #40 and #41 are built on and tested against the new main (both contain the merge 22cdaf1; base at dispatch c44a99a). Added a 40/60 pair for the new main (09 main, 10 release-1.0.0), after tuning chain A: order 05, 06, 07, 09, 10, 08. Chain A takes the early-morning slot because a stopped tuning job loses at most one step, while a stopped 40/60 game is lost.
 
 ## Lessons so far
 

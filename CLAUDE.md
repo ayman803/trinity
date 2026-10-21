@@ -12,10 +12,23 @@ Windows. Every instruction must be concrete:
   guessing.
 - Never guess elapsed time. Check the clock with `date -u` and use the
   times shown in their screenshots. The owner is on US Pacific time.
-- Keep replies short: credit is limited. Only message results that need
-  a decision; batch steps where possible.
+- Keep replies short so they are easy to follow. Only message results
+  that need a decision; batch steps where possible.
 - Effort setting: Medium ("Recommended") for routine steps; High only for
   errors or new design work.
+
+## Usage (owner, 20 October 2026)
+
+Ayman manages his own Claude usage. No agent (Session, Scout, the
+check-in, the phone summary or the advisor) should hold back, shorten
+work, skip checks, or wait in order to save usage. Don't mention usage in
+reports. Do the full job: complete predictions, full tests, proper
+verification. "Don't ration" doesn't mean "keep busy": no busy work, and
+no extra runs that don't help a decision. If a limit is reached, stop
+cleanly, leave a note in ESTIMATES.md saying where the work stopped and
+what comes next, and carry on when usage is available again. (Rule 5's
+schedule, one check-in, one phone summary and Scout, stays as it is; this
+rule governs how fully each one works.)
 
 ## Machines
 
@@ -42,7 +55,14 @@ Windows. Every instruction must be concrete:
    trinity-results, updates ESTIMATES.md, and queues next jobs only from
    already-approved scripts and already-planned work; a read-only task
    ("Trinity phone summary", 6:35 am) sends the owner a short phone summary. It never merges, never changes scripts that need
-   approval, and never starts training or data generation.
+   approval, and never starts training or data generation. It also keeps
+   the "Weekly count" line (Pace rules, ESTIMATES.md Test queue) current:
+   candidates tested and merged this week (owner, 20 October). When it
+   queues, a script edited after the last approval is not a reason to
+   wait: the runner always runs the approved version, so it is enough that
+   the approved version accepts the job's parameters (19 October;
+   this overrides the stricter "unchanged since the approved commit" test
+   in the check-in's own instructions).
 6. When Trinity is near top-100 strength, prepare a release for the CCRL
    testers.
 7. Before each next step, briefly review the plan as a skeptic: what could
@@ -102,8 +122,13 @@ before any code (with the advisor's and Scout's additions):
    second one needs typing AGAIN). Every job's log line names the approved
    commit. trinity-results is public: no user names, personal paths or
    device ids in it.
-11. Real jobs (all but the hello test) start only after 30 minutes without
-   keyboard or mouse use, or between 11 pm and 7 am.
+11. Real jobs (all but the hello test) start after 30 minutes without
+   keyboard or mouse use, at any hour (owner and advisor, 19 October: the
+   runner is for more PC use, not a night shift). An idle beacon in
+   Ayman's own account writes his last keyboard or mouse time to a file
+   the runner can only read. If he comes back during a job, the job stops,
+   does not count ("DISTURBED") and runs again later (at most 3 times). If
+   the beacon is silent, jobs start only between 11 pm and 7 am.
 12. First real jobs: a 200-game calibration of release 1.0.0 (plumbing
    check), then a full known-answer calibration of 1.0.0 (expected about
    3466), then current `main`.
@@ -111,8 +136,11 @@ before any code (with the advisor's and Scout's additions):
    re-calibrated on the runner once or twice a week, and on any night a
    candidate is calibrated. A version's strength is reported as its gap
    over 1.0.0 measured the same night, not as a single number (1.0.0 gave
-   3466 by day on 12 October and 3478 overnight on the runner). Daytime
-   and runner numbers are not mixed. A gap against a 1.0.0 run from another
+   3466 by day on 12 October and 3478 overnight on the runner). Runner
+   measurements count when the PC was idle throughout (day or night;
+   disturbed ones are dropped); they are not mixed with manual runs made
+   while the PC was in use. (The 12-Elo day/night gap of 18 October is
+   itself +/- 14, so it is no evidence of a day/night bias.) A gap against a 1.0.0 run from another
    night is labelled "reference from <date>" (conditions alone moved 1.0.0
    by 12). When CCRL publishes its own rating
    for 1.0.0, that becomes the anchor for converting gaps to the CCRL scale.
@@ -156,6 +184,13 @@ check-in has filled in the overnight results) and writes scout/YYYY-MM-DD.md
 plus one line per idea in scout/INDEX.md. It never touches code, tests or
 ESTIMATES.md. Read scout/INDEX.md before planning the next step.
 
+## Pace rules (owner with the advisor, 20 October 2026)
+
+Network lane: about 20% of GitHub test time at most, one experiment at a
+time. Search/speed lane: at least 2 new candidates tested per day
+(forensics, Scout's list, the speed profile), predictions first. Details
+in ESTIMATES.md, Test queue.
+
 ## Coder 2 (folded back, 16 October 2026)
 
 From 14 to 16 October a second coding session ("Coder 2") owned the
@@ -168,7 +203,9 @@ by the Session. They write only inside C:\Trinity\sprt\coder2.
 Standing parts of that setup that still apply:
 - The PC runs one heavy job at a time; Ayman decides the order. The PC
   queue is in ESTIMATES.md.
-- Every network merge: SPRT (8+0.08 and 30+0.3 for slower networks), the
+- Every network merge: SPRT (8+0.08, and 30+0.3 for slower networks:
+  more than 5% fewer nodes per second than main on GitHub's speed check
+  with 3 copies at once; owner, 18 October, before the 16-bucket result), the
   v2 check (19-V2-Check.bat), calibration, then an SPSA re-tune.
 - Disk budget for training: about 200 GB. Training data takes 32 GB per
   billion positions, plus about 52 GB for shuffling and spare.

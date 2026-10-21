@@ -1,0 +1,11 @@
+SPRT test #38, finished 2026-10-20 23:37 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39486047447 (run id 39486047447)
+SPRT RESULT: PASSED - 'speed-picker' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: speed-picker (bench 828267) vs main (bench 780879), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 2263, Losses: 1708, Draws: 5029, Points: 4777.5 (53.08 %)
+Ptnml(0-2): [42, 835, 2216, 1340, 67]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 21.45 +/- 3.83, nElo: 40.31 +/- 7.18
+LLR: 14.10 (-2.94, 2.94) [0.00, 5.00]

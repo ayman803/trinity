@@ -1,0 +1,11 @@
+SPRT test #41, finished 2026-10-21 03:42 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39517291066 (run id 39517291066)
+SPRT RESULT: FAILED - 'rescore-quiets' is not stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: rescore-quiets (bench 804532) vs main (bench 828267), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 1928, Losses: 2093, Draws: 4979, Points: 4417.5 (49.08 %)
+Ptnml(0-2): [50, 1190, 2185, 1025, 50]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -6.37 +/- 3.87, nElo: -11.83 +/- 7.18
+LLR: -5.34 (-2.94, 2.94) [0.00, 5.00]

@@ -13,13 +13,23 @@ param(
     [string]$TC = "10+0.1",
     [int]$Hash = 16,
     [int]$Concurrency = 0,        # 0 = automatic (14 on the main PC)
+    # Processors the games may use, as a hex mask (for example 0xFF0 = logical
+    # processors 4-11, the 8 efficiency cores of the laptop's i7-1355U), so
+    # games never mix fast and slow cores. Empty = all.
+    [string]$Affinity = "",
     [switch]$NoUpdate,
     # One-off match instead of calibration: the name of an unrated opponent
     # whose Windows build is saved as sprt\opponents\<name>.exe.
-    [string]$Vs = ""
+    [string]$Vs = "",
+    # Re-tuning instead of calibration (docs/spsa-runner-design.md): one
+    # SPSA chain (A or B) against the same rated opponents, for -Minutes.
+    [switch]$Tune,
+    [ValidateSet("A", "B")][string]$Chain = "A",
+    [int]$Minutes = 270
 )
 
 . (Join-Path $PSScriptRoot "common.ps1")
+. (Join-Path $PSScriptRoot "tune-opponents.ps1")
 
 # CCRL 40/15 ratings (single CPU), list of 9 October 2026.
 $opponents = @(
@@ -131,7 +141,7 @@ try {
         Read-Host "Press Enter to continue anyway, or close this window to wait"
     }
 
-    $trinity = Build-Trinity "origin/$Ref"
+    $trinity = if ($Tune) { Build-Trinity "origin/$Ref" -Features "tune" } else { Build-Trinity "origin/$Ref" }
     $bench = Get-BenchNodes $trinity
     $built = @()
     $opponentDir = Join-Path $script:Work "opponents"
@@ -149,6 +159,12 @@ try {
     }
 
     if ($Concurrency -le 0) { $Concurrency = Get-DefaultConcurrency }
+    if ($Affinity) {
+        # Programs started from here (fastchess and the engines) inherit it.
+        $mask = [Convert]::ToInt64(($Affinity -replace '^0x', ''), 16)
+        [Diagnostics.Process]::GetCurrentProcess().ProcessorAffinity = [IntPtr]$mask
+        Write-Host "Games run only on the processors of mask $Affinity."
+    }
     $fastchess = Get-Fastchess
     # A balanced book, closer to how rating lists start their games than the
     # unbalanced book used for SPRT.
@@ -157,6 +173,14 @@ try {
     $syzygy = Join-Path $script:Root "syzygy"
     $syzygyArg = if (Test-Path -LiteralPath $syzygy) { "option.SyzygyPath=$syzygy" } else { "option.Hash=$Hash" }
     if (Test-Path -LiteralPath $syzygy) { Write-Host "Using Syzygy tablebases from $syzygy for all engines." }
+    if ($Tune) {
+        $keepAwake = Start-KeepAwake
+        $sha = Get-NativeOutput git @("-C", $script:Root, "rev-parse", "origin/$Ref")
+        $opps = @($built | ForEach-Object { @{ Name = $_[0].Name; Exe = $_[1] } })
+        Invoke-OpponentTune -Engine $trinity -Sha "$sha".Trim() -Ref $Ref -Opponents $opps -Fastchess $fastchess `
+            -Book $book -TC $TC -SyzygyArg $syzygyArg -Concurrency $Concurrency -Chain $Chain -Minutes $Minutes
+        return
+    }
     $results = Join-Path $script:Work "results"
     New-Item -ItemType Directory -Force -Path $results | Out-Null
     $stamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
@@ -234,7 +258,7 @@ try {
     $hours = [Math]::Round(((Get-Date) - $started).TotalHours, 1)
     $title = if ($Vs) { "MATCH RESULT" } else { "CALIBRATION RESULT" }
     $summary = @("$title for '$Ref' (bench $bench)",
-        "Machine: $(Get-MachineLabel) ($Concurrency games at a time), tc $TC, 1 thread each") + $lines
+        "Machine: $(Get-MachineLabel) ($Concurrency games at a time$(if ($Affinity) { ", processors $Affinity" })), tc $TC, 1 thread each") + $lines
     if ($sumW -gt 0) {
         $estimate = $sumWR / $sumW
         $error95 = 1.0 / [Math]::Sqrt($sumW)

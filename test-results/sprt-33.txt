@@ -1,0 +1,12 @@
+SPRT test #33, finished 2026-10-19 17:17 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39281922954 (run id 39281922954)
+Continues run id 39267579680; the totals below include it.
+SPRT RESULT: FAILED - 'net-control-20261018-1702' is not stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: net-control-20261018-1702 (bench 846777) vs main (bench 780879), tc 8+0.08, bounds [0, 5]
+Games: 6000, Wins: 1346, Losses: 1513, Draws: 3141, Points: 2916.5 (48.61 %)
+Ptnml(0-2): [63, 803, 1408, 690, 36]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -9.67 +/- 4.92, nElo: -17.28 +/- 8.79
+LLR: -4.92 (-2.94, 2.94) [0.00, 5.00]
