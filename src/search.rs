@@ -621,13 +621,6 @@ impl Searcher {
                 return (eval + beta) / 2;
             }
 
-            // Razoring: hopelessly behind; check if captures can save us.
-            if depth <= 3 && eval + tune::RAZOR_BASE() + tune::RAZOR_MUL() * depth <= alpha {
-                let q = self.qsearch(b, alpha, alpha + 1, ply);
-                if q <= alpha {
-                    return q;
-                }
-            }
 
             // Null move pruning: give the opponent a free move. If we are
             // still above beta, this node is almost surely a cut-off.

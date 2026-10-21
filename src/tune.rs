@@ -16,7 +16,7 @@ macro_rules! tunables {
 
         $(
             #[inline(always)]
-            #[allow(non_snake_case)]
+            #[allow(non_snake_case, dead_code)]
             pub fn $name() -> i32 {
                 #[cfg(feature = "tune")]
                 {
