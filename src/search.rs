@@ -179,8 +179,11 @@ impl ScoredMoves {
     #[inline(always)]
     fn pick(&mut self, i: usize) -> Move {
         let mut best_i = i;
+        let mut best = self.score(i);
         for j in i + 1..self.len() {
-            if self.score(j) > self.score(best_i) {
+            let s = self.score(j);
+            if s > best {
+                best = s;
                 best_i = j;
             }
         }
@@ -663,12 +666,12 @@ impl Searcher {
             depth -= 1;
         }
 
-        let mut list = MoveList::new();
-        movegen::generate(b, &mut list, false);
-        if list.is_empty() {
+        // Generated straight into the list that is sorted (no copy).
+        let mut moves = ScoredMoves::new(MoveList::new());
+        movegen::generate(b, &mut moves.list, false);
+        if moves.list.is_empty() {
             return if in_check { -MATE + ply as i32 } else { 0 };
         }
-        let mut moves = ScoredMoves::new(list);
         self.score_moves(b, &mut moves, tt_move, ply, true);
 
         let orig_alpha = alpha;
@@ -915,10 +918,9 @@ impl Searcher {
             alpha = alpha.max(best);
         }
 
-        let mut list = MoveList::new();
-        movegen::generate(b, &mut list, !in_check);
+        let mut moves = ScoredMoves::new(MoveList::new());
+        movegen::generate(b, &mut moves.list, !in_check);
         let tt_move = tt_entry.map_or(Move::NONE, |e| e.mv);
-        let mut moves = ScoredMoves::new(list);
         self.score_moves(b, &mut moves, tt_move, ply, false);
 
         let mut best_move = Move::NONE;
