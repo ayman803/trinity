@@ -631,12 +631,14 @@ mod ablation {
         // the hash size different; its "fixed" and "broken" counts are
         // what chance alone produces.
         if std::env::var("NOISE").is_ok() {
-            for hash in [8, 32, 64] {
-                let v = best_moves(&boards, base, hash);
+            // A bigger table may change nothing at this budget, so the
+            // node budget is also moved by 4% either way.
+            for (hash, nodes) in [(8, base), (64, base), (16, base * 96 / 100), (16, base * 104 / 100)] {
+                let v = best_moves(&boards, nodes, hash);
                 let fixed = (0..boards.len()).filter(|&i| baseline[i] != reference[i] && v[i] == reference[i]).count();
                 let broken = (0..boards.len()).filter(|&i| baseline[i] == reference[i] && v[i] != reference[i]).count();
                 println!(
-                    "ABL no change, hash {hash:>2} MB: agrees {} ({:+}), fixed {fixed}, broken {broken}, net {:+}",
+                    "ABL no change, hash {hash:>2} MB, {nodes} nodes: agrees {} ({:+}), fixed {fixed}, broken {broken}, net {:+}",
                     agree(&v),
                     agree(&v) as i64 - b0 as i64,
                     fixed as i64 - broken as i64
