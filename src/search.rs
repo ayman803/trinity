@@ -650,11 +650,6 @@ impl Searcher {
             }
         }
 
-        // Internal iterative reduction: without a hash move our ordering is
-        // poor, so spend less effort here.
-        if tt_move.is_none() && depth >= 4 && (pv_node || cut_node) {
-            depth -= 1;
-        }
 
         let mut list = MoveList::new();
         movegen::generate(b, &mut list, false);
