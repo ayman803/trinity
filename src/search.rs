@@ -702,12 +702,6 @@ impl Searcher {
                         moves.drop_quiets_after(i - 1);
                         continue;
                     }
-                    // Futility pruning: this quiet move can't lift us to alpha.
-                    if !in_check && lmr_depth <= 8 && eval + tune::FUT_BASE() + tune::FUT_MUL() * lmr_depth <= alpha {
-                        skip_quiets = true;
-                        moves.drop_quiets_after(i - 1);
-                        continue;
-                    }
                     // SEE pruning: the move hangs material.
                     if lmr_depth <= 8 && !b.see_ge(m, -tune::SEE_QUIET() * lmr_depth * lmr_depth) {
                         continue;
