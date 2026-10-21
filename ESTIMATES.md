@@ -113,6 +113,17 @@ network, and the second week merged nothing):
   predictions first. Order: IIR, futility (22 October), then QS
   futility, singular extension's parts (negative extension, multi-cut),
   SEE quiet pruning, null move, SEE capture pruning, QS SEE, LMP, RFP.
+  Guards (advisor, 21 October): a removal with a clear gain also gets a
+  40/60 night; when the campaign ends, the engine with every removal
+  plays the pre-campaign main (branch pre-campaign = e0da35a, main with
+  no-razor) at 40/10, to catch small "not worse" losses adding up.
+- Tests measured against the main before no-razor (tm-stable-floor 40/10
+  #45/#51, speed-pick2 #43/#50/#52, Seed2 #42/#47/#53): any that passes
+  gets a short no-regression test ([-4, 1]) on the new main before it is
+  merged (advisor, 21 October).
+- If two calibration nights put the gap over 1.0.0 at +50 or more, tell
+  Ayman: it opens the question of sending 1.1 to the CCRL testers
+  instead of 1.0.0 (his decision; any message to the testers is his).
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
