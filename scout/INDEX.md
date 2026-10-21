@@ -24,3 +24,4 @@ One line per idea ever proposed: date | short name | status.
 2026-10-18 | [search] Interleaved, opening-paired calibration of candidate and 1.0.0 within one night (A-vs-A check first) | proposed
 2026-10-19 | [network] Two seeds per recipe for verdicts; best of 3-4 seeds of the current recipe as a cheap gain (winner's curse) | proposed
 2026-10-20 | [search] SPSA on the runner against the rated opponents (calibration book, 10+0.1), held-out opponent as check | proposed
+2026-10-21 | [search] Factorial split of #38: test "score quiets lazily" and "drop quiets once one is pruned" separately vs the old main | proposed
