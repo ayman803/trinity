@@ -767,6 +767,8 @@ search, so main was merged into it (branch net-kb16s2-main, bench
 October 6 am; above -10 it extends to 6000 games, as for Control2.
 Prediction unchanged (written before training): vs main -1 +/- 8, about
 25% to beat main by +3 or more.
+Screen (SPRT #42, 400 games): +4.3 +/- 20.1 (W 97, L 92, D 211); above
+-10, so extended to 6000 games (21 October 7:10 am, continues #42).
 Drift check (PC, 20 October): old trainer (8b4d54f) loss 0.042848, new
 trainer (net-kb16) loss 0.042848 after 1 superbatch, same data and seed:
 equal to all printed digits; the saved files differ only by GPU
