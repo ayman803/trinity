@@ -1047,7 +1047,10 @@ impl Searcher {
                 // Think longer when the best move keeps changing, when the
                 // search effort is spread over several moves, or when the
                 // score just dropped; stop sooner when all signs agree.
-                let stability_scale = [2.0, 1.4, 1.1, 0.9, 0.8][stability.min(4)];
+                // A stable best move no longer shortens the think below
+                // plan (forensics: search mistakes were played with 0.75x
+                // the game's average move time).
+                let stability_scale = [2.0, 1.4, 1.1, 1.0, 1.0][stability.min(4)];
                 let node_scale = if depth >= 6 {
                     let best_nodes = self.root_nodes[best.from()][best.to()] as f64;
                     let fraction = best_nodes / self.nodes.max(1) as f64;
