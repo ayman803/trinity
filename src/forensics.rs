@@ -564,7 +564,7 @@ mod ablation {
         ("QS futility", 10), ("QS SEE prune", 11), ("LMR unsure term", 12), ("LMR history term", 13),
     ];
 
-    fn best_moves(boards: &[Board], nodes: u64) -> Vec<Move> {
+    fn best_moves(boards: &[Board], nodes: u64, hash: usize) -> Vec<Move> {
         let threads = 4;
         let chunks: Vec<Vec<(usize, Board)>> = (0..threads)
             .map(|t| boards.iter().copied().enumerate().filter(|(i, _)| i % threads == t).collect())
@@ -575,7 +575,7 @@ mod ablation {
                 .into_iter()
                 .map(|c| {
                     sc.spawn(move || {
-                        let mut s = Searcher::new(Shared::new(16), 0);
+                        let mut s = Searcher::new(Shared::new(hash), 0);
                         s.silent = true;
                         let mut r = Vec::new();
                         for (i, b) in c {
@@ -622,14 +622,31 @@ mod ablation {
         let boards: Vec<Board> = boards.into_iter().step_by(step).take(n).collect();
         println!("ABL positions {} from {} games; base {} nodes, reference {}x", boards.len(), games.len(), base, mult);
         ABLATE.store(0, O::Relaxed);
-        let reference = best_moves(&boards, base * mult);
-        let baseline = best_moves(&boards, base);
+        let reference = best_moves(&boards, base * mult, 16);
+        let baseline = best_moves(&boards, base, 16);
         let agree = |v: &[Move]| v.iter().zip(&reference).filter(|(a, b)| a == b).count();
         let b0 = agree(&baseline);
         println!("ABL baseline agrees with reference: {b0} / {}", boards.len());
+        // No-change baseline (Scout, 21 October): the same engine with only
+        // the hash size different; its "fixed" and "broken" counts are
+        // what chance alone produces.
+        if std::env::var("NOISE").is_ok() {
+            for hash in [8, 32, 64] {
+                let v = best_moves(&boards, base, hash);
+                let fixed = (0..boards.len()).filter(|&i| baseline[i] != reference[i] && v[i] == reference[i]).count();
+                let broken = (0..boards.len()).filter(|&i| baseline[i] == reference[i] && v[i] != reference[i]).count();
+                println!(
+                    "ABL no change, hash {hash:>2} MB: agrees {} ({:+}), fixed {fixed}, broken {broken}, net {:+}",
+                    agree(&v),
+                    agree(&v) as i64 - b0 as i64,
+                    fixed as i64 - broken as i64
+                );
+            }
+            return;
+        }
         for &(name, bit) in RULES {
             ABLATE.store(1 << bit, O::Relaxed);
-            let v = best_moves(&boards, base);
+            let v = best_moves(&boards, base, 16);
             let fixed = (0..boards.len()).filter(|&i| baseline[i] != reference[i] && v[i] == reference[i]).count();
             let broken = (0..boards.len()).filter(|&i| baseline[i] == reference[i] && v[i] != reference[i]).count();
             println!(
