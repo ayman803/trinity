@@ -769,6 +769,12 @@ Prediction unchanged (written before training): vs main -1 +/- 8, about
 25% to beat main by +3 or more.
 Screen (SPRT #42, 400 games): +4.3 +/- 20.1 (W 97, L 92, D 211); above
 -10, so extended to 6000 games (21 October 7:10 am, continues #42).
+Seed2 final (21 October 5 pm): +1.24 +/- 3.46 after 12000 games (SPRT
+#42 + #47 + #53, LLR -0.13), stopped: a pass by 18000 was unlikely.
+Prediction (-1 +/- 8, about 25% to beat main by +3) was right. Not
+merged. Stopping point reached: no third 16-bucket run and no more
+random starts; the next network test changes one thing with the data
+and the seed fixed.
 Drift check (PC, 20 October): old trainer (8b4d54f) loss 0.042848, new
 trainer (net-kb16) loss 0.042848 after 1 superbatch, same data and seed:
 equal to all printed digits; the saved files differ only by GPU
