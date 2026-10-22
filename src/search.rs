@@ -926,14 +926,6 @@ impl Searcher {
                 if !b.see_ge(m, 0) {
                     continue;
                 }
-                if !m.is_promotion() {
-                    let cap = b.captured_piece(m);
-                    let gain = crate::board::SEE_VALUES[piece_type(cap)];
-                    if static_eval + tune::QS_FUTILITY() + gain <= alpha {
-                        best = best.max(static_eval + tune::QS_FUTILITY() + gain);
-                        continue;
-                    }
-                }
             }
 
             let child = self.make(b, m, ply);
