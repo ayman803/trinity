@@ -743,8 +743,6 @@ impl Searcher {
                     } else if s_beta >= beta {
                         // Multi-cut: several moves beat beta.
                         return s_beta;
-                    } else if tt_score >= beta {
-                        extension = -1;
                     }
                 }
             }
