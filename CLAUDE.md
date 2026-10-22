@@ -154,6 +154,12 @@ before any code (with the advisor's and Scout's additions):
    after that the 30-minute idle rule applies. When queueing, put
    calibrations and 40/60 games first and tuning last. (Needs the runner
    reinstalled to take effect.)
+15. (Advisor, 21 October) The runner account cannot read
+   C:\Trinity\sprt\opponents ("access denied"), so the installer copies the
+   calibration opponents to C:\TrinityRunner\opponents (with their
+   fingerprints in copied.txt) and the runner refreshes its working copies
+   from there by fingerprint. After adding or changing an opponent, Ayman
+   reinstalls the runner; otherwise calibrations keep the old copies.
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
 

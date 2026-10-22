@@ -112,6 +112,26 @@ try {
     Run-Icacls @("$RunnerDir\secret", "/inheritance:r", "/grant", "*S-1-5-32-544:(OI)(CI)F", "/grant", "*S-1-5-18:(OI)(CI)F",
         "/grant", "${Owner}:(OI)(CI)F", "/grant", "${Account}:(OI)(CI)R")
     foreach ($f in @("runner.ps1", "Approve-Scripts.ps1", "beacon.ps1")) { Copy-Item -LiteralPath (Join-Path $Repo "runner\$f") -Destination $RunnerDir -Force }
+    # Calibration opponents (Ayman's .exe files in sprt\opponents): the runner
+    # account could not read that folder (21 October, "access denied"), so the
+    # installer, an administrator, copies them to $RunnerDir\opponents (read-only
+    # for the runner), with a list of their fingerprints. The runner refreshes
+    # its working copies from there. After changing an opponent, reinstall.
+    $oppSrc = Join-Path $Repo "sprt\opponents"
+    $oppDst = "$RunnerDir\opponents"
+    if (Test-Path -LiteralPath $oppSrc) {
+        New-Item -ItemType Directory -Force -Path $oppDst | Out-Null
+        $opps = @(Get-ChildItem -LiteralPath $oppSrc -Filter "*.exe" -File)
+        $manifest = @("# Copied by Install-Runner on $(Get-Date -Format 'yyyy-MM-dd HH:mm') from $oppSrc")
+        foreach ($o in $opps) {
+            Copy-Item -LiteralPath $o.FullName -Destination $oppDst -Force
+            $manifest += "$($o.Name) $((Get-FileHash -LiteralPath $o.FullName -Algorithm SHA256).Hash)"
+        }
+        Set-Content -LiteralPath "$oppDst\copied.txt" -Value $manifest
+        Write-Host "Calibration opponents copied for the runner: $(($opps | ForEach-Object { $_.Name }) -join ', ')"
+    } else {
+        Write-Host "No calibration opponents found in $oppSrc." -ForegroundColor Yellow
+    }
     Set-Content -LiteralPath "$RunnerDir\machine.txt" -Value $machine
     $ps = "%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe"
     Set-Content -LiteralPath "$RunnerDir\Approve-Scripts.bat" -Value "@echo off`r`n`"$ps`" -NoProfile -ExecutionPolicy Bypass -File `"$RunnerDir\Approve-Scripts.ps1`"`r`npause"

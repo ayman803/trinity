@@ -201,18 +201,26 @@ function Initialize-Clone {
             & cmd.exe /c mklink /J "$link" "$target" | Out-Null
         }
     }
-    # Calibration opponents Ayman saved by hand: copied (the job may add its own builds there).
-    $from = Join-Path $Data "sprt\opponents"
+    # Calibration opponents Ayman saved by hand: refreshed into the clone (the
+    # job may add its own builds there) from the installer's copy in
+    # $RunnerDir\opponents (this account cannot read Ayman's folder), compared by
+    # fingerprint so a changed opponent is never left stale.
+    $from = Join-Path $RunnerDir "opponents"
+    if (-not (Test-Path -LiteralPath $from)) { $from = Join-Path $Data "sprt\opponents" }
     $to = Join-Path $Clone "sprt\opponents"
     try {
         if (Test-Path -LiteralPath $from) {
             New-Item -ItemType Directory -Force -Path $to | Out-Null
             foreach ($f in Get-ChildItem -LiteralPath $from -Filter "*.exe" -File) {
                 $dest = Join-Path $to $f.Name
-                if (-not (Test-Path -LiteralPath $dest) -or (Get-Item -LiteralPath $dest).Length -ne $f.Length) { Copy-Item -LiteralPath $f.FullName -Destination $dest -Force }
+                $same = (Test-Path -LiteralPath $dest) -and
+                    ((Get-FileHash -LiteralPath $dest -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath $f.FullName -Algorithm SHA256).Hash)
+                if (-not $same) { Copy-Item -LiteralPath $f.FullName -Destination $dest -Force; Write-Log "Calibration opponent refreshed: $($f.Name)" }
             }
         }
-    } catch { Write-Note "Could not copy the calibration opponents: $($_.Exception.Message)" }
+    } catch {
+        Write-Note "Could not refresh the calibration opponents from ${from}: $($_.Exception.Message). Calibrations use the copies already in the runner's folder; reinstall the runner to refresh them."
+    }
 }
 
 # Minutes since Ayman last used the keyboard or mouse, from the idle beacon
