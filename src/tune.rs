@@ -49,7 +49,7 @@ macro_rules! tunables {
 
 tunables! {
     // Reverse futility pruning margin per ply.
-    RFP_MARGIN = 85, 30, 150, 8;
+    RFP_MARGIN = 170, 30, 300, 8;
     // Razoring: margin = base + mul * depth.
     RAZOR_BASE = 215, 50, 400, 20;
     RAZOR_MUL = 279, 100, 450, 20;
