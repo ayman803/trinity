@@ -76,6 +76,8 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-22 | no-fut (removal campaign): no futility pruning of quiet moves. Audit net -6 (noise). Bench 1159611 (+30% nodes) | self-play -10 to +3; [-4, 1]: about 25% to pass | FAILED -7.07 +/- 4.60 after 6000 games (SPRT #55 + #59, LLR -2.98): futility pruning stays | - | predicted before any game; on main with no-razor |
 | 2026-10-22 | no-qsfut (removal campaign): no futility pruning in quiescence. Audit net -7 (noise). Bench 916512 | self-play -6 to +3; [-4, 1]: about 35% to pass | PASSED, far beyond the prediction: +59.76 +/- 6.76 after 3000 games (SPRT #61, LLR 14.13; W 981, L 470; 0 time losses). Merged 22 October (bench 916512, with speed-pick2). Second +60 removal: razoring and QS futility both gave up when the static eval was far below alpha, cutting tactics the eval cannot see (quiet futility, the same shape at depth, held: -7 when removed). Checked for a shared fault (piece values, en passant, eval scale): none found. Clear gain, so a 40/60 night (advisor's guard); calibration queued tonight | - | predicted before any game |
 | 2026-10-22 | no-negext (removal campaign): singular extension keeps its +1 and multi-cut but no longer searches the hash move a ply shallower when another move also beats the singular bound. Bench 869069 | self-play -5 to +4; [-4, 1]: about 45% to pass | 3000 games: +0.93 +/- 6.47 (SPRT #62, LLR 0.41), undecided; continued on the new main (merge base changed: it is re-checked as a [-4, 1] on main with no-qsfut) | - | predicted before any game |
+| 2026-10-23 | rfp-wide (advisor's eval-margin idea, 22 October): reverse futility margin doubled, 85 -> 170 (prunes less, not removed; the audit put RFP off at -61). Bench 1408587 (+54% nodes) | self-play -6 to +12, about 35% to pass [0, 5]; both SPSA tunes moved this margin up (75 -> 81 -> 85) | pending (SPRT 8+0.08) | - | predicted before any game; started 22 October as 23 October's pair; not merged before the 1.1 freeze |
+| 2026-10-23 | fut-wide (same idea): main-search futility margins doubled, 90 + 104 x depth -> 180 + 208 x depth (removing it lost -7). Bench 1012002 | self-play -5 to +8, about 30% to pass (SPSA barely moved these: 90 -> 91 -> 90, 100 -> 102 -> 104) | pending (SPRT 8+0.08) | - | predicted before any game; same pairing |
 
 ## Test queue
 
@@ -160,6 +162,20 @@ network, and the second week merged nothing):
   3. Saturday night: 40/60 pair of release-1.1 and release-1.0.0.
   4. The numbers published with v1.1.0 come from these runs of the frozen
      build only. Then v1.1.0 is tagged and published on GitHub.
+  Gate added (Scout and advisor, 22 October): before release, the frozen
+  build needs a 40/10 time-loss check (at least 1000 games, 0 losses)
+  and tonight's 40/60 result; if either is missing, release the version
+  measured at +44 at 40/60 (the no-razor main) instead. 40/10 check of
+  the current main started 22 October (main vs pre-campaign, 1200 games;
+  it also measures no-qsfut + speed-pick2 at a repeating control).
+  The 1.1 candidate is the current main (bench 916512); tests that pass
+  after this go into 1.2, so the checks describe exactly what is released.
+  Forecasts for tonight, logged before the runs (advisor's correction:
+  no-qsfut's +60 was measured on top of no-razor): same-night 10+0.1 gap
+  over 1.0.0 +90 to +115 (advisor; no-razor kept about 70% against rated
+  engines); under +80 would mean the two removals overlap against rated
+  engines. Session: +85 to +115, central +100. 40/60 of main tonight:
+  +55 to +85 over 1.0.0 (reference from 22 October, 3504).
   5. Whether to offer 1.1 to the CCRL testers instead of 1.0.0, and any
      message to them, is Ayman's (advisor: offer once, only after 1.1 is
      published and checked, the tester chooses).
