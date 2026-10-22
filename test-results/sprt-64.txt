@@ -1,0 +1,11 @@
+SPRT test #64, finished 2026-10-22 22:39 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39861372284 (run id 39861372284)
+SPRT RESULT: PASSED - 'main' is stronger than 'pre-campaign'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: main (bench 916512) vs pre-campaign (bench 892727), tc 40/10, bounds [0, 5]
+Games: 1200, Wins: 364, Losses: 189, Draws: 647, Points: 687.5 (57.29 %)
+Ptnml(0-2): [1, 70, 295, 221, 13]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 51.03 +/- 9.98, nElo: 102.02 +/- 19.66
+LLR: 4.95 (-2.94, 2.94) [0.00, 5.00]
