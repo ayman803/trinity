@@ -14,6 +14,10 @@ param(
     [string]$RunnerDir = "C:\TrinityRunner",
     [string]$Data = "C:\Trinity",       # Ayman's folder: read-only for this account
     [int]$PollSeconds = 300,
+    # Ayman needs the PC at 7 am every day (owner, 21 October): a job starts
+    # only if it should end by this time; resumable tuning fills the gap.
+    [string]$MorningDeadline = "06:55",
+    [string]$MorningBack = "07:30",     # no new job between the deadline and this time
     [switch]$Once                       # one cycle, then exit (for testing)
 )
 
@@ -318,15 +322,24 @@ function Invoke-Cycle {
     Initialize-Clone
     Invoke-Git $Clone @("fetch", "-q", "--prune", "origin") | Out-Null
     $status = Get-JobStatus
-    $next = $null
-    foreach ($job in Get-Queue) {
-        if ($job.Machine -ne $Machine -or -not (Test-JobPending $status $job.Id)) { continue }
-        $next = $job
-        break
-    }
-    if (-not $next) { Write-Note "Queue empty for '$Machine'."; return $false }
+    $pending = @(Get-Queue | Where-Object { $_.Machine -eq $Machine -and (Test-JobPending $status $_.Id) })
+    if ($pending.Count -eq 0) { Write-Note "Queue empty for '$Machine'."; return $false }
     $approval = Get-Approval
     if (-not (Select-ApprovedCommit $approval)) { return $false }
+    # The first queued job that can finish before the morning deadline
+    # (the hello test always fits); later resumable tuning may fill the gap.
+    if (Test-MorningQuiet) { Write-Note "Waiting: the PC is Ayman's from $MorningDeadline to $MorningBack."; return $false }
+    $next = $null
+    foreach ($job in $pending) {
+        $hours = if ($approval.Limits.ContainsKey($job.Script)) { [double]$approval.Limits[$job.Script] } else { 8 }
+        if ($job.Script -eq "runner/jobs/hello.ps1" -or (Test-JobFits $job $hours)) { $next = $job; break }
+    }
+    if (-not $next) {
+        $first = $pending[0]
+        Write-Note "Waiting: $($first.Id) would not finish before $MorningDeadline; it starts after $MorningBack."
+        return $false
+    }
+    if ($next.Id -ne $pending[0].Id) { Write-Note "$($pending[0].Id) would not finish before $MorningDeadline; running $($next.Id) first." }
     $problem = ""
     if ($next.Id -notmatch $IdPattern) { $problem = "bad job id" }
     elseif ($Ready -notcontains $next.Script) { $problem = "script not cleared for the runner: $($next.Script)" }
@@ -347,8 +360,87 @@ function Invoke-Cycle {
         return $false
     }
     $script:LastNote = ""
+    $next = [pscustomobject]@{ Id = $next.Id; Machine = $next.Machine; Script = $next.Script; Args = @(Get-FittedArgs $next) }
     Invoke-Job $next $approval.Limits[$next.Script] $approval.Commit
     return $true
+}
+
+# --- the 7 am deadline (owner and advisor, 21 October) ---------------------
+# Job "kind": the script and its arguments without the version (-Ref x),
+# -NoUpdate and the tuning length (-Minutes x), so that every calibration of
+# the same size counts as one kind whatever version it measures.
+function Get-JobKind([string]$Script, [string[]]$JobArgs) {
+    $kept = @(); $skip = $false
+    foreach ($a in $JobArgs) {
+        if ($skip) { $skip = $false; continue }
+        if ($a -eq "-Ref" -or $a -eq "-Minutes") { $skip = $true; continue }
+        if ($a -eq "-NoUpdate") { continue }
+        $kept += $a
+    }
+    return (@($Script) + $kept) -join " "
+}
+
+# Expected minutes for a job: the longest of its kind's last 3 finished
+# runs in this machine's runner log, plus 10% and 5 minutes; with no
+# history, the approved time limit (the safe side).
+function Get-ExpectedMinutes($Job, [double]$LimitHours) {
+    $kind = Get-JobKind $Job.Script $Job.Args
+    $log = Join-Path $StateDir "runner.log"
+    $kinds = @{}; $done = @()
+    if (Test-Path -LiteralPath $log) {
+        foreach ($l in Get-Content -LiteralPath $log) {
+            if ($l -match '^\S+ \S+ Starting (\S+): (\S+) ?(.*) \(limit ') {
+                $kinds[$Matches[1]] = Get-JobKind $Matches[2] @($Matches[3] -split '\s+' | Where-Object { $_ })
+            } elseif ($l -match '^\S+ \S+ DONE (\S+) after (\d+) min') {
+                if ($kinds[$Matches[1]] -eq $kind) { $done += [int]$Matches[2] }
+            }
+        }
+    }
+    if ($done.Count -eq 0) { return [Math]::Round($LimitHours * 60) }
+    $recent = @($done | Select-Object -Last 3)
+    return [Math]::Round(($recent | Measure-Object -Maximum).Maximum * 1.1 + 5)
+}
+
+# The next morning deadline after now.
+function Get-MorningDeadline {
+    $now = Get-Date
+    $d = [DateTime]::ParseExact($MorningDeadline, "HH:mm", $null)
+    $t = $now.Date.AddHours($d.Hour).AddMinutes($d.Minute)
+    if ($t -le $now) { $t = $t.AddDays(1) }
+    return $t
+}
+
+# Between the deadline and $MorningBack: the PC is Ayman's; nothing starts.
+function Test-MorningQuiet {
+    $now = Get-Date
+    $a = [DateTime]::ParseExact($MorningDeadline, "HH:mm", $null)
+    $b = [DateTime]::ParseExact($MorningBack, "HH:mm", $null)
+    $start = $now.Date.AddHours($a.Hour).AddMinutes($a.Minute)
+    $end = $now.Date.AddHours($b.Hour).AddMinutes($b.Minute)
+    return ($now -ge $start -and $now -lt $end)
+}
+
+# Can this job start now and be done by the deadline? A tuning job
+# (calibrate.ps1 -Tune) is resumable: it fits if at least 30 minutes are
+# left, and its -Minutes is cut to end by the deadline (Get-FittedArgs).
+function Test-JobFits($Job, [double]$LimitHours) {
+    $left = ((Get-MorningDeadline) - (Get-Date)).TotalMinutes
+    if ($Job.Args -contains "-Tune") { return ($left - 20 -ge 30) }
+    return ((Get-ExpectedMinutes $Job $LimitHours) -le $left)
+}
+
+function Get-FittedArgs($Job) {
+    if ($Job.Args -notcontains "-Tune") { return $Job.Args }
+    $left = [Math]::Floor(((Get-MorningDeadline) - (Get-Date)).TotalMinutes) - 20   # build time and the last step
+    $out = @(); $skip = $false; $minutes = $left
+    for ($i = 0; $i -lt $Job.Args.Count; $i++) {
+        if ($skip) { $skip = $false; continue }
+        if ($Job.Args[$i] -eq "-Minutes" -and $i + 1 -lt $Job.Args.Count) {
+            $minutes = [Math]::Min($left, [int]$Job.Args[$i + 1]); $skip = $true; continue
+        }
+        $out += $Job.Args[$i]
+    }
+    return @($out + @("-Minutes", "$minutes"))
 }
 
 # --- first start for this account: tools and git settings -----------------

@@ -144,6 +144,16 @@ before any code (with the advisor's and Scout's additions):
    night is labelled "reference from <date>" (conditions alone moved 1.0.0
    by 12). When CCRL publishes its own rating
    for 1.0.0, that becomes the anchor for converting gaps to the CCRL scale.
+14. (Owner and advisor, 21 October) Ayman needs the PC at 7 am every day.
+   A job starts only if it should end by 6:55 am, judged from the
+   longest of its kind's last 3 runs in the runner's own log (plus 10% and
+   5 minutes; with no history, its time limit). The first queued job that
+   fits runs, so resumable tuning (`calibrate.ps1 -Tune`, which saves every
+   step) fills the end of the night: it starts if 30 minutes are left and
+   its -Minutes is cut to end by 6:55. Nothing starts from 6:55 to 7:30;
+   after that the 30-minute idle rule applies. When queueing, put
+   calibrations and 40/60 games first and tuning last. (Needs the runner
+   reinstalled to take effect.)
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
 
