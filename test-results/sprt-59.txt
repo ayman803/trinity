@@ -1,0 +1,12 @@
+SPRT test #59, finished 2026-10-22 01:30 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39698191836 (run id 39698191836)
+Continues run id 39662715390; the totals below include it.
+SPRT RESULT: FAILED - 'no-fut' is not stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: no-fut (bench 1159611) vs main (bench 892727), tc 8+0.08, bounds [-4, 1]
+Games: 6000, Wins: 1282, Losses: 1404, Draws: 3314, Points: 2939.0 (48.98 %)
+Ptnml(0-2): [34, 757, 1531, 653, 25]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -7.07 +/- 4.60, nElo: -13.51 +/- 8.79
+LLR: -2.98 (-2.94, 2.94) [-4.00, 1.00]
