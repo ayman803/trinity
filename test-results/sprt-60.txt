@@ -1,0 +1,12 @@
+SPRT test #60, finished 2026-10-22 15:21 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39792346105 (run id 39792346105)
+Continues run id 39698183082; the totals below include it.
+SPRT RESULT: PASSED - 'speed-pick2-new' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: speed-pick2-new (bench 892727) vs main (bench 892727), tc 8+0.08, bounds [-4, 1]
+Games: 6000, Wins: 1352, Losses: 1261, Draws: 3387, Points: 3045.5 (50.76 %)
+Ptnml(0-2): [19, 647, 1583, 726, 25]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 5.27 +/- 4.46, nElo: 10.38 +/- 8.79
+LLR: 2.95 (-2.94, 2.94) [-4.00, 1.00]
