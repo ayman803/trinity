@@ -121,6 +121,10 @@ network, and the second week merged nothing):
   #45/#51, speed-pick2 #43/#50/#52, Seed2 #42/#47/#53): any that passes
   gets a short no-regression test ([-4, 1]) on the new main before it is
   merged (advisor, 21 October).
+- Same-night gap (advisor, 21 October evening): no-razor is calibrated
+  again tonight (2026-10-21-03) next to 1.0.0's rerun (2026-10-21-02),
+  so the gap over 1.0.0 at 10+0.1 is a true same-night measurement; if
+  the night is too short it finishes in the next idle hours.
 - Seed2 stopped (21 October 5 pm): +1.24 +/- 3.46 after 12000 games (SPRT
   #42 + #47 + #53, LLR -0.13): a pass by the 18000 cap was unlikely
   (under 10%), and the network lane is capped at about 20% of GitHub
