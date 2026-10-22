@@ -883,18 +883,15 @@ impl Searcher {
         }
 
         let mut best;
-        let static_eval;
         let mut raw_eval = -INF;
         if in_check {
-            static_eval = -INF;
             best = -MATE + ply as i32;
         } else {
             raw_eval = match tt_entry {
                 Some(e) => i32::from(e.eval),
                 None => self.evaluate(b, ply),
             };
-            static_eval = self.corrected_eval(b, raw_eval);
-            best = static_eval;
+            best = self.corrected_eval(b, raw_eval);
             if let Some(e) = tt_entry {
                 let s = score_from_tt(i32::from(e.score), ply);
                 if (e.bound == BOUND_LOWER && s > best)
