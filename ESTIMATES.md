@@ -147,6 +147,22 @@ network, and the second week merged nothing):
 - Runner tuning paused while the removal campaign changes the search
   (tuning a search that changes daily wastes the nights); it restarts
   with chains C and D once the campaign settles.
+- Release 1.1 plan (owner, 22 October: "freeze Friday"; advisor's
+  additions). Correction first: only one same-night 10+0.1 gap so far is
+  at +50 or more (+69, 21-22 October); the +65 used another night's 1.0.0.
+  1. Friday 23 October, evening (when Ayman sends "freeze now"): merges
+     stop; branch release-1.1 = main at that moment.
+  2. Friday night on the runner, in this order (about 6.5 hours, fits
+     before 6:55): calibration of release-1.1 and of release-1.0.0 at
+     10+0.1 the same night; threads check (threads.ps1 -Ref release-1.1
+     -Rounds 100: 4 threads vs 1, 200 games); v2 build check (v2check.ps1
+     -Ref release-1.1). Move similarity in the cloud.
+  3. Saturday night: 40/60 pair of release-1.1 and release-1.0.0.
+  4. The numbers published with v1.1.0 come from these runs of the frozen
+     build only. Then v1.1.0 is tagged and published on GitHub.
+  5. Whether to offer 1.1 to the CCRL testers instead of 1.0.0, and any
+     message to them, is Ayman's (advisor: offer once, only after 1.1 is
+     published and checked, the tester chooses).
 - If two calibration nights put the gap over 1.0.0 at +50 or more, tell
   Ayman: it opens the question of sending 1.1 to the CCRL testers
   instead of 1.0.0 (his decision; any message to the testers is his).
