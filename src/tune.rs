@@ -60,8 +60,8 @@ tunables! {
     LMP_BASE = 359, 100, 800, 40;
     LMP_MUL = 103, 50, 200, 8;
     // Futility pruning: margin = base + mul * depth.
-    FUT_BASE = 180, 30, 400, 10;
-    FUT_MUL = 208, 50, 400, 8;
+    FUT_BASE = 360, 30, 800, 10;
+    FUT_MUL = 416, 50, 800, 8;
     // SEE pruning thresholds: quiet moves -x * depth^2, captures -x * depth.
     SEE_QUIET = 29, 10, 80, 4;
     SEE_NOISY = 89, 40, 180, 8;
