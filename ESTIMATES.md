@@ -200,6 +200,15 @@ network, and the second week merged nothing):
   22 October). Queued (2026-10-23-01..06): calibration of release-1.1 and
   1.0.0 at 10+0.1, v2 check, the 40/60 pair, the threads check (its 8-hour
   limit is its only length estimate, so it runs when that fits).
+  RESULTS (23 October, by day on the idle PC, so they count, rule 13):
+  - 10+0.1, same day, 4000 games each: release-1.1 3570 (akimbo +87,
+    Patricia +80, Bread +70, Prune +16), release-1.0.0 3480: gap +90 +/- 9
+    (the previous night's main, the same engine: +102 +/- 9; the two
+    agree within their noise). All opponents still between 25% and 75%.
+  - v2 build check: PASSED (same bench 916512, 20 games, no time losses,
+    illegal moves or crashes; the v2 build is 32% slower, as expected).
+  - 40/60 pair: release-1.1 started 1:01 pm; release-1.0.0 follows; then
+    the threads check.
   5. Settled 23 October: 1.1 is not offered to the CCRL tester (see the
      CCRL decision above).
 - CCRL DECISION (Ayman, 23 October; settled, do not raise again): 1.0.0
