@@ -165,10 +165,12 @@ network, and the second week merged nothing):
   4. The numbers published with v1.1.0 come from these runs of the frozen
      build only. TAG ONLY (owner, 23 October): the README promises testers
      that "the next release won't come before 1.0.0 has a CCRL rating", so
-     v1.1.0 is a git tag (pushed 23 October, on release-1.1) with no
-     release page, no downloads and no README change. The release page
-     goes up after 1.0.0 is rated (the release workflow runs only by
-     hand, so the tag created nothing else).
+     there is no release page, no downloads and no README change. The
+     cloud session cannot create tags (git and the API both refuse), so
+     the frozen build is marked by the branch release-1.1 (47a89f9, never
+     to be moved). When 1.0.0 is rated: run the release workflow from
+     release-1.1 with version 1.1.0; it creates the v1.1.0 tag and a
+     draft release page on that commit.
   Gate added (Scout and advisor, 22 October): before release, the frozen
   build needs a 40/10 time-loss check (at least 1000 games, 0 losses)
   and tonight's 40/60 result; if either is missing, release the version
