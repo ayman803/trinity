@@ -1,8 +1,9 @@
 # Publish a release of Trinity: Windows and Linux builds for modern
 # processors (x86-64-v3: AVX2, about 2013 onwards) and older ones
 # (x86-64-v2), attached to a GitHub release. Started by hand:
-# Actions tab -> "Release" -> "Run workflow", with the version number that
-# Cargo.toml already carries. The release is made as a draft (visible only
+# Actions tab -> "Release" -> "Run workflow" (on main), with the version
+# number that Cargo.toml already carries; for a frozen release, also its
+# measured commit (full id) and bench, which are then checked. The release is made as a draft (visible only
 # to the owner) so the files can be checked before it is made public.
 
 name: Release
@@ -14,7 +15,7 @@ on:
         description: "Version number, the same as in Cargo.toml (for example 1.0.0)"
         required: true
       commit:
-        description: "Commit that was measured (for 1.1: 47a89f927e); the release stops if the branch now points elsewhere. Empty = no check"
+        description: "Full id of the commit to release, built instead of the branch (for 1.1: 47a89f927e56876a90687479c85ba857546ff968). Empty = the branch the workflow runs on"
         default: ""
       bench:
         description: "Bench node count that was measured (for 1.1: 916512); the release stops if a build differs. Empty = no check"
@@ -40,14 +41,16 @@ jobs:
       BENCH: ${{ inputs.bench }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit || github.sha }}
       - uses: dtolnay/rust-toolchain@stable
       - name: Check this is the measured commit
         if: inputs.commit != ''
         shell: bash
         run: |
-          [[ "$COMMIT" =~ ^[0-9a-f]{7,40}$ ]] || { echo "Commit must be a commit id"; exit 1; }
+          [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]] || { echo "Commit must be the full 40-character id"; exit 1; }
           head=$(git rev-parse HEAD)
-          [[ "$head" == "$COMMIT"* ]] || { echo "STOP: the branch points at $head, not the measured commit $COMMIT"; exit 1; }
+          [[ "$head" == "$COMMIT" ]] || { echo "STOP: built $head, not the measured commit $COMMIT"; exit 1; }
       - name: Check the version number
         shell: bash
         run: |
@@ -101,4 +104,4 @@ jobs:
           EOF
           sed -i "s/VERSION/$VERSION/; s/BENCH/$bench/" notes.md
           cat notes.md
-          gh release create --draft "v$VERSION" files/* --title "Trinity $VERSION" --notes-file notes.md --target "$GITHUB_SHA"
+          gh release create --draft "v$VERSION" files/* --title "Trinity $VERSION" --notes-file notes.md --target "${{ inputs.commit || github.sha }}"

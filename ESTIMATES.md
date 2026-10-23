@@ -168,9 +168,10 @@ network, and the second week merged nothing):
      there is no release page, no downloads and no README change. The
      cloud session cannot create tags (git and the API both refuse), so
      the frozen build is marked by the branch release-1.1 (47a89f9, never
-     to be moved). When 1.0.0 is rated: run the release workflow from
-     release-1.1 with version 1.1.0, commit 47a89f927e and bench 916512;
-     it stops if the branch has moved or any build's bench differs
+     to be moved). When 1.0.0 is rated: run the release workflow (on main)
+     with version 1.1.0, commit 47a89f927e56876a90687479c85ba857546ff968
+     and bench 916512; it builds that commit, not a branch, and
+     stops if any build's bench differs
      (advisor, 23 October), otherwise it creates the v1.1.0 tag and a
      draft release page on that commit.
   Gate added (Scout and advisor, 22 October): before release, the frozen
