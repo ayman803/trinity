@@ -209,6 +209,11 @@ network, and the second week merged nothing):
     illegal moves or crashes; the v2 build is 32% slower, as expected).
   - 40/60 pair: release-1.1 started 1:01 pm; release-1.0.0 follows; then
     the threads check.
+  Release notes (advisor, 23 October): headline the same-day 40/60 gap
+  over 1.0.0 (the clock closest to CCRL's), with the 10+0.1 gap second;
+  word every number as our own measurement ("about +N over 1.0.0 in our
+  tests at 40 moves/60 s against four rated engines"), never as a CCRL
+  rating.
   5. Settled 23 October: 1.1 is not offered to the CCRL tester (see the
      CCRL decision above).
 - CCRL DECISION (Ayman, 23 October; settled, do not raise again): 1.0.0
