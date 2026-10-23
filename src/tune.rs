@@ -57,7 +57,7 @@ tunables! {
     NMP_EVAL_DIV = 199, 80, 400, 20;
     // Late move pruning: quiet moves allowed = (base + mul * depth^2) / 100,
     // halved when not improving.
-    LMP_BASE = 359, 100, 800, 40;
+    LMP_BASE = 718, 100, 1600, 40;
     LMP_MUL = 103, 50, 200, 8;
     // Futility pruning: margin = base + mul * depth.
     FUT_BASE = 180, 30, 400, 10;
