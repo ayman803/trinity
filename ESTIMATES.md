@@ -209,6 +209,18 @@ network, and the second week merged nothing):
   rated and Ayman decides to offer one (by then main will be stronger
   than 1.1). 1.1 is still published on GitHub as planned. The check-in,
   Scout and the phone summary do not bring up 1.1-for-CCRL.
+- Process rules adopted 23 October (owner with the advisor; the
+  Session's verdicts): (1) small candidates (central prediction under +4)
+  are bundled 3-4 to one SPRT; a passed bundle gets one quick split test
+  per member before it counts (a harmful member must not ride along);
+  big or uncertain ideas still go alone. (2) When 3 or more candidates
+  are ready, run the one with the highest expected value per test-hour
+  first (pass chance x central gain / expected games), from the logged
+  predictions. (3) Release robustness suite (release/README.md) on every
+  release and on any version a CCRL tester uses. (4) Forecast scoring:
+  for the 27 October review, how often each forecaster's result fell
+  inside its predicted range (Session, Scout, advisor; small samples for
+  the latter two).
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
