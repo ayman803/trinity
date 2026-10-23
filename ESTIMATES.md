@@ -169,7 +169,9 @@ network, and the second week merged nothing):
      cloud session cannot create tags (git and the API both refuse), so
      the frozen build is marked by the branch release-1.1 (47a89f9, never
      to be moved). When 1.0.0 is rated: run the release workflow from
-     release-1.1 with version 1.1.0; it creates the v1.1.0 tag and a
+     release-1.1 with version 1.1.0, commit 47a89f927e and bench 916512;
+     it stops if the branch has moved or any build's bench differs
+     (advisor, 23 October), otherwise it creates the v1.1.0 tag and a
      draft release page on that commit.
   Gate added (Scout and advisor, 22 October): before release, the frozen
   build needs a 40/10 time-loss check (at least 1000 games, 0 losses)
