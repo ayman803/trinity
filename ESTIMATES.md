@@ -848,6 +848,18 @@ set its margin from the p95 there (a candidate for 1.2).
   (85.0%): same network, search changed only by removals and margins.
   The full six-engine PC run (13-Similarity-Test.bat) waits until a
   version is offered to CCRL (Ayman's decision, 23 October: not 1.1).
+- Robustness suite (release/README.md), 23 October, cloud, 1.1 and 1.0.0:
+  UCI checks 18 of 18 passed for both. Games (1.1 vs 1.0.0, 196 games):
+  Hash 1 MB at 40/4 (80 games), Hash 1024 MB at 40/4 (20), 2 threads each
+  at 40/8 (16): no crash, no illegal move, no disconnect, no time loss.
+  Sudden death 5 s with no increment (80 games): 1.0.0 lost 6 games on
+  time (overruns of 1-3 ms), 1.1 none. Cause known (17 October): 1.0.0's
+  Move Overhead default is 10 ms and its clock runs very low in sudden
+  death; 1.1 has tm-reserve (30 ms, keeps about 1 s). Not a CCRL 40/15
+  risk: a repeating control refills the clock every 40 moves, and the
+  movestogo checks passed (1.0.0 used 0.4 s of 2 s on the last move
+  before the control). Verdict: 1.1 passes; 1.0.0 passes for repeating
+  controls, with a known weakness in no-increment sudden death.
 - Caveat: this test separates engines poorly. Unrelated engines match up to
   82%, and Trinity matches itself 86%, so only about 4 points separate
   "unrelated" from "identical". The positions are too easy (many have one
