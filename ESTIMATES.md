@@ -792,6 +792,22 @@ least 4x the positions to separate effects of +20.
   Trinity against the others in the same run: Bread 80.1%, akimbo 79.6%,
   Reckless 78.9%, Prune 77.1%, Patricia 76.2%. All within the 73-82% range
   of the unrelated pairs. No outlier.
+- Release 1.1 (cloud, 23 October; `trinity similarity 1000 100`, Linux,
+  Stockfish 18 downloaded as a binary only; the other engines' release
+  pages are not reachable from the cloud):
+
+  |               | 1.1   | 1.1 again | 1.0.0 | Stockfish 18 |
+  |---|---|---|---|---|
+  | 1.1           | -     | 85.0% | 84.6% | 77.4% |
+  | 1.1 again     | 85.0% | -     | 83.5% | 78.3% |
+  | 1.0.0         | 84.6% | 83.5% | -     | 78.4% |
+  | Stockfish 18  | 77.4% | 78.3% | 78.4% | -     |
+
+  1.1 is no closer to Stockfish than 1.0.0 was (77.4-78.3% vs 78.4%),
+  and 1.1 against 1.0.0 (84.6%) is about as close as 1.1 against itself
+  (85.0%): same network, search changed only by removals and margins.
+  Before offering 1.1 to a CCRL tester: the full six-engine PC run
+  (13-Similarity-Test.bat).
 - Caveat: this test separates engines poorly. Unrelated engines match up to
   82%, and Trinity matches itself 86%, so only about 4 points separate
   "unrelated" from "identical". The positions are too easy (many have one
