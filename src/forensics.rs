@@ -551,3 +551,86 @@ mod tests {
         assert_eq!(out[0].opponent, "akimbo");
     }
 }
+
+#[cfg(test)]
+mod eval_bias {
+    use super::*;
+    use crate::search::{self, Limits, Searcher, Shared};
+
+    /// Scout, 23 October: is the static evaluation more wrong when the side
+    /// to move is behind than when it is ahead? Error = depth-D search score
+    /// minus static eval (side to move's view). Behind: how much the search
+    /// finds ABOVE the static eval; ahead: how much it finds BELOW it.
+    #[test]
+    #[ignore]
+    fn eval_bias_check() {
+        let n: usize = std::env::var("N").ok().and_then(|v| v.parse().ok()).unwrap_or(4000);
+        let depth: i32 = std::env::var("DEPTH").ok().and_then(|v| v.parse().ok()).unwrap_or(10);
+        let net = crate::nnue::network().expect("network");
+        let mut games = Vec::new();
+        for f in ["games/calibration-2026-10-14_18-06-main-losses.pgn", "games/calibration-2026-10-17_09-41-tm-reserve-losses.pgn"] {
+            if let Ok(text) = std::fs::read_to_string(f) {
+                read_games(&text, &mut games, false);
+            }
+        }
+        let mut boards = Vec::new();
+        for g in &games {
+            for (i, p) in g.plies.iter().enumerate() {
+                if i >= 12 && i % 3 == 0 && !p.board.in_check() && p.board.occupied().count_ones() >= 8 {
+                    boards.push(p.board);
+                }
+            }
+        }
+        let step = (boards.len() / n).max(1);
+        let boards: Vec<Board> = boards.into_iter().step_by(step).take(n).collect();
+        let threads = 4;
+        let mut rows: Vec<(i32, i32)> = Vec::new();
+        std::thread::scope(|sc| {
+            let hs: Vec<_> = (0..threads)
+                .map(|t| {
+                    let mine: Vec<Board> = boards.iter().copied().enumerate().filter(|(i, _)| i % threads == t).map(|(_, b)| b).collect();
+                    sc.spawn(move || {
+                        let mut s = Searcher::new(Shared::new(16), 0);
+                        s.silent = true;
+                        let mut out = Vec::new();
+                        for b in mine {
+                            let pair = crate::nnue::AccPair::from_board(net, &b);
+                            let stat = crate::nnue::evaluate(net, &pair, &b);
+                            s.clear();
+                            let r = search::search_once(&mut s, &b, &[], &Limits { depth: Some(depth), ..Default::default() });
+                            if r.score.abs() < 2000 && stat.abs() < 2000 {
+                                out.push((stat, r.score));
+                            }
+                        }
+                        out
+                    })
+                })
+                .collect();
+            for h in hs {
+                rows.extend(h.join().unwrap());
+            }
+        });
+        println!("BIAS positions {} from {} games, depth {depth}", rows.len(), games.len());
+        let pct = |mut v: Vec<i32>, q: f64| -> i32 {
+            if v.is_empty() {
+                return 0;
+            }
+            v.sort();
+            v[((v.len() - 1) as f64 * q) as usize]
+        };
+        for (lo, hi) in [(50, 150), (150, 300), (300, 600), (600, 2000)] {
+            // Behind: static in [-hi, -lo); the error that hurts a "behind" cutoff is search - static > 0.
+            let behind: Vec<i32> = rows.iter().filter(|(s, _)| *s <= -lo && *s > -hi).map(|(s, r)| r - s).collect();
+            // Ahead: static in (lo, hi]; the error that hurts an "ahead" cutoff is static - search > 0.
+            let ahead: Vec<i32> = rows.iter().filter(|(s, _)| *s >= lo && *s < hi).map(|(s, r)| s - r).collect();
+            let mean = |v: &Vec<i32>| if v.is_empty() { 0.0 } else { v.iter().map(|&x| x as f64).sum::<f64>() / v.len() as f64 };
+            println!(
+                "BIAS |static| {lo}-{hi}: behind n {:>4} search above static: mean {:>5.0} p75 {:>5} p90 {:>5} p95 {:>5} | ahead n {:>4} search below static: mean {:>5.0} p75 {:>5} p90 {:>5} p95 {:>5}",
+                behind.len(), mean(&behind), pct(behind.clone(), 0.75), pct(behind.clone(), 0.90), pct(behind.clone(), 0.95),
+                ahead.len(), mean(&ahead), pct(ahead.clone(), 0.75), pct(ahead.clone(), 0.90), pct(ahead.clone(), 0.95)
+            );
+        }
+        let near: Vec<i32> = rows.iter().filter(|(s, _)| s.abs() < 50).map(|(s, r)| r - s).collect();
+        println!("BIAS |static| < 50: n {} mean search - static {:.0}", near.len(), near.iter().map(|&x| x as f64).sum::<f64>() / near.len().max(1) as f64);
+    }
+}
