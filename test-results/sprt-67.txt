@@ -1,0 +1,11 @@
+SPRT test #67, finished 2026-10-23 17:43 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39963843281 (run id 39963843281)
+SPRT RESULT: FAILED - 'lmp-wide' is not stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: lmp-wide (bench 1129860) vs main (bench 1012002), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 1880, Losses: 2019, Draws: 5101, Points: 4430.5 (49.23 %)
+Ptnml(0-2): [41, 1138, 2271, 1019, 31]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -5.37 +/- 3.74, nElo: -10.30 +/- 7.18
+LLR: -4.77 (-2.94, 2.94) [0.00, 5.00]
