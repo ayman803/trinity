@@ -176,6 +176,20 @@ network, and the second week merged nothing):
   engines); under +80 would mean the two removals overlap against rated
   engines. Session: +85 to +115, central +100. 40/60 of main tonight:
   +55 to +85 over 1.0.0 (reference from 22 October, 3504).
+  RESULTS (check-in 23 October; PC idle throughout, 0 time losses):
+  10+0.1 same night: main 3574 (2026-10-22-03, 5:58 pm), 1.0.0 3472
+  (2026-10-22-04, 8:21 pm): gap +102 +/- 9, inside both forecasts and
+  at the Session's centre (+100); the two removals did not overlap
+  against rated engines. 40/60: main 3570 (2026-10-22-05, 10:42 pm):
+  +66 +/- 21 over 1.0.0, reference from 22 October (3504), inside +55
+  to +85. Gate: the 40/10 time-loss check (SPRT #64, main vs
+  pre-campaign, 1200 games) had 0 time losses, 0 crashes, and passed
+  [0, 5] at +51.0 +/- 10.0; with tonight's 40/60 result, both gate
+  conditions are met for the current main (bench 916512). Skeptic: main
+  now scores about 64% against akimbo and Patricia at both controls and
+  is above Prune too; all four are still inside 25-75%, but the next
+  gains will push akimbo out, so a stronger opponent will be needed
+  soon (rule 2).
   5. Whether to offer 1.1 to the CCRL testers instead of 1.0.0, and any
      message to them, is Ayman's (advisor: offer once, only after 1.1 is
      published and checked, the tester chooses).
@@ -190,7 +204,12 @@ network, and the second week merged nothing):
   candidates (adding speed-pick2, tm-stable-floor, no-razor, no-iir,
   no-fut; plus Seed2 in the network lane), merged 2 (speed-picker;
   no-razor, +58 self-play, same-night gap over 1.0.0 +69 +/- 9 at
-  10+0.1 and +46 +/- 22 at 40/60).
+  10+0.1 and +46 +/- 22 at 40/60). Updated by the check-in 23 October:
+  tested 13 (adding no-qsfut, no-negext, rfp-wide, fut-wide), merged 4
+  (adding speed-pick2 and no-qsfut, +60). fut-wide passed (#66, +5.75
+  +/- 3.75) but is not merged; it was marked for after the 1.1 freeze.
+  rfp-wide failed (#65, -10.2). Same-night gap of main over 1.0.0:
+  +102 +/- 9 at 10+0.1.
 
 ### Speed profile (20 October; callgrind on bench, AVX2 build)
 
@@ -480,6 +499,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-10-22 2:30 pm (Session): 40/60 night 2 ran by day (idle PC, 7:46 am - 11:58 am): main (no-razor) 3546, 1.0.0 3504: gap +42 +/- 21; with night 1 (+46 +/- 22, 22 October 1-5 am): pooled +44 +/- 15. Same-night 10+0.1 (21-22 October night): no-razor 3542, 1.0.0 3473: +69 +/- 9. Merged speed-pick2 and no-qsfut (+60). Queued tonight: main (with no-qsfut) and 1.0.0 at 10+0.1, then main at 40/60 (2026-10-22-03/04/05; about 7 hours, fits before 6:55 if the PC is idle by 10 pm). Tuning stays paused; QS_FUTILITY (in its list) is gone too, so the list changes again before tuning resumes (one approval).
 - 2026-10-21 6:22 am: read up to "05:55 DISTURBED 2026-10-20-07" (40/60 night 3 logged: old main +4 +/- 13 over 3 nights; 05/06 already logged by the Session; tuning chain A stopped at 05:55 by keyboard use, reruns by itself). Nothing queued: 07 (rerun), 09, 10 and 08 are still waiting.
 - 2026-10-22 6:23 am: read up to "05:06 DONE 2026-10-20-10" (tuning chain A finished 12:45 pm; no-razor and 1.0.0 same-night pair at 10+0.1: gap +69 +/- 9; main 40/60: +46 +/- 22; three DISTURBED restarts of 1.0.0, all re-run idle; 0 time losses). Two nights now show a gap of +50 or more at 10+0.1 (+65 reference from 21 October, +69 same night), so Ayman is told about the 1.1 question. Queued a second 40/60 pair for main (2026-10-22-01 main, 2026-10-22-02 release-1.0.0) to firm up the slower-clock gap for that decision.
+- 2026-10-23 6:26 am: read up to "00:42 DONE 2026-10-22-05" (main and 1.0.0 the same night at 10+0.1: gap +102 +/- 9; main at 40/60: +66 +/- 21, reference from 22 October; 0 time losses, no disturbances). Nothing queued: tonight's release-1.1 jobs need the branch that Ayman's "freeze now" creates, so the Session queues them.
 
 ## Lessons so far
 
