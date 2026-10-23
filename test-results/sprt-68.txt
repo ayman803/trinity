@@ -1,0 +1,11 @@
+SPRT test #68, finished 2026-10-23 17:41 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/39963848669 (run id 39963848669)
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: fut-wide2 (bench 987234) vs main (bench 1012002), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 1909, Losses: 1964, Draws: 5127, Points: 4472.5 (49.69 %)
+Ptnml(0-2): [32, 1098, 2296, 1041, 33]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -2.12 +/- 3.71, nElo: -4.11 +/- 7.18
+LLR: -2.47 (-2.94, 2.94) [0.00, 5.00]
