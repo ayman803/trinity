@@ -26,3 +26,4 @@ One line per idea ever proposed: date | short name | status.
 2026-10-20 | [search] SPSA on the runner against the rated opponents (calibration book, 10+0.1), held-out opponent as check | proposed
 2026-10-21 | [search] Factorial split of #38: test "score quiets lazily" and "drop quiets once one is pruned" separately vs the old main | proposed
 2026-10-22 | [search] Audit sampling: re-search 1 in 200 pruned nodes to measure each rule's error rate and nodes saved (pointer: razoring lacked RFP's mate/TB guard on the TT-adjusted eval) | proposed
+2026-10-23 | [search] Measure eval error by side (behind vs ahead) and set the remaining "behind" pruning margins from it (razor/qsfut/fut-wide vs rfp-wide pattern) | proposed
