@@ -734,6 +734,31 @@ rules most clearly worth keeping. Lesson: at equal nodes the move choice
 is chaotic; an audit like this ranks rules only coarsely, and needs at
 least 4x the positions to separate effects of +20.
 
+## Eval-bias measurement (23 October 2026; Scout's idea of the same day)
+
+3939 positions from Trinity's lost calibration games (every 3rd ply from
+move 7, not in check, 8+ pieces). Static network eval (no correction)
+against a depth-10 search, side to move's view. "Behind": how far the
+search lands ABOVE the static eval; "ahead": how far it lands BELOW.
+
+| static eval | behind: mean / p90 / p95 | ahead: mean / p90 / p95 |
+|---|---|---|
+| 50-150 cp   | +23 / 174 / 254   | -5 / 120 / 156   |
+| 150-300 cp  | +38 / 254 / 331   | -31 / 156 / 230  |
+| 300-600 cp  | +85 / 462 / 556   | -43 / 206 / 315  |
+| 600+ cp     | +341 / 1175 / 1424 | -102 / 152 / 195 |
+
+(Near equal, |static| < 50: the search lands 18 above the static eval on
+average: having the move is worth something.) Lopsided, as Scout
+suspected: when behind, the search finds far more than the static eval
+saw (p95 1.6x to 7x the "ahead" error); when ahead, the search usually
+finds even MORE than the static eval (negative means), so "ahead" cutoffs
+are safe, matching rfp-wide's -10. Caveat: some "behind" positions are
+mid-exchange (a recapture pending), which the static eval cannot see; a
+cleaner version compares the quiescence score with the search. Next:
+measure the error at the depths where futility actually prunes (1-8) and
+set its margin from the p95 there (a candidate for 1.2).
+
 ## Loss forensics
 
 - 13 October 2026, release 1.0.0's calibration (200 of 1040 losses, Stockfish
