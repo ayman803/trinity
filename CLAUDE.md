@@ -64,7 +64,9 @@ rule governs how fully each one works.)
    this overrides the stricter "unchanged since the approved commit" test
    in the check-in's own instructions).
 6. When Trinity is near top-100 strength, prepare a release for the CCRL
-   testers.
+   testers. (Owner, 23 October: 1.0.0 stays with the CCRL tester; newer
+   versions are offered only after 1.0.0 is rated and Ayman decides. Do
+   not raise it before then.)
 7. Before each next step, briefly review the plan as a skeptic: what could
    be wrong with these numbers?
 8. Revive rule (owner, 17 October 2026): once the goal is met, or progress

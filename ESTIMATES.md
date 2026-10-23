@@ -200,12 +200,15 @@ network, and the second week merged nothing):
   22 October). Queued (2026-10-23-01..06): calibration of release-1.1 and
   1.0.0 at 10+0.1, v2 check, the 40/60 pair, the threads check (its 8-hour
   limit is its only length estimate, so it runs when that fits).
-  5. Whether to offer 1.1 to the CCRL testers instead of 1.0.0, and any
-     message to them, is Ayman's (advisor: offer once, only after 1.1 is
-     published and checked, the tester chooses).
-- If two calibration nights put the gap over 1.0.0 at +50 or more, tell
-  Ayman: it opens the question of sending 1.1 to the CCRL testers
-  instead of 1.0.0 (his decision; any message to the testers is his).
+  5. Settled 23 October: 1.1 is not offered to the CCRL tester (see the
+     CCRL decision above).
+- CCRL DECISION (Ayman, 23 October; settled, do not raise again): 1.0.0
+  stays with the CCRL tester as agreed; no change is requested and no
+  message goes to the tester. Keeping the tester's goodwill matters more
+  than an earlier, higher listing. Newer versions wait until 1.0.0 is
+  rated and Ayman decides to offer one (by then main will be stronger
+  than 1.1). 1.1 is still published on GitHub as planned. The check-in,
+  Scout and the phone summary do not bring up 1.1-for-CCRL.
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
@@ -831,8 +834,8 @@ set its margin from the p95 there (a candidate for 1.2).
   1.1 is no closer to Stockfish than 1.0.0 was (77.4-78.3% vs 78.4%),
   and 1.1 against 1.0.0 (84.6%) is about as close as 1.1 against itself
   (85.0%): same network, search changed only by removals and margins.
-  Before offering 1.1 to a CCRL tester: the full six-engine PC run
-  (13-Similarity-Test.bat).
+  The full six-engine PC run (13-Similarity-Test.bat) waits until a
+  version is offered to CCRL (Ayman's decision, 23 October: not 1.1).
 - Caveat: this test separates engines poorly. Unrelated engines match up to
   82%, and Trinity matches itself 86%, so only about 4 points separate
   "unrelated" from "identical". The positions are too easy (many have one
