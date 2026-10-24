@@ -16,8 +16,10 @@
 
 # The 4 settings that moved most, in the same direction, in both earlier
 # tunes. RAZOR_MUL (third) was replaced by the fifth, LMR_HIST_DIV, when
-# razoring was removed (21 October; RAZOR_BASE, fourth, went with it).
-$script:TuneNames = @("QS_FUTILITY", "LMP_BASE", "LMR_HIST_DIV", "RFP_MARGIN")
+# razoring was removed (21 October; RAZOR_BASE, fourth, went with it), and
+# QS_FUTILITY by FUT_MUL when quiescence futility was removed (22 October;
+# widening futility then gained +5.8, so its margin is worth tuning).
+$script:TuneNames = @("FUT_MUL", "LMP_BASE", "LMR_HIST_DIV", "RFP_MARGIN")
 # Planned pairs per chain (about 6 nights of one 4.5-hour job per chain);
 # sets the step-size schedule, as --total-pairs does in spsa.py.
 $script:TuneTotalPairs = 11000
