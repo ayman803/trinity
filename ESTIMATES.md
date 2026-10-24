@@ -217,8 +217,19 @@ network, and the second week merged nothing):
     agree within their noise). All opponents still between 25% and 75%.
   - v2 build check: PASSED (same bench 916512, 20 games, no time losses,
     illegal moves or crashes; the v2 build is 32% slower, as expected).
-  - 40/60 pair: release-1.1 started 1:01 pm; release-1.0.0 follows; then
-    the threads check.
+  - 40/60 pair, same day (check-in 24 October): release-1.1 3573
+    (2026-10-23-04, counted run 5:05-7:11 pm after two DISTURBED starts;
+    akimbo +101, Patricia +83, Bread +73, Prune +9), release-1.0.0 3510
+    (2026-10-23-05, 7:12-9:10 pm): gap +63 +/- 21. Inside the +55 to +85
+    forecast for this engine and close to the previous night's +66 (reference
+    from 22 October). 0 time losses for either. Pooled with that night:
+    about +64 +/- 15 at 40/60.
+  - Threads check (2026-10-23-06, 9:10-9:53 pm): 4 threads vs 1, 200 games
+    at 10+0.1: +79.5 +/- 19.3 (46 wins, 1 loss, 153 draws), 0 time losses,
+    illegal moves, crashes or hangs. PASSED (prediction +60 to +100, as for
+    1.0.0's +99.6 +/- 10.2 in 1000 games). Skeptic: the lower figure fits
+    200 games' noise together with more draws as the engine gets stronger;
+    no sign of a threading fault.
   Release notes (advisor, 23 October): headline the same-day 40/60 gap
   over 1.0.0 (the clock closest to CCRL's), with the 10+0.1 gap second;
   word every number as our own measurement ("about +N over 1.0.0 in our
@@ -551,6 +562,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-10-21 6:22 am: read up to "05:55 DISTURBED 2026-10-20-07" (40/60 night 3 logged: old main +4 +/- 13 over 3 nights; 05/06 already logged by the Session; tuning chain A stopped at 05:55 by keyboard use, reruns by itself). Nothing queued: 07 (rerun), 09, 10 and 08 are still waiting.
 - 2026-10-22 6:23 am: read up to "05:06 DONE 2026-10-20-10" (tuning chain A finished 12:45 pm; no-razor and 1.0.0 same-night pair at 10+0.1: gap +69 +/- 9; main 40/60: +46 +/- 22; three DISTURBED restarts of 1.0.0, all re-run idle; 0 time losses). Two nights now show a gap of +50 or more at 10+0.1 (+65 reference from 21 October, +69 same night), so Ayman is told about the 1.1 question. Queued a second 40/60 pair for main (2026-10-22-01 main, 2026-10-22-02 release-1.0.0) to firm up the slower-clock gap for that decision.
 - 2026-10-23 6:26 am: read up to "00:42 DONE 2026-10-22-05" (main and 1.0.0 the same night at 10+0.1: gap +102 +/- 9; main at 40/60: +66 +/- 21, reference from 22 October; 0 time losses, no disturbances). Nothing queued: tonight's release-1.1 jobs need the branch that Ayman's "freeze now" creates, so the Session queues them.
+- 2026-10-24 6:22 am (run by Ayman's "run"): read up to "21:53 DONE 2026-10-23-06" (all six release-1.1 jobs done; 40/60 same day +63 +/- 21; threads +79.5 +/- 19.3, no errors; 0 time losses). The Session had already logged 01-03. Nothing queued: no further runner work is planned (tuning stays paused, and the 1.1 measurements are complete).
 
 ## Lessons so far
 
