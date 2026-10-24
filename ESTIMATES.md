@@ -269,6 +269,8 @@ network, and the second week merged nothing):
   search) -> FUT_MUL; needs Ayman's approval, otherwise the chains run
   the approved list with one dead setting (harmless: it does not affect
   the games). Tuning prediction unchanged: rated scale 0 to +6.
+  Approved by Ayman 24 October (one file, tune-opponents.ps1; no risky
+  lines; checked by the advisor), so the chains tune FUT_MUL.
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
