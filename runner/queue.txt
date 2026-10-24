@@ -42,3 +42,9 @@
 2026-10-23-04 | pc | scripts/calibrate.ps1 | -Ref release-1.1 -TC 40/60 -Rounds 60
 2026-10-23-05 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60
 2026-10-23-06 | pc | scripts/threads.ps1 | -Ref release-1.1 -Rounds 100
+2026-10-24-01 | pc | scripts/calibrate.ps1 | -Ref main
+2026-10-24-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0
+2026-10-24-03 | pc | scripts/calibrate.ps1 | -Ref main -TC 40/60 -Rounds 60
+2026-10-24-04 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60
+2026-10-24-05 | pc | scripts/calibrate.ps1 | -Tune -Chain C -Minutes 270
+2026-10-24-06 | pc | scripts/calibrate.ps1 | -Tune -Chain D -Minutes 270

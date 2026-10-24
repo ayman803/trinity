@@ -78,8 +78,8 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-22 | no-negext (removal campaign): singular extension keeps its +1 and multi-cut but no longer searches the hash move a ply shallower when another move also beats the singular bound. Bench 869069 | self-play -5 to +4; [-4, 1]: about 45% to pass | 3000 games: +0.93 +/- 6.47 (SPRT #62, LLR 0.41) on the earlier main; on the main with no-qsfut -3.24 +/- 6.29 after 3000 (SPRT #63, LLR -0.61). Stopped 23 October, leaning negative: the negative extension stays | - | predicted before any game |
 | 2026-10-23 | rfp-wide (advisor's eval-margin idea, 22 October): reverse futility margin doubled, 85 -> 170 (prunes less, not removed; the audit put RFP off at -61). Bench 1408587 (+54% nodes) | self-play -6 to +12, about 35% to pass [0, 5]; both SPSA tunes moved this margin up (75 -> 81 -> 85) | FAILED -10.16 +/- 3.75 after 9000 games (SPRT #65, LLR -8.19): RFP's margin was about right; the "ahead, stop" cutoff is not over-pruning | - | predicted before any game; started 22 October as 23 October's pair; not merged before the 1.1 freeze |
 | 2026-10-23 | fut-wide (same idea): main-search futility margins doubled, 90 + 104 x depth -> 180 + 208 x depth (removing it lost -7). Bench 1012002 | self-play -5 to +8, about 30% to pass (SPSA barely moved these: 90 -> 91 -> 90, 100 -> 102 -> 104) | PASSED +5.75 +/- 3.75 after 9000 games (SPRT #66, LLR 3.18). Left for 1.2 (owner); merged into main after the freeze | - | predicted before any game; same pairing |
-| 2026-10-23 | lmp-wide (for 1.2; pattern: early give-up cutoffs over-prune): late-move pruning base doubled, 359 -> 718 (about 3.6 more quiet moves at every depth). Bench 1129860 | self-play -6 to +8, about 30% to pass [0, 5]; SPSA moved it up 300 -> 349 -> 359, and the audit found LMP off clearly harmful (-36) | pending (SPRT 8+0.08) | - | predicted before any game |
-| 2026-10-23 | fut-wide2 (for 1.2): futility margins doubled again, 360 + 416 x depth (the first doubling gave +5.8). Bench 987234 | self-play -4 to +5, about 25% to pass (a second doubling should give less than the first) | pending (SPRT 8+0.08) | - | predicted before any game |
+| 2026-10-23 | lmp-wide (for 1.2; pattern: early give-up cutoffs over-prune): late-move pruning base doubled, 359 -> 718 (about 3.6 more quiet moves at every depth). Bench 1129860 | self-play -6 to +8, about 30% to pass [0, 5]; SPSA moved it up 300 -> 349 -> 359, and the audit found LMP off clearly harmful (-36) | FAILED -5.37 +/- 3.74 after 9000 games (SPRT #67, LLR -4.77): the late-move pruning count is about right | - | predicted before any game |
+| 2026-10-23 | fut-wide2 (for 1.2): futility margins doubled again, 360 + 416 x depth (the first doubling gave +5.8). Bench 987234 | self-play -4 to +5, about 25% to pass (a second doubling should give less than the first) | -2.12 +/- 3.71 after 9000 games (SPRT #68, LLR -2.47), undecided and leaning negative; stopped 24 October: futility stays at the first doubling | - | predicted before any game |
 
 ## Test queue
 
@@ -258,6 +258,17 @@ network, and the second week merged nothing):
   for the 27 October review, how often each forecaster's result fell
   inside its predicted range (Session, Scout, advisor; small samples for
   the latter two).
+- Runner plan from 24 October (owner with Scout): (a) same-night
+  calibration of main (1.1 + fut-wide) and 1.0.0 at 10+0.1, then the
+  40/60 pair; (b) tuning chains C and D resume (tuning last each night).
+  Predictions: 10+0.1 gap over 1.0.0 +88 to +108, central +99 (1.1
+  measured +102 and +90; fut-wide's +5.8 self-play should be about +3
+  here, which one night's +/- 9 cannot resolve: these runs track main,
+  they do not settle fut-wide alone); 40/60 gap +55 to +80 (1.1: +66,
+  +63). Tuning list changed 24 October: QS_FUTILITY (removed from the
+  search) -> FUT_MUL; needs Ayman's approval, otherwise the chains run
+  the approved list with one dead setting (harmless: it does not affect
+  the games). Tuning prediction unchanged: rated scale 0 to +6.
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,

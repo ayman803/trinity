@@ -47,7 +47,8 @@ RFP_MARGIN 75 -> 81 -> 85 (+0.8, +0.5). (The Session's first guess,
 FUT_BASE and LMR_QUIET_BASE, barely moved: 0.2 and 0 steps; replaced.)
 21 October: razoring was removed (no-razor, +58), so RAZOR_MUL was
 replaced by the fifth most moved, LMR_HIST_DIV (-0.3, -0.2 steps; RAZOR_BASE,
-fourth, belongs to razoring too). Fresh chains C and D tune the new engine.
+fourth, belongs to razoring too). Fresh chains C and D tune the new engine. 24 October: QS_FUTILITY (quiescence futility removed,
++60) replaced by FUT_MUL (futility widened, +5.8).
 Conditions: (1) the unseen-opponent check decides; (2) calibration
 nights for search/speed candidates that passed on GitHub come before
 tuning nights; (3) experiment, not fix (above).
