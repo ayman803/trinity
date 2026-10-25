@@ -123,7 +123,11 @@ before any code (with the advisor's and Scout's additions):
    not rely only on the Session's summary. At most one approval a day (a
    second one needs typing AGAIN). Every job's log line names the approved
    commit. trinity-results is public: no user names, personal paths or
-   device ids in it.
+   device ids in it. (Advisor, 25 October) An approval counts as done only when
+   the runner's log shows it: the "approved commit" on the next STARTED
+   line, not a message or a note. The morning check-in flags "approval
+   pending" when the approved commit in the latest log line is older than
+   the latest change under scripts/, tools/ or runner/jobs/ on main.
 11. Real jobs (all but the hello test) start after 30 minutes without
    keyboard or mouse use, at any hour (owner and advisor, 19 October: the
    runner is for more PC use, not a night shift). An idle beacon in
