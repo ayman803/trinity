@@ -286,8 +286,11 @@ network, and the second week merged nothing):
   FUT_MUL: the 24 October approval has not reached the runner (its log
   still names 189246b). Harmless for the games (the setting is dead), but
   FUT_MUL is not being tuned until Approve-Scripts is run on the PC.
-  Approved by Ayman 24 October (one file, tune-opponents.ps1; no risky
-  lines; checked by the advisor), so the chains tune FUT_MUL.
+  Approval took effect 25 October 6:40 am (commit 272a0f3; the 24
+  October one had not registered: chain C's first night, 5376 games,
+  still tuned the dead QS_FUTILITY). From 25 October the chains tune
+  FUT_MUL; C and D continue from their saved states (FUT_MUL starts at
+  its default). Queued 25 October: C, then D.
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
