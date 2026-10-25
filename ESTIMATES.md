@@ -269,6 +269,23 @@ network, and the second week merged nothing):
   search) -> FUT_MUL; needs Ayman's approval, otherwise the chains run
   the approved list with one dead setting (harmless: it does not affect
   the games). Tuning prediction unchanged: rated scale 0 to +6.
+  RESULTS (check-in 25 October; PC idle in every counted run, 0 time
+  losses): 10+0.1, same day: main 3581 (2026-10-24-01, 10:30 am; akimbo
+  +105, Patricia +77, Bread +82, Prune +29), 1.0.0 3470 (2026-10-24-02,
+  counted run 6:09-8:29 pm after one DISTURBED start): gap +111 +/- 9,
+  3 above the +88 to +108 range, inside its noise (1.1's +102 and +90
+  plus fut-wide's expected ~+3). 40/60, same night: main 3564
+  (2026-10-24-03), 1.0.0 3501 (2026-10-24-04): gap +63 +/- 21, inside
+  +55 to +80 (1.1: +66, +63; pooled over the three 40/60 nights of this
+  engine family about +64 +/- 12). Skeptic: main now scores about 65%
+  against akimbo at 10+0.1 (+105) and is above all four opponents; still
+  inside 25-75%, but one more step like no-razor would push akimbo out
+  (rule 2). Tuning: chain C ran 267 min (96 steps, 1344 of 11000 pairs);
+  chain D started 5:03 am (91 minutes, cut to end by 6:55). Note: both
+  ran under approved commit 189246b, so they still tune QS_FUTILITY, not
+  FUT_MUL: the 24 October approval has not reached the runner (its log
+  still names 189246b). Harmless for the games (the setting is dead), but
+  FUT_MUL is not being tuned until Approve-Scripts is run on the PC.
   Approved by Ayman 24 October (one file, tune-opponents.ps1; no risky
   lines; checked by the advisor), so the chains tune FUT_MUL.
 - Weekly count (for the phone summary): week of 19 October: tested 4
@@ -576,6 +593,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-10-22 6:23 am: read up to "05:06 DONE 2026-10-20-10" (tuning chain A finished 12:45 pm; no-razor and 1.0.0 same-night pair at 10+0.1: gap +69 +/- 9; main 40/60: +46 +/- 22; three DISTURBED restarts of 1.0.0, all re-run idle; 0 time losses). Two nights now show a gap of +50 or more at 10+0.1 (+65 reference from 21 October, +69 same night), so Ayman is told about the 1.1 question. Queued a second 40/60 pair for main (2026-10-22-01 main, 2026-10-22-02 release-1.0.0) to firm up the slower-clock gap for that decision.
 - 2026-10-23 6:26 am: read up to "00:42 DONE 2026-10-22-05" (main and 1.0.0 the same night at 10+0.1: gap +102 +/- 9; main at 40/60: +66 +/- 21, reference from 22 October; 0 time losses, no disturbances). Nothing queued: tonight's release-1.1 jobs need the branch that Ayman's "freeze now" creates, so the Session queues them.
 - 2026-10-24 6:22 am (run by Ayman's "run"): read up to "21:53 DONE 2026-10-23-06" (all six release-1.1 jobs done; 40/60 same day +63 +/- 21; threads +79.5 +/- 19.3, no errors; 0 time losses). The Session had already logged 01-03. Nothing queued: no further runner work is planned (tuning stays paused, and the 1.1 measurements are complete).
+- 2026-10-25 6:24 am: read up to "05:03 STARTED 2026-10-24-06" (tuning chain D still running, due about 6:34). Main vs 1.0.0 same day: +111 +/- 9 at 10+0.1, +63 +/- 21 at 40/60; tuning chain C done. The runner still uses approved commit 189246b (QS_FUTILITY, not FUT_MUL). Queued tonight's tuning (planned: chains C and D each night, tuning last): 2026-10-25-01 chain C, 2026-10-25-02 chain D (270 minutes each; the runner cuts them to end by 6:55).
 
 ## Lessons so far
 

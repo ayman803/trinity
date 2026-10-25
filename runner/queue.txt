@@ -48,3 +48,5 @@
 2026-10-24-04 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60
 2026-10-24-05 | pc | scripts/calibrate.ps1 | -Tune -Chain C -Minutes 270
 2026-10-24-06 | pc | scripts/calibrate.ps1 | -Tune -Chain D -Minutes 270
+2026-10-25-01 | pc | scripts/calibrate.ps1 | -Tune -Chain C -Minutes 270
+2026-10-25-02 | pc | scripts/calibrate.ps1 | -Tune -Chain D -Minutes 270
