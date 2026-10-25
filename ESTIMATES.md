@@ -291,6 +291,13 @@ network, and the second week merged nothing):
   still tuned the dead QS_FUTILITY). From 25 October the chains tune
   FUT_MUL; C and D continue from their saved states (FUT_MUL starts at
   its default). Queued 25 October: C, then D.
+  Scout (25 October): the chains kept their pair count when the list
+  changed, so FUT_MUL started late in the step schedule (test nudges
+  about half size, learning rate about 60%, 88% of the plan left).
+  Fixed in tune-opponents.ps1: each setting now counts its schedule from
+  when it joined the chain ("since" in the saved state; dry-run checked).
+  Needs one approval (26 October); until then FUT_MUL runs on the late
+  schedule, which is slower but not wrong.
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,

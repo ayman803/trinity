@@ -55,12 +55,20 @@ function Read-TuneState([string]$Chain, $Settings) {
         $s = Get-Content -LiteralPath $f -Raw | ConvertFrom-Json
         if ($null -eq $best -or [int]$s.pairs -gt [int]$best.pairs) { $best = $s }
     }
+    # "since": the chain's pair count when each setting joined it, so a
+    # setting added later gets its own full step-size schedule (Scout, 25
+    # October) instead of the late, small steps of the chain's count.
     $theta = [ordered]@{}
+    $since = [ordered]@{}
     foreach ($name in $Settings.Keys) {
         $theta[$name] = [double]$Settings[$name].Default
-        if ($best -and $null -ne $best.theta.$name) { $theta[$name] = [double]$best.theta.$name }
+        $since[$name] = if ($best) { [int]$best.pairs } else { 0 }
+        if ($best -and $null -ne $best.theta.$name) {
+            $theta[$name] = [double]$best.theta.$name
+            $since[$name] = if ($best.since -and $null -ne $best.since.$name) { [int]$best.since.$name } else { 0 }
+        }
     }
-    $state = [ordered]@{ chain = $Chain; pairs = 0; steps = 0; games = 0; timeLosses = 0; theta = $theta }
+    $state = [ordered]@{ chain = $Chain; pairs = 0; steps = 0; games = 0; timeLosses = 0; theta = $theta; since = $since }
     if ($best) {
         $state.pairs = [int]$best.pairs; $state.steps = [int]$best.steps
         $state.games = [int]$best.games; $state.timeLosses = [int]$best.timeLosses
@@ -119,11 +127,12 @@ function Invoke-OpponentTune {
     Write-Step "Tuning chain $Chain of '$Ref' against $($Opponents.Count) rated opponents, $TC, $Minutes minutes (starting at $($state.pairs) of $n planned pairs)"
     while ((Get-Date).AddSeconds(1.5 * $stepSeconds) -lt $deadline) {
         $t0 = Get-Date
-        $kk = $state.pairs + 1
+        $kk = $state.pairs + 1   # the chain's step; each setting counts from when it joined (since)
         $plus = [ordered]@{}; $minus = [ordered]@{}; $flips = @{}; $ck = @{}
         foreach ($name in $settings.Keys) {
             $p = $settings[$name]
-            $ck[$name] = $p.Step * [Math]::Pow($n / $kk, $script:TuneGamma)
+            $kn = $kk - $state.since[$name]
+            $ck[$name] = $p.Step * [Math]::Pow($n / $kn, $script:TuneGamma)
             $flips[$name] = if ($rng.Next(2) -eq 0) { -1 } else { 1 }
             $up = $state.theta[$name] + $ck[$name] * $flips[$name]
             $down = $state.theta[$name] - $ck[$name] * $flips[$name]
@@ -140,7 +149,8 @@ function Invoke-OpponentTune {
         foreach ($name in $settings.Keys) {
             $p = $settings[$name]
             $aEnd = $script:TuneREnd * $p.Step * $p.Step
-            $ak = $aEnd * [Math]::Pow($bigA + $n, $script:TuneAlpha) / [Math]::Pow($bigA + $kk, $script:TuneAlpha)
+            $kn = $kk - $state.since[$name]
+            $ak = $aEnd * [Math]::Pow($bigA + $n, $script:TuneAlpha) / [Math]::Pow($bigA + $kn, $script:TuneAlpha)
             $v = $state.theta[$name] + $ak * $result * $flips[$name] / $ck[$name]
             $state.theta[$name] = [Math]::Min([Math]::Max($v, $p.Min), $p.Max)
         }
