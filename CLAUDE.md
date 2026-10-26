@@ -211,7 +211,11 @@ ESTIMATES.md. Read scout/INDEX.md before planning the next step.
 Network lane: about 20% of GitHub test time at most, one experiment at a
 time. Search/speed lane: at least 2 new candidates tested per day
 (forensics, Scout's list, the speed profile), predictions first. Details
-in ESTIMATES.md, Test queue.
+in ESTIMATES.md, Test queue. Pace alarm (owner with the advisor, 26 October):
+the morning check-in reports "Decision needed: search lane idle" whenever
+no new candidate test started on GitHub in the last 24 hours (newest
+test-results/sprt-*.txt and running SPRT runs), unless ESTIMATES.md
+records a deliberate pause.
 
 ## Coder 2 (folded back, 16 October 2026)
 

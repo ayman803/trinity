@@ -80,6 +80,8 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-23 | fut-wide (same idea): main-search futility margins doubled, 90 + 104 x depth -> 180 + 208 x depth (removing it lost -7). Bench 1012002 | self-play -5 to +8, about 30% to pass (SPSA barely moved these: 90 -> 91 -> 90, 100 -> 102 -> 104) | PASSED +5.75 +/- 3.75 after 9000 games (SPRT #66, LLR 3.18). Left for 1.2 (owner); merged into main after the freeze | - | predicted before any game; same pairing |
 | 2026-10-23 | lmp-wide (for 1.2; pattern: early give-up cutoffs over-prune): late-move pruning base doubled, 359 -> 718 (about 3.6 more quiet moves at every depth). Bench 1129860 | self-play -6 to +8, about 30% to pass [0, 5]; SPSA moved it up 300 -> 349 -> 359, and the audit found LMP off clearly harmful (-36) | FAILED -5.37 +/- 3.74 after 9000 games (SPRT #67, LLR -4.77): the late-move pruning count is about right | - | predicted before any game |
 | 2026-10-23 | fut-wide2 (for 1.2): futility margins doubled again, 360 + 416 x depth (the first doubling gave +5.8). Bench 987234 | self-play -4 to +5, about 25% to pass (a second doubling should give less than the first) | -2.12 +/- 3.71 after 9000 games (SPRT #68, LLR -2.47), undecided and leaning negative; stopped 24 October: futility stays at the first doubling | - | predicted before any game |
+| 2026-10-26 | lmr-behind (Scout, 26 October): late moves reduced one ply less when the static eval is 300+ below alpha (Scout's offline check: 200 touched 28% of reduced moves, over its 20% limit; 300 touches 19.7%). Bench 1056549 | Scout: self-play +2 to +8, about 40%. Session: -3 to +6, about 35% (overlaps with the removals, which already search "behind" nodes more) | pending (SPRT 8+0.08) | - | predicted before any game; if it passes, also 40/10 |
+| 2026-10-26 | rfp-tight (eval-bias table, the "ahead" side): reverse futility margin 85 -> 65, prunes more when ahead (widening it lost -10). Bench 924219 | self-play -4 to +5, about 30% to pass | pending (SPRT 8+0.08) | - | predicted before any game |
 
 ## Test queue
 
@@ -322,6 +324,14 @@ network, and the second week merged nothing):
   its moves are as small as the others', so that does not change the
   verdict. The per-setting schedule fix is not worth an approval before
   then: if the rule stops tuning, it is moot; if not, approve it then.
+- Search lane idle 23 October 5:43 pm to 26 October (release checks and
+  tuning took the attention; the pace rule was missed for two and a half
+  days). Restarted 26 October: lmr-behind, rfp-tight, and the #38 split
+  continued (research). Pace alarm added to CLAUDE.md (the check-in
+  reports "Decision needed: search lane idle" when no candidate test
+  started in the last 24 hours, unless a deliberate pause is recorded
+  here). If the tuning stop rule fires on 27 October, the runner nights go
+  to calibrating candidates that pass (owner with the advisor).
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
