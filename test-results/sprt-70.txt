@@ -1,0 +1,11 @@
+SPRT test #70, finished 2026-10-26 17:56 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/40335561018 (run id 40335561018)
+SPRT RESULT: FAILED - 'rfp-tight' is not stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: rfp-tight (bench 924219) vs main (bench 1012002), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 1897, Losses: 2001, Draws: 5102, Points: 4448.0 (49.42 %)
+Ptnml(0-2): [30, 1117, 2308, 1017, 28]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -4.01 +/- 3.68, nElo: -7.83 +/- 7.18
+LLR: -3.85 (-2.94, 2.94) [0.00, 5.00]
