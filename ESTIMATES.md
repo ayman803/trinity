@@ -291,6 +291,19 @@ network, and the second week merged nothing):
   still tuned the dead QS_FUTILITY). From 25 October the chains tune
   FUT_MUL; C and D continue from their saved states (FUT_MUL starts at
   its default). Queued 25 October: C, then D.
+  RESULTS (check-in 26 October): chain C 2026-10-25-01 (one DISTURBED
+  start at 1:49 pm, counted run 6:16-10:43 pm, 267 min) and chain D
+  2026-10-25-02 (10:43 pm-3:12 am, 269 min), both under 272a0f3 (FUT_MUL
+  tuned). Totals: C 2926 of 11000 pairs (209 steps, its 2nd night), D 1820
+  (130 steps; night 1 was only 90 min). Values vs main's defaults:
+  FUT_MUL 208 -> C 206.6 / D 209.0; LMP_BASE 359 -> C 355.0 / D 367.9;
+  LMR_HIST_DIV 7860 -> C 7799 / D 7638; RFP_MARGIN 85 -> C 85.9 / D 85.0.
+  Only LMR_HIST_DIV moves the same way (down) in both chains so far;
+  the others are within a step or two of default or split. If that holds
+  after night 3 (tonight), the stop rule (fewer than 3 of 4 the same way)
+  ends the chains. Caveat: FUT_MUL still ran on the chain's late step
+  schedule; Scout's fix (ec90c7e, own schedule per setting) is not yet
+  approved on the runner, so FUT_MUL's small moves say little yet.
   Scout (25 October): the chains kept their pair count when the list
   changed, so FUT_MUL started late in the step schedule (test nudges
   about half size, learning rate about 60%, 88% of the plan left).
@@ -604,6 +617,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-10-23 6:26 am: read up to "00:42 DONE 2026-10-22-05" (main and 1.0.0 the same night at 10+0.1: gap +102 +/- 9; main at 40/60: +66 +/- 21, reference from 22 October; 0 time losses, no disturbances). Nothing queued: tonight's release-1.1 jobs need the branch that Ayman's "freeze now" creates, so the Session queues them.
 - 2026-10-24 6:22 am (run by Ayman's "run"): read up to "21:53 DONE 2026-10-23-06" (all six release-1.1 jobs done; 40/60 same day +63 +/- 21; threads +79.5 +/- 19.3, no errors; 0 time losses). The Session had already logged 01-03. Nothing queued: no further runner work is planned (tuning stays paused, and the 1.1 measurements are complete).
 - 2026-10-25 6:24 am: read up to "05:03 STARTED 2026-10-24-06" (tuning chain D still running, due about 6:34). Main vs 1.0.0 same day: +111 +/- 9 at 10+0.1, +63 +/- 21 at 40/60; tuning chain C done. The runner still uses approved commit 189246b (QS_FUTILITY, not FUT_MUL). Queued tonight's tuning (planned: chains C and D each night, tuning last): 2026-10-25-01 chain C, 2026-10-25-02 chain D (270 minutes each; the runner cuts them to end by 6:55).
+- 2026-10-26 6:25 am: read up to "03:12 DONE 2026-10-25-02" (tuning chains C and D, one DISTURBED restart; approval 272a0f3 in effect). APPROVAL PENDING: ec90c7e (scripts/tune-opponents.ps1, per-setting step schedule) is newer than the approved 272a0f3. Queued tonight's tuning (night 3, planned): 2026-10-26-01 chain C, 2026-10-26-02 chain D.
 
 ## Lessons so far
 
