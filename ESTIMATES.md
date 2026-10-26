@@ -311,6 +311,17 @@ network, and the second week merged nothing):
   when it joined the chain ("since" in the saved state; dry-run checked).
   Needs one approval (26 October); until then FUT_MUL runs on the late
   schedule, which is slower but not wrong.
+  Status 26 October (Session), after 2 nights (C: 11704 games, D: 7280):
+  moves from the defaults in step sizes: FUT_MUL C -0.2 / D +0.1, LMP_BASE
+  C -0.1 / D +0.2, LMR_HIST_DIV C -0.1 / D -0.4 (the only agreement),
+  RFP_MARGIN C +0.1 / D 0.0. Every move is under half a step: the chains
+  are still at noise level, as the design review expected (a game against
+  a rated opponent carries about a quarter of the information of a
+  self-play game). The stop rule (fewer than 3 of 4 agreeing after night 3)
+  is applied on 27 October as agreed; FUT_MUL joined a night late, but
+  its moves are as small as the others', so that does not change the
+  verdict. The per-setting schedule fix is not worth an approval before
+  then: if the rule stops tuning, it is moot; if not, approve it then.
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
