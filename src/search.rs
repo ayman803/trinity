@@ -766,6 +766,10 @@ impl Searcher {
                     r += i32::from(!improving);
                     r -= i32::from(child.in_check());
                     r -= i32::from(unsure);
+                    // Far behind (static eval 300+ below alpha): the static
+                    // eval misses most there (eval-bias table, 23 October),
+                    // so late moves are reduced one ply less (Scout).
+                    r -= i32::from(!in_check && static_eval + 300 < alpha);
                     if quiet {
                         r -= self.quiet_score(b, m, ply) / tune::LMR_HIST_DIV();
                         if m == self.killers[ply][0] || m == self.killers[ply][1] {
