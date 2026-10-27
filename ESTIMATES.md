@@ -941,6 +941,18 @@ Reading:
   separate skill from luck; re-score at the next review.
 - Not scored (no numeric range or no clean result): the tuning's
   "0 to +6" (stopped, no change), research predictions without a range.
+- Pass chances (advisor, 27 October; the queue ordering depends on
+  them), 21 tests with a logged chance: expected 8.3 passes, actual 5.
+  About 30%: 10 tests, 2.8 expected, 1 passed; 32-50%: 7 tests, 2.8
+  expected, 2 passed; 50% and up: 4 tests, 2.7 expected, 2 passed. Brier
+  score 0.171, barely better than always guessing the overall pass rate
+  (0.181). So the pass chances run about 1.6x too high and barely rank
+  the tests: until re-scored, scale them by about 0.6, and do not lean
+  hard on expected-value ordering. Odd but consistent: the gains that did
+  come were bigger than predicted, while passes were rarer.
+- Next review: re-score range coverage after the 1.5x widening (target
+  70-80% inside) and the pass chances (target: expected passes close to
+  actual).
 
 ## Loss forensics
 
