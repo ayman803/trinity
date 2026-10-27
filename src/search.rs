@@ -669,7 +669,7 @@ impl Searcher {
             return if in_check { -MATE + ply as i32 } else { 0 };
         }
         let mut moves = ScoredMoves::new(list);
-        self.score_moves(b, &mut moves, tt_move, ply, true);
+        self.score_moves(b, &mut moves, tt_move, ply, false);
 
         let orig_alpha = alpha;
         let mut best_score = -INF;
