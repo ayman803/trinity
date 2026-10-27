@@ -1,0 +1,11 @@
+SPRT test #73, finished 2026-10-27 16:42 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/40506740628 (run id 40506740628)
+SPRT RESULT: PASSED - 'split38-drop' is stronger than 'base-before-38'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: split38-drop (bench 775818) vs base-before-38 (bench 780879), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 2256, Losses: 1775, Draws: 4969, Points: 4740.5 (52.67 %)
+Ptnml(0-2): [35, 909, 2177, 1298, 81]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 18.59 +/- 3.88, nElo: 34.42 +/- 7.18
+LLR: 11.90 (-2.94, 2.94) [0.00, 5.00]
