@@ -13,6 +13,11 @@ param(
     [double]$Elo0 = 0,            # SPRT bounds (normalized Elo). [0, 5] tests a
     [double]$Elo1 = 5,            #  gain; use -Elo0 -5 -Elo1 0 for "no regression".
     [int]$MaxRounds = 50000,      # each round is 2 games (both colours)
+    # Chunk mode (the runner's second test farm, 27 October): play exactly
+    # this many rounds without stopping early, and report the counts so the
+    # Session adds the chunks of one test up (scripts/sprt_combine.py).
+    [int]$Rounds = 0,
+    [string]$TestId = "",         # chunks of one test share it; default "<dev>-vs-<base>-<tc>"
     [switch]$NoUpdate
 )
 
@@ -83,9 +88,13 @@ try {
         "-engine", "cmd=$baseExe", "name=$Base",
         "-each", "proto=uci", "tc=$TC", "option.Hash=$Hash", "option.Threads=1",
         "-openings", "file=$book", "format=epd", "order=random",
-        "-repeat", "-games", "2", "-rounds", "$MaxRounds",
-        "-concurrency", "$Concurrency",
-        "-sprt", "elo0=$Elo0", "elo1=$Elo1", "alpha=0.05", "beta=0.05", "model=normalized",
+        "-repeat", "-games", "2", "-rounds", "$(if ($Rounds -gt 0) { $Rounds } else { $MaxRounds })",
+        "-concurrency", "$Concurrency"
+    )
+    if ($Rounds -le 0) {
+        $fcArgs += @("-sprt", "elo0=$Elo0", "elo1=$Elo1", "alpha=0.05", "beta=0.05", "model=normalized")
+    }
+    $fcArgs += @(
         "-draw", "movenumber=40", "movecount=8", "score=10",
         "-resign", "movecount=3", "score=600", "twosided=true",
         "-ratinginterval", "20",
@@ -126,6 +135,24 @@ try {
     $summaryText = $summary -join "`r`n"
     Set-Content -Path (Join-Path $results "$name.summary.txt") -Value $summaryText
     Set-Content -Path (Join-Path $results "LATEST-RESULT.txt") -Value $summaryText
+
+    # The counts in the format scripts/sprt_combine.py adds up (as each
+    # GitHub job reports them), published under the runner.
+    $lines = @($text -split "`n")
+    $count = { param($pattern) @($lines | Where-Object { $_ -match $pattern }).Count }
+    $ptnmlLine = ($lines | Where-Object { $_ -match "^Ptnml" } | Select-Object -Last 1)
+    $chunk = @("$gamesLine".Trim(), "$ptnmlLine".Trim(), "tc=$TC", "dev_bench=$devBench", "base_bench=$baseBench",
+        "time_losses=$(& $count '^Finished game.*loses on time')",
+        "illegal_moves=$(& $count '^Finished game.*illegal move')",
+        "crashes=$(& $count '^Finished game.*(disconnects|stalls)')",
+        "machine=$(Get-MachineLabel) ($Concurrency games at a time)", "bounds=$Elo0 $Elo1") | Where-Object { $_ }
+    if ($env:TRINITY_RESULTS_DIR) {
+        if (-not $TestId) { $TestId = "$Dev-vs-$Base-$TC" }
+        $safeId = $TestId -replace '[^A-Za-z0-9._-]', '_'
+        Publish-ToResultsRepo "SPRT chunk: $Dev vs $Base ($stamp)" @{
+            "sprt/$safeId/$stamp.txt" = ($chunk -join "`r`n")
+        }
+    }
 
     Write-Host ""
     Write-Host "==================================================================" -ForegroundColor Cyan

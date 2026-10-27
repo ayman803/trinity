@@ -166,6 +166,13 @@ before any code (with the advisor's and Scout's additions):
    fingerprints in copied.txt) and the runner refreshes its working copies
    from there by fingerprint. After adding or changing an opponent, Ayman
    reinstalls the runner; otherwise calibrations keep the old copies.
+16. (Owner with the advisor, 27 October) Every Friday the morning check-in
+   queues a same-night 10+0.1 calibration of main and of 1.0.0 (main
+   first), unless one ran that week. The PC also runs SPRT chunks
+   (`scripts/sprt.ps1 -Dev <branch> -Rounds 1000 -TestId <id>`, results in
+   trinity-results sprt/<id>/, added up with scripts/sprt_combine.py) and
+   network training (`tools/net/kb16.ps1`), once the reinstall and
+   approval of 27 October are done.
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
 

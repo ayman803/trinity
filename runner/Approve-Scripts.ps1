@@ -16,6 +16,9 @@ $Limits = [ordered]@{
     "runner/jobs/hello.ps1" = 0.25; "scripts/timeuse.ps1" = 1; "scripts/v2check.ps1" = 1
     "tools/net/quantcheck.ps1" = 1; "tools/net/netloss.ps1" = 1; "scripts/calibrate.ps1" = 5
     "scripts/forensics.ps1" = 4; "scripts/threads.ps1" = 8
+    # 27 October: SPRT chunks on the PC (about 1 hour each) and network
+    # training (900 superbatches with 8 king buckets: about 7.5 hours).
+    "scripts/sprt.ps1" = 2; "tools/net/kb16.ps1" = 9
 }
 
 function Invoke-Git([string[]]$GitArgs) {

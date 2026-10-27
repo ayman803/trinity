@@ -133,6 +133,11 @@ try {
         "Last lines of the trainer's log ($log):"
     ) + @(Get-Content -LiteralPath $log -Tail 6)
     Set-Content -Path (Join-Path $resultsDir "$Tag-$stamp.txt") -Value ($summary -join "`n")
+    # Under the runner the network itself went to trinity-results
+    # (Publish-NetBranch); its summary goes next to it.
+    if ($env:TRINITY_RESULTS_DIR) {
+        Publish-ToResultsRepo "Network ${netBranch}: summary" @{ "nets/$netBranch.txt" = ($summary -join "`n") }
+    }
     Write-Host ""
     Write-Host "---------------- copy from here ----------------" -ForegroundColor Cyan
     $summary | ForEach-Object { Write-Host $_ }

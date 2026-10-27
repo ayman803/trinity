@@ -354,6 +354,35 @@ network, and the second week merged nothing):
   started in the last 24 hours, unless a deliberate pause is recorded
   here). If the tuning stop rule fires on 27 October, the runner nights go
   to calibrating candidates that pass (owner with the advisor).
+- PC and GPU plan from 27 October (owner with the advisor; tuning stopped):
+  (1) PC as a second test farm: scripts/sprt.ps1 -Rounds 1000 plays one
+  chunk of 2000 games (about 1 hour at 8+0.08, 14 at a time) and publishes
+  its counts to trinity-results sprt/<test>/; the Session adds a test's
+  chunks up with scripts/sprt_combine.py (cloud dry run 27 October: chunk
+  published and combined). A disturbed chunk loses at most an hour.
+  Capacity: about 9 chunks a night, 18000 games, about two full tests.
+  Skeptic note: GitHub runs up to 4 tests at once around the clock, so the
+  PC adds about 10-25% capacity, not double; the lane's bottleneck has
+  been candidates and attention, not machines. Its real value: busy days,
+  and slower clocks (30+0.3, 40/10) that are slow on GitHub.
+  (2) Weekly same-night calibration of main next to 1.0.0 (10+0.1), queued
+  by the check-in on Fridays (CLAUDE.md).
+  (3) Next network experiment, one change: main's recipe trained 900
+  instead of 600 superbatches, bullet's default seed and the same four
+  data files. Main's network was trained with exactly that seed and data
+  (the drift check of 20 October showed today's trainer reproduces it), so
+  the comparison with main differs only in length; no control run needed.
+  Prediction (widened per the forecast scores): self-play -4 to +12, about
+  20% to pass. GPU about 7.5 hours as a runner job (tools/net/kb16.ps1
+  -KingBuckets 8 -Superbatches 900 -Tag long900), after a 5-minute dry-run
+  job checks that training works under the runner's account (CUDA in a
+  background session is untested). The network goes to trinity-results;
+  the Session makes its branch. Training stays subject to the
+  keyboard/mouse rule; the 6:55 deadline keeps it to nights.
+  Needs: one runner reinstall (runner.ps1 and Approve-Scripts.ps1: the two
+  scripts added to the runner's list and their time limits, 2 and 9
+  hours; it also brings the opponent-copy fix of 21 October) and one
+  approval (scripts/sprt.ps1, tools/net/kb16.ps1).
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,

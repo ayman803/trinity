@@ -31,7 +31,8 @@ $Fingerprinted = @("scripts", "tools", "runner/jobs")
 # Scripts that publish into trinity-results under the runner (the others
 # would fail at the end, after hours of work, pushing to trinity).
 $Ready = @("runner/jobs/hello.ps1", "scripts/calibrate.ps1", "scripts/timeuse.ps1", "scripts/forensics.ps1",
-    "scripts/v2check.ps1", "scripts/threads.ps1", "tools/net/quantcheck.ps1", "tools/net/netloss.ps1")
+    "scripts/v2check.ps1", "scripts/threads.ps1", "tools/net/quantcheck.ps1", "tools/net/netloss.ps1",
+    "scripts/sprt.ps1", "tools/net/kb16.ps1")
 # Read-only links from the clone to Ayman's data (reads only; Windows refuses writes).
 $Links = @("data", "checkpoints", "syzygy", "sprt\coder2\data")
 $ArgPattern = '^[A-Za-z0-9_.+/:=-]+$'
