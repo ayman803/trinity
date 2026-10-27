@@ -28,3 +28,4 @@ One line per idea ever proposed: date | short name | status.
 2026-10-22 | [search] Audit sampling: re-search 1 in 200 pruned nodes to measure each rule's error rate and nodes saved (pointer: razoring lacked RFP's mate/TB guard on the TT-adjusted eval) | proposed
 2026-10-23 | [search] Measure eval error by side (behind vs ahead) and set the remaining "behind" pruning margins from it (razor/qsfut/fut-wide vs rfp-wide pattern) | proposed
 2026-10-26 | [search] Smaller late-move reduction when static eval is far below alpha (eval-bias table: errors large when behind) | proposed
+2026-10-27 | [search] Re-screen parked ideas on today's engine (hist-prune, nonpawn-corr first): context changed by the removals and #38 | proposed
