@@ -324,6 +324,22 @@ network, and the second week merged nothing):
   its moves are as small as the others', so that does not change the
   verdict. The per-setting schedule fix is not worth an approval before
   then: if the rule stops tuning, it is moot; if not, approve it then.
+  NIGHT 3 AND STOP RULE (check-in 27 October): chain C 2026-10-26-01
+  (7:46 am-12:14 pm, 268 min) and chain D 2026-10-26-02 (one DISTURBED
+  start, counted run 7:10-11:38 pm, 269 min); 0 time losses in either
+  chain. Totals: C 4284 pairs (17136 games), D 4480 pairs (17920 games).
+  Moves from the defaults, in step sizes: FUT_MUL C -0.4 / D +0.2;
+  LMP_BASE C -0.3 / D +0.3; LMR_HIST_DIV C -0.1 / D -0.6; RFP_MARGIN
+  C +0.1 / D +0.2. Same direction in both chains: LMR_HIST_DIV (down) and
+  RFP_MARGIN (up, both under a quarter step), so 2 of 4, fewer than 3: by
+  the stop rule fixed in advance, chains C and D STOP. Nothing is applied
+  to main (no setting moved even one step). Prediction (rated scale 0 to
+  +6, about 35% to pass) not tested: stopped before a result. Lesson:
+  against rated opponents, three nights (about 17000 games per chain) are
+  not enough for SPSA to move settings already tuned by self-play; the
+  per-setting schedule fix (ec90c7e) is moot and needs no approval. By
+  the plan of 26 October, runner nights now go to calibrating candidates
+  that pass.
 - Search lane idle 23 October 5:43 pm to 26 October (release checks and
   tuning took the attention; the pace rule was missed for two and a half
   days). Restarted 26 October: lmr-behind, rfp-tight, and the #38 split
@@ -346,6 +362,9 @@ network, and the second week merged nothing):
   +/- 3.75) but is not merged; it was marked for after the 1.1 freeze.
   rfp-wide failed (#65, -10.2). Same-night gap of main over 1.0.0:
   +102 +/- 9 at 10+0.1.
+  Week of 26 October (check-in 27 October): tested 2 (lmr-behind
+  -4.0 failed, rfp-tight -4.0 failed; plus the #38 split, research,
+  undecided), merged 0.
 
 ### Speed profile (20 October; callgrind on bench, AVX2 build)
 
@@ -639,6 +658,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-10-24 6:22 am (run by Ayman's "run"): read up to "21:53 DONE 2026-10-23-06" (all six release-1.1 jobs done; 40/60 same day +63 +/- 21; threads +79.5 +/- 19.3, no errors; 0 time losses). The Session had already logged 01-03. Nothing queued: no further runner work is planned (tuning stays paused, and the 1.1 measurements are complete).
 - 2026-10-25 6:24 am: read up to "05:03 STARTED 2026-10-24-06" (tuning chain D still running, due about 6:34). Main vs 1.0.0 same day: +111 +/- 9 at 10+0.1, +63 +/- 21 at 40/60; tuning chain C done. The runner still uses approved commit 189246b (QS_FUTILITY, not FUT_MUL). Queued tonight's tuning (planned: chains C and D each night, tuning last): 2026-10-25-01 chain C, 2026-10-25-02 chain D (270 minutes each; the runner cuts them to end by 6:55).
 - 2026-10-26 6:25 am: read up to "03:12 DONE 2026-10-25-02" (tuning chains C and D, one DISTURBED restart; approval 272a0f3 in effect). APPROVAL PENDING: ec90c7e (scripts/tune-opponents.ps1, per-setting step schedule) is newer than the approved 272a0f3. Queued tonight's tuning (night 3, planned): 2026-10-26-01 chain C, 2026-10-26-02 chain D.
+- 2026-10-27 5:36 am (run by Ayman's "run"): read up to "23:38 DONE 2026-10-26-02" (tuning night 3; one DISTURBED restart; 0 time losses). Tuning stop rule fired: only 2 of 4 settings move the same way in C and D, so the chains stop and nothing is queued (no candidate is waiting for a calibration). The pending approval (ec90c7e) is moot. Search lane: no SPRT running; the last candidates (#69, #70) started about 7 am on 26 October and both failed, so the 24-hour pace alarm trips about 7 am today.
 
 ## Lessons so far
 
