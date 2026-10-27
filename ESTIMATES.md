@@ -14,7 +14,10 @@ opponents); real uncertainty about +/- 50-100.
   above 50-100 means the calibration method needs fixing.
 - Scout (daily idea task, from 13 October 2026): review on 27 October. If
   at least one Scout idea has passed SPRT by then, keep it daily; if none
-  has, cut it to weekly. Cut it to every 2-3 days earlier if it starts
+  has, cut it to weekly. REVIEWED 27 October (Ayman): KEEP DAILY. Passed:
+  no-qsfut (+60, Scout's removal campaign) and no-razor (+58, from Scout's
+  ablation-audit idea, tested directly by the Session after the audit
+  proved too noisy). Cut it to every 2-3 days earlier if it starts
   repeating itself or reporting "No new idea".
 - Goal line: the CCRL 40/15 list as published ("best versions only"), where
   a 4-CPU entry counts. The 1-CPU estimate is always reported next to it.
@@ -910,6 +913,34 @@ mid-exchange (a recapture pending), which the static eval cannot see; a
 cleaner version compares the quiescence score with the search. Next:
 measure the error at the depths where futility actually prunes (1-8) and
 set its margin from the p95 there (a candidate for 1.2).
+
+## Forecast scores (27 October review; advisor's idea of 23 October)
+
+Every prediction with a numeric range logged before its result (Changes
+table, calibration forecasts, Scout reports). Point results; a miss is
+the distance outside the range (0 if inside).
+
+| Forecaster | Inside the range | Above / below | Mean miss | Median miss |
+|---|---|---|---|---|
+| Session (45, from 3 October; includes Coder 2's 2048 network) | 22 (49%) | 10 / 13 | 8.4 | 0 |
+| Scout (5 tested: bucket spread, weight averaging, runner tuning, "+10 to +25 on top" for no-qsfut, lmr-behind) | 1 (20%) | 1 / 3 | 3.9 | 3.0 |
+| Advisor (4: rescore-quiets, #38 rated, no-razor rated, 22 October gap) | 2 (50%) | 1 / 1 | 2.6 | 2.0 |
+
+Reading:
+- The Session's ranges are too narrow: a "likely" range should catch
+  about 70-80%, it caught 49%. Small search ideas mostly land inside or a
+  little below; the big misses are all upward surprises (no-razor +58,
+  no-qsfut +60, the 1024 network +80, speed-picker +21) or network
+  failures (2048 -30, drill -92). Lesson: widen ranges about 1.5x, and
+  give untested inherited rules and first-of-a-kind changes a fat upper
+  tail instead of "about zero".
+- Scout's ideas were predicted positive and came out negative 3 times in
+  5; its strength is choosing what to test (the removal campaign), not
+  the size of the effect.
+- The advisor and Scout have too few scored forecasts (4 and 5) to
+  separate skill from luck; re-score at the next review.
+- Not scored (no numeric range or no clean result): the tuning's
+  "0 to +6" (stopped, no change), research predictions without a range.
 
 ## Loss forensics
 
