@@ -219,6 +219,9 @@ pub struct Searcher {
     cont_hist: Box<ContHistory>,
     capt_hist: Box<CaptHistory>,
     corr_hist: Box<[[i32; CORR_SIZE]; 2]>,
+    /// Like `corr_hist`, keyed by each side's non-pawn pieces:
+    /// [side to move][colour of the pieces][key].
+    non_pawn_corr: Box<[[[i32; CORR_SIZE]; 2]; 2]>,
     killers: [[Move; 2]; MAX_PLY + 2],
     counters: Box<[[Move; 64]; 12]>,
     frames: [Frame; MAX_PLY + 2],
@@ -258,6 +261,7 @@ impl Searcher {
             cont_hist: zeroed_box(),
             capt_hist: zeroed_box(),
             corr_hist: zeroed_box(),
+            non_pawn_corr: zeroed_box(),
             killers: [[Move::NONE; 2]; MAX_PLY + 2],
             counters: zeroed_box(),
             frames: [Frame::default(); MAX_PLY + 2],
@@ -278,6 +282,7 @@ impl Searcher {
         self.cont_hist = zeroed_box();
         self.capt_hist = zeroed_box();
         self.corr_hist = zeroed_box();
+        self.non_pawn_corr = zeroed_box();
         self.counters = zeroed_box();
         self.killers = [[Move::NONE; 2]; MAX_PLY + 2];
     }
@@ -351,19 +356,31 @@ impl Searcher {
         scaled.clamp(-TB_BOUND + 1, TB_BOUND - 1)
     }
 
-    /// Static eval adjusted by the correction history for this pawn structure.
+    /// Static eval adjusted by the correction histories for this pawn
+    /// structure and for each side's non-pawn pieces (re-test of 4 October).
     #[inline(always)]
     fn corrected_eval(&self, b: &Board, raw: i32) -> i32 {
-        let c = self.corr_hist[b.stm][b.pawn_key as usize & (CORR_SIZE - 1)];
+        let pawn = self.corr_hist[b.stm][b.pawn_key as usize & (CORR_SIZE - 1)];
+        let non_pawn: i32 = [WHITE, BLACK]
+            .into_iter()
+            .map(|c| self.non_pawn_corr[b.stm][c][b.non_pawn_keys[c] as usize & (CORR_SIZE - 1)])
+            .sum();
+        // The two non-pawn tables share the weight of the pawn table.
+        let c = pawn + non_pawn / 2;
         (raw + c / CORR_GRAIN).clamp(-TB_BOUND + 1, TB_BOUND - 1)
     }
 
     fn update_correction(&mut self, b: &Board, depth: i32, diff: i32) {
-        let entry = &mut self.corr_hist[b.stm][b.pawn_key as usize & (CORR_SIZE - 1)];
         let weight = (depth + 1).min(16);
         let target = diff * CORR_GRAIN;
-        *entry =
-            ((*entry * (CORR_WEIGHT_SCALE - weight) + target * weight) / CORR_WEIGHT_SCALE).clamp(-CORR_MAX, CORR_MAX);
+        let update = |entry: &mut i32| {
+            *entry = ((*entry * (CORR_WEIGHT_SCALE - weight) + target * weight) / CORR_WEIGHT_SCALE)
+                .clamp(-CORR_MAX, CORR_MAX);
+        };
+        update(&mut self.corr_hist[b.stm][b.pawn_key as usize & (CORR_SIZE - 1)]);
+        for c in [WHITE, BLACK] {
+            update(&mut self.non_pawn_corr[b.stm][c][b.non_pawn_keys[c] as usize & (CORR_SIZE - 1)]);
+        }
     }
 
     fn is_repetition(&self, b: &Board) -> bool {
