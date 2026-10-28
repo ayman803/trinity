@@ -399,7 +399,10 @@ network, and the second week merged nothing):
   +102 +/- 9 at 10+0.1.
   Week of 26 October (check-in 27 October): tested 2 (lmr-behind
   -4.0 failed, rfp-tight -4.0 failed; plus the #38 split, research,
-  undecided), merged 0.
+  undecided), merged 0. Updated 28 October: tested 4 candidates
+  (adding hist-prune2 -1.0 and nonpawn-corr2 +3.2, both undecided after
+  9000 games; plus split38-drop, research, passed +18.6 against the
+  base before #38), merged 0.
 
 ### Speed profile (20 October; callgrind on bench, AVX2 build)
 
@@ -694,6 +697,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-10-25 6:24 am: read up to "05:03 STARTED 2026-10-24-06" (tuning chain D still running, due about 6:34). Main vs 1.0.0 same day: +111 +/- 9 at 10+0.1, +63 +/- 21 at 40/60; tuning chain C done. The runner still uses approved commit 189246b (QS_FUTILITY, not FUT_MUL). Queued tonight's tuning (planned: chains C and D each night, tuning last): 2026-10-25-01 chain C, 2026-10-25-02 chain D (270 minutes each; the runner cuts them to end by 6:55).
 - 2026-10-26 6:25 am: read up to "03:12 DONE 2026-10-25-02" (tuning chains C and D, one DISTURBED restart; approval 272a0f3 in effect). APPROVAL PENDING: ec90c7e (scripts/tune-opponents.ps1, per-setting step schedule) is newer than the approved 272a0f3. Queued tonight's tuning (night 3, planned): 2026-10-26-01 chain C, 2026-10-26-02 chain D.
 - 2026-10-27 5:36 am (run by Ayman's "run"): read up to "23:38 DONE 2026-10-26-02" (tuning night 3; one DISTURBED restart; 0 time losses). Tuning stop rule fired: only 2 of 4 settings move the same way in C and D, so the chains stop and nothing is queued (no candidate is waiting for a calibration). The pending approval (ec90c7e) is moot. Search lane: no SPRT running; the last candidates (#69, #70) started about 7 am on 26 October and both failed, so the 24-hour pace alarm trips about 7 am today.
+- 2026-10-28 6:37 am: read up to "23:38 DONE 2026-10-26-02" (no runner job since; queue empty). Nothing queued: no candidate to calibrate and no other planned job runs on the approved scripts (Friday brings the weekly calibration). APPROVAL PENDING: 7ad796a (scripts/sprt.ps1, tools/net/kb16.ps1; also needs a runner reinstall) is newer than the approved 272a0f3. Search lane idle: the last candidate tests (#72-#74) started 27 October 12:49 UTC, over 24 hours ago, and none is running.
 
 ## Lessons so far
 
