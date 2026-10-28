@@ -1,0 +1,12 @@
+SPRT test #75, finished 2026-10-28 19:47 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/40720012782 (run id 40720012782)
+Continues run id 40506879936; the totals below include it.
+SPRT RESULT: PASSED - 'nonpawn-corr2' is stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: nonpawn-corr2 (bench 982007) vs main (bench 1012002), tc 8+0.08, bounds [0, 5]
+Games: 18000, Wins: 4106, Losses: 3922, Draws: 9972, Points: 9092.0 (50.51 %)
+Ptnml(0-2): [69, 2036, 4604, 2224, 67]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 3.55 +/- 2.62, nElo: 6.88 +/- 5.08
+LLR: 3.26 (-2.94, 2.94) [0.00, 5.00]
