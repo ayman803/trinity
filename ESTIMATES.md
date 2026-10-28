@@ -89,6 +89,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-27 | split38-drop (research, the other half of the #38 split): speed-picker with lazy quiet scoring switched off (only dropping pruned quiets), vs the main before #38. Lazy-only half: +3.62 +/- 4.28 after 7200 games (#46 + #71). Bench 775818 | +2 to +18: the pure speed part predicts about +2; if the two halves add up, +21.5 - 3.6 = +18. A result near +2 would mean #38's +21.5 was partly luck or the halves interact | PASSED +18.59 +/- 3.88 after 9000 games (SPRT #73): dropping carries nearly all of #38. Mechanism checked 28 October: the search is the same (bench nodes 780879 vs 775818, tie order only), but on 60 positions from real games at 300 ms this build is 18% faster (median), while the bench showed only 5.6% for all of #38. It is speed, not extra pruning (Scout read it as pruning more). LESSON: measure speed on game positions, not the bench; the move loop costs far more in real games | - | predicted before any game; research, not a candidate |
 | 2026-10-27 | nonpawn-corr2 (Scout, 27 October re-test): correction history also keyed by each side's non-pawn pieces (4 October: +1.0 +/- 2.7 after 21k games on the old engine). Bench 982007 | self-play -2 to +5, about 25% to pass; corr-unsure later showed the correction signal is worth a lot (+10.8), and a second key adds detail, but it also makes more nodes "unsure" (less reduction), whose cost is unknown | +3.24 +/- 3.73 after 9000 games (SPRT #74, LLR 1.39), undecided; continued to 18000 (28 October) | - | predicted before any game; the day's second candidate (the #38 split is research) |
 | 2026-10-28 | lmp-early (Scout, 28 October): late move pruning starts sooner, LMP_BASE 359 -> 260 (about one quiet move fewer before pruning when improving, half a move when not); the opposite of lmp-wide (-5.4). Bench 895637 (-11.5% nodes) | self-play -5 to +4, about 12% to pass [0, 5] (Scout: -2 to +6). Against it: SPSA left LMP_BASE where it is (chains C/D 355 and 368), and this week every "prune more" change lost (rfp-tight -4); for it: fewer nodes is speed, and #38 showed speed is worth more than the bench says | pending | - | predicted before any game; ranges widened 1.5x and pass chance scaled by 0.6 (forecast lesson of 27 October) |
+| 2026-10-28 | quiet-skip (speed lane, from the game-position profile): late move and futility pruning are checked before the quiet moves are scored; neither rule depends on which quiet move comes next, so when one applies at the first quiet move, all of them are skipped unscored. Same search, bench 1012002 unchanged. On 17 game positions: 1.1% fewer instructions (quiet scoring -18%); wall clock on 60 game positions +0.3% median, +0.6% mean | self-play -1 to +2; [-4, 1]: about 75% to pass (a same-search change passes about 95% of the time if it is not slower; scaled down for my record) | pending | - | predicted before any game; pure speed, so the short no-regression test (advisor, 20 October) |
 
 ## Test queue
 
@@ -404,6 +405,42 @@ network, and the second week merged nothing):
   (adding hist-prune2 -1.0 and nonpawn-corr2 +3.2, both undecided after
   9000 games; plus split38-drop, research, passed +18.6 against the
   base before #38), merged 0.
+
+### Speed profile on game positions (28 October; owner with the advisor)
+
+After #38's lesson (dropping pruned quiets: 18% faster on game positions,
+5.6% on the bench), the engine was profiled on 17 positions from
+calibration games (150000 nodes each, callgrind, AVX2 build). Where the
+instructions go: accumulator updates about 18% (inlined in the search),
+search logic 12%, SEE 6.2% (bench 3.9%), move scoring 6.3%, quiet
+history scoring 4.9%, evaluate 7.4%, move generation 6.5%, king
+refreshes 3.3%, make_move 3.2%, memcpy 1.7%.
+
+Three speed ideas from it, measured before any game (wall clock: 60 game
+positions, 400000 nodes, both builds alternated, ratio new/old):
+1. lazy-see: test a capture's SEE only when it comes up for search.
+   Only 18% of the SEE calls are saved (most captures that are generated
+   are reached), and the re-scan after a failed test costs more:
+   instructions +0.5%. Dropped, no games.
+2. quiet-later: generate quiet moves only after the hash move and the
+   winning captures (38% of nodes cut off before any quiet move; only 6%
+   have a quiet hash move). Instructions -3.7%, but wall clock -0.7% and
+   -1.0% in two runs: fewer instructions, not faster. Dropped, no games.
+   (It is also a textbook method, close to the deferred accumulator
+   update dropped under the originality rule; that question is moot.)
+3. quiet-skip: check late move and futility pruning before scoring the
+   quiets. Same search; instructions -1.1%, wall clock +0.3%. Tested
+   (Changes table).
+Re-measured on game positions: lazy-noisy (20 October; bench timing
++2.3%, SPRT undecided +1.9) is 0.998 on game positions: no speed-up.
+LESSON (skeptic check of "the bench understates speed about 3x"): it did
+for #38's dropping, but not for lazy-noisy or quiet-later. The bench is
+not reliably low or high; instruction counts are not time either. Judge
+speed only by wall clock on game positions. What is left in the profile
+is mostly the network (accumulator, evaluate, refreshes: about 30%) and
+the search itself; no further large, original move-loop saving is in
+sight, so the speed lane has less in it than the advisor's estimate
+assumed.
 
 ### Speed profile (20 October; callgrind on bench, AVX2 build)
 
