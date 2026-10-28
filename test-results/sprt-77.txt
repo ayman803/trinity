@@ -1,0 +1,11 @@
+SPRT test #77, finished 2026-10-28 20:03 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/40722432145 (run id 40722432145)
+SPRT RESULT: FAILED - 'lmp-early' is not stronger than 'main'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: lmp-early (bench 895637) vs main (bench 1012002), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 1652, Losses: 2256, Draws: 5092, Points: 4198.0 (46.64 %)
+Ptnml(0-2): [48, 1386, 2208, 838, 20]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -23.35 +/- 3.74, nElo: -45.01 +/- 7.18
+LLR: -17.71 (-2.94, 2.94) [0.00, 5.00]
