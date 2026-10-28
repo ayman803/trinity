@@ -52,3 +52,9 @@
 2026-10-25-02 | pc | scripts/calibrate.ps1 | -Tune -Chain D -Minutes 270
 2026-10-26-01 | pc | scripts/calibrate.ps1 | -Tune -Chain C -Minutes 270
 2026-10-26-02 | pc | scripts/calibrate.ps1 | -Tune -Chain D -Minutes 270
+2026-10-28-01 | pc | tools/net/kb16.ps1 | -DryRun -KingBuckets 8 -Tag long900
+2026-10-28-02 | pc | scripts/sprt.ps1 | -Dev lmp-notimp -Base base-lmp-notimp -Rounds 1000 -TestId lmp-notimp
+2026-10-28-03 | pc | scripts/sprt.ps1 | -Dev lmp-notimp -Base base-lmp-notimp -Rounds 1000 -TestId lmp-notimp
+2026-10-28-04 | pc | scripts/sprt.ps1 | -Dev lmp-notimp -Base base-lmp-notimp -Rounds 1000 -TestId lmp-notimp
+2026-10-28-05 | pc | scripts/sprt.ps1 | -Dev lmp-notimp -Base base-lmp-notimp -Rounds 1000 -TestId lmp-notimp
+2026-10-28-06 | pc | scripts/sprt.ps1 | -Dev lmp-notimp -Base base-lmp-notimp -Rounds 1000 -TestId lmp-notimp
