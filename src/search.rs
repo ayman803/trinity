@@ -136,6 +136,9 @@ fn init_lmr(lmr: &mut [[[i32; 64]; 64]; 2]) {
 /// written for existing moves, so nothing is cleared up front.
 /// Ordering score of a quiet move not scored yet (see `score_moves`).
 const QUIET_PENDING: i32 = 600_000_000;
+/// Ordering scores from the killers down: a node whose best remaining
+/// move scores below this must generate its quiet moves first.
+const LATER_THAN_QUIETS: i32 = 950_000_000;
 
 struct ScoredMoves {
     list: MoveList,
@@ -455,14 +458,14 @@ impl Searcher {
     /// the placeholder `QUIET_PENDING` (below killers, above bad captures);
     /// `score_quiets` replaces it once the first of them is picked, so
     /// nodes that cut off earlier never pay for their history lookups.
-    fn score_moves(&self, b: &Board, moves: &mut ScoredMoves, tt_move: Move, ply: usize, lazy: bool) {
+    fn score_moves(&self, b: &Board, moves: &mut ScoredMoves, from: usize, tt_move: Move, ply: usize, lazy: bool) {
         let counter = if ply > 0 {
             let f = self.frames[ply - 1];
             if f.piece != NO_PIECE { self.counters[f.piece as usize][f.mv.to()] } else { Move::NONE }
         } else {
             Move::NONE
         };
-        for i in 0..moves.len() {
+        for i in from..moves.len() {
             let m = moves.list[i];
             let score = if m == tt_move {
                 2_000_000_000
@@ -488,6 +491,15 @@ impl Searcher {
             };
             moves.scores[i].write(score);
         }
+    }
+
+    /// Generate the quiet moves of a node that started with the noisy ones
+    /// only, and score them as `score_moves` would have.
+    #[inline(always)]
+    fn add_quiets(&self, b: &Board, moves: &mut ScoredMoves, tt_move: Move, ply: usize) {
+        let n = moves.len();
+        movegen::generate_quiets(b, &mut moves.list);
+        self.score_moves(b, moves, n, tt_move, ply, true);
     }
 
     /// Replace the placeholder of every quiet move from position `i` on by
@@ -659,13 +671,18 @@ impl Searcher {
             depth -= 1;
         }
 
-        // Generated straight into the list that is sorted (no copy).
+        // Generated straight into the list that is sorted (no copy). Quiet
+        // moves come after the hash move and the winning captures, so they
+        // are generated only once those are used up (unless in check, at
+        // the root, or when the hash move is quiet): nodes that cut off
+        // earlier never pay for them.
         let mut moves = ScoredMoves::new(MoveList::new());
-        movegen::generate(b, &mut moves.list, false);
-        if moves.list.is_empty() {
+        let mut quiets_later = !root && !in_check && (tt_move.is_none() || tt_move.is_noisy());
+        movegen::generate(b, &mut moves.list, quiets_later);
+        if moves.list.is_empty() && !quiets_later {
             return if in_check { -MATE + ply as i32 } else { 0 };
         }
-        self.score_moves(b, &mut moves, tt_move, ply, true);
+        self.score_moves(b, &mut moves, 0, tt_move, ply, true);
 
         let orig_alpha = alpha;
         let mut best_score = -INF;
@@ -676,8 +693,21 @@ impl Searcher {
         let mut noisies_tried = MoveList::new();
 
         let mut i = 0;
-        while i < moves.len() {
+        while i < moves.len() || quiets_later {
+            if i == moves.len() {
+                // Nothing left but the quiet moves.
+                self.add_quiets(b, &mut moves, tt_move, ply);
+                quiets_later = false;
+                continue;
+            }
             let mut m = moves.pick(i);
+            if quiets_later && moves.score(i) < LATER_THAN_QUIETS {
+                // Hash move and winning captures used up: the quiet moves
+                // (killers first) come next.
+                self.add_quiets(b, &mut moves, tt_move, ply);
+                quiets_later = false;
+                m = moves.pick(i);
+            }
             if moves.score(i) == QUIET_PENDING {
                 // First quiet move reached: only now are quiets worth scoring.
                 self.score_quiets(b, &mut moves, i, ply);
@@ -911,7 +941,7 @@ impl Searcher {
         let mut moves = ScoredMoves::new(MoveList::new());
         movegen::generate(b, &mut moves.list, !in_check);
         let tt_move = tt_entry.map_or(Move::NONE, |e| e.mv);
-        self.score_moves(b, &mut moves, tt_move, ply, false);
+        self.score_moves(b, &mut moves, 0, tt_move, ply, false);
 
         let mut best_move = Move::NONE;
         let mut searched = 0;

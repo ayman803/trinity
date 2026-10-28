@@ -8,6 +8,22 @@ use crate::types::*;
 /// Generate all legal moves. With `noisy_only`, only captures and
 /// promotions are produced (used by quiescence search).
 pub fn generate(b: &Board, list: &mut MoveList, noisy_only: bool) {
+    if noisy_only {
+        generate_stage::<true, false>(b, list);
+    } else {
+        generate_stage::<true, true>(b, list);
+    }
+}
+
+/// The legal moves `generate(b, list, true)` leaves out: quiet moves and
+/// under-promotions.
+pub fn generate_quiets(b: &Board, list: &mut MoveList) {
+    generate_stage::<false, true>(b, list);
+}
+
+/// `NOISY`: captures and queen promotions; `QUIET`: everything else.
+#[inline(always)]
+fn generate_stage<const NOISY: bool, const QUIET: bool>(b: &Board, list: &mut MoveList) {
     let us = b.stm;
     let them = us ^ 1;
     let occ = b.occupied();
@@ -18,7 +34,8 @@ pub fn generate(b: &Board, list: &mut MoveList, noisy_only: bool) {
     // King moves: target squares must not be attacked with the king lifted
     // off the board (so it cannot hide behind itself from a slider).
     let occ_no_king = occ ^ bb(ksq);
-    let king_targets = attacks::king(ksq) & !own & if noisy_only { enemy } else { !0 };
+    let wanted = if NOISY { enemy } else { 0 } | if QUIET { !occ } else { 0 };
+    let king_targets = attacks::king(ksq) & wanted;
     for to in Bits(king_targets) {
         if !b.is_attacked(to, them, occ_no_king) {
             let flag = if enemy & bb(to) != 0 { FLAG_CAPTURE } else { FLAG_QUIET };
@@ -52,7 +69,7 @@ pub fn generate(b: &Board, list: &mut MoveList, noisy_only: bool) {
         }
     }
 
-    let target = if noisy_only { enemy } else { !own } & check_mask;
+    let target = wanted & check_mask;
 
     // Knights (a pinned knight can never move).
     for from in Bits(b.piece_bb(us, KNIGHT) & !pinned) {
@@ -74,9 +91,9 @@ pub fn generate(b: &Board, list: &mut MoveList, noisy_only: bool) {
         push_targets(list, from, t, enemy);
     }
 
-    gen_pawns(b, list, noisy_only, pinned, check_mask, ksq);
+    gen_pawns::<NOISY, QUIET>(b, list, pinned, check_mask, ksq);
 
-    if !noisy_only && checkers == 0 {
+    if QUIET && checkers == 0 {
         gen_castling(b, list, occ);
     }
 }
@@ -90,18 +107,27 @@ fn push_targets(list: &mut MoveList, from: Square, targets: Bitboard, enemy: Bit
 }
 
 #[inline(always)]
-fn push_promos(list: &mut MoveList, from: Square, to: Square, capture: bool, noisy_only: bool) {
+fn push_promos<const NOISY: bool, const QUIET: bool>(list: &mut MoveList, from: Square, to: Square, capture: bool) {
     let base = if capture { FLAG_PROMO_CAPTURE } else { FLAG_PROMO };
     // Queen first; in quiescence we skip under-promotions entirely.
-    list.push(Move::new(from, to, base + 3));
-    if !noisy_only {
+    if NOISY {
+        list.push(Move::new(from, to, base + 3));
+    }
+    if QUIET {
         list.push(Move::new(from, to, base));
         list.push(Move::new(from, to, base + 2));
         list.push(Move::new(from, to, base + 1));
     }
 }
 
-fn gen_pawns(b: &Board, list: &mut MoveList, noisy_only: bool, pinned: Bitboard, check_mask: Bitboard, ksq: Square) {
+#[inline(always)]
+fn gen_pawns<const NOISY: bool, const QUIET: bool>(
+    b: &Board,
+    list: &mut MoveList,
+    pinned: Bitboard,
+    check_mask: Bitboard,
+    ksq: Square,
+) {
     let us = b.stm;
     let them = us ^ 1;
     let occ = b.occupied();
@@ -118,13 +144,13 @@ fn gen_pawns(b: &Board, list: &mut MoveList, noisy_only: bool, pinned: Bitboard,
         if occ & bb(one) == 0 {
             if bb(one) & allowed != 0 {
                 if bb(one) & promo_rank != 0 {
-                    push_promos(list, from, one, false, noisy_only);
-                } else if !noisy_only {
+                    push_promos::<NOISY, QUIET>(list, from, one, false);
+                } else if QUIET {
                     list.push(Move::new(from, one, FLAG_QUIET));
                 }
             }
             let two = if us == WHITE { from + 16 } else { from.wrapping_sub(16) };
-            if !noisy_only && two < 64 && bb(two) & double_rank != 0 && occ & bb(two) == 0 && bb(two) & allowed != 0 {
+            if QUIET && two < 64 && bb(two) & double_rank != 0 && occ & bb(two) == 0 && bb(two) & allowed != 0 {
                 list.push(Move::new(from, two, FLAG_DOUBLE_PUSH));
             }
         }
@@ -133,15 +159,15 @@ fn gen_pawns(b: &Board, list: &mut MoveList, noisy_only: bool, pinned: Bitboard,
         let caps = attacks::pawn(us, from) & enemy & allowed;
         for to in Bits(caps) {
             if bb(to) & promo_rank != 0 {
-                push_promos(list, from, to, true, noisy_only);
-            } else {
+                push_promos::<NOISY, QUIET>(list, from, to, true);
+            } else if NOISY {
                 list.push(Move::new(from, to, FLAG_CAPTURE));
             }
         }
 
         // En passant: verify legality directly by checking that the king is
         // not exposed once both pawns leave their squares.
-        if b.ep != NO_SQ {
+        if NOISY && b.ep != NO_SQ {
             let ep = b.ep as Square;
             if attacks::pawn(us, from) & bb(ep) != 0 {
                 let cap_sq = ep ^ 8;
@@ -276,5 +302,25 @@ mod tests {
         let expected = all.iter().filter(|m| m.is_capture() || (m.is_promotion() && m.promo_piece() == QUEEN)).count();
         assert_eq!(noisy.len(), expected);
         assert!(noisy.iter().all(|m| all.contains(*m)));
+    }
+
+    #[test]
+    fn noisy_and_quiet_stages_split_all_moves() {
+        fn walk(b: &Board, depth: u32) {
+            let all = legal_moves(b);
+            let mut staged = MoveList::new();
+            generate(b, &mut staged, true);
+            generate_quiets(b, &mut staged);
+            assert_eq!(staged.len(), all.len(), "{}", b.to_fen());
+            assert!(staged.iter().all(|m| all.contains(*m)), "{}", b.to_fen());
+            if depth > 0 {
+                for &m in all.iter() {
+                    walk(&b.make_move(m), depth - 1);
+                }
+            }
+        }
+        for (fen, _) in CASES {
+            walk(&Board::from_fen(fen).unwrap(), 2);
+        }
     }
 }
