@@ -176,6 +176,21 @@ before any code (with the advisor's and Scout's additions):
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
 
+## Guard on main (advisor, 28 October 2026)
+
+Untested engine code may not reach `main` (it did by accident for two
+minutes on 28 October). A git hook in the cloud sessions refuses a commit
+or push to `main` that changes engine code (src/ except the analysis
+tools, Cargo.toml, Cargo.lock, build.rs, nets/default.nnue; a version
+number alone does not count) unless its first line starts with "Merge",
+says "passed" and names the test (#N), or it puts the engine back exactly
+as it was in a commit already on origin/main (an undo or a pull).
+Candidates are committed on their own branch. Code:
+`.githooks/guard-main.py`, switched on at every session start by
+`.claude/hooks/session-start.sh`. Never bypass it (no `--no-verify`), and
+never write engine code to `main` through the GitHub API tools, which skip
+git hooks.
+
 ## Release checklist (before any CCRL submission)
 
 1. Check the source for close similarity to major open-source engines,

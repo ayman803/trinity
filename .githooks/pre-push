@@ -1,0 +1,3 @@
+#!/bin/sh
+# Refuse untested engine code on main (see guard-main.py).
+exec python3 -I "$(git rev-parse --show-toplevel)/.githooks/guard-main.py" pre-push

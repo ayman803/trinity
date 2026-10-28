@@ -9,6 +9,10 @@ if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
   exit 0
 fi
 
+# Guard against untested engine code on main (advisor, 28 October 2026):
+# commits and pushes to main go through .githooks/guard-main.py.
+git -C "${CLAUDE_PROJECT_DIR:-$(cd "$(dirname "$0")/../.." && pwd)}" config core.hooksPath .githooks
+
 PWSH_DIR="$HOME/pwsh"
 PWSH_VERSION="7.4.6"
 if [ ! -x "$PWSH_DIR/pwsh" ]; then
