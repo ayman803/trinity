@@ -500,6 +500,31 @@ impl Searcher {
         }
     }
 
+    /// Late move pruning or futility pruning of the next quiet move. Neither
+    /// depends on which quiet move it is, so when one applies, every quiet
+    /// move left in the node is skipped.
+    #[inline(always)]
+    fn quiets_cut(
+        &self,
+        depth: i32,
+        moves_searched: usize,
+        improving: bool,
+        in_check: bool,
+        eval: i32,
+        alpha: i32,
+    ) -> bool {
+        // Late move pruning: after enough quiet moves, the rest are very
+        // unlikely to be good.
+        if moves_searched as i32
+            >= (tune::LMP_BASE() + tune::LMP_MUL() * depth * depth) / (100 * (2 - i32::from(improving)))
+        {
+            return true;
+        }
+        // Futility pruning: no quiet move can lift us to alpha.
+        let lmr_depth = (depth - self.lmr[1][depth.min(63) as usize][moves_searched.min(63)]).max(0);
+        !in_check && lmr_depth <= 8 && eval + tune::FUT_BASE() + tune::FUT_MUL() * lmr_depth <= alpha
+    }
+
     fn update_pv(&mut self, ply: usize, m: Move) {
         self.pv[ply][ply] = m;
         let child_len = self.pv_len[ply + 1];
@@ -679,7 +704,18 @@ impl Searcher {
         while i < moves.len() {
             let mut m = moves.pick(i);
             if moves.score(i) == QUIET_PENDING {
-                // First quiet move reached: only now are quiets worth scoring.
+                // First quiet move reached. If the pruning below would skip
+                // it, it skips every quiet move, so don't score them.
+                if !root
+                    && best_score > -TB_BOUND
+                    && self.quiets_cut(depth, moves_searched, improving, in_check, eval, alpha)
+                {
+                    skip_quiets = true;
+                    moves.drop_quiets_after(i);
+                    i += 1;
+                    continue;
+                }
+                // Only now are quiets worth scoring.
                 self.score_quiets(b, &mut moves, i, ply);
                 m = moves.pick(i);
             }
@@ -696,17 +732,7 @@ impl Searcher {
                 let lmr_depth =
                     (depth - self.lmr[usize::from(quiet)][depth.min(63) as usize][moves_searched.min(63)]).max(0);
                 if quiet {
-                    // Late move pruning: after enough quiet moves, the rest
-                    // are very unlikely to be good.
-                    if moves_searched as i32
-                        >= (tune::LMP_BASE() + tune::LMP_MUL() * depth * depth) / (100 * (2 - i32::from(improving)))
-                    {
-                        skip_quiets = true;
-                        moves.drop_quiets_after(i - 1);
-                        continue;
-                    }
-                    // Futility pruning: this quiet move can't lift us to alpha.
-                    if !in_check && lmr_depth <= 8 && eval + tune::FUT_BASE() + tune::FUT_MUL() * lmr_depth <= alpha {
+                    if self.quiets_cut(depth, moves_searched, improving, in_check, eval, alpha) {
                         skip_quiets = true;
                         moves.drop_quiets_after(i - 1);
                         continue;
