@@ -1,0 +1,12 @@
+SPRT test #79, finished 2026-10-28 20:18 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/40750080080 (run id 40750080080)
+Continues run id 40727319079; the totals below include it.
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: quiet-skip (bench 1012002) vs main (bench 1012002), tc 8+0.08, bounds [-4, 1]
+Games: 6000, Wins: 1318, Losses: 1282, Draws: 3400, Points: 3018.0 (50.30 %)
+Ptnml(0-2): [20, 650, 1624, 686, 20]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 2.08 +/- 4.39, nElo: 4.18 +/- 8.79
+LLR: 1.41 (-2.94, 2.94) [-4.00, 1.00]
