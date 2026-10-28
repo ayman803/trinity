@@ -714,9 +714,10 @@ impl Searcher {
                     (depth - self.lmr[usize::from(quiet)][depth.min(63) as usize][moves_searched.min(63)]).max(0);
                 if quiet {
                     // Late move pruning: after enough quiet moves, the rest
-                    // are very unlikely to be good.
+                    // are very unlikely to be good (4/7 as many when
+                    // not improving).
                     if moves_searched as i32
-                        >= (tune::LMP_BASE() + tune::LMP_MUL() * depth * depth) / (100 * (2 - i32::from(improving)))
+                        >= (tune::LMP_BASE() + tune::LMP_MUL() * depth * depth) / if improving { 100 } else { 175 }
                     {
                         skip_quiets = true;
                         moves.drop_quiets_after(i - 1);
