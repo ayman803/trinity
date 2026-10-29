@@ -780,7 +780,6 @@ impl Searcher {
                     r = self.lmr[usize::from(quiet)][depth.min(63) as usize][moves_searched.min(63)];
                     r -= i32::from(pv_node);
                     r += i32::from(cut_node);
-                    r += i32::from(!improving);
                     r -= i32::from(child.in_check());
                     r -= i32::from(unsure);
                     if quiet {
