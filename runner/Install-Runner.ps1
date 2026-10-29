@@ -92,8 +92,14 @@ try {
     Run-Icacls @($Repo, "/grant", "${Owner}:(OI)(CI)F", "/grant", "*S-1-5-32-544:(OI)(CI)F", "/grant", "*S-1-5-18:(OI)(CI)F")
     # The wall: no write, delete or permission change. /T also puts it on any
     # subfolder that does not inherit from C:\Trinity (one moved in from elsewhere).
+    # The rights are listed one by one: icacls's "W" also contains SYNCHRONIZE
+    # and READ_CONTROL, and Windows asks for SYNCHRONIZE on every file open, so
+    # denying "W" (as until 28 October) also stopped every read: the opponents
+    # ("access denied", 21 October), the training data and the tablebases.
+    # The old deny entry is removed first.
     $ErrorActionPreference = "Continue"     # icacls reports single failures on stderr
-    $out = @(& icacls.exe $Repo /deny "${Account}:(OI)(CI)(W,D,DC,WDAC,WO)" /T /C /Q 2>&1 | ForEach-Object { "$_" })
+    & icacls.exe $Repo /remove:d $Account /T /C /Q 2>&1 | Out-Null
+    $out = @(& icacls.exe $Repo /deny "${Account}:(OI)(CI)(WD,AD,WEA,WA,D,DC,WDAC,WO)" /T /C /Q 2>&1 | ForEach-Object { "$_" })
     if ($LASTEXITCODE -ne 0) { Write-Host "Some files could not be changed: $($out[-1])" -ForegroundColor Yellow }
     # Folders the runner copies from may have their own permissions (a folder
     # moved in from elsewhere keeps them): give the runner read access there.
