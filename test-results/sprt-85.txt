@@ -1,0 +1,11 @@
+SPRT test #85, finished 2026-10-29 15:27 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/40888508152 (run id 40888508152)
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: lmr-imp-off (bench 1437370) vs base-1029 (bench 982007), tc 8+0.08, bounds [-4, 1]
+Games: 3000, Wins: 674, Losses: 722, Draws: 1604, Points: 1476.0 (49.20 %)
+Ptnml(0-2): [13, 365, 790, 321, 11]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -5.56 +/- 6.34, nElo: -10.90 +/- 12.43
+LLR: -1.17 (-2.94, 2.94) [-4.00, 1.00]
