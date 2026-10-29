@@ -630,7 +630,13 @@ impl Searcher {
         // "Unsure" node: the learned correction moves the network's opinion
         // a lot here, so the evaluation is less trustworthy; reduce less.
         let unsure = raw_eval > -INF && (static_eval - raw_eval).abs() >= 12;
-        let improving = !in_check && ply >= 2 && static_eval > self.frames[ply - 2].static_eval;
+        // Improving: better than our last static eval, two plies ago, or
+        // four plies ago if we were in check then (no eval to compare).
+        let mut before = if ply >= 2 { self.frames[ply - 2].static_eval } else { -INF };
+        if before == -INF && ply >= 4 {
+            before = self.frames[ply - 4].static_eval;
+        }
+        let improving = !in_check && ply >= 2 && static_eval > before;
         self.killers[ply + 1] = [Move::NONE; 2];
 
         if !pv_node && !in_check && excluded.is_none() {
