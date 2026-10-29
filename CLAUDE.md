@@ -167,8 +167,10 @@ before any code (with the advisor's and Scout's additions):
    from there by fingerprint. After adding or changing an opponent, Ayman
    reinstalls the runner; otherwise calibrations keep the old copies. (Cause found 28 October: the installer's deny entry used icacls "W",
    which also denies SYNCHRONIZE, so the runner could open no file under
-   C:\Trinity at all: opponents, training data, tablebases. The installer
-   now denies the write rights one by one; the opponent copies stay.)
+   C:\Trinity at all: opponents, training data, tablebases. icacls adds
+   SYNCHRONIZE to every entry it writes, so since 29 October the installer
+   sets the deny entry with .NET (no SYNCHRONIZE) and checks it; fixed by
+   hand on the PC the same day. The opponent copies stay.)
 16. (Owner with the advisor, 27 October) Every Friday the morning check-in
    queues a same-night 10+0.1 calibration of main and of 1.0.0 (main
    first), unless one ran that week. The PC also runs SPRT chunks

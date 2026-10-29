@@ -90,17 +90,35 @@ try {
     Run-Icacls @($Repo, "/remove:g", "*S-1-5-11")                      # Authenticated Users: drop the default write access
     Run-Icacls @($Repo, "/grant", "*S-1-5-32-545:(OI)(CI)RX")          # Users: read
     Run-Icacls @($Repo, "/grant", "${Owner}:(OI)(CI)F", "/grant", "*S-1-5-32-544:(OI)(CI)F", "/grant", "*S-1-5-18:(OI)(CI)F")
-    # The wall: no write, delete or permission change. /T also puts it on any
-    # subfolder that does not inherit from C:\Trinity (one moved in from elsewhere).
-    # The rights are listed one by one: icacls's "W" also contains SYNCHRONIZE
-    # and READ_CONTROL, and Windows asks for SYNCHRONIZE on every file open, so
-    # denying "W" (as until 28 October) also stopped every read: the opponents
-    # ("access denied", 21 October), the training data and the tablebases.
-    # The old deny entry is removed first.
+    # The wall: no write, delete or permission change, set on C:\Trinity and
+    # on any subfolder that does not inherit from it (one moved in from elsewhere).
+    # The deny entry must not contain SYNCHRONIZE: Windows asks for it on every
+    # file open, so denying it stops every read (the opponents' "access denied"
+    # of 21 October, the training data and the tablebases until 29 October).
+    # icacls adds SYNCHRONIZE to every entry it writes, even with the rights
+    # listed one by one (checked on the PC, 29 October), so the entry is set
+    # with .NET, which leaves SYNCHRONIZE out of deny entries. Old deny
+    # entries (here and on any subfolder) are removed first.
     $ErrorActionPreference = "Continue"     # icacls reports single failures on stderr
-    & icacls.exe $Repo /remove:d $Account /T /C /Q 2>&1 | Out-Null
-    $out = @(& icacls.exe $Repo /deny "${Account}:(OI)(CI)(WD,AD,WEA,WA,D,DC,WDAC,WO)" /T /C /Q 2>&1 | ForEach-Object { "$_" })
+    $out = @(& icacls.exe $Repo /remove:d $Account /T /C /Q 2>&1 | ForEach-Object { "$_" })
     if ($LASTEXITCODE -ne 0) { Write-Host "Some files could not be changed: $($out[-1])" -ForegroundColor Yellow }
+    $ErrorActionPreference = "Stop"
+    $rights = [Security.AccessControl.FileSystemRights]"WriteData, AppendData, WriteExtendedAttributes, WriteAttributes, DeleteSubdirectoriesAndFiles, Delete, ChangePermissions, TakeOwnership"
+    $wall = New-Object Security.AccessControl.FileSystemAccessRule($Account, $rights, "ContainerInherit, ObjectInherit", "None", "Deny")
+    $notInheriting = @(Get-ChildItem -LiteralPath $Repo -Directory -Recurse -Force -ErrorAction SilentlyContinue |
+        Where-Object { (Get-Acl -LiteralPath $_.FullName).AreAccessRulesProtected })
+    foreach ($dir in @((Get-Item -LiteralPath $Repo)) + $notInheriting) {
+        $acl = Get-Acl -LiteralPath $dir.FullName
+        $acl.AddAccessRule($wall)
+        Set-Acl -LiteralPath $dir.FullName -AclObject $acl
+    }
+    if ($notInheriting.Count) { Write-Host "Write block also set on $($notInheriting.Count) folder(s) that do not inherit from $Repo." }
+    $deny = @((Get-Acl -LiteralPath $Repo).Access | Where-Object { $_.AccessControlType -eq "Deny" -and "$($_.IdentityReference)" -like "*\$Account" })
+    if ($deny.Count -ne 1 -or ($deny[0].FileSystemRights -band [Security.AccessControl.FileSystemRights]::Synchronize)) {
+        throw "The write block on $Repo is not as expected: $($deny | ForEach-Object { $_.FileSystemRights })"
+    }
+    Write-Host "Write block set (reads allowed): $($deny[0].FileSystemRights)"
+    $ErrorActionPreference = "Continue"
     # Folders the runner copies from may have their own permissions (a folder
     # moved in from elsewhere keeps them): give the runner read access there.
     foreach ($sub in @("sprt\opponents", "data", "checkpoints", "syzygy", "sprt\coder2\data")) {
