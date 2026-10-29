@@ -173,7 +173,8 @@ before any code (with the advisor's and Scout's additions):
    queues a same-night 10+0.1 calibration of main and of 1.0.0 (main
    first), unless one ran that week. The PC also runs SPRT chunks
    (`scripts/sprt.ps1 -Dev <branch> -Rounds 1000 -TestId <id>`, results in
-   trinity-results sprt/<id>/, added up with scripts/sprt_combine.py) and
+   trinity-results sprt/<id>/, added up with scripts/sprt_combine.py, run
+   from a scratch folder: it writes result.txt and total.txt where it runs) and
    network training (`tools/net/kb16.ps1`), once the reinstall and
    approval of 27 October are done.
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
