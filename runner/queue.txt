@@ -58,3 +58,4 @@
 2026-10-28-04 | pc | scripts/sprt.ps1 | -Dev lmp-notimp -Base base-lmp-notimp -Rounds 1000 -TestId lmp-notimp
 2026-10-28-05 | pc | scripts/sprt.ps1 | -Dev lmp-notimp -Base base-lmp-notimp -Rounds 1000 -TestId lmp-notimp
 2026-10-28-06 | pc | scripts/sprt.ps1 | -Dev lmp-notimp -Base base-lmp-notimp -Rounds 1000 -TestId lmp-notimp
+2026-10-29-01 | pc | tools/net/kb16.ps1 | -DryRun -KingBuckets 8 -Tag long900
