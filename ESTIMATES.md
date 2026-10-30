@@ -378,13 +378,19 @@ network, and the second week merged nothing):
   (2) Weekly same-night calibration of main next to 1.0.0 (10+0.1), queued
   by the check-in on Fridays (CLAUDE.md).
   (3) Next network experiment, one change: main's recipe trained 900
-  instead of 600 superbatches, bullet's default seed and the same four
-  data files. Main's network was trained with exactly that seed and data
-  (the drift check of 20 October showed today's trainer reproduces it), so
-  the comparison with main differs only in length; no control run needed.
+  instead of 600 superbatches. CORRECTION (advisor, 30 October): main's
+  own shuffled files were deleted on 13 October (NETWORK.md), so 900
+  rounds vs main would also change the data order (run-to-run spread
+  about +/- 5.5). Instead the run copies Control2 exactly (kb16.ps1
+  -KingBuckets 8 -Seed 20261019, same trainer, same four files, same
+  order; Control2 = 600 rounds, -0.2 +/- 5.0 vs main, branch
+  net-control2-20261019-1725), so 900 vs Control2 differs only in length
+  (with its cosine schedule). No extra GPU night is needed. The verdict on
+  length is the head-to-head vs Control2; a merge still needs the test
+  vs main.
   Prediction (widened per the forecast scores): self-play -4 to +12, about
   20% to pass. GPU about 7.5 hours as a runner job (tools/net/kb16.ps1
-  -KingBuckets 8 -Superbatches 900 -Tag long900), after a 5-minute dry-run
+  -KingBuckets 8 -Seed 20261019 -Superbatches 900 -Tag long900), after a 5-minute dry-run
   job checks that training works under the runner's account (CUDA in a
   background session is untested). The network goes to trinity-results;
   the Session makes its branch. Training stays subject to the
@@ -392,9 +398,12 @@ network, and the second week merged nothing):
   nights: with no history its 9-hour limit counts, so it can start any
   time from 7:30 am to about 9:55 pm once the PC has been idle 30 minutes.
   It is therefore queued only on the evening it should run (owner, 30
-  October: Saturday night, after Friday's calibration). Gates before any
-  SPRT (owner with the check-in, 30 October): held-out loss at least 0.3%
-  better than main's network, then 400 quick games.
+  October: Saturday night, after Friday's calibration). Gates (advisor and
+  owner, 30 October, before the run; the 0.3% loss gate was kept only
+  until the control runs measured the noise, and they have): held-out loss
+  worse than main's network -> stop; 0 to 0.3% better -> still the 400
+  quick games; more than 0.3% better -> as planned. The games decide. Its
+  loss is also logged against Control2's.
   Needs: one runner reinstall (runner.ps1 and Approve-Scripts.ps1: the two
   scripts added to the runner's list and their time limits, 2 and 9
   hours; it also brings the opponent-copy fix of 21 October) and one

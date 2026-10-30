@@ -838,3 +838,11 @@ passes, 3000 games at 30+0.3 as for the 1024 network (the owner's
 condition 2 reads the 30+0.3 result).
 Branch state on 15 October: net-quantcheck and net-wide both carry main's
 combo merge of 15 October, build, pass the tests, bench 780879.)
+
+Long run, 900 superbatches (planned 30 October, before training; details
+in ESTIMATES.md, Runner plan): main's 8-bucket recipe with Control2's
+weight seed (20261019) and the same files and order, so 900 vs Control2
+(600) is one change, the length. Main's own run cannot be the pair: its
+shuffled files were deleted on 13 October. Gate: held-out loss worse than
+main's -> stop; 0-0.3% better -> 400 quick games anyway; above -> as
+planned.
