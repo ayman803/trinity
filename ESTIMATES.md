@@ -388,7 +388,13 @@ network, and the second week merged nothing):
   job checks that training works under the runner's account (CUDA in a
   background session is untested). The network goes to trinity-results;
   the Session makes its branch. Training stays subject to the
-  keyboard/mouse rule; the 6:55 deadline keeps it to nights.
+  keyboard/mouse rule. The 6:55 deadline alone does not keep it to
+  nights: with no history its 9-hour limit counts, so it can start any
+  time from 7:30 am to about 9:55 pm once the PC has been idle 30 minutes.
+  It is therefore queued only on the evening it should run (owner, 30
+  October: Saturday night, after Friday's calibration). Gates before any
+  SPRT (owner with the check-in, 30 October): held-out loss at least 0.3%
+  better than main's network, then 400 quick games.
   Needs: one runner reinstall (runner.ps1 and Approve-Scripts.ps1: the two
   scripts added to the runner's list and their time limits, 2 and 9
   hours; it also brings the opponent-copy fix of 21 October) and one
