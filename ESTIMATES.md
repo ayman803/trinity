@@ -393,7 +393,8 @@ network, and the second week merged nothing):
   -KingBuckets 8 -Seed 20261019 -Superbatches 900 -Tag long900), after a 5-minute dry-run
   job checks that training works under the runner's account (CUDA in a
   background session is untested). The network goes to trinity-results;
-  the Session makes its branch. Training stays subject to the
+  the Session makes its branch. Its strength test is head-to-head against
+  Control2 (same seed and files), not against main (advisor, 31 October). Training stays subject to the
   keyboard/mouse rule. The 6:55 deadline alone does not keep it to
   nights: with no history its 9-hour limit counts, so it can start any
   time from 7:30 am to about 9:55 pm once the PC has been idle 30 minutes.
@@ -1044,6 +1045,10 @@ structure at Trinity's turning point. Scout's PC-night version stays on
 the list, with lower expectations; it competes with training and
 calibration nights.
 Watch: 2 games lost on time in Friday's 4,000 (none the week before).
+If they appear again next week, check whether the deeper searches after
+the rule removals (no-razor, no-qsfut, 30% more nodes per depth) run the
+clock low (advisor, 31 October): time use per move and the clock left at
+move 40, from the saved games.
 
 ## Forecast scores (27 October review; advisor's idea of 23 October)
 

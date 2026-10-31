@@ -18,6 +18,8 @@ param(
     # only if it should end by this time; resumable tuning fills the gap.
     [string]$MorningDeadline = "06:55",
     [string]$MorningBack = "07:30",     # no new job between the deadline and this time
+    [string]$EveningStart = "21:00",    # long jobs start only from here to the deadline
+    [int]$LongJobMinutes = 90,          # "long": expected longer than this and not resumable
     [switch]$Once                       # one cycle, then exit (for testing)
 )
 
@@ -345,7 +347,11 @@ function Invoke-Cycle {
     }
     if (-not $next) {
         $first = $pending[0]
-        Write-Note "Waiting: $($first.Id) would not finish before $MorningDeadline; it starts after $MorningBack."
+        if (-not (Test-Evening) -and $first.Args -notcontains "-Tune") {
+            Write-Note "Waiting: $($first.Id) is a long job; long jobs start from $EveningStart (if they finish by $MorningDeadline)."
+        } else {
+            Write-Note "Waiting: $($first.Id) would not finish before $MorningDeadline; it starts after $MorningBack."
+        }
         return $false
     }
     if ($next.Id -ne $pending[0].Id) { Write-Note "$($pending[0].Id) would not finish before $MorningDeadline; running $($next.Id) first." }
@@ -435,7 +441,23 @@ function Test-MorningQuiet {
 function Test-JobFits($Job, [double]$LimitHours) {
     $left = ((Get-MorningDeadline) - (Get-Date)).TotalMinutes
     if ($Job.Args -contains "-Tune") { return ($left - 20 -ge 30) }
-    return ((Get-ExpectedMinutes $Job $LimitHours) -le $left)
+    $expected = Get-ExpectedMinutes $Job $LimitHours
+    if ($expected -gt $LongJobMinutes -and -not (Test-Evening)) { return $false }
+    return ($expected -le $left)
+}
+
+# Long jobs that cannot pause (calibrations, training) start only in the
+# evening and night (advisor and owner, 31 October): in the day Ayman comes
+# back to the PC, and Friday's 1.0.0 calibration was stopped three times
+# and dropped. Daytime idle time goes to short jobs (test chunks, about an
+# hour) and to resumable tuning.
+function Test-Evening {
+    $now = Get-Date
+    $e = [DateTime]::ParseExact($EveningStart, "HH:mm", $null)
+    $d = [DateTime]::ParseExact($MorningDeadline, "HH:mm", $null)
+    $start = $now.Date.AddHours($e.Hour).AddMinutes($e.Minute)
+    $end = $now.Date.AddHours($d.Hour).AddMinutes($d.Minute)
+    return ($now -ge $start -or $now -lt $end)
 }
 
 function Get-FittedArgs($Job) {

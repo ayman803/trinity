@@ -179,6 +179,13 @@ before any code (with the advisor's and Scout's additions):
    from a scratch folder: it writes result.txt and total.txt where it runs) and
    network training (`tools/net/kb16.ps1`), once the reinstall and
    approval of 27 October are done.
+17. (Advisor and owner, 31 October) Jobs that cannot pause and are
+   expected to take more than 90 minutes (calibrations, training,
+   forensics) start only from 9 pm, and still only if they end by 6:55 am.
+   Daytime idle time goes to short jobs (test chunks, about an hour) and
+   resumable tuning. Friday's 1.0.0 calibration started three times in
+   the day, was stopped each time and dropped. (Needs the runner
+   reinstalled; runner.ps1 is not under the approval fingerprint.)
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
 
