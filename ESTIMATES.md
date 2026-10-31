@@ -1019,6 +1019,32 @@ cleaner version compares the quiescence score with the search. Next:
 measure the error at the depths where futility actually prunes (1-8) and
 set its margin from the p95 there (a candidate for 1.2).
 
+## Losses to Prune, first pass (31 October; Scout's idea of the same day)
+
+Scout: in every calibration since 22 October Prune puts Trinity 10-40
+lower than the other three. First pass, in the cloud, no PC night: all
+8,996 saved losses from the calibrations of 22-30 October (main, 1.0.0,
+1.1), using the engines' own evals written in the games.
+- Seen from the opponent's eval, Prune's wins look different: longer
+  games (144 plies against 118-130), decided later (Prune first holds +1
+  at about ply 68; Bread and akimbo at about ply 47), with less material
+  and fewer queens on the board.
+- Seen from Trinity's own eval (the last move it still thought it was
+  level, -0.30 or better, before never recovering), the losses to Prune
+  match the others: turning point in the middlegame 49% (others 50-51%),
+  late middlegame 26% (24-27%), endgame 7% (7-8%); queenless 24% (20-24%);
+  a drop of 1.5 pawns within 3 moves 49% (49-63%); Trinity was
+  optimistic (+1 or more) just before 14% (16-27%).
+Reading: the first view mostly reflects Prune's own eval scale (smaller
+numbers reach the +1 mark and the resign threshold later), not a
+different kind of game. No phase, material or queen signature separates
+the Prune losses. Not done: which move was the mistake (needs the
+Stockfish referee, forensics.ps1 on a PC night) and open/closed pawn
+structure at Trinity's turning point. Scout's PC-night version stays on
+the list, with lower expectations; it competes with training and
+calibration nights.
+Watch: 2 games lost on time in Friday's 4,000 (none the week before).
+
 ## Forecast scores (27 October review; advisor's idea of 23 October)
 
 Every prediction with a numeric range logged before its result (Changes
