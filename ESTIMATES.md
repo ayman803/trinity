@@ -404,6 +404,11 @@ network, and the second week merged nothing):
   worse than main's network -> stop; 0 to 0.3% better -> still the 400
   quick games; more than 0.3% better -> as planned. The games decide. Its
   loss is also logged against Control2's.
+  Queued 31 October 10:25 am Pacific (owner's "train"): 2026-10-31-01
+  (training), then a fresh calibration pair, main then 1.0.0 (2026-10-31-02
+  and -03): Friday's 1.0.0 calibration (2026-10-30-02) ran in the day and
+  was DISTURBED three times (12:23, 1:02, 2:37 pm), the most allowed, so
+  it was dropped and Friday's main run has no same-day 1.0.0 partner.
   Needs: one runner reinstall (runner.ps1 and Approve-Scripts.ps1: the two
   scripts added to the runner's list and their time limits, 2 and 9
   hours; it also brings the opponent-copy fix of 21 October) and one

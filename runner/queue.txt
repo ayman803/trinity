@@ -62,3 +62,6 @@
 2026-10-29-02 | pc | tools/net/kb16.ps1 | -DryRun -KingBuckets 8 -Tag long900
 2026-10-30-01 | pc | scripts/calibrate.ps1 | -Ref main
 2026-10-30-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0
+2026-10-31-01 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Superbatches 900 -Tag long900
+2026-10-31-02 | pc | scripts/calibrate.ps1 | -Ref main
+2026-10-31-03 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0
