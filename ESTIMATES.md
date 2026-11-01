@@ -407,6 +407,16 @@ network, and the second week merged nothing):
   worse than main's network -> stop; 0 to 0.3% better -> still the 400
   quick games; more than 0.3% better -> as planned. The games decide. Its
   loss is also logged against Control2's.
+  Held-out loss (1 November, in the cloud, 150,000 positions from
+  tools/net/data/heldout-positions.txt, label = game result): main
+  0.081781, Control2 0.081577 (-0.25%), long900 0.081565 (-0.26% vs main,
+  -0.015% vs Control2). Gate: 0 to 0.3% better than main -> the 400 quick
+  games anyway. Against Control2 the loss is practically equal: on loss,
+  the extra 300 superbatches bought almost nothing. (Control2 itself was
+  -0.25% in loss and -0.2 Elo vs main: loss and Elo disagree again.)
+  Screen: long900 vs Control2, both on today's main search (branches
+  net-long900-main, bench 991226; net-control2-main, bench 924692), 400
+  games at 8+0.08, started 1 November 8:20 am Pacific.
   Queued 31 October 10:25 am Pacific (owner's "train"): 2026-10-31-01
   (training), then a fresh calibration pair, main then 1.0.0 (2026-10-31-02
   and -03): Friday's 1.0.0 calibration (2026-10-30-02) ran in the day and

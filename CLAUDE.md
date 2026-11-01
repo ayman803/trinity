@@ -62,7 +62,13 @@ rule governs how fully each one works.)
    wait: the runner always runs the approved version, so it is enough that
    the approved version accepts the job's parameters (19 October;
    this overrides the stricter "unchanged since the approved commit" test
-   in the check-in's own instructions).
+   in the check-in's own instructions). Second exception (owner with
+   the advisor, 1 November 2026, after the search lane stalled three
+   times waiting for a relay): a daily pace routine (scheduled task
+   "Trinity pace routine", 7:11 am Pacific, into the main Session)
+   continues undecided tests, merges passed ones, keeps at least two
+   candidate tests running, queues PC chunks and starts waiting network
+   checks, without waiting for Ayman.
 6. When Trinity is near top-100 strength, prepare a release for the CCRL
    testers. (Owner, 23 October: 1.0.0 stays with the CCRL tester; newer
    versions are offered only after 1.0.0 is rated and Ayman decides. Do
@@ -250,7 +256,11 @@ in ESTIMATES.md, Test queue. Pace alarm (owner with the advisor, 26 October):
 the morning check-in reports "Decision needed: search lane idle" whenever
 no new candidate test started on GitHub in the last 24 hours (newest
 test-results/sprt-*.txt and running SPRT runs), unless ESTIMATES.md
-records a deliberate pause.
+records a deliberate pause. It also reports "Decision needed: tests left
+undecided" when any test has been undecided and not running for more
+than 24 hours without a logged stop (owner with the advisor, 1
+November; four tests waited three days on 29 October). The daily pace
+routine (rule 5) normally clears both before Ayman sees them.
 
 ## Coder 2 (folded back, 16 October 2026)
 
