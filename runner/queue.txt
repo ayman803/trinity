@@ -65,3 +65,8 @@
 2026-10-31-11 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Superbatches 900 -Tag long900
 2026-10-31-12 | pc | scripts/calibrate.ps1 | -Ref main
 2026-10-31-13 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0
+2026-11-01-01 | pc | scripts/sprt.ps1 | -Dev corr-avg -Base base-1101 -Rounds 1000 -TestId corr-avg
+2026-11-01-02 | pc | scripts/sprt.ps1 | -Dev corr-avg -Base base-1101 -Rounds 1000 -TestId corr-avg
+2026-11-01-03 | pc | scripts/sprt.ps1 | -Dev corr-avg -Base base-1101 -Rounds 1000 -TestId corr-avg
+2026-11-01-04 | pc | scripts/sprt.ps1 | -Dev corr-avg -Base base-1101 -Rounds 1000 -TestId corr-avg
+2026-11-01-05 | pc | scripts/sprt.ps1 | -Dev corr-avg -Base base-1101 -Rounds 1000 -TestId corr-avg
