@@ -365,8 +365,10 @@ impl Searcher {
             .into_iter()
             .map(|c| self.non_pawn_corr[b.stm][c][b.non_pawn_keys[c] as usize & (CORR_SIZE - 1)])
             .sum();
-        // The two non-pawn tables share the weight of the pawn table.
-        let c = pawn + non_pawn / 2;
+        // Each table learns the whole gap between the network and the
+        // search on its own, so they are averaged, not added: the pawn
+        // table and the mean of the two non-pawn tables, half each.
+        let c = (pawn + non_pawn / 2) / 2;
         (raw + c / CORR_GRAIN).clamp(-TB_BOUND + 1, TB_BOUND - 1)
     }
 
