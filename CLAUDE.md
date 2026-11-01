@@ -70,9 +70,9 @@ rule governs how fully each one works.)
    queues PC chunks and starts waiting network checks, without waiting
    for Ayman. Merges (advisor and Scout, 1 November): it may merge only a
    search, speed or time candidate that passed its planned bounds with 0
-   crashes and 0 illegal moves, and only once Ayman has confirmed
-   automatic merges in his own words (not yet confirmed; until then it
-   reports "Decision needed: merge ...?"). A network that passes is never
+   crashes and 0 illegal moves. Confirmed by Ayman in his own words, 1
+   November 2026: "Yes: the morning routine may merge search, speed and
+   time changes that passed their test." A network that passes is never
    merged by the routine: its calibration, v2 check and SPSA re-tune come
    first, and the merge waits for Ayman's OK.
 6. When Trinity is near top-100 strength, prepare a release for the CCRL
