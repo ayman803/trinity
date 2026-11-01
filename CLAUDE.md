@@ -66,9 +66,15 @@ rule governs how fully each one works.)
    the advisor, 1 November 2026, after the search lane stalled three
    times waiting for a relay): a daily pace routine (scheduled task
    "Trinity pace routine", 7:11 am Pacific, into the main Session)
-   continues undecided tests, merges passed ones, keeps at least two
-   candidate tests running, queues PC chunks and starts waiting network
-   checks, without waiting for Ayman.
+   continues undecided tests, keeps at least two candidate tests running,
+   queues PC chunks and starts waiting network checks, without waiting
+   for Ayman. Merges (advisor and Scout, 1 November): it may merge only a
+   search, speed or time candidate that passed its planned bounds with 0
+   crashes and 0 illegal moves, and only once Ayman has confirmed
+   automatic merges in his own words (not yet confirmed; until then it
+   reports "Decision needed: merge ...?"). A network that passes is never
+   merged by the routine: its calibration, v2 check and SPSA re-tune come
+   first, and the merge waits for Ayman's OK.
 6. When Trinity is near top-100 strength, prepare a release for the CCRL
    testers. (Owner, 23 October: 1.0.0 stays with the CCRL tester; newer
    versions are offered only after 1.0.0 is rated and Ayman decides. Do

@@ -846,3 +846,13 @@ weight seed (20261019) and the same files and order, so 900 vs Control2
 shuffled files were deleted on 13 October. Gate: held-out loss worse than
 main's -> stop; 0-0.3% better -> 400 quick games anyway; above -> as
 planned.
+
+Held-out set changed (1 November): tools/net/data/heldout-positions.txt,
+150,000 positions exported from the PC's calibration games up to 1
+November (Export-Heldout.bat), replaces the earlier held-out sample
+(Net-Loss.bat on the PC). Losses on the two sets are not comparable, and
+the 0.3% gate bands were set on the old set: re-check them on the new set
+(score main and the earlier networks with known Elo on it) before the
+next gate decision; until then gate decisions are marked "new held-out
+set". On it: main 0.081781, Control2 0.081577, long900 0.081565
+(long900 vs Control2: a tie within seed noise).

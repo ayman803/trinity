@@ -410,9 +410,13 @@ network, and the second week merged nothing):
   Held-out loss (1 November, in the cloud, 150,000 positions from
   tools/net/data/heldout-positions.txt, label = game result): main
   0.081781, Control2 0.081577 (-0.25%), long900 0.081565 (-0.26% vs main,
-  -0.015% vs Control2). Gate: 0 to 0.3% better than main -> the 400 quick
-  games anyway. Against Control2 the loss is practically equal: on loss,
-  the extra 300 superbatches bought almost nothing. (Control2 itself was
+  -0.015% vs Control2). Gate (marked "new held-out set": the 0.3% bands
+  were set on the old held-out positions): 0 to 0.3% better than main ->
+  the 400 quick games anyway. long900 vs Control2 is a TIE within seed
+  noise (Scout, 1 November): no evidence either way on length. The
+  400-game screen (about +/- 30) only rules out large effects. The next
+  network experiment should still change something other than length,
+  for a different reason: loss gains have not turned into Elo. (Control2 itself was
   -0.25% in loss and -0.2 Elo vs main: loss and Elo disagree again.)
   Screen: long900 vs Control2, both on today's main search (branches
   net-long900-main, bench 991226; net-control2-main, bench 924692), 400
