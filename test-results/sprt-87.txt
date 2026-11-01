@@ -1,0 +1,12 @@
+SPRT test #87, finished 2026-11-01 17:30 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/41323884827 (run id 41323884827)
+Continues run id 40888142091; the totals below include it.
+SPRT RESULT: PASSED - 'quiet-skip' is stronger than 'base-quiet-skip'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: quiet-skip (bench 1012002) vs base-quiet-skip (bench 1012002), tc 8+0.08, bounds [-4, 1]
+Games: 18000, Wins: 3988, Losses: 3899, Draws: 10113, Points: 9044.5 (50.25 %)
+Ptnml(0-2): [56, 1997, 4818, 2060, 69]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 1.72 +/- 2.55, nElo: 3.41 +/- 5.08
+LLR: 3.66 (-2.94, 2.94) [-4.00, 1.00]
