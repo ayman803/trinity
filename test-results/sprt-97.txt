@@ -1,0 +1,12 @@
+SPRT test #97, finished 2026-11-02 19:45 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/41467244209 (run id 41467244209)
+Continues run id 41323891925; the totals below include it.
+SPRT RESULT: FAILED - 'lmp-notimp' is not stronger than 'base-lmp-notimp'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: lmp-notimp (bench 1212334) vs base-lmp-notimp (bench 982007), tc 8+0.08, bounds [0, 5]
+Games: 18000, Wins: 3940, Losses: 4004, Draws: 10056, Points: 8968.0 (49.82 %)
+Ptnml(0-2): [70, 2180, 4560, 2124, 66]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -1.24 +/- 2.63, nElo: -2.38 +/- 5.08
+LLR: -3.64 (-2.94, 2.94) [0.00, 5.00]
