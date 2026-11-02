@@ -1,0 +1,11 @@
+SPRT test #98, finished 2026-11-02 20:22 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/41481228759 (run id 41481228759)
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: corr-integral (bench 1098712) vs base-1102 (bench 982007), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 1992, Losses: 1976, Draws: 5032, Points: 4508.0 (50.09 %)
+Ptnml(0-2): [23, 1074, 2283, 1104, 16]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 0.62 +/- 3.66, nElo: 1.21 +/- 7.18
+LLR: -0.48 (-2.94, 2.94) [0.00, 5.00]
