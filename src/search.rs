@@ -373,9 +373,12 @@ impl Searcher {
     fn update_correction(&mut self, b: &Board, depth: i32, diff: i32) {
         let weight = (depth + 1).min(16);
         let target = diff * CORR_GRAIN;
+        // `diff` is what the corrected eval still missed, so each entry adds
+        // a share of it (a running sum, as an integral controller does)
+        // instead of moving toward it: averaging toward the leftover settled
+        // short of the true gap (Scout, 2 November).
         let update = |entry: &mut i32| {
-            *entry = ((*entry * (CORR_WEIGHT_SCALE - weight) + target * weight) / CORR_WEIGHT_SCALE)
-                .clamp(-CORR_MAX, CORR_MAX);
+            *entry = (*entry + target * weight / CORR_WEIGHT_SCALE).clamp(-CORR_MAX, CORR_MAX);
         };
         update(&mut self.corr_hist[b.stm][b.pawn_key as usize & (CORR_SIZE - 1)]);
         for c in [WHITE, BLACK] {
