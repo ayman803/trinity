@@ -1,0 +1,12 @@
+SPRT test #93, finished 2026-11-02 18:51 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/41467223109 (run id 41467223109)
+Continues run id 41325636214; the totals below include it.
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: net-long900-main (bench 991226) vs net-control2-main (bench 924692), tc 8+0.08, bounds [0, 5]
+Games: 9400, Wins: 2289, Losses: 2157, Draws: 4954, Points: 4766.0 (50.70 %)
+Ptnml(0-2): [64, 1094, 2257, 1216, 69]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 4.88 +/- 3.86, nElo: 8.88 +/- 7.02
+LLR: 2.48 (-2.94, 2.94) [0.00, 5.00]
