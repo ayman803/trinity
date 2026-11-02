@@ -62,7 +62,11 @@ rule governs how fully each one works.)
    wait: the runner always runs the approved version, so it is enough that
    the approved version accepts the job's parameters (19 October;
    this overrides the stricter "unchanged since the approved commit" test
-   in the check-in's own instructions). Second exception (owner with
+   in the check-in's own instructions). The check-in's summary also
+   lists the GitHub test results of the last 24 hours (test-results/
+   sprt-*.txt in this repository), each as passed, failed or undecided
+   against its prediction, and fills them into ESTIMATES.md, not only the
+   PC jobs (Scout, 2 November: six GitHub results were missing). Second exception (owner with
    the advisor, 1 November 2026, after the search lane stalled three
    times waiting for a relay): a daily pace routine (scheduled task
    "Trinity pace routine", 7:11 am Pacific, into the main Session)
