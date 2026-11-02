@@ -1,0 +1,12 @@
+SPRT test #95, finished 2026-11-02 16:19 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/41467233898 (run id 41467233898)
+Continues run id 41323887236; the totals below include it.
+SPRT RESULT: FAILED - 'lmr-imp-off' is not stronger than 'base-1029'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: lmr-imp-off (bench 1437370) vs base-1029 (bench 982007), tc 8+0.08, bounds [-4, 1]
+Games: 9000, Wins: 2003, Losses: 2145, Draws: 4852, Points: 4429.0 (49.21 %)
+Ptnml(0-2): [45, 1115, 2306, 1005, 29]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -5.48 +/- 3.72, nElo: -10.59 +/- 7.18
+LLR: -3.39 (-2.94, 2.94) [-4.00, 1.00]
