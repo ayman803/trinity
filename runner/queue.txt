@@ -70,3 +70,8 @@
 2026-11-01-03 | pc | scripts/sprt.ps1 | -Dev corr-avg -Base base-1101 -Rounds 1000 -TestId corr-avg
 2026-11-01-04 | pc | scripts/sprt.ps1 | -Dev corr-avg -Base base-1101 -Rounds 1000 -TestId corr-avg
 2026-11-01-05 | pc | scripts/sprt.ps1 | -Dev corr-avg -Base base-1101 -Rounds 1000 -TestId corr-avg
+2026-11-02-01 | pc | scripts/sprt.ps1 | -Dev corr-integral-u14 -Base base-1102 -Rounds 1000 -TestId corr-integral-u14
+2026-11-02-02 | pc | scripts/sprt.ps1 | -Dev corr-integral-u14 -Base base-1102 -Rounds 1000 -TestId corr-integral-u14
+2026-11-02-03 | pc | scripts/sprt.ps1 | -Dev corr-integral-u14 -Base base-1102 -Rounds 1000 -TestId corr-integral-u14
+2026-11-02-04 | pc | scripts/sprt.ps1 | -Dev corr-integral-u14 -Base base-1102 -Rounds 1000 -TestId corr-integral-u14
+2026-11-02-05 | pc | scripts/sprt.ps1 | -Dev corr-integral-u14 -Base base-1102 -Rounds 1000 -TestId corr-integral-u14
