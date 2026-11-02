@@ -31,3 +31,4 @@ One line per idea ever proposed: date | short name | status.
 2026-10-27 | [search] Re-screen parked ideas on today's engine (hist-prune, nonpawn-corr first): context changed by the removals and #38 | proposed
 2026-10-28 | [search] Follow #38's mechanism (drop-half +18.6): lmp-tight, and drop-keep-checks as a diagnostic | proposed
 2026-10-31 | [search] Matchup forensics: Prune rates Trinity 10-40 lower than the other opponents in every run; compare loss profiles to find what it exploits | proposed
+2026-11-02 | [search] corr-integral: correction tables settle at 2/3 of the eval gap (they chase the leftover and decay); additive update to reach the full gap, plus an unsure-threshold variant to split corr-avg's two causes | proposed
