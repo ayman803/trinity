@@ -1,0 +1,12 @@
+SPRT test #94, finished 2026-11-02 18:59 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/41467228465 (run id 41467228465)
+Continues run id 41324246089; the totals below include it.
+SPRT RESULT: PASSED - 'tm-floor2' is stronger than 'base-1101'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: tm-floor2 (bench 982007) vs base-1101 (bench 982007), tc 8+0.08, bounds [0, 5]
+Games: 18000, Wins: 4128, Losses: 3915, Draws: 9957, Points: 9106.5 (50.59 %)
+Ptnml(0-2): [58, 2012, 4648, 2223, 59]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 4.11 +/- 2.59, nElo: 8.05 +/- 5.08
+LLR: 4.14 (-2.94, 2.94) [0.00, 5.00]
