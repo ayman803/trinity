@@ -105,7 +105,7 @@ const HISTORY_MAX: i32 = 16_384;
 const CORR_SIZE: usize = 16_384;
 const CORR_GRAIN: i32 = 256;
 const CORR_WEIGHT_SCALE: i32 = 256;
-const CORR_MAX: i32 = CORR_GRAIN * 32;
+const CORR_MAX: i32 = CORR_GRAIN * 64;
 
 /// Nudge a history value towards `bonus` while keeping it in range.
 #[inline(always)]
