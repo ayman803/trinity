@@ -461,6 +461,9 @@ network, and the second week merged nothing):
   lmp-early -23.4 failed, quiet-skip +1.8 after 9000 continued, lmp-notimp
   +3.7 after 10000 on the PC farm, undecided), merged 1 (nonpawn-corr2,
   +3.55 after 18000).
+  Week of 2 November (check-in 3 November): tested 2 new (corr-integral,
+  corr-integral-u14, both undecided); merged 1 (quiet-skip, passed [-4, 1]
+  +1.72 after 18000). Passed and not yet merged: tm-floor2 (+4.11).
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 
