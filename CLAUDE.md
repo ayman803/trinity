@@ -76,7 +76,10 @@ rule governs how fully each one works.)
    search, speed or time candidate that passed its planned bounds with 0
    crashes and 0 illegal moves. Confirmed by Ayman in his own words, 1
    November 2026: "Yes: the morning routine may merge search, speed and
-   time changes that passed their test." A network that passes is never
+   time changes that passed their test." A candidate whose ESTIMATES.md
+   row or plan sets an extra merge condition (for example a second time
+   control) is merged only when that condition holds too (Scout, 3
+   November: tm-floor2 needs its 40/10 test). A network that passes is never
    merged by the routine: its calibration, v2 check and SPSA re-tune come
    first, and the merge waits for Ayman's OK.
 6. When Trinity is near top-100 strength, prepare a release for the CCRL
