@@ -32,3 +32,5 @@ One line per idea ever proposed: date | short name | status.
 2026-10-28 | [search] Follow #38's mechanism (drop-half +18.6): lmp-tight, and drop-keep-checks as a diagnostic | proposed
 2026-10-31 | [search] Matchup forensics: Prune rates Trinity 10-40 lower than the other opponents in every run; compare loss profiles to find what it exploits | proposed
 2026-11-02 | [search] corr-integral: correction tables settle at 2/3 of the eval gap (they chase the leftover and decay); additive update to reach the full gap, plus an unsure-threshold variant to split corr-avg's two causes | proposed
+2026-11-03 | [search] corr-cap: count correction entries at the 32 cp cap before judging corr-integral; cap 64 only if >5% sit there (finding: tm-floor2 owes its pre-fixed 40/10 test before merge) | proposed
+2026-11-03 | [network] Sibling-ranking check: score networks by how they order the moves of one position vs a deep search (top-1, Kendall's tau), validated on networks with known game results | proposed
