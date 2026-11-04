@@ -8,6 +8,14 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-04 · Decision lines only when a decision is ready
+The "Decisions needed" section is read word for word by the 7:43 phone
+summary, so a line like "merge long900? Not yet" reaches Ayman as a
+decision he can't make yet. Write a dated "Decision needed" line only when
+everything it depends on is done and Ayman can answer yes or no; keep
+"waiting for X" status in the Test queue instead. Move today's long900
+line there until its checks are in.
+
 ### 2026-11-03 · Relay ended
 Ayman no longer pastes messages between agents. Read this file and the
 "## For the Session" section of the day's scout file on every pace-routine
