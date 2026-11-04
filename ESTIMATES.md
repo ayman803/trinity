@@ -95,7 +95,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-10-29 | imp-check (first principles): a node whose side was in check two plies ago had no static eval to compare, so it always counted as improving (less pruning and reduction); now it compares with four plies ago. Bench 1055823 | self-play -3 to +4, about 12% to pass [0, 5]; it touches only nodes after a check, and lmp-notimp suggests "improving" errs the other way, so making fewer nodes improving may cost | +1.85 +/- 2.61 after 18000 games (SPRT #86, #89, #96, LLR 0.83), undecided at the cap; stopped 2 November, not merged (inside the -3 to +4 prediction) | - | predicted before any game |
 | 2026-11-01 | tm-floor2 (re-screen, as for nonpawn-corr2): a stable best move no longer shortens the think below plan (stability scale 0.9/0.8 -> 1.0/1.0). On the old engine (tm-stable-floor, 21 October): +2.20 +/- 3.76 after 9000 games, undecided. Bench 982007 unchanged (time only). Base base-1101 | self-play -3 to +5, about 15% to pass [0, 5]. It spends more time on stable moves, so it also takes time from later moves; time losses are on watch (2 then 1 in 4000) | +3.51 +/- 3.66 after 9000 games (SPRT #91, LLR 1.63), undecided, leaning towards a pass; 0 time losses; continued 2 November. PASSED (check-in 3 November): +4.11 +/- 2.59 after 18000 games (SPRT #91 + #94, LLR 4.14, [0, 5]), 0 time losses: above the -3 to +5 range's centre, inside it; the pace routine may merge it (time candidate). 40/10 check (check-in 4 November): +4.52 +/- 4.43 after 6000 games (SPRT #99, LLR 1.61), undecided, 0 time losses; the merge waits for this test (rule of 21 October) | - 8+0.08 FINAL: PASSED +4.1 after 18000 games (check-in 3 November). NOT merged yet: the rule fixed on 21 October for this change (tm-stable-floor) still applies: merge only if the 40/10 test passes ([0, 5], cap 12000 games) and the 8+0.08 test does not fail (Scout, 3 November). 40/10 test started 3 November 6:50 am Pacific, base base-1101; 40/10 prediction as on 21 October: -3 to +4 | predicted before any game |
 | 2026-11-01 | corr-avg (first principles, from nonpawn-corr2's +3.6): the pawn correction and the mean of the two non-pawn corrections are averaged instead of added. Each table learns the whole gap between the network and the search, so adding counts an agreed correction about twice. Also fewer "unsure" nodes (gap >= 12). Bench 1065894. Base base-1101. On the PC farm (5 chunks, night of 1 November) | self-play -6 to +5, about 12% to pass [0, 5]. If nonpawn-corr2's gain came from the extra detail, this keeps it and removes the double count; if it came from the larger correction (or the extra unsure nodes, corr-unsure was +10.8), this loses it | FAILED on the PC farm (check-in 2 November; 5 chunks 2026-11-01-01..05, the first DISTURBED once and re-run idle): -6.64 +/- 3.59 after 10000 games (LLR -6.26, [0, 5]; pentanomial 48 / 1304 / 2475 / 1137 / 36), 0 time losses, illegal moves or crashes. Just below the -6 to +5 range. Two causes cannot be told apart (Scout, 2 November): the larger, added correction, or the extra "unsure" nodes it makes (corr-unsure was worth +10.8). A test that adds the tables but keeps the old unsure count would separate them | - | predicted before any game |
-| 2026-11-02 | corr-integral (Scout, 2 November): correction entries add a share of what the corrected eval still missed (a running sum, as in integral control) instead of averaging toward it; averaging settles short of the true gap (about 2/3 with three tables). Mean correction on the bench 14.6 -> 16.9 cp (1.16x, not Scout's 1.5x: short bench, entries capped at 32 cp). Bench 1098712. Base base-1102 (main with quiet-skip). GitHub | self-play -5 to +7, about 20% to pass [0, 5] (Scout: -3 to +8, 35%; scaled per the forecast record) | +0.62 +/- 3.66 after 9000 games (SPRT #98, LLR -0.48), undecided, 0 time losses (check-in 3 November). Undecided at the 18000 cap (check-in 4 November): +0.29 +/- 2.58 (SPRT #98 + #101, LLR -1.44), 0 time losses; inside the -5 to +7 prediction, near zero | - | predicted before any game |
+| 2026-11-02 | corr-integral (Scout, 2 November): correction entries add a share of what the corrected eval still missed (a running sum, as in integral control) instead of averaging toward it; averaging settles short of the true gap (about 2/3 with three tables). Mean correction on the bench 14.6 -> 16.9 cp (1.16x, not Scout's 1.5x: short bench, entries capped at 32 cp). Bench 1098712. Base base-1102 (main with quiet-skip). GitHub | self-play -5 to +7, about 20% to pass [0, 5] (Scout: -3 to +8, 35%; scaled per the forecast record) | +0.62 +/- 3.66 after 9000 games (SPRT #98, LLR -0.48), undecided, 0 time losses (check-in 3 November). Undecided at the 18000 cap (check-in 4 November): +0.29 +/- 2.58 (SPRT #98 + #101, LLR -1.44), 0 time losses; inside the -5 to +7 prediction, near zero | +0.29 +/- 2.58 after 18000 games (SPRT #98 + #101, LLR -1.44), undecided at the 18000 cap; stopped 4 November, not merged. Inside the prediction; with -u14 (+0.75 at its cap) the integral correction is neutral | predicted before any game |
 | 2026-11-02 | corr-integral-u14 (Scout's second variant): corr-integral plus the unsure threshold 12 -> 14, so about the same share of nodes stays unsure (14 from the measured 1.16x, not Scout's 18). If corr-integral passes and this does not, the extra unsure nodes matter; if both pass, the size of the correction. Bench 1100066. Base base-1102. PC farm, night of 2 November | self-play -5 to +6, about 15% to pass [0, 5] | PC farm (check-in 3 November; 5 chunks 2026-11-02-01..05, 8:24 am-1:08 pm, idle): +1.25 +/- 3.51 after 10000 games (LLR -0.03, [0, 5]; pentanomial 30 / 1190 / 2527 / 1220 / 33), undecided; 0 time losses, illegal moves or crashes. With night 2 (4 chunks 2026-11-03-01..04, one DISTURBED start): +0.75 +/- 2.64 after 18000 games (LLR -0.78; pentanomial 55 / 2174 / 4524 / 2171 / 76), undecided at the 18000 cap; 0 time losses, illegal moves or crashes; inside the prediction, near zero. Together with corr-integral: the integral correction is neutral | - | predicted before any game |
 | 2026-11-03 | corr-cap64 (Scout's corr-cap check, 3 November): correction table entries may reach 64 cp instead of 32. The count came first, no games: on the bench about 20% of pawn-table updates in main end at the 32 cp cap (25% with corr-integral), so the cap binds. Bench 1056316. Base base-1103 (today's main) | self-play -4 to +6, about 18% to pass [0, 5]. For it: a cap that binds a fifth of the time clips real corrections. Against it: big corrections come from shallow, noisy searches, and more nodes become unsure | +1.89 +/- 3.73 after 9000 games (SPRT #102, LLR 0.43), undecided, 0 time losses (check-in 4 November) | - | predicted before any game |
 
@@ -417,9 +417,20 @@ network, and the second week merged nothing):
   were set on the old held-out positions): 0 to 0.3% better than main ->
   the 400 quick games anyway. long900 vs Control2 is a TIE within seed
   noise (Scout, 1 November): no evidence either way on length. The
-  400-game screen (about +/- 30) only rules out large effects. The next
-  network experiment should still change something other than length,
-  for a different reason: loss gains have not turned into Elo. (Control2 itself was
+  400-game screen (about +/- 30) only rules out large effects.
+  CORRECTION (Scout, 4 November): the earlier line here said the next
+  network experiment should change something other than length. In games
+  length was worth +5.65 +/- 2.73 at the same seed and data (SPRT #93 +
+  #100, 18400 games, passed vs Control2): the cleanest one-change network
+  result so far. Training length is a working lever; held-out loss could
+  not see it (a tie). Lesson: held-out loss is not a usable gate for
+  small network changes; games decide.
+  Next (advisor note of 3 November, Scout 4 November): test vs main
+  (net-long900-main2 = today's main search with the long900 network,
+  bench 991226, base base-1104; 8+0.08 [0, 5], started 4 November);
+  calibration next to 1.0.0 and the v2 check on the PC the night of 4
+  November (2026-11-04-01..03); SPSA re-tune after those. Then the merge
+  decision goes to Ayman. (Control2 itself was
   -0.25% in loss and -0.2 Elo vs main: loss and Elo disagree again.)
   Screen: long900 vs Control2, both on today's main search (branches
   net-long900-main, bench 991226; net-control2-main, bench 924692), 400
@@ -1057,6 +1068,12 @@ mid-exchange (a recapture pending), which the static eval cannot see; a
 cleaner version compares the quiescence score with the search. Next:
 measure the error at the depths where futility actually prunes (1-8) and
 set its margin from the p95 there (a candidate for 1.2).
+
+## Decisions needed (dated; read by the phone summary)
+
+- 2026-11-04 (pace routine): merge long900 (+5.65 vs Control2)? Not yet:
+  its test vs main, calibration, v2 check and SPSA re-tune come first;
+  the decision goes to Ayman with those numbers.
 
 ## Lapse, 29 October to 1 November (Session)
 
