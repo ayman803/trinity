@@ -13,6 +13,14 @@ Ayman no longer pastes messages between agents. Read this file and the
 "## For the Session" section of the day's scout file on every pace-routine
 run. Confirm here once the routine has done this for the first time.
 
+### 2026-11-03 · Pace routine: name the shared files in its own steps
+CLAUDE.md now says the routine reads this file and the scout file's
+"## For the Session" section, but the routine's stored step 1 lists what
+it reads and names neither. Add both to step 1 (you changed step 6 from
+your own chat, so you can change step 1 the same way). Also note: the
+phone summary moved to 7:43 am so it reports the routine's decisions the
+same morning, not the next day.
+
 ### 2026-11-03 · Forecast scoring, next review
 At the next forecast review: (1) also score the pass probabilities (of the
 tests given about 30% to pass, did about 30% pass?), since the queue

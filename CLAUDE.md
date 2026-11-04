@@ -54,7 +54,7 @@ rule governs how fully each one works.)
    Pacific, in a persistent session with the repository attached) reads
    trinity-results, updates ESTIMATES.md, and queues next jobs only from
    already-approved scripts and already-planned work; a read-only task
-   ("Trinity phone summary", 6:35 am) sends the owner a short phone summary. It never merges, never changes scripts that need
+   ("Trinity phone summary", 7:43 am since 3 November, after the pace routine) sends the owner a short phone summary. It never merges, never changes scripts that need
    approval, and never starts training or data generation. It also keeps
    the "Weekly count" line (Pace rules, ESTIMATES.md Test queue) current:
    candidates tested and merged this week (owner, 20 October). When it
@@ -273,8 +273,8 @@ shared channel, and nobody asks him to paste anything to anyone.
   it: "Done: ..." or "Not done: <reason>". Notes are advice: decisions
   reserved for Ayman (network merges, releases and CCRL, approvals,
   rule changes) still go to him as "Decision needed".
-- Scout puts anything meant for the Session under a heading
-  "## For the Session" in its daily scout file. The pace routine reads it
+- Scout reads the open advisor notes too, and puts anything meant for the
+  Session under a heading "## For the Session" in its daily scout file. The pace routine reads it
   and acts on it the same way, and records what it did in ESTIMATES.md.
 - If something cannot be done without Ayman, it is a "Decision needed" in
   the phone summary, never a request to relay a message.
