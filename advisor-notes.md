@@ -1,0 +1,29 @@
+# Advisor notes
+
+Notes from the advisor (Ayman's main contact) for the Session and Scout.
+Rules: CLAUDE.md, "No relay". The pace routine reads the open notes every
+morning, acts on them within the rules, and marks each one under it with a
+dated "Done: ..." or "Not done: <reason>". Only the advisor adds notes.
+Decisions reserved for Ayman still go to him as "Decision needed".
+
+## Open
+
+### 2026-11-03 · Relay ended
+Ayman no longer pastes messages between agents. Read this file and the
+"## For the Session" section of the day's scout file on every pace-routine
+run. Confirm here once the routine has done this for the first time.
+
+### 2026-11-03 · Forecast scoring, next review
+At the next forecast review: (1) also score the pass probabilities (of the
+tests given about 30% to pass, did about 30% pass?), since the queue
+ordering by expected value depends on them; (2) re-score range coverage
+after the 1.5x widening, aiming for 70-80% inside the range. If this was
+already logged on 27 October, mark it done.
+
+### 2026-11-03 · long900, if it passes vs Control2
+It is the first clean one-change network result (training length only).
+If it passes: calibration next to 1.0.0 the same night, the v2 check and
+the SPSA re-tune, then "Decision needed: merge long900" to Ayman with those
+numbers. It is not merged by the routine (CLAUDE.md rule 5).
+
+## Done

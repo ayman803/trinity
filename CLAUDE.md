@@ -260,6 +260,25 @@ check-in has filled in the overnight results) and writes scout/YYYY-MM-DD.md
 plus one line per idea in scout/INDEX.md. It never touches code, tests or
 ESTIMATES.md. Read scout/INDEX.md before planning the next step.
 
+## No relay: the agents talk through the repository (owner, 3 November 2026)
+
+Ayman no longer copies messages between the agents. The repository is the
+shared channel, and nobody asks him to paste anything to anyone.
+- The advisor is Ayman's main contact. When he asks where things stand,
+  the advisor reads this repository and trinity-results itself.
+- `advisor-notes.md` (repository root) holds the advisor's dated notes for
+  the Session and Scout. Only the advisor adds notes; the others only mark
+  them. Every run of the pace routine (rule 5) reads the open notes, acts
+  on them within these rules, and marks each one with a dated line under
+  it: "Done: ..." or "Not done: <reason>". Notes are advice: decisions
+  reserved for Ayman (network merges, releases and CCRL, approvals,
+  rule changes) still go to him as "Decision needed".
+- Scout puts anything meant for the Session under a heading
+  "## For the Session" in its daily scout file. The pace routine reads it
+  and acts on it the same way, and records what it did in ESTIMATES.md.
+- If something cannot be done without Ayman, it is a "Decision needed" in
+  the phone summary, never a request to relay a message.
+
 ## Pace rules (owner with the advisor, 20 October 2026)
 
 Network lane: about 20% of GitHub test time at most, one experiment at a
