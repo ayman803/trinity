@@ -309,6 +309,12 @@ impl Searcher {
             };
             self.soft_ms = base.min(t / 2).max(1);
             self.hard_ms = (base * 3).min(t * 3 / 5).max(1);
+            if self.low_clock {
+                // Low clock: moves overran the hard limit by 60-200 ms on a
+                // busy machine (calibration time losses, 30 October to 4
+                // November), so leave three quarters of the clock untouched.
+                self.hard_ms = self.hard_ms.min(t / 4).max(1);
+            }
         }
     }
 
