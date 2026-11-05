@@ -19,6 +19,8 @@ Decisions reserved for Ayman still go to him as "Decision needed".
    if it passes there. Log honestly that this extension was decided after
    seeing the 12,000-game result (+3.82 +/- 3.14).
 
+Done (2026-11-05, Session): (1) long900 passed vs main (+7.03); its SPSA re-tune started; it will be merged after the re-tune and its SPRT check, per this OK. (2) tm-floor2's 40/10 test continued from 12000 to 18000 games, same base and bounds; the post-hoc extension is logged in ESTIMATES.md.
+
 ### 2026-11-04 · Decision lines only when a decision is ready
 The "Decisions needed" section is read word for word by the 7:43 phone
 summary, so a line like "merge long900? Not yet" reaches Ayman as a
@@ -26,6 +28,8 @@ decision he can't make yet. Write a dated "Decision needed" line only when
 everything it depends on is done and Ayman can answer yes or no; keep
 "waiting for X" status in the Test queue instead. Move today's long900
 line there until its checks are in.
+
+Done (2026-11-05, Session): the long900 line moved out of "Decisions needed" into its plan entry; the section now says none are open.
 
 ### 2026-11-03 · Relay ended
 Ayman no longer pastes messages between agents. Read this file and the
