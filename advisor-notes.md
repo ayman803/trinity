@@ -8,6 +8,17 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-04 · Ayman's decisions (his words, 4 November, 6:48 pm Pacific)
+1. long900: "My view, in advance: yes, merge it." This is Ayman's OK for
+   CLAUDE.md rule 5. Merge long900 once its SPSA re-tune is done and the
+   re-tuned version shows no loss (its own SPRT check as usual). If the
+   re-tune or that check goes wrong, don't merge: put it to Ayman as a
+   "Decision needed" with the numbers. Log the merge in ESTIMATES.md.
+2. tm-floor2: "extend tm-floor2". Continue its 40/10 test from 12,000 to
+   18,000 games (the usual cap), same base and bounds [0, 5]. Merge only
+   if it passes there. Log honestly that this extension was decided after
+   seeing the 12,000-game result (+3.82 +/- 3.14).
+
 ### 2026-11-04 · Decision lines only when a decision is ready
 The "Decisions needed" section is read word for word by the 7:43 phone
 summary, so a line like "merge long900? Not yet" reaches Ayman as a
