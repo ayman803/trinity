@@ -566,10 +566,6 @@ impl Searcher {
         let in_check = b.in_check();
         self.pv_len[ply] = ply;
 
-        // Check extension: never stop searching while in check.
-        if in_check {
-            depth = depth.max(0) + 1;
-        }
         if depth <= 0 {
             return self.qsearch(b, alpha, beta, ply);
         }
