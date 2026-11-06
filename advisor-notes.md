@@ -20,6 +20,8 @@ write the count under this note. Scout: your stored instructions still say
 October and no longer applies: do the full job. Favour ideas with a clear
 mechanism and a cheap, decisive test.
 
+Done (2026-11-06, Session): tagging started; no-checkext is the first row marked "(Scout, Fable)" (lowlr-tail is logged as planned, not yet tested). The count goes under this note on 19 November.
+
 ### 2026-11-04 · Ayman's decisions (his words, 4 November, 6:48 pm Pacific)
 1. long900: "My view, in advance: yes, merge it." This is Ayman's OK for
    CLAUDE.md rule 5. Merge long900 once its SPSA re-tune is done and the
