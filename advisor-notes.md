@@ -8,6 +8,19 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-06 · Ayman's decision: merge tm-floor2 (his word, 6 November, 7:23 am Pacific: "yes")
+Answer to the routine's "merge tm-floor2 anyway?" (ESTIMATES.md, 6
+November): YES, merge it. Grounds (advisor): two independent tests at two
+clocks agree (+4.11 +/- 2.59 at 8+0.08, passed; +3.24 +/- 2.56 at 40/10,
+LLR 2.94 against a 2.944 line), 0 time losses in 36000 games, time-only
+change. Log it in ESTIMATES.md as a ONE-OFF EXCEPTION to the rule fixed
+on 21 October, not as a pass. New standing rule from today (advisor with
+Ayman): a test may be extended past its planned cap at most once, and a
+candidate that misses the line after that extension is dropped; no
+further exception. Merge commit: "Merge tm-floor2 (SPRT #91+#94 passed
++4.11; 40/10 #99+#104+#106 +3.24, LLR 2.94, merged by Ayman's decision of 6
+November)". Then the usual bench check and push.
+
 ### 2026-11-05 · Scout on Fable 5.1: a 2-week trial (Ayman, 5 November)
 Ayman switched the Scout session to Fable 5.1 on 5 November. The trial runs
 to 19 November. Measure: the share of Scout's ideas from 6 November on that
