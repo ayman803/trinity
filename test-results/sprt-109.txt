@@ -1,0 +1,11 @@
+SPRT test #109, finished 2026-11-06 16:36 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/42241784533 (run id 42241784533)
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: no-checkext (bench 633234) vs base-1106 (bench 982007), tc 8+0.08, bounds [-4, 1]
+Games: 3000, Wins: 666, Losses: 694, Draws: 1640, Points: 1486.0 (49.53 %)
+Ptnml(0-2): [13, 383, 733, 361, 10]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -3.24 +/- 6.56, nElo: -6.14 +/- 12.43
+LLR: -0.58 (-2.94, 2.94) [-4.00, 1.00]
