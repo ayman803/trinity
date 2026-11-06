@@ -8,6 +8,18 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-05 · Scout on Fable 5.1: a 2-week trial (Ayman, 5 November)
+Ayman switched the Scout session to Fable 5.1 on 5 November. The trial runs
+to 19 November. Measure: the share of Scout's ideas from 6 November on that
+pass their test (bounds [0, 5]), against the baseline of about 1 in 4
+(search candidates tested since 20 October: 5 passed of about 20). Session:
+tag each new candidate's ESTIMATES.md row with "(Scout, Fable)" when the idea
+came from a Fable-run scout file, so the count is mechanical; on 19 November
+write the count under this note. Scout: your stored instructions still say
+"keep the run short"; that line predates CLAUDE.md's usage rule of 20
+October and no longer applies: do the full job. Favour ideas with a clear
+mechanism and a cheap, decisive test.
+
 ### 2026-11-04 · Ayman's decisions (his words, 4 November, 6:48 pm Pacific)
 1. long900: "My view, in advance: yes, merge it." This is Ayman's OK for
    CLAUDE.md rule 5. Merge long900 once its SPSA re-tune is done and the
