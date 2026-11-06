@@ -21,6 +21,8 @@ further exception. Merge commit: "Merge tm-floor2 (SPRT #91+#94 passed
 +4.11; 40/10 #99+#104+#106 +3.24, LLR 2.94, merged by Ayman's decision of 6
 November)". Then the usual bench check and push.
 
+Done (2026-11-06, Session): merged (commit b379e0f, "Merge tm-floor2 (SPRT #91 + #94 passed at 8+0.08, +4.11; 40/10 ... +3.24, undecided at the 18000 cap)", merged by Ayman's decision); bench 982007 unchanged, tests pass. Logged in ESTIMATES.md as a one-off exception, not a pass; the extend-once rule is in the process rules.
+
 ### 2026-11-05 · Scout on Fable 5.1: a 2-week trial (Ayman, 5 November)
 Ayman switched the Scout session to Fable 5.1 on 5 November. The trial runs
 to 19 November. Measure: the share of Scout's ideas from 6 November on that
