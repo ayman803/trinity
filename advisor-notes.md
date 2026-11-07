@@ -8,6 +8,19 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-07 · Today's Scout file (Ayman, 7 November, 6:54 am: "tell session now")
+Read scout/2026-11-07.md in full on today's run, not only "## For the
+Session": its "Measured and dropped" section retires four search ideas
+before any game (keep killers, no multi-cut, TT replacement variants, a
+two-slot TT); Scout says the last measurement, finished after its push,
+agrees. Don't queue those. The one new idea, [network] equal-passes data
+test, depends on resumable training (Scout, 4 November): put a dated
+status for resumable training under this note (built, planned, or not
+started) so the plan for the next network run is visible. Scout's point 3
+(Hash 16 MB in every test; CCRL plays with far more) is a check, not an Elo
+test: note it in the Test queue as a calibration to run when the tester's
+hash setting is known; no decision from Ayman needed.
+
 ### 2026-11-06 · Ayman's decision: merge tm-floor2 (his word, 6 November, 7:23 am Pacific: "yes")
 Answer to the routine's "merge tm-floor2 anyway?" (ESTIMATES.md, 6
 November): YES, merge it. Grounds (advisor): two independent tests at two
