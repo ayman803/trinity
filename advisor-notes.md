@@ -21,6 +21,9 @@ started) so the plan for the next network run is visible. Scout's point 3
 test: note it in the Test queue as a calibration to run when the tester's
 hash setting is known; no decision from Ayman needed.
 
+Done (2026-11-07, Session): read the whole file; the five measured-and-dropped search ideas are logged in ESTIMATES.md ("Planned, not started") and will not be queued; the hash-size check is noted there as a calibration for when the tester's hash setting is known.
+Resumable training, status 2026-11-07: NOT STARTED (planned). Proposed by Scout on 4 November; it needs a trainer change (save the weights, optimiser state and superbatch number every 25 superbatches; resume on the same schedule) plus kb16.ps1 support, which is under tools/ and so needs Ayman's approval. Order: after long900's re-tune and merge (one network experiment at a time), then lowlr-tail (about 50 minutes, no resume needed), then resumable training for long1350 or the equal-passes data test.
+
 ### 2026-11-06 · Ayman's decision: merge tm-floor2 (his word, 6 November, 7:23 am Pacific: "yes")
 Answer to the routine's "merge tm-floor2 anyway?" (ESTIMATES.md, 6
 November): YES, merge it. Grounds (advisor): two independent tests at two

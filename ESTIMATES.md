@@ -444,7 +444,9 @@ network, and the second week merged nothing):
   net-long900-main2, run 1 of about 3). Ayman's OK is given in advance
   (4 November): merge after the re-tune and its SPRT check show no loss.
   6 November: SPSA run 1 finished (5 hours); run 2 started (continues run
-  42053009961). RESULTS (check-in 5 November; PC idle in
+  42053009961).
+  7 November: run 2 finished; run 3 (the last) started (continues run
+  42241570393). RESULTS (check-in 5 November; PC idle in
   every run): test vs main PASSED, +7.03 +/- 3.90 after 9000 games
   (SPRT #103, LLR 3.89, [0, 5]), 0 time losses, illegal moves or
   crashes. Calibration the same day: long900 main 3575 (2026-11-04-01,
@@ -1104,6 +1106,23 @@ measure the error at the depths where futility actually prunes (1-8) and
 set its margin from the p95 there (a candidate for 1.2).
 
 ## Planned, not started
+
+- Measured and dropped before any game (Scout, 7 November; offline node
+  counts on today's main, bench + held-out positions + a replay of 8
+  game lines with the table carried over): no-killerclear (16% MORE
+  nodes), no-multicut (multi-cut saves about 4%), tt-depth, tt-coll and a
+  two-slot TT prototype (worse or a wash under game pressure). None gets
+  a game. Offline node counts resolve about 3-5% at best; small effects
+  need games.
+- Hash-size check (Scout, 7 November): every test and calibration runs
+  with Hash 16 MB; at 40/15 about 50x more nodes per move go through the
+  table. When the CCRL tester's hash setting is known, run one
+  calibration at that setting (memory, hashfull, time use). A check, not
+  an Elo test; no decision needed.
+- equal-passes data test (Scout, Fable, 7 November): long900's recipe and
+  seed on the 5.65 billion positions of the more-data run at about 24.6
+  passes (1390 superbatches, about 11.6 GPU hours). Needs resumable
+  training first; after lowlr-tail.
 
 - lowlr-tail (Scout, Fable, 6 November): continue Control2's 600
   checkpoint for 100 superbatches at the floor learning rate, to tell

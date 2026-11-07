@@ -88,3 +88,7 @@
 2026-11-05-04 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
 2026-11-06-01 | pc | scripts/calibrate.ps1 | -Ref main
 2026-11-06-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0
+2026-11-07-01 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
+2026-11-07-02 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
+2026-11-07-03 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
+2026-11-07-04 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
