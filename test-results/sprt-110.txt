@@ -1,0 +1,12 @@
+SPRT test #110, finished 2026-11-07 16:32 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/42385255130 (run id 42385255130)
+Continues run id 42241575243; the totals below include it.
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: tm-lowclock (bench 982007) vs base-1105 (bench 982007), tc 8+0.08, bounds [-4, 1]
+Games: 9000, Wins: 1983, Losses: 1975, Draws: 5042, Points: 4504.0 (50.04 %)
+Ptnml(0-2): [30, 1037, 2359, 1043, 31]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 0.31 +/- 3.65, nElo: 0.61 +/- 7.18
+LLR: 0.79 (-2.94, 2.94) [-4.00, 1.00]
