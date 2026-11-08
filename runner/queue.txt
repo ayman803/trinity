@@ -92,3 +92,7 @@
 2026-11-07-02 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
 2026-11-07-03 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
 2026-11-07-04 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
+2026-11-08-01 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
+2026-11-08-02 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
+2026-11-08-03 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
+2026-11-08-04 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned

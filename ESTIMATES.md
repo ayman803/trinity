@@ -446,7 +446,17 @@ network, and the second week merged nothing):
   6 November: SPSA run 1 finished (5 hours); run 2 started (continues run
   42053009961).
   7 November: run 2 finished; run 3 (the last) started (continues run
-  42241570393). RESULTS (check-in 5 November; PC idle in
+  42241570393).
+  8 November: SPSA done (3 runs, 5055 pairs per chain, 0 time losses).
+  Every setting moved by less than its step (largest: LMP_BASE 359 ->
+  367, LMR_HIST_DIV 7860 -> 7714): today's settings already fit long900.
+  Re-tuned version: branch net-long900-tuned (bench 1090223). Its check,
+  per Ayman's OK of 4 November ("re-tuned version shows no loss"): SPRT
+  vs net-long900-main2, 8+0.08, [-4, 1], started 8 November on GitHub
+  (plus 4 PC chunks, pooled only under the pooling rule). If it passes:
+  merge long900 with the re-tune. If it fails: merge long900 without the
+  re-tune (that version already passed vs main, +7.03); either way the
+  merge needs no further decision. RESULTS (check-in 5 November; PC idle in
   every run): test vs main PASSED, +7.03 +/- 3.90 after 9000 games
   (SPRT #103, LLR 3.89, [0, 5]), 0 time losses, illegal moves or
   crashes. Calibration the same day: long900 main 3575 (2026-11-04-01,
@@ -1136,6 +1146,16 @@ set its margin from the p95 there (a candidate for 1.2).
 ## Decisions needed (dated; read by the phone summary)
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
+
+- 2026-11-08 (pace routine, from Scout's 8 November file): drop the 0.3%
+  held-out-loss gate for networks? Proposal: keep the loss only as a
+  broken-run check (stop if clearly worse than main's network) and go
+  straight to the 400-game screen and the head-to-head. Evidence:
+  long900 tied Control2 on loss (-0.015%) but won +5.65 in games; Control2
+  was 0.25% better than main on loss and -0.2 in games; Scout found that
+  no slice of the loss orders eight tested networks like their games.
+  Session's view: yes; games are nearly free on GitHub, a GPU night is
+  not. Yes = new gate; No = keep the 0.3% gate.
 
 - 2026-11-06 (pace routine): merge tm-floor2 anyway? It thinks longer on
   moves whose best choice stays the same. Results: 8+0.08 PASSED +4.11
