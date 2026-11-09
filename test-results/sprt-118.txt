@@ -1,0 +1,11 @@
+SPRT test #118, finished 2026-11-09 19:24 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/42643469128 (run id 42643469128)
+SPRT RESULT: FAILED - 'chk-noreduce' is not stronger than 'base-1109'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: chk-noreduce (bench 1156846) vs base-1109 (bench 982007), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 1898, Losses: 2030, Draws: 5072, Points: 4434.0 (49.27 %)
+Ptnml(0-2): [34, 1138, 2280, 1022, 26]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -5.10 +/- 3.70, nElo: -9.88 +/- 7.18
+LLR: -4.61 (-2.94, 2.94) [0.00, 5.00]
