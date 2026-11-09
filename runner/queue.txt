@@ -92,6 +92,7 @@
 2026-11-07-02 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
 2026-11-07-03 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
 2026-11-07-04 | pc | scripts/sprt.ps1 | -Dev tm-lowclock -Base base-1105 -Rounds 1000 -TestId tm-lowclock
+2026-11-08-05 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261108 -Superbatches 900 -Tag long900s2
 2026-11-08-01 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
 2026-11-08-02 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
 2026-11-08-03 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned

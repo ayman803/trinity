@@ -495,6 +495,28 @@ network, and the second week merged nothing):
   scripts added to the runner's list and their time limits, 2 and 9
   hours; it also brings the opponent-copy fix of 21 October) and one
   approval (scripts/sprt.ps1, tools/net/kb16.ps1).
+  (4) long900s2 (advisor with Ayman, 8 November evening; Ayman: "GPU is
+  on and free all night", chose this over leaving it idle). Neither
+  planned GPU job could run (lowlr-tail needs a new script and an
+  approval; equal-passes needs resumable training), so the night goes to
+  a replication of the length result with no new script: long900's recipe
+  with a NEW weight seed (tools/net/kb16.ps1 -KingBuckets 8 -Seed
+  20261108 -Superbatches 900 -Tag long900s2, queued as 2026-11-08-05
+  ahead of tonight's four chunks; approved commit b2624557d1 accepts these
+  arguments; the 31 October run took 451 minutes). Second half, a later
+  GPU night: the SAME seed at 600 superbatches (-Tag control-s2), so
+  900-s2 vs 600-s2 is a second paired one-change test of "longer training
+  helps", at a different seed from long900 vs Control2 (+5.65 +/- 2.73).
+  That pair decides whether resumable training for 11-hour runs (long1350,
+  equal-passes) is worth building. Predictions, written before training:
+  900-s2 vs 600-s2 (8+0.08, [0, 5]) self-play +1 to +9, about 50% to
+  pass; 900-s2 vs main 0 to +12 (seed spread about +/- 5.5 on top of
+  length's +5 to +7). The network's test waits for the long900 re-tune
+  check to finish (one network test on GitHub at a time; the lane's 20%
+  share), and a pass of either test merges nothing on its own: a merge
+  still needs the usual checks and Ayman's OK. A single 900-s2 result on
+  its own is weak evidence either way (one seed, spread +/- 5.5); the
+  paired 600-s2 run is what makes it count.
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
@@ -867,6 +889,8 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-11-06 6:22 am PST: read up to "11:39 DONE 2026-11-05-04" (PC farm by day: tm-lowclock 8000 games, +0.30 +/- 3.90, 0 time losses). GitHub, last 24 hours: tm-floor2 at 40/10 undecided at its 18000 cap (+3.24, LLR 2.94, just under the pass line); tm-lowclock +1.27 after 3000. No approval pending. Friday rule (runner rule 16; main has not been calibrated this week, only the long900 branch on 4 November): queued 2026-11-06-01 main, then 2026-11-06-02 release-1.0.0, both 10+0.1 (rule 17: they start from 9 pm).
 - 2026-11-07 6:22 am PST: read up to "12:30 DONE 2026-11-06-02". Friday calibration (runs in the day: rule 17 is not yet in the installed runner; both idle throughout): main (bench 982007, before the tm-floor2 merge at 8:27 am; with quiet-skip and nonpawn-corr2) 3573 (2026-11-06-01; akimbo +102, Patricia +78, Bread +79, Prune +10), 1.0.0 3468 (2026-11-06-02): gap +105 +/- 9, in line with +109 (31 October) and +101/+111 before. Time losses: main 1 in 4000, 1.0.0 1 (its usual 7-8). GitHub, last 24 hours: tm-lowclock +1.33 after 6000 [-4, 1], undecided; no-checkext -3.24 after 3000 [-4, 1], undecided. No approval pending. Nothing queued: the PC's next work is the pace routine's.
 - 2026-11-08 6:22 am PST: read up to "21:00 DONE 2026-11-07-04" (PC farm: 4 more chunks of tm-lowclock, PC total +0.11 +/- 2.75 after 16000, undecided at [-4, 1]). GitHub, last 24 hours: tm-lowclock +0.31 after 9000, undecided; no-checkext -5.04 after 6000, leaning towards a fail. No approval pending. Nothing queued: the PC's next work is the pace routine's.
+
+- 2026-11-08 6:30 pm PST (advisor, Ayman live: "GPU is on and free all night"): queued 2026-11-08-05 (tools/net/kb16.ps1 -KingBuckets 8 -Seed 20261108 -Superbatches 900 -Tag long900s2, about 7.5 hours) ahead of the four net-long900-tuned chunks (2026-11-08-01..04; -01 was DISTURBED at 4:01 pm and reruns). Rule 14: with the 31 October run's 451 minutes it must start by about 10:30 pm to end by 6:55 am; if it starts later it waits and the chunks run instead. Plan and predictions in the Test queue, network experiment (4).
 
 ## Lessons so far
 
