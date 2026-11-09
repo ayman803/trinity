@@ -856,3 +856,8 @@ the 0.3% gate bands were set on the old set: re-check them on the new set
 next gate decision; until then gate decisions are marked "new held-out
 set". On it: main 0.081781, Control2 0.081577, long900 0.081565
 (long900 vs Control2: a tie within seed noise).
+
+Network gate changed (Ayman, 8 November): the 0.3% held-out-loss gate is
+retired. Loss is kept only as a broken-run check (stop if clearly worse
+than main's network); every network otherwise goes straight to the
+400-game screen and the head-to-head test (ESTIMATES.md, process rules).

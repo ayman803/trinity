@@ -118,6 +118,12 @@ network, and the second week merged nothing):
 - Search/speed lane: at least 2 new candidates tested per day, from the
   forensics, Scout's list and the speed profile below. Predictions in the
   Changes table before any game.
+- Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
+  of 16-17 October): held-out loss is only a broken-run check (stop if
+  clearly worse than main's network); every network otherwise goes
+  straight to the 400-game screen and its head-to-head test. Loss could
+  not see long900's +5.65 (a tie with Control2) and no slice of it orders
+  eight tested networks like their games (Scout, 8 November).
 - Extensions (advisor with Ayman, 6 November): a test may be extended
   past its planned cap at most once, and a candidate that misses the
   line after that extension is dropped; no further exception (tm-floor2
@@ -1189,6 +1195,8 @@ set its margin from the p95 there (a candidate for 1.2).
   no slice of the loss orders eight tested networks like their games.
   Session's view: yes; games are nearly free on GitHub, a GPU night is
   not. Yes = new gate; No = keep the 0.3% gate.
+  DECIDED 8 November (Ayman: "yes"): new gate in force, see the process
+  rules.
 
 - 2026-11-06 (pace routine): merge tm-floor2 anyway? It thinks longer on
   moves whose best choice stays the same. Results: 8+0.08 PASSED +4.11
