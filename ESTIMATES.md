@@ -100,6 +100,7 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-11-03 | corr-cap64 (Scout's corr-cap check, 3 November): correction table entries may reach 64 cp instead of 32. The count came first, no games: on the bench about 20% of pawn-table updates in main end at the 32 cp cap (25% with corr-integral), so the cap binds. Bench 1056316. Base base-1103 (today's main) | self-play -4 to +6, about 18% to pass [0, 5]. For it: a cap that binds a fifth of the time clips real corrections. Against it: big corrections come from shallow, noisy searches, and more nodes become unsure | +1.89 +/- 3.73 after 9000 games (SPRT #102, LLR 0.43), undecided, 0 time losses (check-in 4 November). Undecided at the 18000 cap (check-in 5 November): +2.24 +/- 2.61 (SPRT #102 + #105, LLR 1.38), 0 time losses; inside the -4 to +6 prediction | +2.24 +/- 2.61 after 18000 games (SPRT #102 + #105, LLR 1.38), undecided at the 18000 cap; stopped 5 November, not merged. Inside the prediction. With corr-integral and -u14 also flat, the correction lever looks spent (Scout, 4 November) | predicted before any game |
 | 2026-11-05 | tm-lowclock (Scout's time-loss check, 5 November): with the clock under 10 increments (sudden death), the hard limit is at most a quarter of the clock. All 20 calibration time losses of 30 October to 4 November (5 by main or long900, 15 by 1.0.0) came after move 55 with 0.1-0.3 s left, and the last move overran the hard limit by 60-200 ms: a slowly drained clock plus delays on a busy machine, not one long think. Median clock at move 40 in lost games: 3.1 s (lowest 5%: 1.6 s). Bench 982007 unchanged (time only). Base base-1105 | [-4, 1] (robustness): self-play -1 to +2, about 75% to pass; the real measure is time losses in the next calibrations (expect 0-1 in 4000 instead of 1-2). Not a CCRL 40/15 risk (the clock resets every 40 moves) | GitHub (check-in 6 November): +1.27 +/- 6.49 after 3000 games (SPRT #107, [-4, 1], LLR 0.49), undecided, 0 time losses. PC farm, reported separately (4 chunks 2026-11-05-01..04, 7:53-11:39 am, idle; the chunks were set to [0, 5], judged here at [-4, 1]): +0.30 +/- 3.90 after 8000 games (LLR 0.69 at [-4, 1]; pentanomial 33 / 914 / 2097 / 925 / 31), 0 time losses, illegal moves or crashes. Both inside -1 to +2; the real measure (time losses in calibrations) is still to come. GitHub after 6000 (check-in 7 November): +1.33 +/- 4.52 (SPRT #107 + #108, LLR 1.02, [-4, 1]), undecided, 0 time losses. Check-in 8 November: GitHub +0.31 +/- 3.65 after 9000 (SPRT #107 + #108 + #110, LLR 0.79, [-4, 1]), undecided; PC farm night 2 (4 more chunks 2026-11-07-01..04, 5:15-9:00 pm, idle), PC total +0.11 +/- 2.75 after 16000 (LLR 1.14 at [-4, 1]; pentanomial 65 / 1819 / 4227 / 1824 / 65), undecided. Both parts agree (about 0); 0 time losses, illegal moves or crashes in 25000 games. GitHub after 12000 (check-in 9 November): +0.03 +/- 3.15 (SPRT #113, LLR 0.77), undecided, 0 time losses | - | predicted before any game |
 | 2026-11-06 | no-checkext (Scout, Fable, 6 November): the check extension removed (the last first-commit rule never tested alone; not in the removal campaign or the ablation audit). Scout measured before predicting: 36% fewer nodes to depth 10 on the bench (633234 vs 982007), about one ply deeper at 300 ms on 60 game positions (median 15 vs 14), best moves differ in 15 of 60. Bench 633234. Base base-1106. GitHub only | self-play -12 to +10, about 30% to pass [-4, 1] (Scout: -12 to +12, 35%). Removals so far: +58, +60, -7, -3, -3. For it: a quarter more depth per move; against it: mating attacks and perpetual checks are what the extension sees | -3.24 +/- 6.56 after 3000 games (SPRT #109, [-4, 1], LLR -0.58), undecided, 0 time losses (check-in 7 November). After 6000 (check-in 8 November): -5.04 +/- 4.60 (SPRT #109 + #111, LLR -2.02, [-4, 1]), undecided, leaning towards a fail; 0 time losses. After 9000 (check-in 9 November): -4.21 +/- 3.76 (SPRT #114, LLR -2.43), undecided, close to a fail; 0 time losses | - | predicted before any game |
+| 2026-11-09 | chk-noreduce (Scout, Fable, 9 November): a move that gives check is never reduced (today: one ply less reduction). Scout measured before predicting: bench +17.8% nodes (1156846); on 60 held-out positions at depth 10 the median node ratio is 1.00 (mean 1.12, check-rich positions up to 2.8x); depth at 300 ms unchanged (median 14); best move differs in 14 of 60. Base base-1109 (main with tm-floor2). GitHub | self-play -4 to +5, about 20% to pass [0, 5] (Scout's numbers, already scaled 0.6x). A pass gets a 40/60 night before merging (Scout: the value of following checks may grow with depth) | pending | - | predicted before any game |
 
 ## Test queue
 
@@ -460,9 +461,16 @@ network, and the second week merged nothing):
   per Ayman's OK of 4 November ("re-tuned version shows no loss"): SPRT
   vs net-long900-main2, 8+0.08, [-4, 1], started 8 November on GitHub
   (plus 4 PC chunks, pooled only under the pooling rule). If it passes:
-  merge long900 with the re-tune. If it fails: merge long900 without the
-  re-tune (that version already passed vs main, +7.03); either way the
-  merge needs no further decision. Check so far (check-in 9 November): GitHub
+  merge long900 with the re-tune. CORRECTION (Session, 9 November): the
+  8 November text said a failed check would merge long900 without the
+  re-tune with no further decision. Ayman's OK of 4 November says the
+  opposite: "If the re-tune or that check goes wrong, don't merge: put it
+  to Ayman as a Decision needed with the numbers." So a failed check
+  goes to Ayman.
+  9 November: GitHub -4.29 +/- 6.37 after 3000 (SPRT #112); PC -2.35 +/-
+  3.96 after 8000 (4 chunks); they agree within their error bars, both
+  undecided and leaning negative. Continued on GitHub, 3 more PC chunks
+  tonight. Check so far (check-in 9 November): GitHub
   -4.29 +/- 6.37 after 3000 (SPRT #112, [-4, 1], LLR -0.85); PC farm,
   reported separately (2026-11-08-01..04, one DISTURBED start; chunks
   set to [0, 5], judged at [-4, 1]): -2.35 +/- 3.96 after 8000 (LLR
@@ -522,7 +530,14 @@ network, and the second week merged nothing):
   equal-passes) is worth building. TRAINED (check-in 9 November): 2026-11-08-05,
   7:17 pm-2:45 am (7.5 h, not disturbed), branch
   net-long900s2-20261108-1917, bench 901735, network in trinity-results
-  nets/. The 600-superbatch partner (control-s2) still needs a GPU night. Predictions, written before training:
+  nets/. Broken-run check (new gate, 9 November, cloud, 150,000 held-out
+  positions): main 0.081781, long900 0.081565, long900s2 0.081550: not
+  broken. Its games wait for long900's re-tune check (one network test
+  at a time). The 600-superbatch partner control-s2 (kb16.ps1
+  -KingBuckets 8 -Seed 20261108 -Tag control-s2) is queued for the night
+  of 9 November (2026-11-09-01): with no run of its kind in the log it
+  needs its 9-hour slot, so it starts only by about 9:55 pm; otherwise
+  the chunks behind it run and it waits for the next night. Predictions, written before training:
   900-s2 vs 600-s2 (8+0.08, [0, 5]) self-play +1 to +9, about 50% to
   pass; 900-s2 vs main 0 to +12 (seed spread about +/- 5.5 on top of
   length's +5 to +7). The network's test waits for the long900 re-tune

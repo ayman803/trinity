@@ -97,3 +97,7 @@
 2026-11-08-02 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
 2026-11-08-03 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
 2026-11-08-04 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
+2026-11-09-01 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261108 -Tag control-s2
+2026-11-09-02 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
+2026-11-09-03 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
+2026-11-09-04 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
