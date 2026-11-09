@@ -816,6 +816,12 @@ impl Searcher {
                         }
                     }
                     r = r.clamp(0, (new_depth - 1).max(0));
+                    // A move that gives check is never reduced (as the
+                    // hash move): reductions deep in a line undo the
+                    // check extension (Scout, 9 November).
+                    if child.in_check() {
+                        r = 0;
+                    }
                 }
                 score = -self.negamax(&child, -alpha - 1, -alpha, new_depth - r, ply + 1, true, Move::NONE);
                 if score > alpha && r > 0 {
