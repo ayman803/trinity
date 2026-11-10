@@ -1,0 +1,12 @@
+SPRT test #121, finished 2026-11-10 16:37 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/42843041682 (run id 42843041682)
+Continues run id 42643223017; the totals below include it.
+SPRT RESULT: FAILED - 'no-checkext' is not stronger than 'base-1106'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: no-checkext (bench 633234) vs base-1106 (bench 982007), tc 8+0.08, bounds [-4, 1]
+Games: 15000, Wins: 3272, Losses: 3461, Draws: 8267, Points: 7405.5 (49.37 %)
+Ptnml(0-2): [67, 1906, 3735, 1733, 59]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -4.38 +/- 2.92, nElo: -8.33 +/- 5.56
+LLR: -4.25 (-2.94, 2.94) [-4.00, 1.00]
