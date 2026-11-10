@@ -8,6 +8,19 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-10 · CCRL: 1.0.0 is in Graham's queue (Ayman, 10 November, 2:52 pm Pacific)
+Graham (CCRL) replied to Ayman: "Double Gauntlet in 16073". Trinity 1.0.0
+is queued for a double gauntlet; the number is his batch or queue
+reference, not yet confirmed. Session and check-in: from now on, check
+the CCRL 40/15 list for "Trinity 1.0.0" once a week (lists update on
+Saturdays) and, when a rating appears, log it in ESTIMATES.md as the
+anchor (CLAUDE.md runner rule 13: gaps over 1.0.0 convert to the CCRL
+scale from it) next to our own estimate for 1.0.0 (3466 by day, 3478 on
+the runner, 10+0.1). Compare, and if the two differ by more than about
+20, say so plainly and re-score the forecast. Rule 6 stands: no newer
+version is offered to the testers until 1.0.0 is rated and Ayman decides;
+nobody contacts CCRL except Ayman himself.
+
 ### 2026-11-07 · Today's Scout file (Ayman, 7 November, 6:54 am: "tell session now")
 Read scout/2026-11-07.md in full on today's run, not only "## For the
 Session": its "Measured and dropped" section retires four search ideas
