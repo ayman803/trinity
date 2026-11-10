@@ -1081,7 +1081,9 @@ impl Searcher {
                 let node_scale = if depth >= 6 {
                     let best_nodes = self.root_nodes[best.from()][best.to()] as f64;
                     let fraction = best_nodes / self.nodes.max(1) as f64;
-                    (1.5 - fraction) * 1.35
+                    // Floored at 1.0 (Scout, 10 November): a best move that
+                    // takes most of the nodes no longer shortens the think.
+                    ((1.5 - fraction) * 1.35).max(1.0)
                 } else {
                     1.0
                 };
