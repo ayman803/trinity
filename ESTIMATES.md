@@ -495,7 +495,12 @@ network, and the second week merged nothing):
   passed nor failed, so neither branch of Ayman's OK of 4 November
   applies: put to him as a "Decision needed" (merge long900 without the
   re-tune, the version that passed vs main and was calibrated and
-  v2-checked). RESULTS (check-in 5 November; PC idle in
+  v2-checked). MERGED untuned 11 November by Ayman's decision ("1 -
+  yes"): commit 784e27e, "Merge long900 network (SPRT #103 passed vs
+  main, ...)", bench 991226 (main's search with tm-floor2), tests pass.
+  Base for new search candidates from now: main at 784e27e. Friday's
+  calibration (13 November, rule 16) is the first same-night gap of the
+  merged main over 1.0.0. RESULTS (check-in 5 November; PC idle in
   every run): test vs main PASSED, +7.03 +/- 3.90 after 9000 games
   (SPRT #103, LLR 3.89, [0, 5]), 0 time losses, illegal moves or
   crashes. Calibration the same day: long900 main 3575 (2026-11-04-01,
@@ -1272,6 +1277,8 @@ set its margin from the p95 there (a candidate for 1.2).
   long900 untuned (the tested version; the re-tune's settings all moved
   by less than one step). Yes = merge long900 untuned; No = keep testing
   the re-tune (about 20,000 more games, holding the network slot).
+  DECIDED 11 November, about 1:55 pm Pacific (Ayman: "1 - yes"): merged
+  untuned, commit 784e27e, bench 991226, tests pass.
 
 - 2026-11-11 (pace routine, from Scout's 11 November file): keep the
   rule "at least 2 new search candidates a day"? Since 6 November all
@@ -1286,6 +1293,10 @@ set its margin from the p95 there (a candidate for 1.2).
   network lane (above its 20% share, still one experiment at a time). Yes = change it as
   proposed; No = keep the quota (the Session then tests the best nudges
   available, about 1 in 4 passing).
+  DECIDED 11 November, about 1:55 pm Pacific (Ayman: "2 - Yes, with one
+  guard."): yes. The guard's wording did not come with the answer; the
+  Test queue's pace rule is changed only once it is known (asked the
+  same day). Until then the quota stays as written.
 
 - 2026-11-08 (pace routine, from Scout's 8 November file): drop the 0.3%
   held-out-loss gate for networks? Proposal: keep the loss only as a

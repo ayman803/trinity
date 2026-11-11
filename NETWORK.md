@@ -861,3 +861,12 @@ Network gate changed (Ayman, 8 November): the 0.3% held-out-loss gate is
 retired. Loss is kept only as a broken-run check (stop if clearly worse
 than main's network); every network otherwise goes straight to the
 400-game screen and the head-to-head test (ESTIMATES.md, process rules).
+
+long900 MERGED (11 November, Ayman's decision, commit 784e27e): main's
+network is now long900 (900 superbatches, seed 20261019, sha256 starting
+609bc598), untuned. Tests: vs Control2 +5.65 +/- 2.73 (SPRT #92 + #93 +
+#100, passed), vs main +7.03 +/- 3.90 (SPRT #103, passed); calibration
+gap +102 +/- 9 over 1.0.0 (4 November); v2 check passed; SPSA re-tune
+changed nothing measurable (-0.54 +/- 2.32 after 23000 games vs long900),
+so not taken. Bench 991226. Lesson: training length is a lever; the
+second-seed pair (900-s2 vs 600-s2, SPRT #123) checks it.
