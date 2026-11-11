@@ -548,10 +548,10 @@ network, and the second week merged nothing):
   the chunks behind it run and it waits for the next night. 9-10 November: DISTURBED twice (5:05 pm after 1 minute, 10:02 pm
   after 216 minutes; 3.6 GPU hours lost); one more disturbance drops it
   (runner limit 3). Rule 17 (long jobs only from 9 pm) is still not in
-  TRAINED (check-in 11 November): third start 6:37-11:34 pm on 10
-  November (4.9 h, not disturbed), branch net-control-s2-20261110-1837,
-  bench 865945. The 900-s2 vs 600-s2 test can start.
-  the installed runner: it needs Ayman's reinstall. Predictions, written before training:
+  the installed runner: it needs Ayman's reinstall. TRAINED (check-in 11 November):
+  third start 6:37-11:34 pm on 10 November (4.9 h, not disturbed), branch
+  net-control-s2-20261110-1837, bench 865945; the 900-s2 vs 600-s2 test
+  can start. Predictions, written before training:
   900-s2 vs 600-s2 (8+0.08, [0, 5]) self-play +1 to +9, about 50% to
   pass; 900-s2 vs main 0 to +12 (seed spread about +/- 5.5 on top of
   length's +5 to +7). The network's test waits for the long900 re-tune
