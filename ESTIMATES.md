@@ -111,15 +111,29 @@ at once. PC: one heavy job at a time, in the order Ayman chooses.
 
 Pace rules (owner with the advisor, 20 October; tests #28-#37 were all
 network, and the second week merged nothing):
-- Network lane: about 20% of GitHub test time at most, one experiment at
+- (Ayman with the advisor, 11 November, replacing the 20 October quota
+  and share below:) network lane one experiment at a time, using the
+  GitHub time the search lane leaves spare; search lane: a candidate
+  whenever a real idea exists, no daily quota, never a test only to keep
+  the lane busy. Guard: the "search lane idle" alarm stays; it is
+  satisfied only by a dated line under "Search lane status" (below) from
+  the last 24 hours saying why nothing is running.
+- Network lane (20 October; share replaced 11 November): about 20% of GitHub test time at most, one experiment at
   a time. Current one: KB16-Seed2 (stopping rule: no third 16-bucket run
   unless Seed2 passes against main). Main changed after Seed2 started
   (speed-picker, +21.5), and Seed2's published branch carries the older
   search: before its screen, merge main into that branch (checked: merges
   cleanly), so the test compares networks only.
-- Search/speed lane: at least 2 new candidates tested per day, from the
+- Search/speed lane (20 October; quota replaced 11 November): at least 2 new candidates tested per day, from the
   forensics, Scout's list and the speed profile below. Predictions in the
   Changes table before any game.
+- Search lane status (dated lines; the pace routine writes one on any
+  day no search test runs or starts):
+  2026-11-11: nothing running. No idea worth a test: Scout's 11 November
+  file proposes no search candidate (the last three, all small changes
+  to settled rules, failed); the speed profile of 28 October found
+  nothing left; the Prune forensics night needs a PC night (behind
+  wdl25 and Friday's calibration).
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes
@@ -1294,9 +1308,11 @@ set its margin from the p95 there (a candidate for 1.2).
   proposed; No = keep the quota (the Session then tests the best nudges
   available, about 1 in 4 passing).
   DECIDED 11 November, about 1:55 pm Pacific (Ayman: "2 - Yes, with one
-  guard."): yes. The guard's wording did not come with the answer; the
-  Test queue's pace rule is changed only once it is known (asked the
-  same day). Until then the quota stays as written.
+  guard."): yes. Guard (advisor's wording, same afternoon): the "search
+  lane idle" alarm stays, satisfied only by a dated line in ESTIMATES.md
+  saying why nothing is running; the network lane keeps one experiment at
+  a time. In force from 11 November: CLAUDE.md Pace rules, the Test
+  queue and the pace routine's instructions updated.
 
 - 2026-11-08 (pace routine, from Scout's 8 November file): drop the 0.3%
   held-out-loss gate for networks? Proposal: keep the loss only as a

@@ -66,6 +66,7 @@ October and no longer applies: do the full job. Favour ideas with a clear
 mechanism and a cheap, decisive test.
 
 Done (2026-11-06, Session): tagging started; no-checkext is the first row marked "(Scout, Fable)" (lowlr-tail is logged as planned, not yet tested). The count goes under this note on 19 November.
+Noted (2026-11-11, Session): with the search quota gone (Ayman, 11 November), the advisor proposes counting Fable's network ideas too, judged by their head-to-heads, rather than ending the trial early. The 19 November count will list search ideas (0 of 3 passed so far) and network ideas (wdl25, training tonight) separately.
 
 ### 2026-11-04 · Ayman's decisions (his words, 4 November, 6:48 pm Pacific)
 1. long900: "My view, in advance: yes, merge it." This is Ayman's OK for

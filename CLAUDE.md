@@ -281,14 +281,20 @@ shared channel, and nobody asks him to paste anything to anyone.
 
 ## Pace rules (owner with the advisor, 20 October 2026)
 
-Network lane: about 20% of GitHub test time at most, one experiment at a
-time. Search/speed lane: at least 2 new candidates tested per day
-(forensics, Scout's list, the speed profile), predictions first. Details
-in ESTIMATES.md, Test queue. Pace alarm (owner with the advisor, 26 October):
-the morning check-in reports "Decision needed: search lane idle" whenever
-no new candidate test started on GitHub in the last 24 hours (newest
+Network lane: one experiment at a time; it may use the GitHub test time
+the search lane leaves spare (owner, 11 November 2026; until then about
+20% at most). Search/speed lane (owner with the advisor, 11 November
+2026, replacing the quota of 20 October of at least 2 new candidates a
+day): a search candidate whenever a real idea exists (speed profile,
+forensics, measured data, Scout's list), predictions first; never a test
+only to keep the lane busy. Details in ESTIMATES.md, Test queue. Pace
+alarm (owner with the advisor, 26 October; guard of 11 November): the
+morning check-in reports "Decision needed: search lane idle" whenever no
+new candidate test started on GitHub in the last 24 hours (newest
 test-results/sprt-*.txt and running SPRT runs), unless ESTIMATES.md
-records a deliberate pause. It also reports "Decision needed: tests left
+(Test queue, "Search lane status") has a dated line from the last 24
+hours saying why nothing is running, so idleness is always a visible
+choice, never a drift. It also reports "Decision needed: tests left
 undecided" when any test has been undecided and not running for more
 than 24 hours without a logged stop (owner with the advisor, 1
 November; four tests waited three days on 29 October). The daily pace
