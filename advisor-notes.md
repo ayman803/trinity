@@ -20,7 +20,7 @@ the runner, 10+0.1). Compare, and if the two differ by more than about
 20, say so plainly and re-score the forecast. Rule 6 stands: no newer
 version is offered to the testers until 1.0.0 is rated and Ayman decides;
 nobody contacts CCRL except Ayman himself.
-Not done yet (2026-11-11, Session): the weekly check starts Saturday 14 November (the pace routine, which runs in the Session). The CCRL site (computerchess.org.uk) cannot be reached from the cloud sessions today: the network proxy refuses it (403), and a web fetch failed too. The Session has asked Ayman, on a one-time approval card, to allow that one site; until it is allowed, the Saturday check needs a screenshot of the CCRL 40/15 list from Ayman or a check by the advisor. Our estimate for 1.0.0 to compare with: 3466 by day, 3478 on the runner (10+0.1).
+Not done yet (2026-11-11, Session): the weekly check starts Saturday 14 November (the pace routine, which runs in the Session). The CCRL site (computerchess.org.uk) cannot be reached from the cloud sessions today: the network proxy refuses it (403), and a web fetch failed too. A personal cloud environment "trinity" that allows that one site was created on 11 November (Ayman approved it on a card). The running Session cannot switch to it, so on Saturdays the pace routine starts a short session in that environment to read the CCRL 40/15 list; if that fails, a screenshot from Ayman or a check by the advisor. Our estimate for 1.0.0 to compare with: 3466 by day, 3478 on the runner (10+0.1).
 
 ### 2026-11-07 · Today's Scout file (Ayman, 7 November, 6:54 am: "tell session now")
 Read scout/2026-11-07.md in full on today's run, not only "## For the
