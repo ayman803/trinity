@@ -101,3 +101,6 @@
 2026-11-09-02 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
 2026-11-09-03 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
 2026-11-09-04 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
+2026-11-11-01 | pc | scripts/sprt.ps1 | -Dev net-long900s2-main -Base net-control-s2-main -Rounds 1000 -TestId net-long900s2
+2026-11-11-02 | pc | scripts/sprt.ps1 | -Dev net-long900s2-main -Base net-control-s2-main -Rounds 1000 -TestId net-long900s2
+2026-11-11-03 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Tag wdl25 -Wdl 0.25
