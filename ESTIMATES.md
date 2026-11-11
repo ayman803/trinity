@@ -583,7 +583,7 @@ network, and the second week merged nothing):
   (LLR 2.52 of 2.94, [0, 5]), undecided, close to a pass; 0 time losses,
   illegal moves or crashes; inside the +1 to +9 prediction. Continued on
   GitHub 1:15 pm Pacific (continue_from 43046814875); PC chunks not
-  started yet (the PC was in use).
+  started yet (nothing new in the runner log since last night).
   (5) wdl25 (Scout, Fable, 11 November; scout/2026-11-11.md): Control2's
   recipe, seed 20261019, files and 600 superbatches with one change, WDL
   0.25 instead of 0.5 (less weight on the game result, more on the search
