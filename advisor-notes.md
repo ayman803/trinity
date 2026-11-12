@@ -8,6 +8,27 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-12 · Runner silent 10-12 November: cause found (advisor, from Runner-Status on the PC)
+The runner was alive throughout. Runner-Status log: after each wake from
+sleep with nobody signed in, "Idle time unknown (the idle beacon has not
+written for 3 minutes); real jobs wait for 11 pm" (11 Nov 17:28 and
+22:01, 12 Nov 07:38); the beacon writes only while Ayman is signed in
+(it wrote at 7:39 today, right after sign-in). At 11 pm on 11 November
+the PC was asleep: woke 22:01 (asleep since 17:55), slept again 22:06, no
+wake at 23:00, next wake 05:03, by then too late for wdl25 before 6:55.
+Also 10 Nov 07:40: one "git fetch failed: could not resolve host
+github.com" (transient DNS after wake). Today's workaround: Ayman sets
+Sleep to Never so the 11 pm window is reachable; the three queued jobs
+(2026-11-11-01..03) should run tonight. For the Session, runner work
+(not under the approval fingerprint, needs a reinstall): (1) find why the
+11 pm wake timer did not fire (the install may need `powercfg` wake-timer
+settings checked and a retry at 23:05/23:10); (2) when the PC wakes by
+timer and the beacon is stale, that is exactly the idle case: consider
+treating "beacon stale AND no interactive session unlocked" as idle so
+timer wakes in the day can start short jobs (rule 11's intent, Ayman and
+advisor 19 October: the runner is for more PC use). Put a proposal in
+ESTIMATES.md; a rule change goes to Ayman as a Decision needed.
+
 ### 2026-11-12 · Scout's 12 November file: build the resume mode now (advisor)
 The length lever is replicated (900-s2 vs 600-s2 +4.81 +/- 2.71, next to
 long900 vs Control2 +5.65 +/- 2.73): by the plan of 8 November that
