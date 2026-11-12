@@ -23,6 +23,18 @@
 //!       network without king buckets is accepted too: its input weights
 //!       become the shared part and the per-bucket parts start at zero, so
 //!       training starts from (almost exactly) the old network.
+//!   trinity-trainer part <planned total> <stop at> <name> <start lr> <wdl> <checkpoint dir or -> <data files...>
+//!       One part of a from-scratch run planned as <planned total>
+//!       superbatches (resumable training, 12 November 2026): from random
+//!       weights ("-") or from a checkpoint <dir>/<name>-<N> of the same
+//!       network (weights and the optimiser's running averages), it trains
+//!       superbatches N+1 to <stop at> on the same data order and the same
+//!       cosine learning rate (to 1% of <start lr> at <planned total>) as
+//!       one uninterrupted run. `part T T <name> ... -` is `scratch T`.
+//!       With <stop at> beyond <planned total> it continues at the final
+//!       (1%) learning rate (the lowlr-tail experiment).
+//!   trinity-trainer compare <checkpoint a> <checkpoint b>
+//!       How far apart two checkpoints' weights are (checks a resumed run).
 //! Output: checkpoints/<name>-<N>/quantised.bin  (copy it to nets/default.nnue)
 
 use std::{
@@ -155,6 +167,16 @@ fn warm_start_weights(checkpoint: &str) -> Option<String> {
     Some(path)
 }
 
+/// The superbatch a checkpoint folder `<name>-<N>` was saved at.
+fn checkpoint_superbatch(checkpoint: &str) -> usize {
+    let dir = checkpoint.trim_end_matches(['/', '\\']);
+    let base = dir.rsplit(['/', '\\']).next().unwrap_or(dir);
+    base.rsplit('-').next().and_then(|n| n.parse().ok()).unwrap_or_else(|| {
+        eprintln!("{checkpoint} is not a checkpoint folder (<name>-<superbatch>)");
+        std::process::exit(1)
+    })
+}
+
 fn usage() -> ! {
     eprintln!("usage: trinity-trainer <shuffled data file> [superbatches] [name]");
     eprintln!("       trinity-trainer convert <file.binpack> <out.data> [max positions] [skip]");
@@ -162,6 +184,8 @@ fn usage() -> ! {
     eprintln!("       trinity-trainer scratch <superbatches> <name> <start lr> <wdl> <data files...>");
     eprintln!("       trinity-trainer finetune <checkpoint dir> <superbatches> <name> <shuffled data file> [start lr]");
     eprintln!("       trinity-trainer average <out file> <checkpoint dirs...>");
+    eprintln!("       trinity-trainer part <planned total> <stop at> <name> <start lr> <wdl> <checkpoint dir or -> <data files...>");
+    eprintln!("       trinity-trainer compare <checkpoint a> <checkpoint b>");
     std::process::exit(1);
 }
 
@@ -285,8 +309,37 @@ fn main() {
         convert_into(&args[2], &outputs, per_chunk, 0);
         return;
     }
+    if mode == Some("compare") {
+        // compare <checkpoint a> <checkpoint b>: largest and mean absolute
+        // difference of the two checkpoints' weights, tensor by tensor and
+        // overall, with the mean absolute weight for scale.
+        if args.len() < 4 {
+            usage();
+        }
+        let a = read_weights(&format!("{}/optimiser_state/weights.bin", args[2]));
+        let b = read_weights(&format!("{}/optimiser_state/weights.bin", args[3]));
+        assert_eq!(a.len(), b.len(), "checkpoints have different layouts");
+        let (mut max, mut sum, mut size, mut count) = (0f32, 0f64, 0f64, 0usize);
+        for ((name, x), (other, y)) in a.iter().zip(&b) {
+            assert!(name == other && x.len() == y.len(), "checkpoints have different layouts");
+            let m = x.iter().zip(y).map(|(p, q)| (p - q).abs()).fold(0f32, f32::max);
+            let s: f64 = x.iter().zip(y).map(|(p, q)| f64::from((p - q).abs())).sum();
+            println!("{name}: largest difference {m:.8}, mean {:.10}", s / x.len().max(1) as f64);
+            max = max.max(m);
+            sum += s;
+            size += x.iter().map(|p| f64::from(p.abs())).sum::<f64>();
+            count += x.len();
+        }
+        let n = count.max(1) as f64;
+        println!("WEIGHTS: largest difference {max:.8}, mean difference {:.10}, mean weight {:.8}", sum / n, size / n);
+        return;
+    }
     let scratch = mode == Some("scratch");
     if scratch && args.len() < 7 {
+        usage();
+    }
+    let part = mode == Some("part");
+    if part && args.len() < 9 {
         usage();
     }
     let hidden = hidden_size();
@@ -416,6 +469,54 @@ fn main() {
                 initial_lr: start_lr,
                 final_lr: start_lr * 0.01,
                 final_superbatch: superbatches,
+            },
+            save_rate: 50,
+        };
+        let data_loader = loader::DirectSequentialDataLoader::new(&files);
+        trainer.run(&schedule, &settings, &data_loader);
+        return;
+    }
+    if part {
+        // part <planned total> <stop at> <name> <start lr> <wdl> <checkpoint dir or -> <data files...>
+        let planned: usize = args[2].parse().unwrap_or_else(|_| usage());
+        let stop: usize = args[3].parse().unwrap_or_else(|_| usage());
+        let name = args[4].clone();
+        let start_lr: f32 = args[5].parse().unwrap_or_else(|_| usage());
+        let wdl: f32 = args[6].parse().unwrap_or_else(|_| usage());
+        let from = args[7].as_str();
+        let files: Vec<&str> = args[8..].iter().map(String::as_str).collect();
+        let start = if from == "-" {
+            1
+        } else {
+            let done = checkpoint_superbatch(from);
+            // Weights and the optimiser's running averages (momentum and
+            // velocity), as saved with every checkpoint.
+            trainer.load_from_checkpoint(from);
+            println!("Resuming from {from}: superbatch {done} done, continuing at {}", done + 1);
+            done + 1
+        };
+        if planned == 0 || start > stop {
+            println!("Nothing to train: superbatch {} is already done (stop at {stop}).", start - 1);
+            return;
+        }
+        let schedule = TrainingSchedule {
+            net_id: name,
+            eval_scale: SCALE as f32,
+            // The data loader skips the positions superbatches 1..start-1
+            // used, so the data order is that of one uninterrupted run.
+            steps: TrainingSteps {
+                batch_size: 16_384,
+                batches_per_superbatch: 6104,
+                start_superbatch: start,
+                end_superbatch: stop,
+            },
+            wdl_scheduler: wdl::ConstantWDL { value: wdl },
+            // Depends only on the superbatch number and the planned total;
+            // from the planned total on it stays at its final value.
+            lr_scheduler: lr::CosineDecayLR {
+                initial_lr: start_lr,
+                final_lr: start_lr * 0.01,
+                final_superbatch: planned,
             },
             save_rate: 50,
         };
