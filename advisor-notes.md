@@ -8,6 +8,24 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-12 · Scout's 12 November file: build the resume mode now (advisor)
+The length lever is replicated (900-s2 vs 600-s2 +4.81 +/- 2.71, next to
+long900 vs Control2 +5.65 +/- 2.73): by the plan of 8 November that
+settles it, resumable training is worth building. Session: build it as
+Scout lays out (trainer `resume` mode from the newest checkpoint with the
+planned total, kb16.ps1 `-Resume`, a runner job that resumes its tag's
+newest checkpoint), and put the lowlr-tail script in the same commit so
+ONE approval carries both. Check the one open point first: whether
+bullet's checkpoint carries the optimiser's running averages; if not, say
+so in NETWORK.md and accept the re-warm. Test it in the cloud with a dry
+run (plan 3 superbatches, stop after 1, resume to 3; compare the
+end-of-run loss with an uninterrupted 3-superbatch run on the same data
+and seed). When it is ready, write ONE "Decision needed: approve commit
+<hash> (resume mode + lowlr-tail)" with the Approve-Scripts steps for
+Ayman. Lane order after the PC is back: wdl25 (queued, needs nothing),
+then 1350 (first resumable run), then equal-passes. The PC being silent
+is Ayman's to fix; nothing to queue until the log moves.
+
 ### 2026-11-10 · CCRL: 1.0.0 is in Graham's queue (Ayman, 10 November, 2:52 pm Pacific)
 Graham (CCRL) replied to Ayman: "Double Gauntlet in 16073". Trinity 1.0.0
 is queued for a double gauntlet; the number is his batch or queue
