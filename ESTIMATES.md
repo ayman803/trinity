@@ -1339,6 +1339,22 @@ set its margin from the p95 there (a candidate for 1.2).
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
 
+- 2026-11-12 (pace routine, advisor note of 12 November): approve the
+  scripts for resumable training (commit dc96ea7703 or any later main)?
+  It lets an 11-hour training run be split over two nights, lets a
+  stopped run continue instead of starting over, and runs lowlr-tail.
+  The first job after it is a 10-minute test that compares a stopped-
+  and-resumed run with an uninterrupted one on the GPU. Session's view:
+  yes. Steps at the PC: (1) double-click "Trinity Approve-Scripts" on
+  the desktop; (2) the window lists 3 changed files (tools/net/
+  Dry-Run-Resume.bat, tools/net/data/heldout-positions.txt,
+  tools/net/kb16.ps1) and "Risky changes found by this tool: 3 new
+  line(s)", all "Remove-Item Env:TRINITY_..." in kb16.ps1: they only
+  clear the script's own temporary settings, as before; (3) type Y and
+  press Enter; (4) it says "Approved. The runner uses this version from
+  its next check". Send a screenshot of the window. Yes = approve; No =
+  no resumable runs (wdl25 still runs on the current approval).
+
 - 2026-11-11 (pace routine): merge long900 now, without the re-tune?
   The re-tuned version was checked against long900 itself: -0.5 +/- 2.3
   after 23,000 games (GitHub and PC agree): no measurable change either
