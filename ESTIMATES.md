@@ -603,6 +603,11 @@ network, and the second week merged nothing):
   illegal moves or crashes; inside the +1 to +9 prediction. Continued on
   GitHub 1:15 pm Pacific (continue_from 43046814875); PC chunks not
   started yet (nothing new in the runner log since last night).
+  PASSED (check-in 12 November): +4.81 +/- 2.71 after 18000 games (SPRT
+  #123 + #124, LLR 4.86, [0, 5]), 0 time losses, illegal moves or
+  crashes; inside +1 to +9. Second paired seed agrees with long900 vs
+  Control2 (+5.65 +/- 2.73): longer training helps by about +5 at
+  either seed.
   (5) wdl25 (Scout, Fable, 11 November; scout/2026-11-11.md): Control2's
   recipe, seed 20261019, files and 600 superbatches with one change, WDL
   0.25 instead of 0.5 (less weight on the game result, more on the search
@@ -1001,6 +1006,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-11-09 6:24 am PST: read up to "05:35 DONE 2026-11-08-04" (long900s2 trained, 7.5 h; 4 chunks of net-long900-tuned, PC -2.35 +/- 3.96 after 8000 at [-4, 1], undecided). GitHub, last 24 hours: net-long900-tuned -4.29 after 3000, undecided; tm-lowclock +0.03 after 12000, undecided; no-checkext -4.21 after 9000, close to a fail. No approval pending. Nothing queued: control-s2 is training (never the check-in's), and test chunks are the pace routine's.
 - 2026-11-10 6:24 am PST: read up to "03:59 DONE 2026-11-09-04". control-s2 training (2026-11-09-01) was DISTURBED twice (5:05 pm after 1 minute; 10:02 pm after 216 minutes, so 3.6 GPU hours lost) and did not finish; one more disturbance would drop it (runner limit 3). Keyboard or mouse use also stopped chunks at 11:49 pm and 2:12 am. Re-tune check: PC -0.84 +/- 2.98 after 14000, GitHub -1.16 +/- 4.46 after 6000, both undecided. GitHub, last 24 hours: chk-noreduce FAILED (-5.10); no-checkext -3.65 after 12000 (edge of a fail); tm-lowclock -0.35 after 15000. No approval pending. Nothing queued (training is never the check-in's; control-s2 stays in the queue and may start again tonight).
 - 2026-11-11 6:24 am PST: read up to "23:34 DONE 2026-11-09-01" (control-s2 trained on its third start, 4.9 h). GitHub, last 24 hours: no-checkext FAILED (-4.38, 15000); tm-nodefloor FAILED (-2.82); tm-lowclock -0.77 at the 18000 cap, undecided; long900 re-tune check -0.08 after 9000, undecided. No approval pending. Nothing queued: the PC's next work (900-s2 vs 600-s2, re-tune chunks) is the pace routine's. CCRL list check for 1.0.0 (advisor note 10 November) is due Saturday 14 November, when the lists update.
+- 2026-11-12 6:22 am PST: RUNNER SILENT. The last log line is still "23:34 DONE 2026-11-09-01" (10 November): nothing started in about 31 hours, including the whole night of 11-12 November, although 2026-11-11-01..03 (two s2 chunks, wdl25 training) were queued at 7:22 am on 11 November. No FAILED or REFUSED line, so the runner did not see or did not try them: likely the PC was off or asleep (wake timer), a Windows restart is pending (rule 9), or the STOP file exists (rule 6). Reported to Ayman. GitHub, last 24 hours: 900-s2 vs 600-s2 PASSED (+4.81, 18000); long900 merged 11 November (Ayman, untuned). No approval pending. Nothing queued.
 
 ## Lessons so far
 
