@@ -1,0 +1,12 @@
+SPRT test #124, finished 2026-11-12 01:14 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/43101241331 (run id 43101241331)
+Continues run id 43046814875; the totals below include it.
+SPRT RESULT: PASSED - 'net-long900s2-main' is stronger than 'net-control-s2-main'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: net-long900s2-main (bench 1073582) vs net-control-s2-main (bench 1159767), tc 8+0.08, bounds [0, 5]
+Games: 18000, Wins: 4411, Losses: 4162, Draws: 9427, Points: 9124.5 (50.69 %)
+Ptnml(0-2): [97, 2036, 4497, 2261, 109]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 4.81 +/- 2.71, nElo: 9.02 +/- 5.08
+LLR: 4.86 (-2.94, 2.94) [0.00, 5.00]
