@@ -25,6 +25,7 @@ and seed). When it is ready, write ONE "Decision needed: approve commit
 Ayman. Lane order after the PC is back: wdl25 (queued, needs nothing),
 then 1350 (first resumable run), then equal-passes. The PC being silent
 is Ayman's to fix; nothing to queue until the log moves.
+Done (2026-11-12, Session): built as laid out. Trainer branch net-kb16-resume (6c4e8af396, a "part" mode and a "compare" mode); kb16.ps1 -Resume, -StopAt, -From. Open point: bullet's checkpoint DOES carry AdamW's running averages (momentum.bin, velocity.bin, restored by load_from_checkpoint): no re-warm. lowlr-tail needs no script of its own: it is a kb16.ps1 line with -From control2 (the cosine stays at its floor past the planned total). One change from the note: the dry run cannot train in the cloud (bullet at this commit has no CPU backend), so the script logic was tested here against a fake trainer and the real GPU comparison (uninterrupted twice vs stopped-and-resumed, 3 superbatches) is the first PC job after the approval. "Decision needed: approve" written in ESTIMATES.md with the Approve-Scripts steps. equal-passes still needs kb16.ps1 to take the more-data files.
 
 ### 2026-11-10 · CCRL: 1.0.0 is in Graham's queue (Ayman, 10 November, 2:52 pm Pacific)
 Graham (CCRL) replied to Ayman: "Double Gauntlet in 16073". Trinity 1.0.0
@@ -52,6 +53,7 @@ started) so the plan for the next network run is visible. Scout's point 3
 (Hash 16 MB in every test; CCRL plays with far more) is a check, not an Elo
 test: note it in the Test queue as a calibration to run when the tester's
 hash setting is known; no decision from Ayman needed.
+Status of resumable training (2026-11-12, Session): built (trainer branch net-kb16-resume, kb16.ps1 -Resume/-StopAt/-From), waiting for Ayman's approval and a PC dry run.
 
 Done (2026-11-07, Session): read the whole file; the five measured-and-dropped search ideas are logged in ESTIMATES.md ("Planned, not started") and will not be queued; the hash-size check is noted there as a calibration for when the tester's hash setting is known.
 Resumable training, status 2026-11-07: NOT STARTED (planned). Proposed by Scout on 4 November; it needs a trainer change (save the weights, optimiser state and superbatch number every 25 superbatches; resume on the same schedule) plus kb16.ps1 support, which is under tools/ and so needs Ayman's approval. Order: after long900's re-tune and merge (one network experiment at a time), then lowlr-tail (about 50 minutes, no resume needed), then resumable training for long1350 or the equal-passes data test.

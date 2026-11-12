@@ -134,6 +134,10 @@ network, and the second week merged nothing):
   to settled rules, failed); the speed profile of 28 October found
   nothing left; the Prune forensics night needs a PC night (behind
   wdl25 and Friday's calibration).
+  2026-11-12: nothing running. No idea worth a test: Scout's 12 November
+  file has no search candidate (it is about resumable training); nothing
+  new from forensics or the speed profile. The day went to the network
+  lane (resumable training built, item (6) below).
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes
@@ -608,6 +612,10 @@ network, and the second week merged nothing):
   crashes; inside +1 to +9. Second paired seed agrees with long900 vs
   Control2 (+5.65 +/- 2.73): longer training helps by about +5 at
   either seed.
+  Not a merge candidate (pace routine 12 November): long900s2 is main's
+  recipe (long900) at another seed; testing it against main would be the
+  best-of-seeds lottery parked on 19 October (spread +/- 5.5, value
+  small). Its job is done: the length lever is replicated.
   (5) wdl25 (Scout, Fable, 11 November; scout/2026-11-11.md): Control2's
   recipe, seed 20261019, files and 600 superbatches with one change, WDL
   0.25 instead of 0.5 (less weight on the game result, more on the search
@@ -623,6 +631,45 @@ network, and the second week merged nothing):
   re-tune becomes part of the verdict). Its games wait for the s2 test
   (one network test at a time). If it passes, WDL 0.0 next; if it fails
   clearly, WDL 0.75.
+  (6) Resumable training BUILT (12 November; advisor note and Scout's
+  12 November file), waiting for Ayman's approval (Decisions needed).
+  Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
+  and a "compare" mode; existing modes unchanged); tools/net/kb16.ps1
+  gets -Resume, -StopAt and -From and builds that branch, pinned to that
+  commit. Facts checked in bullet's source (rev c004ebf): a checkpoint
+  holds the weights AND AdamW's momentum and velocity, and
+  load_from_checkpoint restores all three (no re-warm); the data loader
+  skips the positions of superbatches 1..N, so a resumed part reads the
+  same data as one uninterrupted run; the cosine rate depends only on the
+  superbatch and the planned total. Cloud test: the trainer builds, the
+  new modes parse, and kb16.ps1's logic was run end to end against a fake
+  trainer (plain run, parts, a part stopped mid-way and resumed, re-run
+  of a finished part, lowlr-tail from another run, dry runs, a moved
+  branch refused, a faulty resume caught). A real training step cannot
+  run in the cloud (bullet at this commit has no CPU backend), so the
+  GPU check is the PC dry run, the first job after approval: runs A and
+  A2 uninterrupted (3 superbatches), B stopped after 1 and resumed to 3;
+  it fails if B's loss differs from A's by more than max(3x the A-A2
+  difference, 0.2%), and it checks that Control2's checkpoint can be read.
+  To queue AFTER the approval shows in the runner log (the approved
+  b2624557d1 does not accept the new arguments):
+    tools/net/kb16.ps1 | -KingBuckets 8 -DryRun -Resume -From control2
+    tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Superbatches 600 -StopAt 700 -From control2 -Tag lowlr-tail -Resume
+    tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Superbatches 1350 -StopAt 700 -Tag long1350 -Resume
+    tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Superbatches 1350 -Tag long1350 -Resume
+  (wdl25, already queued, runs first either way.) lowlr-tail: superbatches
+  601-700 from Control2's 600 checkpoint at the floor rate (1e-5),
+  optimiser state reloaded, data order continued: about 50 minutes, fits
+  a daytime idle slot. long1350: two parts of about 5.8 and 5.4 hours,
+  each starting by about 9:55 pm (no history: 9-hour slot); a stopped
+  part loses at most 50 superbatches. Predictions, written before
+  training: lowlr-tail vs Control2 -2 to +5, about 25% to pass [0, 5]
+  (Scout, 6 November); long1350 vs main (long900, same seed) self-play +2
+  to +5 (Scout, 12 November), Session 0 to +6, about 35% to pass [0, 5]
+  (another 1.5x in length, with diminishing returns likely). If
+  lowlr-tail passes clearly before long1350 starts, reconsider 1350
+  (Scout: then the cheap lever is the tail). equal-passes also needs
+  kb16.ps1 to take the more-data files (it uses big-1..4 only): not built.
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
@@ -658,7 +705,8 @@ network, and the second week merged nothing):
   no-checkext -4.4 failed and tm-lowclock stopped undecided at its cap,
   both started the week before); network lane: long900's re-tune check
   stopped undecided (-0.5 after 23000), 900-s2 vs 600-s2 started; merged
-  0.
+  0. Updated 12 November: 900-s2 vs 600-s2 PASSED (+4.81); merged 1
+  (long900, network, by Ayman's decision of 11 November).
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 
@@ -1273,7 +1321,9 @@ set its margin from the p95 there (a candidate for 1.2).
 - equal-passes data test (Scout, Fable, 7 November): long900's recipe and
   seed on the 5.65 billion positions of the more-data run at about 24.6
   passes (1390 superbatches, about 11.6 GPU hours). Needs resumable
-  training first; after lowlr-tail.
+  training first; after lowlr-tail. 12 November: resumable training
+  built (Test queue, item (6)); equal-passes still needs kb16.ps1 to take
+  the more-data files.
 
 - lowlr-tail (Scout, Fable, 6 November): continue Control2's 600
   checkpoint for 100 superbatches at the floor learning rate, to tell
@@ -1282,6 +1332,8 @@ set its margin from the p95 there (a candidate for 1.2).
   PC (sprt\coder2\checkpoints\...control2...-600; not visible from the
   cloud). Not started 6 November: the GPU lane waits for long900's
   re-tune and merge first (one network experiment at a time).
+  12 November: no separate script needed; it is a kb16.ps1 queue line
+  with -From control2 (Test queue, item (6)), waiting for the approval.
 
 ## Decisions needed (dated; read by the phone summary)
 

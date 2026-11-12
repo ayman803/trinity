@@ -870,3 +870,22 @@ gap +102 +/- 9 over 1.0.0 (4 November); v2 check passed; SPSA re-tune
 changed nothing measurable (-0.54 +/- 2.32 after 23000 games vs long900),
 so not taken. Bench 991226. Lesson: training length is a lever; the
 second-seed pair (900-s2 vs 600-s2, SPRT #123) checks it.
+
+Resumable training (12 November, advisor and Scout; ESTIMATES.md Test
+queue item (6)). Trainer branch net-kb16-resume (6c4e8af396): net-kb16
+plus `part <planned total> <stop at> <name> <lr> <wdl> <checkpoint|-> <files>`
+and `compare <a> <b>`. Checked in bullet's source (rev c004ebf):
+checkpoints hold weights.bin, momentum.bin and velocity.bin (AdamW keeps
+no step count), and load_from_checkpoint restores all three, so a resumed
+part needs no re-warm (the open point of the advisor's note: answered
+yes); the data loader skips batch_size x batches already done (modulo
+one pass), so the data order matches one uninterrupted run (the "already
+used positions" message Scout pointed to is the binpack converter's, not
+the trainer's: the loader's skip is the one that matters); CosineDecayLR
+depends only on the superbatch and its own final superbatch, and stays
+at the floor beyond it, which gives lowlr-tail without a new script.
+kb16.ps1: -Resume, -StopAt, -From; it now builds net-kb16-resume, pinned
+to that commit (the approval covers the script, so the script pins the
+branch it builds). Bullet at this commit has no CPU backend (CUDA, ROCm,
+Metal or a mock that cannot train), so the training check runs on the
+PC: Dry-Run-Resume.bat or the queued dry-run job.
