@@ -657,6 +657,12 @@ network, and the second week merged nothing):
   merges nothing on its own: test vs main, calibration, v2 check, SPSA
   re-tune (the scale is not uniform, so a re-tune is part of any merge)
   and Ayman's OK.
+  Screens (13 November, 8:08 am Pacific): x1.2 +17.39 +/- 18.87 (SPRT
+  #125, 400 games), unscaled +6.95 +/- 17.36 (SPRT #126, 400 games); 0
+  time losses, illegal moves or crashes. Both pass the screen; by the
+  rule fixed before the games, x1.2 goes into the head-to-head
+  (continued from #125, 9000 more games, [0, 5], started 8:10 am). The
+  10-point gap between the screens is well inside their noise.
   (6) Resumable training BUILT (12 November; advisor note and Scout's
   12 November file), waiting for Ayman's approval (Decisions needed).
   Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
