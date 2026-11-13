@@ -348,7 +348,9 @@ impl Searcher {
 
     fn evaluate(&self, b: &Board, ply: usize) -> i32 {
         let raw = match self.net {
-            Some(net) => nnue::evaluate(net, &self.acc[ply], b),
+            // wdl25 test (12-13 November): its evals are about 15% smaller
+            // than Control2's, so they are scaled by 1.2 for this screen.
+            Some(net) => nnue::evaluate(net, &self.acc[ply], b) * 6 / 5,
             None => eval::evaluate(b),
         };
         // Drift towards a draw as the fifty-move counter grows.
