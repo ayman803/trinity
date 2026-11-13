@@ -634,6 +634,24 @@ network, and the second week merged nothing):
   TRAINED (check-in 13 November): 2026-11-11-03, 6:06-11:04 pm on 12
   November (5.0 h, not disturbed), branch net-wdl25-20261112-1806, bench
   863609; its broken-run check and head-to-head vs Control2 come next.
+  Checks (Scout, 13 November, in the cloud, 15,000 held-out positions):
+  not broken (result loss 0.08260 vs Control2 0.08121, matched at a
+  scale factor of about 1.25); eval scale 0.85 of Control2's (0.79 with
+  25-32 pieces, 0.91 with 2-10). Screens (pace routine 13 November,
+  written before any game): two 400-game screens at 8+0.08 against
+  Control2, all on today's main search: net-wdl25-main (bench 1057786)
+  and net-wdl25x12-main (eval x1.2 in search.rs, bench 959021), partner
+  net-control2-main2 (bench 924692). Skeptic: a 400-game screen is
+  +/- 30 or so, so the two can be told apart only if they differ by more
+  than about 40; the rule fixed now: x1.2 goes into the head-to-head
+  unless the unscaled screen beats it by more than 40 (the pruning
+  margins are tuned to the old scale, and the rescaled loss matches
+  Control2's). Either screen below -30 is a fail for that variant.
+  Prediction: the better variant -5 to +6 vs Control2, about 20% to pass
+  [0, 5] (Scout's, unchanged); x1.2 minus unscaled 0 to +10. A pass
+  merges nothing on its own: test vs main, calibration, v2 check, SPSA
+  re-tune (the scale is not uniform, so a re-tune is part of any merge)
+  and Ayman's OK.
   (6) Resumable training BUILT (12 November; advisor note and Scout's
   12 November file), waiting for Ayman's approval (Decisions needed).
   Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
