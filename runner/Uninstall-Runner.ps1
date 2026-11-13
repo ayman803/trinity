@@ -76,6 +76,6 @@ if (Test-Path -LiteralPath $saved) {
     Write-Host "No saved settings found; sleep and Windows Update settings left as they are." -ForegroundColor Yellow
 }
 $desktop = [Environment]::GetFolderPath("Desktop")
-foreach ($b in @("Approve-Scripts", "Stop-Runner", "Start-Runner", "Runner-Status")) { Remove-Item -LiteralPath (Join-Path $desktop "Trinity $b.bat") -ErrorAction SilentlyContinue }
+foreach ($b in @("Approve-Scripts", "Stop-Runner", "Start-Runner", "Runner-Status", "Away")) { Remove-Item -LiteralPath (Join-Path $desktop "Trinity $b.bat") -ErrorAction SilentlyContinue }
 Write-Host "Runner removed. (C:\TrinityRunner kept for its logs.)" -ForegroundColor Green
 Read-Host "Press Enter to close"

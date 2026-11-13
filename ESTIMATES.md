@@ -1339,6 +1339,20 @@ set its margin from the p95 there (a candidate for 1.2).
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
 
+- 2026-11-12, 5:45 pm (Ayman asked, "start in 5 minutes"; answered "Yes"
+  to a button): "Trinity Away" built (runner.ps1 Test-Away; installer
+  makes the desktop button and keeps Sleep: Never). Not a question any
+  more, but it needs Ayman's runner REINSTALL to work, which also
+  switches on rule 17 (long jobs from 9 pm; coded 31 October, never
+  installed). Steps when at the PC: (1) get the new files: Start menu,
+  type cmd, press Enter; in the black window type
+  git -C C:\Trinity pull  and press Enter (it lists changed files); (2)
+  open C:\Trinity\runner and double-click Install-Runner.bat, answer Yes
+  to the administrator question, type pc, press Enter to keep the stored
+  key; (3) the window ends with "INSTALLED on 'pc'" and the desktop has a
+  new button "Trinity Away". From then on Install-Runner.bat gets the new
+  files itself (step 1 is needed this once).
+
 - 2026-11-12 (pace routine, advisor note of 12 November): approve the
   scripts for resumable training (commit dc96ea7703 or any later main)?
   It lets an 11-hour training run be split over two nights, lets a

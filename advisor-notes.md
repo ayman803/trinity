@@ -28,6 +28,7 @@ treating "beacon stale AND no interactive session unlocked" as idle so
 timer wakes in the day can start short jobs (rule 11's intent, Ayman and
 advisor 19 October: the runner is for more PC use). Put a proposal in
 ESTIMATES.md; a rule change goes to Ayman as a Decision needed.
+Partly done (2026-11-12, Session): at Ayman's request ("start in 5 minutes"; "Yes" to a button) the runner gets a desktop button "Trinity Away": after he clicks it, jobs start 5 minutes after his last use instead of 30 and long jobs need not wait for 9 pm, until he touches the keyboard or mouse again (24 hours at most). It still needs a working beacon, so it does not cover your point (2) (stale beacon after a timer wake). The installer now keeps Sleep: Never if Ayman set it (a reinstall would have reset it to 1 hour), and Install-Runner.bat pulls the newest files first. Not done yet: (1) why the 11 pm wake timer did not fire, and (2) the stale-beacon proposal; both for the next pace routine.
 
 ### 2026-11-12 · Scout's 12 November file: build the resume mode now (advisor)
 The length lever is replicated (900-s2 vs 600-s2 +4.81 +/- 2.71, next to

@@ -245,12 +245,33 @@ function Get-IdleMinutes {
     } catch { return $null }
 }
 
+# "Trinity Away" (owner, 12 November): Ayman clicks the desktop button
+# when he leaves (it touches $RunnerDir\beacon\away.txt). Until he next uses
+# the keyboard or mouse (input in the first minute after the click, such as
+# the click itself, does not count), or for at most 24 hours, real jobs
+# start after 5 minutes without use instead of 30, and long jobs need not
+# wait for the evening. Only with a working beacon: if it is silent, the
+# 11 pm rule below applies as before.
+$AwayFile = Join-Path $RunnerDir "beacon\away.txt"
+function Test-Away {
+    try {
+        if (-not (Test-Path -LiteralPath $AwayFile)) { return $false }
+        $click = (Get-Item -LiteralPath $AwayFile).LastWriteTimeUtc
+        $now = [DateTime]::UtcNow
+        if (($now - $click).TotalHours -gt 24) { return $false }
+        $idle = Get-IdleMinutes
+        if ($null -eq $idle) { return $false }
+        return ($now.AddMinutes(-$idle) -le $click.AddMinutes(1))
+    } catch { return $false }
+}
+
 # Real jobs start only when the PC is free for them (owner and advisor,
-# 19 October): 30 minutes without keyboard or mouse use, at any hour. If
-# the beacon is silent (idle time unknown), only between 11 pm and 7 am.
+# 19 October): 30 minutes without keyboard or mouse use, at any hour (5
+# minutes after "Trinity Away"). If the beacon is silent (idle time
+# unknown), only between 11 pm and 7 am.
 function Test-PcFree {
     $idle = Get-IdleMinutes
-    if ($null -ne $idle) { return ($idle -ge 30) }
+    if ($null -ne $idle) { return ($idle -ge 30 -or ($idle -ge 5 -and (Test-Away))) }
     Write-Note "Idle time unknown (the idle beacon has not written for 3 minutes); real jobs wait for 11 pm."
     $h = (Get-Date).Hour
     return ($h -ge 23 -or $h -lt 7)
@@ -347,7 +368,7 @@ function Invoke-Cycle {
     }
     if (-not $next) {
         $first = $pending[0]
-        if (-not (Test-Evening) -and $first.Args -notcontains "-Tune") {
+        if (-not (Test-Evening) -and -not (Test-Away) -and $first.Args -notcontains "-Tune") {
             Write-Note "Waiting: $($first.Id) is a long job; long jobs start from $EveningStart (if they finish by $MorningDeadline)."
         } else {
             Write-Note "Waiting: $($first.Id) would not finish before $MorningDeadline; it starts after $MorningBack."
@@ -371,7 +392,7 @@ function Invoke-Cycle {
         return $false
     }
     if ($next.Script -ne "runner/jobs/hello.ps1" -and -not (Test-PcFree)) {
-        Write-Note "Waiting: $($next.Id) starts after 30 minutes without keyboard or mouse use."
+        Write-Note "Waiting: $($next.Id) starts after 30 minutes without keyboard or mouse use (5 after 'Trinity Away')."
         return $false
     }
     $script:LastNote = ""
@@ -442,7 +463,7 @@ function Test-JobFits($Job, [double]$LimitHours) {
     $left = ((Get-MorningDeadline) - (Get-Date)).TotalMinutes
     if ($Job.Args -contains "-Tune") { return ($left - 20 -ge 30) }
     $expected = Get-ExpectedMinutes $Job $LimitHours
-    if ($expected -gt $LongJobMinutes -and -not (Test-Evening)) { return $false }
+    if ($expected -gt $LongJobMinutes -and -not (Test-Evening) -and -not (Test-Away)) { return $false }
     return ($expected -le $left)
 }
 

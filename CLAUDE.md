@@ -154,6 +154,13 @@ before any code (with the advisor's and Scout's additions):
    the runner can only read. If he comes back during a job, the job stops,
    does not count ("DISTURBED") and runs again later (at most 3 times). If
    the beacon is silent, jobs start only between 11 pm and 7 am.
+   (Owner, 12 November) Desktop button "Trinity Away": after Ayman clicks
+   it, real jobs start after 5 minutes without use instead of 30, and long
+   jobs need not wait for 9 pm (rule 17), until he next uses the keyboard
+   or mouse (input within a minute of the click does not count) or 24
+   hours pass. It needs the beacon, so he stays signed in. (Needs the
+   runner reinstalled; the reinstall keeps Sleep set to Never if he chose
+   it.)
 12. First real jobs: a 200-game calibration of release 1.0.0 (plumbing
    check), then a full known-answer calibration of 1.0.0 (expected about
    3466), then current `main`.

@@ -161,13 +161,17 @@ try {
     Set-Content -LiteralPath "$RunnerDir\Approve-Scripts.bat" -Value "@echo off`r`n`"$ps`" -NoProfile -ExecutionPolicy Bypass -File `"$RunnerDir\Approve-Scripts.ps1`"`r`npause"
     Set-Content -LiteralPath "$RunnerDir\Stop-Runner.bat" -Value "@echo off`r`necho stop> `"$RunnerDir\STOP`"`r`necho The runner will start no new job. (A job already running finishes.)`r`npause"
     Set-Content -LiteralPath "$RunnerDir\Start-Runner.bat" -Value "@echo off`r`nif exist `"$RunnerDir\STOP`" del `"$RunnerDir\STOP`"`r`necho The runner will take jobs again within 5 minutes.`r`npause"
+    # "Trinity Away" (owner, 12 November): jobs may start 5 minutes after the
+    # click instead of 30 (runner.ps1, Test-Away). The window closes itself,
+    # so no key press counts as coming back.
+    Set-Content -LiteralPath "$RunnerDir\Away.bat" -Value "@echo off`r`necho away> `"$RunnerDir\beacon\away.txt`"`r`necho Away: the runner may start a job in about 5 to 10 minutes.`r`necho Touching the keyboard or mouse from now on cancels this. This window closes by itself.`r`ntimeout /t 15 /nobreak >nul"
     Set-Content -LiteralPath "$RunnerDir\Runner-Status.bat" -Value "@echo off`r`n`"$ps`" -NoProfile -Command `"Get-Content '$RunnerDir\state\runner.log' -Tail 25`"`r`npause"
     $desktop = [Environment]::GetFolderPath("Desktop")
     if ("$env:USERDOMAIN\$env:USERNAME" -eq $Owner -and (Test-Path $desktop)) {
-        foreach ($b in @("Approve-Scripts", "Stop-Runner", "Start-Runner", "Runner-Status")) { Copy-Item "$RunnerDir\$b.bat" (Join-Path $desktop "Trinity $b.bat") -Force }
-        Write-Host "Shortcuts placed on the desktop: Trinity Approve-Scripts, Trinity Stop-Runner, Trinity Start-Runner, Trinity Runner-Status."
+        foreach ($b in @("Approve-Scripts", "Stop-Runner", "Start-Runner", "Runner-Status", "Away")) { Copy-Item "$RunnerDir\$b.bat" (Join-Path $desktop "Trinity $b.bat") -Force }
+        Write-Host "Shortcuts placed on the desktop: Trinity Approve-Scripts, Trinity Stop-Runner, Trinity Start-Runner, Trinity Runner-Status, Trinity Away."
     } else {
-        Write-Host "The four .bat shortcuts are in $RunnerDir."
+        Write-Host "The five .bat shortcuts are in $RunnerDir."
     }
 
     Step "GitHub key for trinity-results"
@@ -224,7 +228,11 @@ try {
     $password = $null
     # Sleep after an hour without use (the runner holds the PC awake while a
     # job runs), never hibernate, and allow wake timers.
-    & powercfg.exe /change standby-timeout-ac 60
+    # A PC Ayman set to never sleep stays so (12 November: timer wakes did not
+    # let jobs start, so he chose Sleep: Never); otherwise an hour.
+    $standbyNow = ((& powercfg.exe /query SCHEME_CURRENT SUB_SLEEP STANDBYIDLE) -match "Current AC Power Setting Index") -replace ".*:\s*", ""
+    if ("$standbyNow".Trim() -eq "0x00000000") { Write-Host "Sleep: Never (kept as you set it)." }
+    else { & powercfg.exe /change standby-timeout-ac 60 }
     & powercfg.exe /change hibernate-timeout-ac 0
     & powercfg.exe /setacvalueindex SCHEME_CURRENT SUB_SLEEP RTCWAKE 1
     & powercfg.exe /setactive SCHEME_CURRENT
