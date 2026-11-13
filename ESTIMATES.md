@@ -631,6 +631,9 @@ network, and the second week merged nothing):
   re-tune becomes part of the verdict). Its games wait for the s2 test
   (one network test at a time). If it passes, WDL 0.0 next; if it fails
   clearly, WDL 0.75.
+  TRAINED (check-in 13 November): 2026-11-11-03, 6:06-11:04 pm on 12
+  November (5.0 h, not disturbed), branch net-wdl25-20261112-1806, bench
+  863609; its broken-run check and head-to-head vs Control2 come next.
   (6) Resumable training BUILT (12 November; advisor note and Scout's
   12 November file), waiting for Ayman's approval (Decisions needed).
   Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
@@ -1055,6 +1058,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-11-10 6:24 am PST: read up to "03:59 DONE 2026-11-09-04". control-s2 training (2026-11-09-01) was DISTURBED twice (5:05 pm after 1 minute; 10:02 pm after 216 minutes, so 3.6 GPU hours lost) and did not finish; one more disturbance would drop it (runner limit 3). Keyboard or mouse use also stopped chunks at 11:49 pm and 2:12 am. Re-tune check: PC -0.84 +/- 2.98 after 14000, GitHub -1.16 +/- 4.46 after 6000, both undecided. GitHub, last 24 hours: chk-noreduce FAILED (-5.10); no-checkext -3.65 after 12000 (edge of a fail); tm-lowclock -0.35 after 15000. No approval pending. Nothing queued (training is never the check-in's; control-s2 stays in the queue and may start again tonight).
 - 2026-11-11 6:24 am PST: read up to "23:34 DONE 2026-11-09-01" (control-s2 trained on its third start, 4.9 h). GitHub, last 24 hours: no-checkext FAILED (-4.38, 15000); tm-nodefloor FAILED (-2.82); tm-lowclock -0.77 at the 18000 cap, undecided; long900 re-tune check -0.08 after 9000, undecided. No approval pending. Nothing queued: the PC's next work (900-s2 vs 600-s2, re-tune chunks) is the pace routine's. CCRL list check for 1.0.0 (advisor note 10 November) is due Saturday 14 November, when the lists update.
 - 2026-11-12 6:22 am PST: RUNNER SILENT. The last log line is still "23:34 DONE 2026-11-09-01" (10 November): nothing started in about 31 hours, including the whole night of 11-12 November, although 2026-11-11-01..03 (two s2 chunks, wdl25 training) were queued at 7:22 am on 11 November. No FAILED or REFUSED line, so the runner did not see or did not try them: likely the PC was off or asleep (wake timer), a Windows restart is pending (rule 9), or the STOP file exists (rule 6). Reported to Ayman. GitHub, last 24 hours: 900-s2 vs 600-s2 PASSED (+4.81, 18000); long900 merged 11 November (Ayman, untuned). No approval pending. Nothing queued.
+- 2026-11-13 7:45 am PST (the check-in fired late, at 7:44): read up to "23:04 DONE 2026-11-11-03" (wdl25 trained, 5.0 h). No GitHub results in the last 24 hours (the newest is #124, 12 November); no search test running, and the last "Search lane status" line is from 12 November, so the 24-hour pace alarm is due unless today's pace routine adds one. Reinstall and approval of a55d874 done by Ayman at 7:10-7:13 am (advisor note); the runner log will confirm it on the next STARTED line. Friday rule (runner rule 16; main, now with long900, not calibrated this week): queued 2026-11-13-01 main, then 2026-11-13-02 release-1.0.0, 10+0.1 the same night.
 
 ## Lessons so far
 
