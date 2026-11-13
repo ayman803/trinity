@@ -1,0 +1,11 @@
+SPRT test #126, finished 2026-11-13 16:08 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/43457518703 (run id 43457518703)
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: net-wdl25-main (bench 1057786) vs net-control2-main2 (bench 924692), tc 8+0.08, bounds [0, 5]
+Games: 400, Wins: 93, Losses: 85, Draws: 222, Points: 204.0 (51.00 %)
+Ptnml(0-2): [2, 40, 108, 48, 2]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 6.95 +/- 17.36, nElo: 13.65 +/- 34.05
+LLR: 0.18 (-2.94, 2.94) [0.00, 5.00]
