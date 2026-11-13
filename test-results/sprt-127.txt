@@ -1,0 +1,12 @@
+SPRT test #127, finished 2026-11-13 20:08 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/43459779338 (run id 43459779338)
+Continues run id 43457513329; the totals below include it.
+SPRT RESULT: PASSED - 'net-wdl25x12-main' is stronger than 'net-control2-main2'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: net-wdl25x12-main (bench 959021) vs net-control2-main2 (bench 924692), tc 8+0.08, bounds [0, 5]
+Games: 9400, Wins: 2382, Losses: 2141, Draws: 4877, Points: 4820.5 (51.28 %)
+Ptnml(0-2): [44, 1052, 2291, 1245, 68]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 8.91 +/- 3.79, nElo: 16.52 +/- 7.02
+LLR: 5.46 (-2.94, 2.94) [0.00, 5.00]
