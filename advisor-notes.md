@@ -8,6 +8,21 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-13 · Reinstall and approval done; wake test inconclusive (advisor)
+Ayman reinstalled the runner at 7:10 am (Away button, Sleep: Never kept)
+and approved a55d874 (3 files, 3 Remove-Item lines) at 7:13. Installer
+wake test: he put the PC to sleep at about 7:14; Runner-Status shows
+"woke from sleep (asleep since about 07:21)" at 07:38:16, the wake being
+his own. The one-shot 7:16 alarm fell before the PC was actually asleep,
+so the wake timer is still unverified. Not urgent while Sleep is Never.
+When the runner is next changed: make the installer's wake test arm an
+alarm for "now + 6 minutes" only after it has seen the PC enter sleep
+(or tell Ayman to put it to sleep first and arm the alarm from the
+runner's next tick), so the test is conclusive. Also: the 6:20 check-in
+posted nothing this morning (no commit by 7:40); if its session is
+blocked or its wake failed, say so in ESTIMATES.md and in the evening
+update.
+
 ### 2026-11-12 · Runner silent 10-12 November: cause found (advisor, from Runner-Status on the PC)
 The runner was alive throughout. Runner-Status log: after each wake from
 sleep with nobody signed in, "Idle time unknown (the idle beacon has not
