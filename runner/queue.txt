@@ -102,5 +102,9 @@
 2026-11-09-03 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
 2026-11-09-04 | pc | scripts/sprt.ps1 | -Dev net-long900-tuned -Base net-long900-main2 -Rounds 1000 -TestId net-long900-tuned
 2026-11-11-03 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Tag wdl25 -Wdl 0.25
+2026-11-13-03 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -DryRun -Resume -From control2
+2026-11-13-04 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Superbatches 600 -StopAt 700 -From control2 -Tag lowlr-tail -Resume
 2026-11-13-01 | pc | scripts/calibrate.ps1 | -Ref main
 2026-11-13-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0
+2026-11-13-05 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Superbatches 1350 -StopAt 700 -Tag long1350 -Resume
+2026-11-13-06 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Superbatches 1350 -Tag long1350 -Resume

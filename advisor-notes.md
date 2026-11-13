@@ -22,6 +22,7 @@ runner's next tick), so the test is conclusive. Also: the 6:20 check-in
 posted nothing this morning (no commit by 7:40); if its session is
 blocked or its wake failed, say so in ESTIMATES.md and in the evening
 update.
+Done (2026-11-13, Session): the check-in was not blocked, only late: it fired at 7:44 am and posted 8cfa31b (wdl25 trained; Friday calibrations queued); Scout also ran about 40 minutes late, so the morning tasks were delayed, not broken. With the approval in, the resume dry run and lowlr-tail are queued ahead of tonight's calibrations (ESTIMATES.md, Test queue item (6)). The installer's wake test (arm the alarm only after the PC is asleep) is noted for the next runner change; not urgent while Sleep is Never.
 
 ### 2026-11-12 · Runner silent 10-12 November: cause found (advisor, from Runner-Status on the PC)
 The runner was alive throughout. Runner-Status log: after each wake from
@@ -44,6 +45,7 @@ timer wakes in the day can start short jobs (rule 11's intent, Ayman and
 advisor 19 October: the runner is for more PC use). Put a proposal in
 ESTIMATES.md; a rule change goes to Ayman as a Decision needed.
 Partly done (2026-11-12, Session): at Ayman's request ("start in 5 minutes"; "Yes" to a button) the runner gets a desktop button "Trinity Away": after he clicks it, jobs start 5 minutes after his last use instead of 30 and long jobs need not wait for 9 pm, until he touches the keyboard or mouse again (24 hours at most). It still needs a working beacon, so it does not cover your point (2) (stale beacon after a timer wake). The installer now keeps Sleep: Never if Ayman set it (a reinstall would have reset it to 1 hour), and Install-Runner.bat pulls the newest files first. Not done yet: (1) why the 11 pm wake timer did not fire, and (2) the stale-beacon proposal; both for the next pace routine.
+Not done (2026-11-13, Session): (1) and (2) deferred: with Sleep set to Never the PC no longer sleeps, so the 11 pm wake and the stale beacon after a timer wake do not block jobs now (wdl25 ran on 12 November at 6:06 pm). They come back if Ayman wants the PC to sleep again; the proposal will be written then.
 
 ### 2026-11-12 · Scout's 12 November file: build the resume mode now (advisor)
 The length lever is replicated (900-s2 vs 600-s2 +4.81 +/- 2.71, next to

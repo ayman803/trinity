@@ -138,6 +138,11 @@ network, and the second week merged nothing):
   file has no search candidate (it is about resumable training); nothing
   new from forensics or the speed profile. The day went to the network
   lane (resumable training built, item (6) below).
+  2026-11-13: nothing running. No idea worth a test: Scout's 13 November
+  file proposes none (it looked at the 50-move eval drift and set it
+  aside: removing it would add 50-move draws in won endgames); nothing
+  new from forensics or the speed profile. GitHub time goes to wdl25's
+  two screens (network lane).
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes
@@ -691,6 +696,18 @@ network, and the second week merged nothing):
   lowlr-tail passes clearly before long1350 starts, reconsider 1350
   (Scout: then the cheap lever is the tail). equal-passes also needs
   kb16.ps1 to take the more-data files (it uses big-1..4 only): not built.
+  APPROVED 13 November 7:13 am (Ayman, commit a55d874, which contains
+  dc96ea7; advisor note; the runner log confirms it on the next STARTED
+  line). Queued by the pace routine 13 November: 2026-11-13-03 (dry run)
+  and -04 (lowlr-tail) BEFORE Friday's calibrations 2026-11-13-01/02, so
+  tonight from 9 pm all four fit: the two kb16 jobs have no history, so
+  each holds a 9-hour slot and must start by about 9:55 pm (dry run about
+  10 minutes, lowlr-tail about 50), then the calibrations (about 2.6
+  hours each by their history) end by about 3:30 am. If Ayman uses the PC
+  past about 9:25 pm, the two kb16 jobs no longer fit and the
+  calibrations run alone, as the Friday rule wants. long1350 parts
+  2026-11-13-05/-06 come after: Saturday and Sunday nights. A lowlr-tail
+  result is ignored if the dry run fails.
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
@@ -727,7 +744,8 @@ network, and the second week merged nothing):
   both started the week before); network lane: long900's re-tune check
   stopped undecided (-0.5 after 23000), 900-s2 vs 600-s2 started; merged
   0. Updated 12 November: 900-s2 vs 600-s2 PASSED (+4.81); merged 1
-  (long900, network, by Ayman's decision of 11 November).
+  (long900, network, by Ayman's decision of 11 November). Updated 13
+  November: wdl25 trained (network lane), its two screens started.
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 
@@ -1390,6 +1408,9 @@ set its margin from the p95 there (a candidate for 1.2).
   press Enter; (4) it says "Approved. The runner uses this version from
   its next check". Send a screenshot of the window. Yes = approve; No =
   no resumable runs (wdl25 still runs on the current approval).
+  DONE 13 November, 7:13 am Pacific (advisor note): Ayman approved
+  a55d874 (it includes dc96ea7); the runner log confirms it on the next
+  STARTED line.
 
 - 2026-11-11 (pace routine): merge long900 now, without the re-tune?
   The re-tuned version was checked against long900 itself: -0.5 +/- 2.3
