@@ -1,0 +1,11 @@
+SPRT test #128, finished 2026-11-14 19:14 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/43609016883 (run id 43609016883)
+SPRT RESULT: PASSED - 'net-wdl25x12-main' is stronger than 'base-1114'
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: net-wdl25x12-main (bench 959021) vs base-1114 (bench 991226), tc 8+0.08, bounds [0, 5]
+Games: 9000, Wins: 2284, Losses: 2086, Draws: 4630, Points: 4599.0 (51.10 %)
+Ptnml(0-2): [48, 1026, 2169, 1194, 63]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 7.64 +/- 3.90, nElo: 14.07 +/- 7.18
+LLR: 4.31 (-2.94, 2.94) [0.00, 5.00]
