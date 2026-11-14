@@ -1010,6 +1010,23 @@ small: it ends with KB16-Seed2 unless Seed2 passes against main.
 
 ## Calibrations
 
+CCRL ANCHOR (weekly check, 14 November; ccrl/2026-11-14.md): the CCRL
+40/15 list of 13 November rates "Trinity 1.0.0 64-bit" 3527 +/- 42 after
+100 games (21 wins, 9 losses, 70 draws, 56.0% against an average
+opponent 40 lower; opponents from Viridithas 20.0.0, 3611, to Askaig,
+3396). It is in the complete list but not yet ranked; at 3527 it would
+sit at about rank 73-74 (the goal, top 100, is about 3455). Our own
+estimate for 1.0.0: 3466 by day (12 October), 3478 on the runner (10+0.1).
+CCRL is 49 to 61 higher: more than the 20 the advisor set as the mark,
+so said plainly; but with 100 games CCRL's own error is +/- 42, so the
+difference is about 1.2 of its sigmas and may shrink as games are
+added. Kept as the provisional anchor (runner rule 13): main's latest
+same-night gap over 1.0.0 (long900, +102 +/- 9, 4 November) would put
+main near 3630 on the CCRL scale, but that conversion is only as good as
+the 100-game anchor. The forecast is re-scored when the rating settles
+(the double gauntlet is still adding games). Next check: Saturday 21
+November.
+
 | Date | main | akimbo 3474 | Simbelmyne 3193 | Inanis 3046 | Estimate |
 |---|---|---|---|---|---|
 | 2026-10-02 | net #3 (bench 920942) | 10.95% | 61.95% | 79.00% | 3238 |
@@ -1422,6 +1439,15 @@ set its margin from the p95 there (a candidate for 1.2).
 ## Decisions needed (dated; read by the phone summary)
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
+
+- 2026-11-14 (pace routine; for later, not yet a question): CCRL's first
+  rating for 1.0.0 is 3527 +/- 42 after 100 games, above the goal (top
+  100, about 3455; it would sit near rank 73). If the rating holds when
+  CCRL's testing of 1.0.0 is complete, the goal is met, and two of
+  Ayman's own rules then apply: rule 8 (once the goal is met, park
+  Trinity rather than force big bets) and rule 6 (whether to offer a
+  newer version to the testers is his decision). Nothing to decide until
+  the rating settles; the weekly check follows it.
 
 - 2026-11-14 (pace routine): the PC runner has started nothing since the
   reinstall of 13 November 7:10 am (its last log line is wdl25's DONE at
