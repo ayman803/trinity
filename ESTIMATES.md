@@ -669,6 +669,14 @@ network, and the second week merged nothing):
   20% to pass). Skeptic: x1.2 changes two things (WDL 0.25 and the eval
   scale); the pass says the pair helps, not which part. Next by the plan:
   test vs main, calibration, v2 check, SPSA re-tune, Ayman's OK.
+  Test vs main (pace routine 14 November, written before any game):
+  net-wdl25x12-main (bench 959021) vs base-1114 (= main, long900, bench
+  991226), 8+0.08, [0, 5], 9000 games. Expected from the two results
+  against Control2 (wdl25 x1.2 +8.9, long900 +5.65): about +3 +/- 5, so
+  self-play -2 to +8, about 25% to pass. Skeptic: self-play results are
+  not strictly additive, and x1.2 is a guessed scale. Even a pass is at
+  600 superbatches: the merge candidate Scout proposes is wdl25-900
+  (long900's recipe with WDL 0.25), queued for the PC.
   (6) Resumable training BUILT (12 November; advisor note and Scout's
   12 November file), waiting for Ayman's approval (Decisions needed).
   Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
