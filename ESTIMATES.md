@@ -663,6 +663,12 @@ network, and the second week merged nothing):
   rule fixed before the games, x1.2 goes into the head-to-head
   (continued from #125, 9000 more games, [0, 5], started 8:10 am). The
   10-point gap between the screens is well inside their noise.
+  Head-to-head PASSED (check-in 14 November): x1.2 +8.91 +/- 3.79 after
+  9400 games vs Control2 (SPRT #125 + #127, LLR 5.46, [0, 5]), 0 time
+  losses, illegal moves or crashes. Above the -5 to +6 prediction (about
+  20% to pass). Skeptic: x1.2 changes two things (WDL 0.25 and the eval
+  scale); the pass says the pair helps, not which part. Next by the plan:
+  test vs main, calibration, v2 check, SPSA re-tune, Ayman's OK.
   (6) Resumable training BUILT (12 November; advisor note and Scout's
   12 November file), waiting for Ayman's approval (Decisions needed).
   Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
@@ -1101,6 +1107,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-11-11 6:24 am PST: read up to "23:34 DONE 2026-11-09-01" (control-s2 trained on its third start, 4.9 h). GitHub, last 24 hours: no-checkext FAILED (-4.38, 15000); tm-nodefloor FAILED (-2.82); tm-lowclock -0.77 at the 18000 cap, undecided; long900 re-tune check -0.08 after 9000, undecided. No approval pending. Nothing queued: the PC's next work (900-s2 vs 600-s2, re-tune chunks) is the pace routine's. CCRL list check for 1.0.0 (advisor note 10 November) is due Saturday 14 November, when the lists update.
 - 2026-11-12 6:22 am PST: RUNNER SILENT. The last log line is still "23:34 DONE 2026-11-09-01" (10 November): nothing started in about 31 hours, including the whole night of 11-12 November, although 2026-11-11-01..03 (two s2 chunks, wdl25 training) were queued at 7:22 am on 11 November. No FAILED or REFUSED line, so the runner did not see or did not try them: likely the PC was off or asleep (wake timer), a Windows restart is pending (rule 9), or the STOP file exists (rule 6). Reported to Ayman. GitHub, last 24 hours: 900-s2 vs 600-s2 PASSED (+4.81, 18000); long900 merged 11 November (Ayman, untuned). No approval pending. Nothing queued.
 - 2026-11-13 7:45 am PST (the check-in fired late, at 7:44): read up to "23:04 DONE 2026-11-11-03" (wdl25 trained, 5.0 h). No GitHub results in the last 24 hours (the newest is #124, 12 November); no search test running, and the last "Search lane status" line is from 12 November, so the 24-hour pace alarm is due unless today's pace routine adds one. Reinstall and approval of a55d874 done by Ayman at 7:10-7:13 am (advisor note); the runner log will confirm it on the next STARTED line. Friday rule (runner rule 16; main, now with long900, not calibrated this week): queued 2026-11-13-01 main, then 2026-11-13-02 release-1.0.0, 10+0.1 the same night.
+- 2026-11-14 6:21 am PST: RUNNER SILENT AGAIN. The last log line is still "23:04 DONE 2026-11-11-03" (12 November): nothing started, failed or was refused in about 31 hours, including the whole Friday night, although 2026-11-13-03 (resume dry run), -04 (lowlr-tail), -01/-02 (Friday calibration) and -05/-06 (long1350) were queued. The silence began after Ayman's reinstall and approval of a55d874 on 13 November at 7:10-7:13 am, so the reinstalled runner may not be running at all (its scheduled task, the trinity-runner account, or the PC itself). Reported to Ayman. GitHub, last 24 hours: wdl25 x1.2 PASSED vs Control2 (+8.91, 9400). CCRL weekly check of 1.0.0: the CCRL site is refused from this session (as on 11 November); it is the pace routine's, from the "trinity" environment. Nothing queued.
 
 ## Lessons so far
 
