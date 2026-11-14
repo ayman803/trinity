@@ -143,6 +143,10 @@ network, and the second week merged nothing):
   aside: removing it would add 50-move draws in won endgames); nothing
   new from forensics or the speed profile. GitHub time goes to wdl25's
   two screens (network lane).
+  2026-11-14: nothing running. No idea worth a test: Scout's 14 November
+  file is about networks only (wdl25-900, an eval-scale setting); nothing
+  new from forensics or the speed profile. GitHub time goes to wdl25 x1.2
+  vs main (network lane).
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes
@@ -677,6 +681,23 @@ network, and the second week merged nothing):
   not strictly additive, and x1.2 is a guessed scale. Even a pass is at
   600 superbatches: the merge candidate Scout proposes is wdl25-900
   (long900's recipe with WDL 0.25), queued for the PC.
+  (7) wdl25-900 (Scout, Fable, 14 November; scout/2026-11-14.md): the
+  merge candidate, one change against main's network: long900's recipe
+  (seed 20261019, same files, 900 superbatches) with WDL 0.25. Queued 14
+  November as 2026-11-14-01 (tools/net/kb16.ps1 -KingBuckets 8 -Seed
+  20261019 -Superbatches 900 -Tag wdl25-900 -Wdl 0.25 -Resume; -Resume
+  so a stopped run continues instead of starting over), right after the
+  10-minute resume dry run and BEFORE lowlr-tail and the calibrations: it
+  needs the whole night (about 7.5 hours; no history, so it must start by
+  about 9:55 pm). Prediction (Scout, written before training): self-play
+  vs main +3 to +12, about 40% to pass [0, 5]; kept against rated
+  engines about 60%. Its test will use the x1.2 scale unless a re-tune
+  has measured one (Scout's item 1: an EVAL_SCALE setting for SPSA; it
+  changes engine code, so it goes on the candidate's branch for its
+  re-tune, not on main, by the guard on main). The long1350 parts
+  (2026-11-13-05/-06, WDL 0.5) were taken out of the queue (never
+  started): if WDL 0.25 holds at 900, 1350 should use the new recipe
+  (Scout); re-queued after wdl25-900's test.
   (6) Resumable training BUILT (12 November; advisor note and Scout's
   12 November file), waiting for Ayman's approval (Decisions needed).
   Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
@@ -766,6 +787,8 @@ network, and the second week merged nothing):
   0. Updated 12 November: 900-s2 vs 600-s2 PASSED (+4.81); merged 1
   (long900, network, by Ayman's decision of 11 November). Updated 13
   November: wdl25 trained (network lane), its two screens started.
+  Updated 14 November: wdl25 x1.2 PASSED vs Control2 (+8.91); its test
+  vs main started.
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 
@@ -1399,6 +1422,13 @@ set its margin from the p95 there (a candidate for 1.2).
 ## Decisions needed (dated; read by the phone summary)
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
+
+- 2026-11-14 (pace routine): the PC runner has started nothing since the
+  reinstall of 13 November 7:10 am (its last log line is wdl25's DONE at
+  11:04 pm on 12 November), so tonight's jobs may not run either. Needed
+  from Ayman at the PC: double-click "Trinity Runner-Status" on the
+  desktop and send a screenshot of the window (its last 25 lines say why
+  it waits). Not a yes/no; listed here so the phone summary carries it.
 
 - 2026-11-12, 5:45 pm (Ayman asked, "start in 5 minutes"; answered "Yes"
   to a button): "Trinity Away" built (runner.ps1 Test-Away; installer
