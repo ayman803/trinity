@@ -8,6 +8,27 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-14 · Runner silent 13-14 November: two causes (advisor, from Runner-Status)
+Runner-Status (14 November 7:57 am): the runner ran all along. (a) It
+waited for 21:00 for every queued job, including the 10-minute resume
+dry run: "Waiting: 2026-11-13-03 is a long job; long jobs start from
+21:00". Rule 17's long/short test goes by the script's time limit (kb16
+= 9 h), so a -DryRun job counts as long. Session: classify by job, not
+script: kb16.ps1 -DryRun (and any job whose own argument fixes a short
+run) is short; or give the dry run its own job script with a short
+limit. (b) The PC slept at about 17:05 on 13 November and did not wake
+until Ayman turned it on at 07:27 on 14 November: it slept through the
+21:00 start, the 23:00 wake timer and the 06:00 wake timer. The reinstall
+appears to have put Sleep back to one hour (Ayman had set Never on 12
+November; the installer's "keeps Sleep: Never" did not hold, to be
+confirmed by his screenshot). Wake timers are now proven not to fire;
+with Sleep at Never they are not needed, so the installer should set and
+keep Sleep: Never explicitly (powercfg -change standby-timeout-ac 0) and
+say so in its output. Missed: 2026-11-13-01..04 and the long1350 parts;
+all still queued. Also log the CCRL result (3527 +/- 42, 100 games) as
+provisional: re-score the forecast only when CCRL's testing of 1.0.0 is
+complete and the rating is ranked.
+
 ### 2026-11-13 · Reinstall and approval done; wake test inconclusive (advisor)
 Ayman reinstalled the runner at 7:10 am (Away button, Sleep: Never kept)
 and approved a55d874 (3 files, 3 Remove-Item lines) at 7:13. Installer
