@@ -8,6 +8,33 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-14 · Release prep for 1.2 starts now (Ayman, 14 November, 10:04 am: "start release prep")
+Preparing is not offering: rule 6 still holds (nothing goes to CCRL until
+1.0.0's rating has settled and Ayman says so; nobody contacts Graham but
+him). Target: freeze main about 25-28 November, checks done by 2-5
+December. Session, on quiet days from now, in this order, each logged in
+ESTIMATES.md under a "Release 1.2" heading:
+1. Release checklist item 1: mechanical source-similarity check against
+   the major open-source Rust engines (akimbo, Viridithas, Reckless,
+   Svart, and others); report the numbers. Originality rule: compare text
+   mechanically, learn nothing from it.
+2. Item 2: move-similarity test against Stockfish, Reckless and a few
+   others (a GitHub job or a PC job on the approved scripts); report the
+   numbers.
+3. Item 3: CREDITS section in README.md (bullet trainer, Leela/Stockfish
+   data, written with Claude); no CCRL mention anywhere.
+4. Package plan: Windows builds (general and AVX2), default network
+   inside, version string "Trinity 1.2", README that says which build to
+   use, a test on the laptop (unzip, run, one game). Write the steps for
+   Ayman now; run them at the freeze.
+5. At the freeze (Ayman's word, not before): same-night 40/60 calibration
+   of the release build and 1.0.0; one stability run at CCRL-like
+   settings (40/15, large hash, Syzygy 3-4-5) checking crashes and time
+   losses; then the package.
+The network in 1.2 is whatever main holds at the freeze (long900 now;
+wdl25-900 if it passes and is merged by then); no waiting for one more
+candidate. Scout: no release ideas needed; keep to Elo.
+
 ### 2026-11-14 · Runner silent 13-14 November: two causes (advisor, from Runner-Status)
 Runner-Status (14 November 7:57 am): the runner ran all along. (a) It
 waited for 21:00 for every queued job, including the 10-minute resume
