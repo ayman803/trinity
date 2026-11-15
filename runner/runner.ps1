@@ -247,10 +247,10 @@ function Get-IdleMinutes {
 
 # "Trinity Away" (owner, 12 November): Ayman clicks the desktop button
 # when he leaves (it touches $RunnerDir\beacon\away.txt). Until he next uses
-# the keyboard or mouse (input in the first minute after the click, such as
-# the click itself, does not count), or for at most 24 hours, real jobs
-# start after 5 minutes without use instead of 30, and long jobs need not
-# wait for the evening. Only with a working beacon: if it is silent, the
+# the keyboard or mouse (input in the first 10 minutes after the click, such
+# as the click itself or finishing up before leaving, does not count), or
+# for at most 24 hours, real jobs start after 5 minutes without use instead
+# of 30, and long jobs need not wait for the evening. Only with a working beacon: if it is silent, the
 # 11 pm rule below applies as before.
 $AwayFile = Join-Path $RunnerDir "beacon\away.txt"
 function Test-Away {
@@ -261,7 +261,7 @@ function Test-Away {
         if (($now - $click).TotalHours -gt 24) { return $false }
         $idle = Get-IdleMinutes
         if ($null -eq $idle) { return $false }
-        return ($now.AddMinutes(-$idle) -le $click.AddMinutes(1))
+        return ($now.AddMinutes(-$idle) -le $click.AddMinutes(10))
     } catch { return $false }
 }
 
@@ -432,6 +432,9 @@ function Get-ExpectedMinutes($Job, [double]$LimitHours) {
             }
         }
     }
+    # A dry run is short whatever its script's limit (advisor, 14 November:
+    # the 10-minute resume dry run waited for 9 pm as a "long" job).
+    if ($done.Count -eq 0 -and $Job.Args -contains "-DryRun") { return 30 }
     if ($done.Count -eq 0) { return [Math]::Round($LimitHours * 60) }
     $recent = @($done | Select-Object -Last 3)
     return [Math]::Round(($recent | Measure-Object -Maximum).Maximum * 1.1 + 5)

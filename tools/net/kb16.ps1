@@ -179,8 +179,9 @@ try {
             $worst = [Math]::Max($worst, [Math]::Abs($b - $a) / $a)
             $lines += ("superbatch {0}: loss A {1:F7}, A2 {2:F7}, B (resumed) {3:F7}" -f $sb, $a, $a2, $b)
         }
-        $wAA2 = @(Get-NativeOutput $trainer @("compare", (Join-Path $ckptDir "dryA-3"), (Join-Path $ckptDir "dryA2-3")) | Where-Object { $_ -like "WEIGHTS:*" })
-        $wAB = @(Get-NativeOutput $trainer @("compare", (Join-Path $ckptDir "dryA-3"), (Join-Path $ckptDir "dryB-3")) | Where-Object { $_ -like "WEIGHTS:*" })
+        # Get-NativeOutput returns one string: split it before picking the summary line.
+        $wAA2 = @((Get-NativeOutput $trainer @("compare", (Join-Path $ckptDir "dryA-3"), (Join-Path $ckptDir "dryA2-3"))) -split "`n" | Where-Object { $_ -like "WEIGHTS:*" })
+        $wAB = @((Get-NativeOutput $trainer @("compare", (Join-Path $ckptDir "dryA-3"), (Join-Path $ckptDir "dryB-3"))) -split "`n" | Where-Object { $_ -like "WEIGHTS:*" })
         $lines += "A vs A2 $($wAA2 -join ' ')"
         $lines += "A vs B  $($wAB -join ' ')"
         $tail = Get-SuperbatchLoss (Join-Path $ckptDir "dryB-4") 4

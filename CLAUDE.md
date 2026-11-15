@@ -136,7 +136,10 @@ before any code (with the advisor's and Scout's additions):
    pending (Ayman restarts when convenient). (Owner and advisor, 17
    October:) otherwise the PC may sleep after an hour unused; a wake timer
    wakes it at 11 pm and 6 am to check the queue, so a job queued in the
-   day may wait until 11 pm.
+   day may wait until 11 pm. (Owner 12 November, advisor 14 November:)
+   Sleep is now Never; the PC slept through the 9 pm start and both wake
+   timers on 13 November, so the timers are only a fallback, and the
+   installer sets Sleep: Never itself (from the next reinstall).
 10. (Advisor, 17 October) Approve-Scripts itself lists new risky lines
    (deletes, moves, downloads, git push, Windows settings), so Ayman does
    not rely only on the Session's summary. At most one approval a day (a
@@ -157,8 +160,8 @@ before any code (with the advisor's and Scout's additions):
    (Owner, 12 November) Desktop button "Trinity Away": after Ayman clicks
    it, real jobs start after 5 minutes without use instead of 30, and long
    jobs need not wait for 9 pm (rule 17), until he next uses the keyboard
-   or mouse (input within a minute of the click does not count) or 24
-   hours pass. It needs the beacon, so he stays signed in. (Needs the
+   or mouse (input within 10 minutes of the click does not count, from the
+   next reinstall; 1 minute before) or 24 hours pass. It needs the beacon, so he stays signed in. (Needs the
    runner reinstalled; the reinstall keeps Sleep set to Never if he chose
    it.)
 12. First real jobs: a 200-game calibration of release 1.0.0 (plumbing
@@ -211,7 +214,9 @@ before any code (with the advisor's and Scout's additions):
    Daytime idle time goes to short jobs (test chunks, about an hour) and
    resumable tuning. Friday's 1.0.0 calibration started three times in
    the day, was stopped each time and dropped. (Needs the runner
-   reinstalled; runner.ps1 is not under the approval fingerprint.)
+   reinstalled; runner.ps1 is not under the approval fingerprint.) A dry
+   run (-DryRun) with no history counts as 30 minutes, not its script's
+   limit (advisor, 14 November; from the next reinstall).
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
 

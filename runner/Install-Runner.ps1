@@ -12,8 +12,8 @@
 #  5. lets it log on as a batch job, registers the runner to start at boot,
 #     starts the idle beacon in Ayman's account (beacon.ps1: the time of his
 #     last keyboard or mouse use, for the runner to read),
-#     lets the PC sleep after an hour unused (never during a job), wakes it
-#     at 11 pm and 6 am to check the queue, and stops automatic update restarts.
+#     sets Sleep to Never (12 and 14 November; wake timers at 11 pm and 6
+#     am stay as a fallback), and stops automatic update restarts.
 # Rerunning it is safe: it updates the installed copy and keeps the key.
 
 param(
@@ -226,25 +226,25 @@ try {
     Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings `
         -User $Account -Password $password -RunLevel Limited -Force | Out-Null
     $password = $null
-    # Sleep after an hour without use (the runner holds the PC awake while a
-    # job runs), never hibernate, and allow wake timers.
-    # A PC Ayman set to never sleep stays so (12 November: timer wakes did not
-    # let jobs start, so he chose Sleep: Never); otherwise an hour.
+    # Never sleep (Ayman's choice, 12 November; advisor, 14 November): the PC
+    # slept through the 9 pm start and both wake timers on 13 November, so
+    # the timers are not relied on any more. Never hibernate either; wake
+    # timers stay allowed (harmless). The screen may still turn off.
+    & powercfg.exe /change standby-timeout-ac 0
     $standbyNow = ((& powercfg.exe /query SCHEME_CURRENT SUB_SLEEP STANDBYIDLE) -match "Current AC Power Setting Index") -replace ".*:\s*", ""
-    if ("$standbyNow".Trim() -eq "0x00000000") { Write-Host "Sleep: Never (kept as you set it)." }
-    else { & powercfg.exe /change standby-timeout-ac 60 }
+    if ("$standbyNow".Trim() -eq "0x00000000") { Write-Host "Sleep: Never (set by the installer)." -ForegroundColor Green }
+    else { Write-Host "Sleep could not be set to Never (it reads $standbyNow). Set it by hand: Settings, System, Power & sleep, Sleep: Never." -ForegroundColor Yellow }
     & powercfg.exe /change hibernate-timeout-ac 0
     & powercfg.exe /setacvalueindex SCHEME_CURRENT SUB_SLEEP RTCWAKE 1
     & powercfg.exe /setactive SCHEME_CURRENT
-    # Wake the PC at 11 pm and 6 am (and once, 6 minutes from now, as a test)
-    # and hold it awake 3 minutes so the runner can check the queue. Runs as
+    # Wake the PC at 11 pm and 6 am and hold it awake 3 minutes so the runner
+    # can check the queue (a fallback only: Sleep is Never). Runs as
     # SYSTEM, with the command written here: it reads no file the runner can change.
     $hold = 'Add-Type -Namespace W -Name P -MemberDefinition ''[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint f);''; [W.P]::SetThreadExecutionState([uint32]2147483649) | Out-Null; Start-Sleep -Seconds 180'
     $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($hold))
     $wakeAction = New-ScheduledTaskAction -Execute "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe" `
         -Argument "-NoProfile -NonInteractive -WindowStyle Hidden -EncodedCommand $encoded"
-    $testWake = (Get-Date).AddMinutes(6)
-    $wakeTriggers = @((New-ScheduledTaskTrigger -Daily -At "11:00 PM"), (New-ScheduledTaskTrigger -Daily -At "6:00 AM"), (New-ScheduledTaskTrigger -Once -At $testWake))
+    $wakeTriggers = @((New-ScheduledTaskTrigger -Daily -At "11:00 PM"), (New-ScheduledTaskTrigger -Daily -At "6:00 AM"))
     $wakeSettings = New-ScheduledTaskSettingsSet -WakeToRun -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
     Register-ScheduledTask -TaskName "Trinity Runner Wake" -Action $wakeAction -Trigger $wakeTriggers -Settings $wakeSettings `
         -User "SYSTEM" -RunLevel Highest -Force | Out-Null
@@ -288,9 +288,6 @@ try {
     Write-Host "INSTALLED on '$machine'. The runner is running as $Account." -ForegroundColor Green
     Write-Host "It runs nothing until you approve the scripts: double-click 'Trinity Approve-Scripts' on the desktop." -ForegroundColor Green
     Write-Host "Keep your own account signed in (locking the screen is fine): Windows only holds back update restarts while someone is signed in." -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host ("WAKE TEST: put the PC to sleep now (Start, Power, Sleep). It should wake by itself at about {0}." -f $testWake.ToString("h:mm tt")) -ForegroundColor Cyan
-    Write-Host "Then open 'Trinity Runner-Status': the last line should say 'The PC woke from sleep'." -ForegroundColor Cyan
 } catch {
     Write-Host "PROBLEM: $($_.Exception.Message)" -ForegroundColor Red
     Write-Host "Send Claude a screenshot of this window." -ForegroundColor Yellow
