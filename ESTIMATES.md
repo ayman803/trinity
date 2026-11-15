@@ -681,6 +681,11 @@ network, and the second week merged nothing):
   not strictly additive, and x1.2 is a guessed scale. Even a pass is at
   600 superbatches: the merge candidate Scout proposes is wdl25-900
   (long900's recipe with WDL 0.25), queued for the PC.
+  PASSED (check-in 15 November): +7.64 +/- 3.90 after 9000 games (SPRT
+  #128, LLR 4.31, [0, 5]), 0 time losses; at the top of the -2 to +8
+  prediction. Not merged: the 600-superbatch version is the test case;
+  wdl25-900 (not yet trained: it did not fit before 6:55 last night) is
+  the merge candidate.
   (7) wdl25-900 (Scout, Fable, 14 November; scout/2026-11-14.md): the
   merge candidate, one change against main's network: long900's recipe
   (seed 20261019, same files, 900 superbatches) with WDL 0.25. Queued 14
@@ -733,7 +738,12 @@ network, and the second week merged nothing):
   training: lowlr-tail vs Control2 -2 to +5, about 25% to pass [0, 5]
   (Scout, 6 November); long1350 vs main (long900, same seed) self-play +2
   to +5 (Scout, 12 November), Session 0 to +6, about 35% to pass [0, 5]
-  (another 1.5x in length, with diminishing returns likely). If
+  (another 1.5x in length, with diminishing returns likely). RESULTS (check-in 15 November): resume dry
+  run (2026-11-13-03, 9:04 pm, 6 min) PASSED: a resumed run matches an
+  uninterrupted one (largest loss difference 0.008%, run-to-run 0.009%,
+  allowed 0.2%). lowlr-tail TRAINED (2026-11-13-04, 9:11-10:06 pm, 54
+  min), network in trinity-results nets/net-lowlr-tail-20261114-2111;
+  its games are next. If
   lowlr-tail passes clearly before long1350 starts, reconsider 1350
   (Scout: then the cheap lever is the tail). equal-passes also needs
   kb16.ps1 to take the more-data files (it uses big-1..4 only): not built.
@@ -1156,6 +1166,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-11-12 6:22 am PST: RUNNER SILENT. The last log line is still "23:34 DONE 2026-11-09-01" (10 November): nothing started in about 31 hours, including the whole night of 11-12 November, although 2026-11-11-01..03 (two s2 chunks, wdl25 training) were queued at 7:22 am on 11 November. No FAILED or REFUSED line, so the runner did not see or did not try them: likely the PC was off or asleep (wake timer), a Windows restart is pending (rule 9), or the STOP file exists (rule 6). Reported to Ayman. GitHub, last 24 hours: 900-s2 vs 600-s2 PASSED (+4.81, 18000); long900 merged 11 November (Ayman, untuned). No approval pending. Nothing queued.
 - 2026-11-13 7:45 am PST (the check-in fired late, at 7:44): read up to "23:04 DONE 2026-11-11-03" (wdl25 trained, 5.0 h). No GitHub results in the last 24 hours (the newest is #124, 12 November); no search test running, and the last "Search lane status" line is from 12 November, so the 24-hour pace alarm is due unless today's pace routine adds one. Reinstall and approval of a55d874 done by Ayman at 7:10-7:13 am (advisor note); the runner log will confirm it on the next STARTED line. Friday rule (runner rule 16; main, now with long900, not calibrated this week): queued 2026-11-13-01 main, then 2026-11-13-02 release-1.0.0, 10+0.1 the same night.
 - 2026-11-14 6:21 am PST: RUNNER SILENT AGAIN. The last log line is still "23:04 DONE 2026-11-11-03" (12 November): nothing started, failed or was refused in about 31 hours, including the whole Friday night, although 2026-11-13-03 (resume dry run), -04 (lowlr-tail), -01/-02 (Friday calibration) and -05/-06 (long1350) were queued. The silence began after Ayman's reinstall and approval of a55d874 on 13 November at 7:10-7:13 am, so the reinstalled runner may not be running at all (its scheduled task, the trinity-runner account, or the PC itself). Reported to Ayman. GitHub, last 24 hours: wdl25 x1.2 PASSED vs Control2 (+8.91, 9400). CCRL weekly check of 1.0.0: the CCRL site is refused from this session (as on 11 November); it is the pace routine's, from the "trinity" environment. Nothing queued.
+- 2026-11-15 6:22 am PST: RUNNER BACK (approved commit a55d874 now in the log). Read up to "04:50 DONE 2026-11-14-02". Resume dry run PASSED; lowlr-tail trained (54 min). Calibration, same night: main (with long900, bench 991226) 3577 (2026-11-13-01; akimbo +106, Patricia +73, Bread +87, Prune +16), 1.0.0 3470 (2026-11-13-02): gap +107 +/- 9, the same as before long900 (+105 on 6 November): long900's self-play +7 does not show against rated engines yet. 40/60: main 3577 (2026-11-14-02): +67 +/- 21 over 1.0.0, reference from 23 October (3510); 1.0.0's 40/60 (2026-11-14-03) did not fit before 6:55 and waits. Time losses: main 1 + 0, 1.0.0 2. wdl25-900 (2026-11-14-01) did not start (no fit), still queued. GitHub, last 24 hours: wdl25 x1.2 vs main PASSED (+7.64). CCRL anchor logged by the pace routine 14 November: 1.0.0 3527 +/- 42 (100 games), 49-61 above our own estimate. No approval pending. Nothing queued (training is not the check-in's; the 1.0.0 40/60 job is still queued).
 
 ## Lessons so far
 
