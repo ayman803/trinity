@@ -1,0 +1,11 @@
+SPRT test #129, finished 2026-11-15 15:26 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/43728761535 (run id 43728761535)
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: net-lowlr-tail-main (bench 1049044) vs net-control2-main2 (bench 924692), tc 8+0.08, bounds [0, 5]
+Games: 400, Wins: 93, Losses: 88, Draws: 219, Points: 202.5 (50.62 %)
+Ptnml(0-2): [1, 47, 101, 48, 3]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 4.34 +/- 17.94, nElo: 8.25 +/- 34.05
+LLR: 0.10 (-2.94, 2.94) [0.00, 5.00]
