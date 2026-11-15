@@ -747,6 +747,16 @@ network, and the second week merged nothing):
   lowlr-tail passes clearly before long1350 starts, reconsider 1350
   (Scout: then the cheap lever is the tail). equal-passes also needs
   kb16.ps1 to take the more-data files (it uses big-1..4 only): not built.
+  lowlr-tail games (pace routine 15 November, before any game): broken-
+  run check in the cloud (150,000 held-out positions): lowlr-tail
+  0.081623, Control2 0.081577, long900 0.081565: not broken (the tail
+  did not lower the held-out loss). Branch net-lowlr-tail-main (bench
+  1049044) vs net-control2-main2 (bench 924692), both on today's main
+  search: 400-game screen, then [0, 5] to 9000 games. Prediction as
+  written on 6 November (Scout): -2 to +5, about 25% to pass. Reading
+  fixed now: a pass says long900's gain was largely the low-rate tail
+  (cheap lever: longer tails); a fail or about 0 says it was the extra
+  passes (long runs worth their hours).
   APPROVED 13 November 7:13 am (Ayman, commit a55d874, which contains
   dc96ea7; advisor note; the runner log confirms it on the next STARTED
   line). Queued by the pace routine 13 November: 2026-11-13-03 (dry run)
