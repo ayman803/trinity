@@ -22,6 +22,7 @@ pair's prediction in ESTIMATES.md on the morning run (my prior: gap +70
 to +100 at 40/60, from +105 at 10+0.1 and the earlier 40/60:10+0.1 ratio
 of about 0.6-0.8), and if only one of the two ran, label the gap
 "reference from <date>".
+Done (2026-11-15, Session): prior logged next to the result in ESTIMATES.md (Calibrations): main at 40/60 3577, +67 +/- 21 over 1.0.0 "reference from 23 October", just below +70 to +100; 1.0.0's own 40/60 (2026-11-14-03) did not fit and is still queued, so a same-night pair is still owed before the freeze.
 
 ### 2026-11-14 · Saturday evening: Friday's jobs first (Ayman, 14 November, 4:20 pm Pacific: "catch up with what was missed Friday")
 Ayman retired early and left the PC free at about 4:20 pm, Sleep: Never
@@ -39,6 +40,7 @@ early, otherwise it waits for the next idle slot (Sunday from 9 pm, or
 earlier if Ayman clicks Away again). Session: nothing to change; log the
 results as usual, and a lowlr-tail result is still void if the dry run
 failed.
+Done (2026-11-15, Session): the jobs started at 9:04 pm, not 4:40 pm (they all waited for 9 pm as "long" jobs; if Away was clicked, any keyboard or mouse use more than a minute after the click cancelled it: from the next reinstall the grace is 10 minutes). Dry run PASSED (resumed vs uninterrupted 0.008%, run-to-run 0.009%), so lowlr-tail counts; it trained in 54 minutes, is not broken (held-out loss 0.081623 vs Control2 0.081577) and its games vs Control2 started today. wdl25-900 is tonight's first job.
 
 ### 2026-11-14 · Release prep for 1.2 starts now (Ayman, 14 November, 10:04 am: "start release prep")
 Preparing is not offering: rule 6 still holds (nothing goes to CCRL until
@@ -66,6 +68,7 @@ ESTIMATES.md under a "Release 1.2" heading:
 The network in 1.2 is whatever main holds at the freeze (long900 now;
 wdl25-900 if it passes and is merged by then); no waiting for one more
 candidate. Scout: no release ideas needed; keep to Elo.
+Not done yet (2026-11-15, Session): "Release 1.2" heading made in ESTIMATES.md with the five items; none started today (the network tests and the runner fixes took the day). Item 1 needs the other engines' public repositories added to the session for a read-only, mechanical comparison.
 
 ### 2026-11-14 · Runner silent 13-14 November: two causes (advisor, from Runner-Status)
 Runner-Status (14 November 7:57 am): the runner ran all along. (a) It
@@ -87,6 +90,7 @@ say so in its output. Missed: 2026-11-13-01..04 and the long1350 parts;
 all still queued. Also log the CCRL result (3527 +/- 42, 100 games) as
 provisional: re-score the forecast only when CCRL's testing of 1.0.0 is
 complete and the rating is ranked.
+Done (2026-11-15, Session): (a) runner.ps1: a -DryRun job with no history now counts as 30 minutes (the dry run's own history, 6 minutes, already makes later dry runs short); (b) Install-Runner.ps1 sets Sleep: Never with powercfg and checks it, and the one-shot wake test is gone. Both from the next reinstall (not urgent: Sleep is Never by hand now). The CCRL result is logged as provisional (Calibrations, ESTIMATES.md); forecast re-scoring waits for the settled, ranked rating. The long1350 parts were taken out on 14 November (Scout: retrain at WDL 0.25 if wdl25-900 confirms).
 
 ### 2026-11-13 · Reinstall and approval done; wake test inconclusive (advisor)
 Ayman reinstalled the runner at 7:10 am (Away button, Sleep: Never kept)

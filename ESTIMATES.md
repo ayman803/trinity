@@ -147,6 +147,10 @@ network, and the second week merged nothing):
   file is about networks only (wdl25-900, an eval-scale setting); nothing
   new from forensics or the speed profile. GitHub time goes to wdl25 x1.2
   vs main (network lane).
+  2026-11-15: nothing running. No idea worth a test: Scout's 15 November
+  file has nothing to start ("wdl25-900 first"); nothing new from
+  forensics or the speed profile. GitHub time goes to lowlr-tail vs
+  Control2 (network lane).
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes
@@ -703,6 +707,20 @@ network, and the second week merged nothing):
   (2026-11-13-05/-06, WDL 0.5) were taken out of the queue (never
   started): if WDL 0.25 holds at 900, 1350 should use the new recipe
   (Scout); re-queued after wdl25-900's test.
+  15 November: still queued (2026-11-14-01): on 14-15 November the
+  Friday jobs ran first (Ayman's order) and it no longer fit. Tonight it
+  is the first pending job: from 9 pm, if it starts by about 9:55 pm (or
+  earlier after "Trinity Away"). Fallback for the 1.2 freeze (about 25-28
+  November): if wdl25-900 is not trained and tested by about 20
+  November, or fails, the 600-superbatch wdl25 x1.2 (passed vs main,
+  +7.64) goes through the merge checks instead (calibration, v2 check,
+  SPSA re-tune with an eval-scale setting, Ayman's OK).
+  Its replication (Scout, 15 November): wdl25-900s2, the same recipe at
+  seed 20261108, partner long900s2 (same seed and length, WDL 0.5);
+  queued as 2026-11-15-01 after it. Prediction (written before
+  training): wdl25-900s2 vs long900s2 +3 to +12 self-play, about 40% to
+  pass [0, 5] (as Scout's for wdl25-900); if both pass, the WDL lever is
+  replicated as the length lever was; WDL 0.0 at 900 after both.
   (6) Resumable training BUILT (12 November; advisor note and Scout's
   12 November file), waiting for Ayman's approval (Decisions needed).
   Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
@@ -809,6 +827,9 @@ network, and the second week merged nothing):
   November: wdl25 trained (network lane), its two screens started.
   Updated 14 November: wdl25 x1.2 PASSED vs Control2 (+8.91); its test
   vs main started.
+  Updated 15 November: wdl25 x1.2 vs main PASSED (+7.64, not merged:
+  wdl25-900 is the candidate); resume dry run passed on the PC;
+  lowlr-tail trained and its games started.
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 
@@ -1046,6 +1067,14 @@ main near 3630 on the CCRL scale, but that conversion is only as good as
 the 100-game anchor. The forecast is re-scored when the rating settles
 (the double gauntlet is still adding games). Next check: Saturday 21
 November.
+
+40/60 pair of 14-15 November (advisor's fallback; the advisor's prior,
+written in the note before the run: gap +70 to +100): main (long900)
+3577 at 40/60 (2026-11-14-02), +67 +/- 21 over 1.0.0 with the 1.0.0
+"reference from 23 October" (3510); just below the prior. 1.0.0's own
+40/60 (2026-11-14-03) did not fit before 6:55 am and is still queued; a
+same-night pair is still owed before the freeze (advisor's release
+note, item 5).
 
 | Date | main | akimbo 3474 | Simbelmyne 3193 | Inanis 3046 | Estimate |
 |---|---|---|---|---|---|
@@ -1666,6 +1695,23 @@ Reading:
   control yet (how often a retry at the SAME time also "fixes" a move,
   given referee noise of +/- 30-50 cp and search randomness); the margin
   for small mistakes (half the drop, at least 15 cp) is lenient.
+
+## Release 1.2 (advisor note of 14 November; Ayman: "start release prep")
+
+Preparing is not offering: rule 6 holds (nothing goes to CCRL until
+1.0.0's rating has settled and Ayman says so). Target: freeze main about
+25-28 November, checks done by 2-5 December. The network is whatever
+main holds at the freeze (long900 now; wdl25-900 if it passes and is
+merged by then).
+1. Source-similarity check (checklist item 1): not started (15 November:
+   the day went to the network tests and the runner fixes). Needs the
+   other engines' public repositories added to the session (read only)
+   before a mechanical comparison; nothing learned from them may be used.
+2. Move-similarity test (item 2): not started.
+3. CREDITS section in README.md (item 3): not started.
+4. Package plan and steps for Ayman (item 4): not started.
+5. At the freeze, on Ayman's word: same-night 40/60 of the release build
+   and 1.0.0; a stability run at CCRL-like settings; the package.
 
 ## Release checks
 
