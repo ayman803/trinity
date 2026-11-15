@@ -8,6 +8,21 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-14 · Night of 14-15 November: fallback 40/60 pair queued (advisor; Ayman: "off PC for 12 hours, make up lost time")
+Ayman is away from the PC from about 4:40 pm to 4:40 am. After the
+Friday jobs (dry run, lowlr-tail, 10+0.1 pair, done about 11 pm) the
+wdl25-900 training (7.5 h) fits only if it starts by about 10:35 pm;
+otherwise the runner would idle the rest of the night. So I appended a
+same-night 40/60 pair, main then 1.0.0 (2026-11-14-02/03, 60 rounds each,
+about 2 h each), as the fallback: it is the headline number for the
+release (the last 40/60 gap is from 24 October, before four merges) and
+it is needed before the freeze anyway. The runner takes the first job
+that fits, so wdl25-900 still goes first when it fits. Session: log the
+pair's prediction in ESTIMATES.md on the morning run (my prior: gap +70
+to +100 at 40/60, from +105 at 10+0.1 and the earlier 40/60:10+0.1 ratio
+of about 0.6-0.8), and if only one of the two ran, label the gap
+"reference from <date>".
+
 ### 2026-11-14 · Saturday evening: Friday's jobs first (Ayman, 14 November, 4:20 pm Pacific: "catch up with what was missed Friday")
 Ayman retired early and left the PC free at about 4:20 pm, Sleep: Never
 confirmed by his screenshot (Power & sleep: Screen 10 minutes, Sleep

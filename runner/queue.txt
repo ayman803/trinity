@@ -107,3 +107,5 @@
 2026-11-13-01 | pc | scripts/calibrate.ps1 | -Ref main
 2026-11-13-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0
 2026-11-14-01 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Superbatches 900 -Tag wdl25-900 -Wdl 0.25 -Resume
+2026-11-14-02 | pc | scripts/calibrate.ps1 | -Ref main -TC 40/60 -Rounds 60
+2026-11-14-03 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60
