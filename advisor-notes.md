@@ -8,6 +8,23 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-14 · Saturday evening: Friday's jobs first (Ayman, 14 November, 4:20 pm Pacific: "catch up with what was missed Friday")
+Ayman retired early and left the PC free at about 4:20 pm, Sleep: Never
+confirmed by his screenshot (Power & sleep: Screen 10 minutes, Sleep
+Never), and was asked to click "Trinity Away". At his word the advisor
+moved 2026-11-14-01 (wdl25-900) behind Friday's missed jobs, so the
+queue order tonight is: 2026-11-13-03 (resume dry run), -04 (lowlr-tail),
+-01 (main at 10+0.1), -02 (1.0.0 at 10+0.1), then 2026-11-14-01
+(wdl25-900, about 7.5 h). Expected, if the first job starts about 4:40
+pm: dry run and lowlr-tail done by about 5:50 pm, the calibration pair by
+about 11:10 pm; wdl25-900 then needs a slot ending by 6:55 am (the runner
+judges kb16 jobs by their longest recent run, 448 min, so it must start
+by about 10:35 pm): it runs tonight only if the calibrations finish
+early, otherwise it waits for the next idle slot (Sunday from 9 pm, or
+earlier if Ayman clicks Away again). Session: nothing to change; log the
+results as usual, and a lowlr-tail result is still void if the dry run
+failed.
+
 ### 2026-11-14 · Release prep for 1.2 starts now (Ayman, 14 November, 10:04 am: "start release prep")
 Preparing is not offering: rule 6 still holds (nothing goes to CCRL until
 1.0.0's rating has settled and Ayman says so; nobody contacts Graham but
