@@ -775,6 +775,9 @@ network, and the second week merged nothing):
   fixed now: a pass says long900's gain was largely the low-rate tail
   (cheap lever: longer tails); a fail or about 0 says it was the extra
   passes (long runs worth their hours).
+  Screen (15 November, 7:26 am Pacific): +4.34 +/- 17.94 after 400
+  games (SPRT #129), 0 time losses: passes the screen; continued to the
+  full [0, 5] test (continue_from 43728761535, 9000 more games).
   APPROVED 13 November 7:13 am (Ayman, commit a55d874, which contains
   dc96ea7; advisor note; the runner log confirms it on the next STARTED
   line). Queued by the pace routine 13 November: 2026-11-13-03 (dry run)
