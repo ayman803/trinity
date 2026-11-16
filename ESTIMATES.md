@@ -865,6 +865,11 @@ network, and the second week merged nothing):
   Updated 15 November: wdl25 x1.2 vs main PASSED (+7.64, not merged:
   wdl25-900 is the candidate); resume dry run passed on the PC;
   lowlr-tail trained and its games started.
+  Week of 16 November (pace routine 16 November): search lane idle by
+  choice (dated lines above); network lane: lowlr-tail FAILED in effect
+  (-2.66, stopped at LLR -2.93: the tail is not the lever), wdl25 x1.2
+  SPSA re-tune started (the 1.2 fallback); wdl25-900 and wdl25-900s2
+  still waiting for the PC; merged 0.
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 
@@ -1101,7 +1106,9 @@ same-night gap over 1.0.0 (long900, +102 +/- 9, 4 November) would put
 main near 3630 on the CCRL scale, but that conversion is only as good as
 the 100-game anchor. The forecast is re-scored when the rating settles
 (the double gauntlet is still adding games). Next check: Saturday 21
-November.
+November; it also reads, once, the testers' stated conditions for the
+40/15 list (hash, book, tablebases, threads) if the site publishes them,
+for the 1.2 pre-release checks (Scout, 16 November).
 
 40/60 pair of 14-15 November (advisor's fallback; the advisor's prior,
 written in the note before the run: gap +70 to +100): main (long900)
@@ -1525,6 +1532,26 @@ set its margin from the p95 there (a candidate for 1.2).
 ## Decisions needed (dated; read by the phone summary)
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
+
+- 2026-11-16 (pace routine): let training use any free hour (CLAUDE.md
+  runner rule 18, commit 2a1f538)? Today a 7.5-hour training run can only
+  start if the PC is free from about 9:25 pm; wdl25-900 has missed two
+  nights, and a single mouse bump at night throws a whole run away. With
+  the change a training run trains in whatever idle time there is (day
+  or night), pauses at a checkpoint before 6:55 am, and continues next
+  time; a bump costs at most 25 minutes. Session's view: yes. Steps at
+  the PC, in this order: (1) double-click "Trinity Approve-Scripts" on
+  the desktop: it lists 1 changed file, tools/net/kb16.ps1, and "Risky
+  changes: none found"; type Y and press Enter; it says "Approved."
+  (2) open the folder C:\Trinity\runner and double-click
+  Install-Runner.bat (it gets the new files itself): answer Yes to the
+  administrator question, type pc, press Enter to keep the stored key;
+  the window ends with "INSTALLED on 'pc'" and "Sleep: Never (set by
+  the installer)". (3) Send a screenshot of each window. Approve first:
+  the new runner gives training jobs a setting the old approved script
+  does not know. Yes = do the steps; No = training keeps waiting for a
+  free night. (This reinstall also brings the fixes of 15 November:
+  short dry runs, Sleep: Never, Away's 10 minutes.)
 
 - 2026-11-14 (pace routine; for later, not yet a question): CCRL's first
   rating for 1.0.0 is 3527 +/- 42 after 100 games, above the goal (top
