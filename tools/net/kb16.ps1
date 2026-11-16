@@ -41,6 +41,7 @@ param(
     [switch]$Resume,                  # continue this run (same -Tag) from its newest complete checkpoint, if there is one
     [int]$StopAt = 0,                 # end this job at this superbatch (one part of a longer run); 0 = -Superbatches
     [string]$From = "",               # start from the newest checkpoint of another run (its -Tag), e.g. control2
+    [int]$Minutes = 0,                # time this job has (the runner sets it for -Resume runs): train what fits, then pause (exit code 3)
     [switch]$DryRun                   # 1 superbatch, save, check the file loads in the engine; publishes nothing
 )
 
@@ -227,6 +228,21 @@ try {
         $stamp = ($netId -split '-')[1..2] -join '-'
         $log = Join-Path $resultsDir "train-$netId.log"
         if ($done -gt 0) { $log = Join-Path $resultsDir "train-$netId-from-$done.log" }
+        # With -Minutes (resumable runs under the runner, 16 November): train
+        # only the superbatches that fit, at about 0.55 minute each with 8 king
+        # buckets and 0.75 with 16 (measured: 0.50 and 0.70), after about 25
+        # minutes of builds, the bench and publishing; then pause.
+        $paused = $false
+        if ($Minutes -gt 0 -and $done -lt $target) {
+            $per = if ($KingBuckets -eq 16) { 0.75 } else { 0.55 }
+            $fit = [int][Math]::Floor(($Minutes - 25) / $per)
+            if ($fit -lt 10) { Write-Host "Only $Minutes minutes: too little to train now; pausing."; exit 3 }
+            if ($done + $fit -lt $target) {
+                $target = $done + $fit
+                $paused = $true
+                Write-Host "$Minutes minutes available: training to superbatch $target now, the rest at the next start."
+            }
+        }
         $finalDir = Join-Path $ckptDir "$netId-$target"
         if ($done -ge $target) {
             Write-Host "Nothing to train: superbatch $done is done (this part ends at $target)."
@@ -247,9 +263,10 @@ try {
             Write-Good "Nothing to do: $netId is already at superbatch $done (this part ends at $target)."
             return
         }
-        if ($target -lt $Superbatches) {
+        if ($target -lt $Superbatches -or $paused) {
             # One part of a longer run: the next part (same arguments, a later
-            # -StopAt) continues from this checkpoint. Nothing to publish yet.
+            # -StopAt, or the same job after a pause) continues from this
+            # checkpoint. Nothing to publish yet.
             $fmt = { param($t) $t.ToString("yyyy-MM-dd HH:mm") }
             $part = @(
                 "$($Tag.ToUpper()) PART DONE: $netId at superbatch $target of $Superbatches (started at $done)",
@@ -261,6 +278,10 @@ try {
                 Publish-ToResultsRepo "Network $Tag-${stamp}: part to superbatch $target" @{ "nets/net-$Tag-$stamp-part-$target.txt" = ($part -join "`n") }
             }
             $part | ForEach-Object { Write-Host $_ }
+            if ($paused) {
+                Write-Good "Paused at superbatch $target; the next start continues from here."
+                exit 3
+            }
             Write-Good "Part done. The next part continues from superbatch $target."
             return
         }

@@ -129,11 +129,31 @@ function Get-JobStatus {
     return $status
 }
 
-# A job still to run: never started, or stopped because Ayman came back
-# (at most 3 such stops; after that it is reported and left).
+# A job still to run: never started, stopped because Ayman came back (at
+# most 3 such stops; after that it is reported and left), or a resumable
+# training run that paused at a checkpoint (PAUSED: it continues later,
+# with no limit, since a pause loses at most 50 superbatches).
 function Test-JobPending($Status, [string]$Id) {
     if (-not $Status.ContainsKey($Id)) { return $true }
+    if ($Status[$Id] -like "PAUSED*") { return $true }
     return ($Status[$Id] -like "DISTURBED*" -and $script:Disturbed[$Id] -lt 3)
+}
+
+# Resumable training (16 November): a kb16.ps1 run with -Resume (not a dry
+# run) saves a checkpoint every 50 superbatches and continues from the
+# newest one, so, like resumable tuning, it may start in any idle slot of
+# an hour or more (day or night), is told how many minutes it has
+# (-Minutes), pauses at a checkpoint before the deadline (exit code 3) and
+# continues at the next slot.
+function Test-ResumableTraining($Job) {
+    return ($Job.Script -eq "tools/net/kb16.ps1" -and $Job.Args -contains "-Resume" -and $Job.Args -notcontains "-DryRun")
+}
+
+# The value after a job argument such as -Superbatches, or $null.
+function Get-JobArg($Job, [string]$Name) {
+    $i = [array]::IndexOf(@($Job.Args), $Name)
+    if ($i -ge 0 -and $i + 1 -lt $Job.Args.Count) { return $Job.Args[$i + 1] }
+    return $null
 }
 
 function Set-JobStatus([string]$Id, [string]$Status) {
@@ -338,7 +358,9 @@ function Invoke-Job($Job, $Hours, [string]$Commit) {
             ForEach-Object { Move-Item -LiteralPath $_.FullName -Destination $aside -Force }
     }
     $minutes = [Math]::Round(((Get-Date) - $started).TotalMinutes)
-    $status = if ($reason) { $reason } elseif ($p.ExitCode -eq 0) { "DONE" } else { "FAILED (exit code $($p.ExitCode))" }
+    if ((Test-ResumableTraining $Job) -and $reason -like "DISTURBED*") { $reason = "PAUSED (keyboard or mouse used; continues from its last checkpoint later)" }
+    if ((Test-ResumableTraining $Job) -and $reason -like "STOPPED (over*") { $reason = "PAUSED (at the $Hours h limit; continues from its last checkpoint later)" }
+    $status = if ($reason) { $reason } elseif ($p.ExitCode -eq 0) { "DONE" } elseif ($p.ExitCode -eq 3 -and (Test-ResumableTraining $Job)) { "PAUSED (part done before the deadline; continues later)" } else { "FAILED (exit code $($p.ExitCode))" }
     Set-JobStatus $Job.Id $status
     Write-Log "$status $($Job.Id) after $minutes min"
     $tail = @()
@@ -368,7 +390,7 @@ function Invoke-Cycle {
     }
     if (-not $next) {
         $first = $pending[0]
-        if (-not (Test-Evening) -and -not (Test-Away) -and $first.Args -notcontains "-Tune") {
+        if (-not (Test-Evening) -and -not (Test-Away) -and $first.Args -notcontains "-Tune" -and -not (Test-ResumableTraining $first)) {
             Write-Note "Waiting: $($first.Id) is a long job; long jobs start from $EveningStart (if they finish by $MorningDeadline)."
         } else {
             Write-Note "Waiting: $($first.Id) would not finish before $MorningDeadline; it starts after $MorningBack."
@@ -396,7 +418,7 @@ function Invoke-Cycle {
         return $false
     }
     $script:LastNote = ""
-    $next = [pscustomobject]@{ Id = $next.Id; Machine = $next.Machine; Script = $next.Script; Args = @(Get-FittedArgs $next) }
+    $next = [pscustomobject]@{ Id = $next.Id; Machine = $next.Machine; Script = $next.Script; Args = @(Get-FittedArgs $next ([double]$approval.Limits[$next.Script])) }
     Invoke-Job $next $approval.Limits[$next.Script] $approval.Commit
     return $true
 }
@@ -435,6 +457,17 @@ function Get-ExpectedMinutes($Job, [double]$LimitHours) {
     # A dry run is short whatever its script's limit (advisor, 14 November:
     # the 10-minute resume dry run waited for 9 pm as a "long" job).
     if ($done.Count -eq 0 -and $Job.Args -contains "-DryRun") { return 30 }
+    # Training with no history: about 0.5 minute per superbatch with 8 king
+    # buckets, 0.7 with 16 (the runs of 31 October to 14 November), plus 10%
+    # and 20 minutes for the builds and the bench; never above the limit.
+    if ($done.Count -eq 0 -and $Job.Script -eq "tools/net/kb16.ps1") {
+        $sb = Get-JobArg $Job "-Superbatches"; $sb = if ($sb) { [int]$sb } else { 600 }
+        $stop = Get-JobArg $Job "-StopAt"; $stop = if ($stop) { [int]$stop } else { 0 }
+        $todo = if ($stop -gt 0) { $stop } else { $sb }
+        if ((Get-JobArg $Job "-From") -and $stop -gt $sb) { $todo = $stop - $sb }
+        $per = if ((Get-JobArg $Job "-KingBuckets") -eq "8") { 0.5 } else { 0.7 }
+        return [Math]::Min([Math]::Round($LimitHours * 60), [Math]::Round($todo * $per * 1.1 + 20))
+    }
     if ($done.Count -eq 0) { return [Math]::Round($LimitHours * 60) }
     $recent = @($done | Select-Object -Last 3)
     return [Math]::Round(($recent | Measure-Object -Maximum).Maximum * 1.1 + 5)
@@ -465,6 +498,7 @@ function Test-MorningQuiet {
 function Test-JobFits($Job, [double]$LimitHours) {
     $left = ((Get-MorningDeadline) - (Get-Date)).TotalMinutes
     if ($Job.Args -contains "-Tune") { return ($left - 20 -ge 30) }
+    if (Test-ResumableTraining $Job) { return ($left - 25 -ge 60) }
     $expected = Get-ExpectedMinutes $Job $LimitHours
     if ($expected -gt $LongJobMinutes -and -not (Test-Evening) -and -not (Test-Away)) { return $false }
     return ($expected -le $left)
@@ -484,7 +518,13 @@ function Test-Evening {
     return ($now -ge $start -or $now -lt $end)
 }
 
-function Get-FittedArgs($Job) {
+function Get-FittedArgs($Job, [double]$LimitHours = 9) {
+    if (Test-ResumableTraining $Job) {
+        # Until the deadline, and within the job's own time limit.
+        $left = [Math]::Floor(((Get-MorningDeadline) - (Get-Date)).TotalMinutes) - 25   # builds, bench, publishing
+        $left = [Math]::Min($left, [Math]::Floor($LimitHours * 60) - 30)
+        return @(@($Job.Args | Where-Object { $_ -ne "-Minutes" }) + @("-Minutes", "$left"))
+    }
     if ($Job.Args -notcontains "-Tune") { return $Job.Args }
     $left = [Math]::Floor(((Get-MorningDeadline) - (Get-Date)).TotalMinutes) - 20   # build time and the last step
     $out = @(); $skip = $false; $minutes = $left

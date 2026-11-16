@@ -217,6 +217,19 @@ before any code (with the advisor's and Scout's additions):
    reinstalled; runner.ps1 is not under the approval fingerprint.) A dry
    run (-DryRun) with no history counts as 30 minutes, not its script's
    limit (advisor, 14 November; from the next reinstall).
+18. (Session, 16 November, after wdl25-900 missed two nights for want of
+   a free 9-hour slot; needs Ayman's yes, a reinstall and an approval)
+   Resumable training: a kb16.ps1 job with -Resume is treated like
+   resumable tuning. It may start in any idle slot of at least about 85
+   minutes before 6:55 am, day or night (rule 17's 9 pm start does not
+   apply to it), is given -Minutes to the deadline (at most 8.5 hours),
+   trains what fits, saves a checkpoint and pauses (exit code 3, logged
+   PAUSED), and continues at the next slot. A keyboard or mouse stop of
+   such a job is a PAUSE too (it loses at most 50 superbatches, about 25
+   minutes), not one of rule 11's three stops. Training without -Resume
+   is judged by its length when it has no history (0.5 minute per
+   superbatch with 8 king buckets, 0.7 with 16, plus 10% and 20 minutes),
+   not by its script's 9-hour limit.
 The Session adds jobs to `runner/queue.txt`; it never gets a connection
 into the PC.
 
