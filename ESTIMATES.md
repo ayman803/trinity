@@ -151,6 +151,11 @@ network, and the second week merged nothing):
   file has nothing to start ("wdl25-900 first"); nothing new from
   forensics or the speed profile. GitHub time goes to lowlr-tail vs
   Control2 (network lane).
+  2026-11-16: nothing running. No idea worth a test: Scout's 16 November
+  file has no search candidate (it is about lowlr-tail's answer, the
+  night-time input stops and the network order); nothing new from
+  forensics or the speed profile. GitHub time goes to the SPSA re-tune
+  of wdl25 x1.2 (network lane).
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes
@@ -715,6 +720,18 @@ network, and the second week merged nothing):
   November, or fails, the 600-superbatch wdl25 x1.2 (passed vs main,
   +7.64) goes through the merge checks instead (calibration, v2 check,
   SPSA re-tune with an eval-scale setting, Ayman's OK).
+  16 November: wdl25-900 has missed two nights (no 9-hour slot was free:
+  Sunday evening the PC was in use until about 3:50 am, then an input at
+  4:22 am stopped the 1.0.0 40/60 job). So the fallback's GitHub part
+  starts now, while the PC part waits: SPSA re-tune of wdl25 x1.2 on
+  branch net-wdl25x12-tune (= net-wdl25x12-main with the scale as a
+  tunable, EVAL_SCALE = 120, range 90-150, step 4; same play, bench
+  959021), 3 runs as for long900. If wdl25-900 later passes, its own
+  re-tune starts from these values. Prediction (written before the
+  tune): EVAL_SCALE settles at 110-135 (the held-out loss matched
+  Control2's at about 1.25; screens +17 at x1.2 vs +7 at x1.0); the other
+  settings move less than one step each, as for long900; the re-tuned
+  version vs the untuned: 0 to +5, about 25% to pass [0, 5].
   Its replication (Scout, 15 November): wdl25-900s2, the same recipe at
   seed 20261108, partner long900s2 (same seed and length, WDL 0.5);
   queued as 2026-11-15-01 after it. Prediction (written before
@@ -778,6 +795,16 @@ network, and the second week merged nothing):
   Screen (15 November, 7:26 am Pacific): +4.34 +/- 17.94 after 400
   games (SPRT #129), 0 time losses: passes the screen; continued to the
   full [0, 5] test (continue_from 43728761535, 9000 more games).
+  STOPPED (pace routine 16 November): -2.66 +/- 3.71 after 9400 games
+  (SPRT #129 + #130, LLR -2.93, the fail line is -2.94), 0 time losses;
+  counted as a FAIL. Reason for not adding games: the question it was
+  for is answered whatever happens next (even its upper bound, +1.0, is
+  far below long900's +5.65), so more games change no decision. Below
+  the -2 to +5 prediction. Reading fixed before the games: long900's
+  gain came from the extra passes at a working learning rate, not from
+  more time at the floor rate. The low-rate tail is dropped from the
+  plan; length (1350) and equal-passes stay the next one-change runs,
+  at the WDL 0.25 recipe (Scout, 16 November).
   Result so far (check-in 16 November): screen +4.34 +/- 17.94 (SPRT
   #129, 400 games); full test -2.66 +/- 3.71 after 9400 (SPRT #129 +
   #130, LLR -2.93, a hair above the fail line -2.94), undecided, 0 time
