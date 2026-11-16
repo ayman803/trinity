@@ -82,4 +82,7 @@ tunables! {
     HIST_MUL = 172, 80, 300, 10;
     HIST_SUB = 79, 0, 200, 10;
     HIST_MAX = 1705, 800, 3000, 100;
+    // Network output scale in hundredths (Scout, 14 November: a network's
+    // scale set by the tuner, not by each margin compensating).
+    EVAL_SCALE = 120, 90, 150, 4;
 }
