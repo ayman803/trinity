@@ -237,7 +237,10 @@ try {
             $per = if ($KingBuckets -eq 16) { 0.75 } else { 0.55 }
             $fit = [int][Math]::Floor(($Minutes - 25) / $per)
             if ($fit -lt 10) { Write-Host "Only $Minutes minutes: too little to train now; pausing."; exit 3 }
-            if ($done + $fit -lt $target) {
+            # Within 30 superbatches (about 16 minutes) of the end: finish
+            # rather than pause (advisor, 17 November: wdl25-900 paused at
+            # 881 of 900). The runner's -Minutes keeps 25 minutes in hand.
+            if ($done + $fit -lt $target - 30) {
                 $target = $done + $fit
                 $paused = $true
                 Write-Host "$Minutes minutes available: training to superbatch $target now, the rest at the next start."

@@ -165,7 +165,24 @@ try {
     # click instead of 30 (runner.ps1, Test-Away). The window closes itself,
     # so no key press counts as coming back.
     Set-Content -LiteralPath "$RunnerDir\Away.bat" -Value "@echo off`r`necho away> `"$RunnerDir\beacon\away.txt`"`r`necho Away: the runner may start a job in about 5 to 10 minutes.`r`necho Touching the keyboard or mouse from now on cancels this. This window closes by itself.`r`ntimeout /t 15 /nobreak >nul"
-    Set-Content -LiteralPath "$RunnerDir\Runner-Status.bat" -Value "@echo off`r`n`"$ps`" -NoProfile -Command `"Get-Content '$RunnerDir\state\runner.log' -Tail 25`"`r`npause"
+    # Which runner is installed (advisor, 16 November: a reinstall from an
+    # old folder was not visible), shown first by Runner-Status.
+    $repoCommit = (& git -c safe.directory=* -C $Repo rev-parse --short=10 HEAD 2>$null) -join ""
+    $runnerCommit = (& git -c safe.directory=* -C $Repo log -1 --format=%h -- runner/runner.ps1 2>$null) -join ""
+    Set-Content -LiteralPath "$RunnerDir\version.txt" -Value "Runner installed $(Get-Date -Format 'yyyy-MM-dd HH:mm') from C:\Trinity at commit $repoCommit (runner.ps1 last changed in $runnerCommit)"
+    # Runner-Status: the installed version, the power plan's real sleep and
+    # hibernate settings (not the Settings page), then the runner's log.
+    $statusPs = @(
+        "Get-Content -LiteralPath '$RunnerDir\version.txt' -ErrorAction SilentlyContinue",
+        "foreach (`$s in @(@('STANDBYIDLE', 'Sleep'), @('HIBERNATEIDLE', 'Hibernate'))) {",
+        "    `$v = ((& powercfg.exe /query SCHEME_CURRENT SUB_SLEEP `$s[0]) -match 'Current AC Power Setting Index') -replace '.*:\s*', ''",
+        "    `$m = [Convert]::ToInt32(`"`$v`".Trim(), 16) / 60",
+        "    Write-Host (`"{0} when plugged in: {1}`" -f `$s[1], `$(if (`$m -eq 0) { 'Never' } else { `"after `$m minutes`" }))",
+        "}",
+        "Get-Content -LiteralPath '$RunnerDir\state\runner.log' -Tail 25"
+    )
+    Set-Content -LiteralPath "$RunnerDir\Runner-Status.ps1" -Value $statusPs
+    Set-Content -LiteralPath "$RunnerDir\Runner-Status.bat" -Value "@echo off`r`n`"$ps`" -NoProfile -ExecutionPolicy Bypass -File `"$RunnerDir\Runner-Status.ps1`"`r`npause"
     $desktop = [Environment]::GetFolderPath("Desktop")
     if ("$env:USERDOMAIN\$env:USERNAME" -eq $Owner -and (Test-Path $desktop)) {
         foreach ($b in @("Approve-Scripts", "Stop-Runner", "Start-Runner", "Runner-Status", "Away")) { Copy-Item "$RunnerDir\$b.bat" (Join-Path $desktop "Trinity $b.bat") -Force }
