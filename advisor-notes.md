@@ -8,6 +8,20 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-17 · wdl25-900 paused 19 superbatches short of the end (advisor)
+First resumable run under rule 18 worked: started 18:20 with -Minutes 510,
+saved and paused at superbatch 881 of 900 at 01:40 (7h19m of training),
+output in trinity-results runner/output/2026-11-14-01.txt. It was NOT a
+keyboard stop (Ayman was away); the time budget ran out: actual pace 32.2
+s per superbatch against the planned 0.5 min (30 s), plus start-up and
+save time. When the budget would leave less than about 30 superbatches,
+let the run finish instead of pausing (finishing 10 minutes past the
+budget is fine at 1:40 am; the hard limit is 6:55). Use the measured
+pace from the run's own log for the next estimate. Minor: the job's last
+lines show "fatal: unable to get credential storage lock ... Permission
+denied" after the part was saved; check the result still reached
+trinity-results every time (it did this time) and silence or fix it.
+
 ### 2026-11-16 · PC asleep all day; reinstalled runner still treats the -Resume job as "long" (advisor, from Runner-Status 5:09 pm)
 Runner-Status, 16 November: "woke from sleep (asleep since about 06:57)"
 at 16:53:45, so the PC slept from 6:57 am to 4:53 pm; it also slept at
