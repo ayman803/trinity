@@ -8,6 +8,26 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-16 · PC asleep all day; reinstalled runner still treats the -Resume job as "long" (advisor, from Runner-Status 5:09 pm)
+Runner-Status, 16 November: "woke from sleep (asleep since about 06:57)"
+at 16:53:45, so the PC slept from 6:57 am to 4:53 pm; it also slept at
+22:46 and 23:06 on 15 November. Sleep: Never is not holding (or Ayman is
+putting it to sleep by hand; asked). Session: have the installer, and
+Runner-Status, print the ACTIVE power plan's AC standby timeout
+(powercfg /query SCHEME_CURRENT SUB_SLEEP STANDBYIDLE) and hibernate
+timeout, so we see the real setting, not the Settings page. Also check
+hibernate ("asleep" in the log may be hibernate; HIBERNATEIDLE) and set
+it to 0 as well. Second: Ayman reinstalled at 16:57:48 ("Runner started
+on 'pc'"), and the very next line is "Waiting: 2026-11-14-01 is a long
+job; long jobs start from 21:00" although that job has -Resume (rule
+18). Either Install-Runner did not get the 16 November runner.ps1 (its
+pull of C:\Trinity may have failed silently) or rule 18 is not in the
+installed code path. Make Runner-Status print the runner's version (the
+commit of runner/runner.ps1 it was installed from) on its first line so
+this is checkable from a screenshot; and make Install-Runner stop with a
+clear message if the pull fails. Approval of the 16 November scripts
+not yet confirmed (no STARTED line since the reinstall).
+
 ### 2026-11-14 · Night of 14-15 November: fallback 40/60 pair queued (advisor; Ayman: "off PC for 12 hours, make up lost time")
 Ayman is away from the PC from about 4:40 pm to 4:40 am. After the
 Friday jobs (dry run, lowlr-tail, 10+0.1 pair, done about 11 pm) the
