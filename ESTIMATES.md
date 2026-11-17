@@ -743,6 +743,20 @@ network, and the second week merged nothing):
   1:41-1:52 am (to 900): branch net-wdl25-900-20261116-1820, bench
   873804. wdl25-900s2 (2026-11-15-01) started 3:45 am and PAUSED at
   superbatch 252 of 900 at 5:46 am; it continues in the next idle slot.
+  Checks and test (pace routine 17 November, before any game): broken-
+  run check in the cloud (150,000 held-out positions): wdl25-900
+  0.082831, wdl25 0.082863, long900 0.081565: not broken (the WDL 0.25
+  recipe's result loss is higher at its own scale, as for wdl25). Test
+  branch net-wdl25-900-main = main's search with EVAL_SCALE 120 (x1.2,
+  as a tunable; the scale the fallback re-tune is measuring) and the
+  wdl25-900 network, bench 948275; base base-1117 (= main, long900).
+  400-game screen, then [0, 5] to 9000 games, 8+0.08. Prediction (Scout,
+  14 November, written before training): +3 to +12, about 40% to pass.
+  Skeptic: wdl25 at 600 already beat main by +7.64; if the levers add,
+  this should land above that, but x1.2 was measured for the 600 run and
+  length may shift the scale again. A pass is the merge candidate for
+  1.2: then calibration, v2 check, the SPSA re-tune (continuing from the
+  fallback's tune) and Ayman's OK.
   (6) Resumable training BUILT (12 November; advisor note and Scout's
   12 November file), waiting for Ayman's approval (Decisions needed).
   Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
