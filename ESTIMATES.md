@@ -764,6 +764,9 @@ network, and the second week merged nothing):
   length may shift the scale again. A pass is the merge candidate for
   1.2: then calibration, v2 check, the SPSA re-tune (continuing from the
   fallback's tune) and Ayman's OK.
+  Screen (17 November, 7:26 am Pacific): +22.62 +/- 18.48 after 400
+  games (SPRT #131), 0 time losses: passes the screen; continued to the
+  full [0, 5] test (continue_from 44111933534, 9000 more games).
   (6) Resumable training BUILT (12 November; advisor note and Scout's
   12 November file), waiting for Ayman's approval (Decisions needed).
   Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
