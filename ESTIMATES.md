@@ -156,6 +156,9 @@ network, and the second week merged nothing):
   night-time input stops and the network order); nothing new from
   forensics or the speed profile. GitHub time goes to the SPSA re-tune
   of wdl25 x1.2 (network lane).
+  2026-11-17: nothing running. No idea worth a test: no Scout file yet
+  this morning; nothing new from forensics or the speed profile. GitHub
+  time goes to wdl25-900 vs main and the re-tune's run 2 (network lane).
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes
@@ -732,6 +735,10 @@ network, and the second week merged nothing):
   Control2's at about 1.25; screens +17 at x1.2 vs +7 at x1.0); the other
   settings move less than one step each, as for long900; the re-tuned
   version vs the untuned: 0 to +5, about 25% to pass [0, 5].
+  Run 1 done (16 November, 5 chains): EVAL_SCALE 120 -> 120; the rest
+  moved less than one step (largest LMR_HIST_DIV 7860 -> 7803, HIST_MAX
+  1705 -> 1708, HIST_MUL 172 -> 173, LMR_QUIET_DIV 225 -> 224). Run 2
+  started 17 November (continue_from 43894279338).
   Its replication (Scout, 15 November): wdl25-900s2, the same recipe at
   seed 20261108, partner long900s2 (same seed and length, WDL 0.5);
   queued as 2026-11-15-01 after it. Prediction (written before
@@ -888,7 +895,9 @@ network, and the second week merged nothing):
   choice (dated lines above); network lane: lowlr-tail FAILED in effect
   (-2.66, stopped at LLR -2.93: the tail is not the lever), wdl25 x1.2
   SPSA re-tune started (the 1.2 fallback); wdl25-900 and wdl25-900s2
-  still waiting for the PC; merged 0.
+  still waiting for the PC; merged 0. Updated 17 November: wdl25-900
+  trained (resumable runner, first night), its test vs main started;
+  wdl25-900s2 at 252 of 900.
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 

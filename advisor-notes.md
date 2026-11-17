@@ -21,6 +21,7 @@ pace from the run's own log for the next estimate. Minor: the job's last
 lines show "fatal: unable to get credential storage lock ... Permission
 denied" after the part was saved; check the result still reached
 trinity-results every time (it did this time) and silence or fix it.
+Done in part (2026-11-17, Session): kb16.ps1 now finishes instead of pausing when 30 superbatches or fewer would be left (commit 63dc150; needs the next approval, not urgent: the pause cost one 11-minute restart). The pace estimate stays 0.55 min per superbatch: the 881 superbatches took 440 minutes including start-up, so it was right; only the last stretch was the problem. Not done: the credential-lock message. It is git's "store" helper trying to save the key after a push into the runner's read-only secret folder; the pushes themselves succeed (both parts' files are in trinity-results). Harmless; left as it is unless a push is ever missing.
 
 ### 2026-11-16 · PC asleep all day; reinstalled runner still treats the -Resume job as "long" (advisor, from Runner-Status 5:09 pm)
 Runner-Status, 16 November: "woke from sleep (asleep since about 06:57)"
@@ -41,6 +42,7 @@ commit of runner/runner.ps1 it was installed from) on its first line so
 this is checkable from a screenshot; and make Install-Runner stop with a
 clear message if the pull fails. Approval of the 16 November scripts
 not yet confirmed (no STARTED line since the reinstall).
+Done (2026-11-17, Session): cause found on 16 November from Ayman's screenshots: C:\Trinity had not been updated since late October (d73bd78), so both the 13 and 16 November reinstalls ran the old installer (no Away, no rule 18, and it set Sleep back to 1 hour each time, hence the sleeping PC). After git pull (to 67add28) and a third reinstall the new runner ran rule 18 the same evening (wdl25-900 started 6:20 pm with -Minutes 510; approval 52f6e65 confirmed by that line). As asked: Runner-Status now prints the installed version (C:\Trinity commit and runner.ps1's last change) and the active plan's AC sleep and hibernate timeouts; Install-Runner.bat stops with a message if its git pull fails (commit 63dc150, with the next reinstall). Hibernate is already set to 0 by the installer.
 
 ### 2026-11-14 · Night of 14-15 November: fallback 40/60 pair queued (advisor; Ayman: "off PC for 12 hours, make up lost time")
 Ayman is away from the PC from about 4:40 pm to 4:40 am. After the
