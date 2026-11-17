@@ -1567,6 +1567,13 @@ set its margin from the p95 there (a candidate for 1.2).
   approved kb16.ps1 runs -Resume jobs as before. Asked Ayman (16
   November, 5 pm): set Sleep: Never again, run git pull in C:\Trinity,
   reinstall again.
+  DONE 16 November, about 5:15 pm Pacific (Ayman's screenshots): git pull
+  in C:\Trinity went from d73bd78 to 67add28 (clean, fast-forward), and
+  the reinstall ran the new installer: "Trinity Away" among the desktop
+  buttons, "Sleep: Never (set by the installer)". The new runner
+  (resumable training, short dry runs, Away's 10 minutes) and the
+  approved 52f6e65405 (kb16.ps1 -Minutes) now go together; the first
+  STARTED line with -Minutes will confirm it.
 
 - 2026-11-14 (pace routine; for later, not yet a question): CCRL's first
   rating for 1.0.0 is 3527 +/- 42 after 100 games, above the goal (top
