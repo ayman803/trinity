@@ -1552,6 +1552,21 @@ set its margin from the p95 there (a candidate for 1.2).
   does not know. Yes = do the steps; No = training keeps waiting for a
   free night. (This reinstall also brings the fixes of 15 November:
   short dry runs, Sleep: Never, Away's 10 minutes.)
+  DECIDED 16 November, about 5 pm Pacific (Ayman: "yes"; screenshots):
+  approved 52f6e65405 (1 file, tools/net/kb16.ps1, no risky lines). The
+  reinstall ran the OLD installer: its window lists four desktop buttons
+  (no "Trinity Away"), prints no "Sleep: Never" line and ends with the
+  wake test removed on 15 November, so C:\Trinity on the PC is still at
+  a commit between 29 October and 13 November (Install-Runner.bat there
+  has no "git pull" line yet). Consequences: the installed runner is the
+  old one (no Away, no resumable training, rule 17 as coded on 31
+  October), the 13 November reinstall was old too (the advisor's note
+  assumed the Away button), and the old installer sets Sleep back to 1
+  hour each time, which explains the PC sleeping on 13 and 16 November.
+  Nothing breaks meanwhile: the old runner passes no -Minutes, and the
+  approved kb16.ps1 runs -Resume jobs as before. Asked Ayman (16
+  November, 5 pm): set Sleep: Never again, run git pull in C:\Trinity,
+  reinstall again.
 
 - 2026-11-14 (pace routine; for later, not yet a question): CCRL's first
   rating for 1.0.0 is 3527 +/- 42 after 100 games, above the goal (top
