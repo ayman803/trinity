@@ -738,6 +738,11 @@ network, and the second week merged nothing):
   training): wdl25-900s2 vs long900s2 +3 to +12 self-play, about 40% to
   pass [0, 5] (as Scout's for wdl25-900); if both pass, the WDL lever is
   replicated as the length lever was; WDL 0.0 at 900 after both.
+  TRAINED (check-in 17 November): 2026-11-14-01 in two parts under the
+  resumable runner, 6:20 pm-1:40 am (to superbatch 881, PAUSED) and
+  1:41-1:52 am (to 900): branch net-wdl25-900-20261116-1820, bench
+  873804. wdl25-900s2 (2026-11-15-01) started 3:45 am and PAUSED at
+  superbatch 252 of 900 at 5:46 am; it continues in the next idle slot.
   (6) Resumable training BUILT (12 November; advisor note and Scout's
   12 November file), waiting for Ayman's approval (Decisions needed).
   Trainer branch net-kb16-resume (6c4e8af396 = net-kb16 + a "part" mode
@@ -822,11 +827,6 @@ network, and the second week merged nothing):
   calibrations run alone, as the Friday rule wants. long1350 parts
   2026-11-13-05/-06 come after: Saturday and Sunday nights. A lowlr-tail
   result is ignored if the dry run fails.
-  TRAINED (check-in 17 November): 2026-11-14-01 in two parts under the
-  resumable runner, 6:20 pm-1:40 am (to superbatch 881, PAUSED) and
-  1:41-1:52 am (to 900): branch net-wdl25-900-20261116-1820, bench
-  873804. wdl25-900s2 (2026-11-15-01) started 3:45 am and PAUSED at
-  superbatch 252 of 900 at 5:46 am; it continues in the next idle slot.
 - Weekly count (for the phone summary): week of 19 October: tested 4
   (speed-picker, unsure-spread, lazy-noisy, rescore-quiets; the last two
   started 20 October evening as 21 October's pair: +1.9 undecided,
