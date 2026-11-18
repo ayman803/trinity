@@ -148,6 +148,14 @@ before any code (with the advisor's and Scout's additions):
    Sleep is now Never; the PC slept through the 9 pm start and both wake
    timers on 13 November, so the timers are only a fallback, and the
    installer sets Sleep: Never itself (from the next reinstall).
+   (Owner, 18 November 2026: "put the pc to sleep when Trinity is done
+   for the night".) At night (from 9 pm to 6:55 am), when a job ends and
+   no queued job can start and end before 6:55 am (or the queue is
+   empty), and there has been no keyboard or mouse use for 30 minutes,
+   the runner puts the PC to sleep. Never during a job, never in the
+   day, never while Ayman is using it. Sleep: Never stays the Windows
+   setting, so the PC does not doze off on its own before or between
+   jobs. (Needs the runner reinstalled.)
 10. (Advisor, 17 October) Approve-Scripts itself lists new risky lines
    (deletes, moves, downloads, git push, Windows settings), so Ayman does
    not rely only on the Session's summary. At most one approval a day (a

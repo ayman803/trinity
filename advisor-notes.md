@@ -8,6 +8,22 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-18 · Sleep the PC when the night's work is done (Ayman, 18 November, 7:16 am)
+Ayman: "put the pc to sleep when Trinity is done for the night .. schedule
+it". Written into CLAUDE.md runner rule 9. Session, runner change (needs
+a reinstall; write the Install-Runner steps for Ayman when ready):
+between 21:00 and 06:55, after a job ends, if no queued job fits before
+06:55 (by rule 14's own estimate) or the queue is empty, and the beacon
+shows 30 minutes without input, log "SLEEP: night's work done" and put
+the PC to sleep (rundll32 powrprof.dll,SetSuspendState 0,1,0 with
+hibernation off, or a scheduled task in Ayman's own account that the
+runner triggers, if the runner account cannot sleep the machine). Never
+during a job, never by day, never with a restart pending. Sleep: Never
+stays the Windows setting. Runner-Status should show the SLEEP line.
+Also record in the weekly check: hours of PC work per day (about 5 on
+average over 4-17 November, peak 9.6) so the load stays visible; Ayman
+is checking temperatures and drive health this week.
+
 ### 2026-11-17 · wdl25-900 passed vs main; its checks queued tonight (advisor, 6:40 pm, Ayman: "PC is free, start now")
 #132: net-wdl25-900-main vs base-1117 PASSED, +5.54 +/- 3.80, 9400 games
 (8+0.08, [0, 5]). The queue was empty (wdl25-900s2 finished 13:46), so I
