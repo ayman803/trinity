@@ -8,6 +8,23 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-17 · New goal: CCRL top 50 (Ayman, 17 November, 5:07 pm)
+Ayman: "change our goal to be ranked in top 50" (CLAUDE.md rule 1 now
+says so). The advisor's "about 3600, roughly rank 50" of this morning was
+an extrapolation from the ranks seen around 1.0.0 (70-77 at 3522-3533),
+not a reading. Session: in the weekly CCRL check (ccrl/YYYY-MM-DD.md)
+record the ratings at ranks 45, 50 and 55 of the best-versions list and
+how many of ranks 40-60 are 4CPU entries; put the rank-50 rating in the
+Test queue next to our CCRL-scale estimate for main (1.0.0's CCRL rating
+plus main's same-night 40/60 gap, labelled as an estimate). Two levers to
+keep in view, no action yet: (1) networks (wdl25-900 and its
+replication), the main source of gains since October; (2) multi-threading:
+4 threads vs 1 measured +99.6 (12 October) and +79.5 (23 October) in our
+games, and the list ranks 4CPU entries alongside 1CPU ones. Whether
+Trinity is ever tested at 4CPU is the testers' choice and goes through
+Ayman alone; the release README should simply say that Trinity supports
+Threads.
+
 ### 2026-11-17 · wdl25-900 paused 19 superbatches short of the end (advisor)
 First resumable run under rule 18 worked: started 18:20 with -Minutes 510,
 saved and paused at superbatch 881 of 900 at 01:40 (7h19m of training),

@@ -41,6 +41,14 @@ rule governs how fully each one works.)
 
 1. Goal: CCRL top 100 (about 3455) within one year, starting October 2026.
    Stop rule: if it is clearly off track, say so plainly.
+   (Owner, 17 November 2026, after CCRL's first rating of release 1.0.0,
+   3527 +/- 42 on 100 games, about rank 73, not yet placed:) NEW GOAL:
+   CCRL 40/15 top 50 (best-versions list) by October 2027. The top-100
+   goal counts as met once 1.0.0's rating is ranked and settled. The
+   rating at rank 50 is measured, not assumed: the weekly CCRL check
+   records it (and ranks 45 and 55) every week. Report progress as the
+   gap between our CCRL-scale estimate and that number. The same stop
+   rule applies to the new goal.
 2. After every new network, calibrate against rated engines
    (`5-Calibrate.bat`). Keep at least two opponents where Trinity scores
    between 25% and 75%; replace any opponent outside that range.
