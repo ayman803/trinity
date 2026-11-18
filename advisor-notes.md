@@ -8,6 +8,20 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-17 · wdl25-900 passed vs main; its checks queued tonight (advisor, 6:40 pm, Ayman: "PC is free, start now")
+#132: net-wdl25-900-main vs base-1117 PASSED, +5.54 +/- 3.80, 9400 games
+(8+0.08, [0, 5]). The queue was empty (wdl25-900s2 finished 13:46), so I
+queued the network-merge checks CLAUDE.md requires, same night: 40/60
+calibration of net-wdl25-900-main, then 1.0.0 at 40/60 (rule 13
+reference), then its v2 check (2026-11-17-01..03). Session, on the
+morning run: log the prediction for the 40/60 gap BEFORE reading the
+result if possible (prior: main's +78 +/- 21 plus 0 to +6), start the
+SPSA re-tune of wdl25-900 if not already planned, start the
+wdl25-900s2 test vs main (the replication), and write the merge as
+"Decision needed: merge wdl25-900 after its checks?" when the checks and
+re-tune are in. It is the 1.2 network candidate if it clears them by the
+freeze (about 25-28 November).
+
 ### 2026-11-17 · New goal: CCRL top 50 (Ayman, 17 November, 5:07 pm)
 Ayman: "change our goal to be ranked in top 50" (CLAUDE.md rule 1 now
 says so). The advisor's "about 3600, roughly rank 50" of this morning was
