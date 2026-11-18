@@ -159,6 +159,10 @@ network, and the second week merged nothing):
   2026-11-17: nothing running. No idea worth a test: no Scout file yet
   this morning; nothing new from forensics or the speed profile. GitHub
   time goes to wdl25-900 vs main and the re-tune's run 2 (network lane).
+  2026-11-18: nothing running. No idea worth a test: Scout's 18 November
+  file is about networks (the wdl25-900 vs wdl25 head-to-head); nothing
+  new from forensics or the speed profile. GitHub time goes to that
+  head-to-head and the re-tune's run 3 (network lane).
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes
@@ -783,6 +787,15 @@ network, and the second week merged nothing):
   advisor: same recipe and scale). Run 2 (17 November): EVAL_SCALE 120 ->
   120 again; LMP_BASE 359 -> 365, LMR_HIST_DIV 7860 -> 7740, HIST_MUL 172
   -> 174, the rest within a step.
+  (8) wdl0 (Scout's next one-change question, 11 and 18 November):
+  Control2's recipe at WDL 0.0 (training target the search score only),
+  600 superbatches, seed 20261019, queued 18 November as 2026-11-18-01
+  (kb16.ps1 -KingBuckets 8 -Seed 20261019 -Tag wdl0 -Wdl 0.0 -Resume;
+  about 5 hours, resumable). Partner: wdl25 (600, x1.2). Useful whatever
+  the head-to-head says (Scout's plans A and B both ask for WDL 0.0).
+  Prediction (written before training): vs wdl25 -6 to +5, about 20% to
+  pass [0, 5]; its eval scale is likely smaller again (check before the
+  screen, as for wdl25).
   PASSED vs main (check-in 18 November): +5.54 +/- 3.80 after 9400 games
   (SPRT #131 + #132, LLR 3.02, [0, 5]), 0 time losses; inside +3 to +12.
   40/60, same night (PC idle): wdl25-900 main 3581 (2026-11-17-01, 6:49-
@@ -1855,7 +1868,16 @@ merged by then).
    other engines' public repositories added to the session (read only)
    before a mechanical comparison; nothing learned from them may be used.
 2. Move-similarity test (item 2): not started.
-3. CREDITS section in README.md (item 3): not started.
+3. CREDITS section in README.md (item 3): already there (code by
+   Claude, bullet, the Leela-derived data in the Stockfish community's
+   binpacks, Syzygy and shakmaty-syzygy, fastchess, UHO books). Still to
+   do AT THE FREEZE, not before (README is public and testers read it, so
+   tester-facing text changes with the release, on Ayman's word): drop
+   the three CCRL mentions (the "next release won't come before 1.0.0 has
+   a CCRL rating" line, the "about 3450 on the CCRL scale ... CCRL top
+   100" strength line, and "the engines on the CCRL list" in Testing),
+   point "For testers" at 1.2, and add one line that Trinity supports
+   Threads (advisor, 17 November). Drafted 18 November.
 4. Package plan and steps for Ayman (item 4): not started.
 5. At the freeze, on Ayman's word: same-night 40/60 of the release build
    and 1.0.0; a stability run at CCRL-like settings; the package.

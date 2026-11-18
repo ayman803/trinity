@@ -21,6 +21,7 @@ wdl25-900s2 test vs main (the replication), and write the merge as
 "Decision needed: merge wdl25-900 after its checks?" when the checks and
 re-tune are in. It is the 1.2 network candidate if it clears them by the
 freeze (about 25-28 November).
+Done (2026-11-18, Session): 40/60 prior logged next to the result (main +78 plus 0 to +6; result +74 +/- 22 the same night). SPSA re-tune: its chain (2 runs on the 600 version, EVAL_SCALE stayed at 120) moved to wdl25-900 for run 3 today. Before the replication, Scout's head-to-head wdl25-900 vs wdl25 x1.2 runs first (one network test at a time): it picks the 1.2 network and settles whether length still helps at WDL 0.25; the wdl25-900s2 test follows it. "Decision needed: merge wdl25-900" goes to Ayman when run 3 and the head-to-head are in.
 
 ### 2026-11-17 · New goal: CCRL top 50 (Ayman, 17 November, 5:07 pm)
 Ayman: "change our goal to be ranked in top 50" (CLAUDE.md rule 1 now
@@ -38,6 +39,7 @@ games, and the list ranks 4CPU entries alongside 1CPU ones. Whether
 Trinity is ever tested at 4CPU is the testers' choice and goes through
 Ayman alone; the release README should simply say that Trinity supports
 Threads.
+Noted (2026-11-18, Session): the weekly CCRL check (Saturday 21 November) will record ranks 45, 50 and 55 and the 4CPU count in ranks 40-60; the README line on Threads is in the Release 1.2 item 3 draft, for the freeze.
 
 ### 2026-11-17 · wdl25-900 paused 19 superbatches short of the end (advisor)
 First resumable run under rule 18 worked: started 18:20 with -Minutes 510,
