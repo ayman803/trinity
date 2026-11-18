@@ -767,6 +767,22 @@ network, and the second week merged nothing):
   Screen (17 November, 7:26 am Pacific): +22.62 +/- 18.48 after 400
   games (SPRT #131), 0 time losses: passes the screen; continued to the
   full [0, 5] test (continue_from 44111933534, 9000 more games).
+  40/60 prior (advisor, 17 November, written before the run): main's +78
+  +/- 21 plus 0 to +6. Result (check-in, above): +74 +/- 22 the same
+  night: inside, no gain visible against rated engines.
+  Head-to-head with wdl25 x1.2 (Scout, 18 November; pace routine, written
+  before any game): net-wdl25-900-main vs net-wdl25x12-main (same search,
+  same x1.2 scale), 8+0.08, [0, 5], 9000 games. One change: length at
+  WDL 0.25. Prediction (Scout): -3 to +6, about 25% to pass. It picks the
+  1.2 network (the winner, or wdl25-900 if undecided: it is the one being
+  re-tuned) and the next GPU nights (if length adds nothing at WDL 0.25:
+  600-superbatch WDL 0.0 and 0.1 runs instead of 1350). The wdl25-900s2
+  replication test follows it (one network test at a time).
+  SPSA re-tune: the fallback's chain moves to wdl25-900 for run 3
+  (continue_from 44111979940 on branch net-wdl25-900-main; Scout and the
+  advisor: same recipe and scale). Run 2 (17 November): EVAL_SCALE 120 ->
+  120 again; LMP_BASE 359 -> 365, LMR_HIST_DIV 7860 -> 7740, HIST_MUL 172
+  -> 174, the rest within a step.
   PASSED vs main (check-in 18 November): +5.54 +/- 3.80 after 9400 games
   (SPRT #131 + #132, LLR 3.02, [0, 5]), 0 time losses; inside +3 to +12.
   40/60, same night (PC idle): wdl25-900 main 3581 (2026-11-17-01, 6:49-
