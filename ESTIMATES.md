@@ -810,6 +810,12 @@ network, and the second week merged nothing):
   calibration +74 +/- 22 over 1.0.0 the same night (main +78 two nights
   apart: no gain visible against rated engines yet), v2 check passed,
   re-tune done. Put to Ayman (Decisions needed, 19 November).
+  MERGED 19 November by Ayman's decision ("yes"): "Merge wdl25-900
+  network (SPRT #131 + #132 passed vs main, +5.54)", bench 948275, tests
+  pass. Main's network is now wdl25-900 with EVAL_SCALE 120. New search
+  candidates and network tests use main from this commit. wdl0 x1.4's
+  test (vs wdl25 x1.2, already running) is unaffected; a wdl0 pass would
+  next be tested against this main.
   (9) wdl0 screens (Scout, 19 November; written before any game): wdl0's
   eval is 29% smaller than Control2's and flatter in openings (Scout's
   check); held-out loss 0.085230 (wdl25 0.082863): not broken, the result
@@ -1657,6 +1663,8 @@ set its margin from the p95 there (a candidate for 1.2).
   with the 600-superbatch wdl25 was a tie (-1.0 +/- 3.9). The merge also
   brings the eval scale x1.2 as a setting. Session's view: yes; it is
   the 1.2 network. Yes = merge it; No = keep long900 for 1.2.
+  DECIDED 19 November (Ayman: "yes"): merged into main, bench 948275,
+  tests pass.
 
 - 2026-11-16 (pace routine): let training use any free hour (CLAUDE.md
   runner rule 18, commit 2a1f538)? Today a 7.5-hour training run can only

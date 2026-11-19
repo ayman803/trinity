@@ -889,3 +889,11 @@ to that commit (the approval covers the script, so the script pins the
 branch it builds). Bullet at this commit has no CPU backend (CUDA, ROCm,
 Metal or a mock that cannot train), so the training check runs on the
 PC: Dry-Run-Resume.bat or the queued dry-run job.
+
+wdl25-900 MERGED (19 November, Ayman's decision): main's network is now
+long900's recipe trained with WDL 0.25 (900 superbatches, seed 20261019),
+with the eval scaled x1.2 (EVAL_SCALE = 120 in src/tune.rs, a tunable).
+vs main (long900) +5.54 +/- 3.80 (#131 + #132); vs wdl25 at 600
+superbatches -1.0 +/- 3.9 (#133, stopped: length adds nothing measurable
+at WDL 0.25); 40/60 +74 +/- 22 over 1.0.0; v2 check passed; SPSA re-tune
+(3 runs) changed nothing by a step. Bench 948275.
