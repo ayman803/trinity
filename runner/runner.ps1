@@ -362,6 +362,7 @@ function Invoke-Job($Job, $Hours, [string]$Commit) {
     if ((Test-ResumableTraining $Job) -and $reason -like "STOPPED (over*") { $reason = "PAUSED (at the $Hours h limit; continues from its last checkpoint later)" }
     $status = if ($reason) { $reason } elseif ($p.ExitCode -eq 0) { "DONE" } elseif ($p.ExitCode -eq 3 -and (Test-ResumableTraining $Job)) { "PAUSED (part done before the deadline; continues later)" } else { "FAILED (exit code $($p.ExitCode))" }
     Set-JobStatus $Job.Id $status
+    if (Test-Evening) { $script:JobEndedTonight = $true }
     Write-Log "$status $($Job.Id) after $minutes min"
     $tail = @()
     foreach ($f in @($out, $err)) { if (Test-Path -LiteralPath $f) { $tail += @(Get-Content -LiteralPath $f -Tail 80) } }
@@ -369,6 +370,7 @@ function Invoke-Job($Job, $Hours, [string]$Commit) {
 }
 
 function Invoke-Cycle {
+    $script:NothingFits = $false
     if (Test-Path -LiteralPath (Join-Path $RunnerDir "STOP")) { Write-Note "Stopped by the STOP switch; starting nothing new."; return $false }
     if (Test-RestartPending) { Write-Note "Waiting: Windows wants to restart; restart the machine when convenient."; return $false }
     if ((Get-FreeGB) -lt $MinFreeStartGB) { Write-Note "Waiting: under $MinFreeStartGB GB free on the disk."; return $false }
@@ -377,7 +379,7 @@ function Invoke-Cycle {
     Invoke-Git $Clone @("fetch", "-q", "--prune", "origin") | Out-Null
     $status = Get-JobStatus
     $pending = @(Get-Queue | Where-Object { $_.Machine -eq $Machine -and (Test-JobPending $status $_.Id) })
-    if ($pending.Count -eq 0) { Write-Note "Queue empty for '$Machine'."; return $false }
+    if ($pending.Count -eq 0) { $script:NothingFits = $true; Write-Note "Queue empty for '$Machine'."; return $false }
     $approval = Get-Approval
     if (-not (Select-ApprovedCommit $approval)) { return $false }
     # The first queued job that can finish before the morning deadline
@@ -389,6 +391,7 @@ function Invoke-Cycle {
         if ($job.Script -eq "runner/jobs/hello.ps1" -or (Test-JobFits $job $hours)) { $next = $job; break }
     }
     if (-not $next) {
+        $script:NothingFits = $true
         $first = $pending[0]
         if (-not (Test-Evening) -and -not (Test-Away) -and $first.Args -notcontains "-Tune" -and -not (Test-ResumableTraining $first)) {
             Write-Note "Waiting: $($first.Id) is a long job; long jobs start from $EveningStart (if they finish by $MorningDeadline)."
@@ -581,6 +584,63 @@ function Set-Awake([bool]$On) {
     [TrinityRunner.Power]::SetThreadExecutionState($flags) | Out-Null
 }
 
+# Sleep when the night's work is done (Ayman, 18 November; CLAUDE.md runner
+# rule 9): at night (21:00-06:55), after a job has ended, when no queued job
+# can start and end before 06:55 (or the queue is empty), with no keyboard or
+# mouse use for 30 minutes (or nobody signed in), no restart pending, no
+# STOP switch and no other Trinity program running. Never during a job,
+# never by day. Wake timers stay allowed (SetSuspendState: no hibernate,
+# wake events on). The runner's account must switch on its shutdown
+# privilege first.
+$script:JobEndedTonight = $false
+$script:NothingFits = $false
+function Test-NightDone {
+    if (-not $script:JobEndedTonight -or -not $script:NothingFits) { return $false }
+    if (-not (Test-Evening)) { $script:JobEndedTonight = $false; return $false }
+    if (Test-Path -LiteralPath (Join-Path $RunnerDir "STOP")) { return $false }
+    if ((Test-RestartPending) -or (Test-Busy)) { return $false }
+    $idle = Get-IdleMinutes
+    return ($null -eq $idle -or $idle -ge 30)
+}
+function Invoke-NightSleep {
+    $script:JobEndedTonight = $false
+    Write-Log "SLEEP: the night's work is done; putting the PC to sleep"
+    Publish-Log "SLEEP (the night's work is done; no queued job fits before $MorningDeadline)"
+    try {
+        if (-not ("TrinityRunner.Sleeper" -as [type])) {
+            Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+namespace TrinityRunner {
+    public static class Sleeper {
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct TokPriv1Luid { public int Count; public long Luid; public int Attr; }
+        [DllImport("advapi32.dll", SetLastError = true)] static extern bool OpenProcessToken(IntPtr h, int access, out IntPtr token);
+        [DllImport("advapi32.dll", SetLastError = true)] static extern bool LookupPrivilegeValue(string host, string name, out long luid);
+        [DllImport("advapi32.dll", SetLastError = true)] static extern bool AdjustTokenPrivileges(IntPtr token, bool disableAll, ref TokPriv1Luid state, int len, IntPtr prev, IntPtr retLen);
+        [DllImport("kernel32.dll")] static extern IntPtr GetCurrentProcess();
+        [DllImport("powrprof.dll", SetLastError = true)] static extern bool SetSuspendState(bool hibernate, bool force, bool disableWakeEvent);
+        // "" when the PC went to sleep (and has woken again), else what failed.
+        public static string Sleep() {
+            IntPtr token;
+            if (!OpenProcessToken(GetCurrentProcess(), 0x0020 | 0x0008, out token)) return "OpenProcessToken error " + Marshal.GetLastWin32Error();
+            TokPriv1Luid tp; tp.Count = 1; tp.Attr = 2; tp.Luid = 0;
+            if (!LookupPrivilegeValue(null, "SeShutdownPrivilege", out tp.Luid)) return "LookupPrivilegeValue error " + Marshal.GetLastWin32Error();
+            AdjustTokenPrivileges(token, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+            int e = Marshal.GetLastWin32Error();
+            if (e != 0) return "AdjustTokenPrivileges error " + e;
+            if (!SetSuspendState(false, false, false)) return "SetSuspendState error " + Marshal.GetLastWin32Error();
+            return "";
+        }
+    }
+}
+'@
+        }
+        $problem = [TrinityRunner.Sleeper]::Sleep()
+        if ($problem) { Write-Log "SLEEP failed: $problem (the PC stays awake)"; Publish-Log "SLEEP failed: $problem" }
+    } catch { Write-Log "SLEEP failed: $($_.Exception.Message)" }
+}
+
 # Any error that would stop the runner is written to the log first.
 trap { Write-Log "Runner stopped by an error: $($_.Exception.Message)"; break }
 Write-Log "Runner started on '$Machine' as $env:USERNAME"
@@ -609,6 +669,7 @@ while ($true) {
     $ran = $false
     try { $ran = Invoke-Cycle } catch { Write-Log "Cycle error: $($_.Exception.Message)" }
     if (-not $ran) { Set-Awake $false }   # nothing running: Windows may let the PC sleep
+    if (-not $ran -and (Test-NightDone)) { Invoke-NightSleep }
     if ($Once) { break }
     # Wait by the wall clock in short steps, so a check follows soon after
     # the PC wakes (Windows puts it back to sleep a few minutes after a timer wake).
