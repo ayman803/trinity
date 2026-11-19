@@ -1,0 +1,12 @@
+SPRT test #136, finished 2026-11-19 19:28 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/44555048813 (run id 44555048813)
+Continues run id 44552669275; the totals below include it.
+SPRT RESULT: FAILED - 'net-wdl0x140-main' is not stronger than 'net-wdl25x12-main'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: net-wdl0x140-main (bench 868732) vs net-wdl25x12-main (bench 959021), tc 8+0.08, bounds [0, 5]
+Games: 9400, Wins: 2217, Losses: 2366, Draws: 4817, Points: 4625.5 (49.21 %)
+Ptnml(0-2): [60, 1206, 2304, 1083, 47]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -5.51 +/- 3.77, nElo: -10.25 +/- 7.02
+LLR: -4.97 (-2.94, 2.94) [0.00, 5.00]
