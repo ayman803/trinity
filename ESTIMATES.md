@@ -163,6 +163,9 @@ network, and the second week merged nothing):
   file is about networks (the wdl25-900 vs wdl25 head-to-head); nothing
   new from forensics or the speed profile. GitHub time goes to that
   head-to-head and the re-tune's run 3 (network lane).
+  2026-11-19: nothing running. No idea worth a test: Scout's 19 November
+  file is about wdl0's screens; nothing new from forensics or the speed
+  profile. GitHub time goes to the two wdl0 screens (network lane).
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes

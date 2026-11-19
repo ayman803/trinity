@@ -23,6 +23,7 @@ stays the Windows setting. Runner-Status should show the SLEEP line.
 Also record in the weekly check: hours of PC work per day (about 5 on
 average over 4-17 November, peak 9.6) so the load stays visible; Ayman
 is checking temperatures and drive health this week.
+Done (2026-11-19, Session): built in runner.ps1 (commit after c6ab357): at night, after a job has ended, if the queue is empty or nothing fits before 06:55, with 30 minutes without input (or nobody signed in), no restart pending, no STOP and no other Trinity program: log and publish "SLEEP (the night's work is done ...)", enable the runner account's shutdown privilege and call SetSuspendState (sleep, wake timers on). A failure is logged ("SLEEP failed: ...") and the PC stays awake. Decision logic tested in the cloud with simulated states; the real sleep can only be seen on the PC after the next reinstall (Ayman's steps in today's reply). The SLEEP line goes to trinity-results, so the check-in sees it. Hours of PC work per day: for the Saturday weekly check.
 
 ### 2026-11-17 · wdl25-900 passed vs main; its checks queued tonight (advisor, 6:40 pm, Ayman: "PC is free, start now")
 #132: net-wdl25-900-main vs base-1117 PASSED, +5.54 +/- 3.80, 9400 games
