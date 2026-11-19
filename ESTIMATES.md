@@ -782,6 +782,9 @@ network, and the second week merged nothing):
   re-tuned) and the next GPU nights (if length adds nothing at WDL 0.25:
   600-superbatch WDL 0.0 and 0.1 runs instead of 1350). The wdl25-900s2
   replication test follows it (one network test at a time).
+  Head-to-head so far (check-in 19 November): -1.00 +/- 3.90 after 9000
+  games (SPRT #133, LLR -1.62, [0, 5]), undecided, 0 time losses; inside
+  -3 to +6. So far length adds nothing at WDL 0.25.
   SPSA re-tune: the fallback's chain moves to wdl25-900 for run 3
   (continue_from 44111979940 on branch net-wdl25-900-main; Scout and the
   advisor: same recipe and scale). Run 2 (17 November): EVAL_SCALE 120 ->
@@ -796,6 +799,9 @@ network, and the second week merged nothing):
   Prediction (written before training): vs wdl25 -6 to +5, about 20% to
   pass [0, 5]; its eval scale is likely smaller again (check before the
   screen, as for wdl25).
+  TRAINED (check-in 19 November): 2026-11-18-01, 8:20 am-1:22 pm on 18
+  November (5.0 h, one part), branch net-wdl0-20261118-0820, bench
+  813661.
   PASSED vs main (check-in 18 November): +5.54 +/- 3.80 after 9400 games
   (SPRT #131 + #132, LLR 3.02, [0, 5]), 0 time losses; inside +3 to +12.
   40/60, same night (PC idle): wdl25-900 main 3581 (2026-11-17-01, 6:49-
@@ -1324,6 +1330,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-11-16 6:21 am PST: read up to "04:22 DISTURBED 2026-11-14-03". Nothing ran on Sunday 15 November or overnight until 4:21 am: wdl25-900 (2026-11-14-01) and wdl25-900s2 (2026-11-15-01) did not start, and the 1.0.0 40/60 run started at 4:21 am and was stopped one minute later by keyboard or mouse use (the fourth night-time stop since 9 November: 11:49 pm, 2:12 am, 4:22 am; something may be touching the mouse at night). GitHub, last 24 hours: lowlr-tail vs Control2 -2.66 after 9400, undecided at the edge of a fail. No approval pending (the runner fixes of 70d833d are under runner/, so they need a reinstall, not an approval). Nothing queued.
 - 2026-11-17 6:21 am PST: read up to "05:46 PAUSED 2026-11-15-01" (new runner with resumable training at work: wdl25-900 trained in two parts; wdl25-900s2 at 252/900, paused). 1.0.0 at 40/60 (2026-11-14-03, 1:52-3:45 am, idle): 3499; main's 40/60 of 15 November (3577) is +78 +/- 21 over it, 1.0.0 reference from 17 November (the two runs are two nights apart). 0 time losses for 1.0.0 in 480 games. No GitHub results in the last 24 hours. No approval pending (52f6e65 is in the log). Nothing queued (training is not the check-in's; wdl25-900s2 continues by itself).
 - 2026-11-18 6:21 am PST: read up to "22:37 DONE 2026-11-17-03" (wdl25-900s2 trained; wdl25-900 at 40/60 +74 +/- 22 over 1.0.0 the same night; v2 check passed; no disturbances). GitHub, last 24 hours: wdl25-900 vs main PASSED (+5.54, 9400). No approval pending. Nothing queued: the re-tune and the merge decision are the Session's and Ayman's.
+- 2026-11-19 6:21 am PST: read up to "13:22 DONE 2026-11-18-01" (wdl0 trained, 5.0 h; nothing ran overnight, the queue was empty after it). GitHub, last 24 hours: wdl25-900 vs wdl25 x1.2 -1.00 after 9000, undecided. No approval pending. Nothing queued: the Friday calibration is tomorrow's; network tests are the pace routine's.
 
 ## Lessons so far
 
