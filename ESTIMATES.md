@@ -819,6 +819,10 @@ network, and the second week merged nothing):
   [0, 5] head-to-head (x140 unless x120 beats it by more than 40, the
   rule used for wdl25). Prediction (Scout): the better one -6 to +6
   against wdl25 x1.2, about 20% to pass.
+  Screens (19 November, 7:27 am Pacific): x140 +17.39 +/- 19.63 (SPRT
+  #134), x120 +0.00 +/- 18.19 (SPRT #135), 400 games each, 0 time losses
+  in both. By the rule fixed before the games, x140 goes into the
+  head-to-head (continue_from 44552669275, 9000 more games, [0, 5]).
   (8) wdl0 (Scout's next one-change question, 11 and 18 November):
   Control2's recipe at WDL 0.0 (training target the search score only),
   600 superbatches, seed 20261019, queued 18 November as 2026-11-18-01
