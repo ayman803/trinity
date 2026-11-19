@@ -348,7 +348,9 @@ impl Searcher {
 
     fn evaluate(&self, b: &Board, ply: usize) -> i32 {
         let raw = match self.net {
-            Some(net) => nnue::evaluate(net, &self.acc[ply], b),
+            // The network's output in hundredths (wdl25: its evals are about
+            // 15% smaller than Control2's, so 120; tuned by SPSA).
+            Some(net) => nnue::evaluate(net, &self.acc[ply], b) * tune::EVAL_SCALE() / 100,
             None => eval::evaluate(b),
         };
         // Drift towards a draw as the fifty-move counter grows.
