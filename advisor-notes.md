@@ -295,6 +295,7 @@ October and no longer applies: do the full job. Favour ideas with a clear
 mechanism and a cheap, decisive test.
 
 Done (2026-11-06, Session): tagging started; no-checkext is the first row marked "(Scout, Fable)" (lowlr-tail is logged as planned, not yet tested). The count goes under this note on 19 November.
+COUNT (2026-11-19, Session), Scout's ideas from the Fable-run files of 6-18 November that got a decided test, against bounds [0, 5]: search 0 of 3 (no-checkext -4.4, chk-noreduce -5.1, tm-nodefloor -2.8); network 2 of 3 (wdl25 x1.2 +8.9 vs Control2 and +7.6 vs main; wdl25-900 +5.5 vs main; lowlr-tail -2.7, failed). Total 2 of 6 (33%), against the baseline of about 1 in 4. Not counted: the wdl-length head-to-head (a diagnostic, stopped at -1.0) and wdl0 (screens start today). The two passes are the trial's main gain: wdl25-900 is the 1.2 network candidate. Small numbers: 2 of 6 is no clear evidence either way against 1 in 4.
 Noted (2026-11-11, Session): with the search quota gone (Ayman, 11 November), the advisor proposes counting Fable's network ideas too, judged by their head-to-heads, rather than ending the trial early. The 19 November count will list search ideas (0 of 3 passed so far) and network ideas (wdl25, training tonight) separately.
 
 ### 2026-11-04 · Ayman's decisions (his words, 4 November, 6:48 pm Pacific)
