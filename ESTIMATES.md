@@ -790,6 +790,32 @@ network, and the second week merged nothing):
   advisor: same recipe and scale). Run 2 (17 November): EVAL_SCALE 120 ->
   120 again; LMP_BASE 359 -> 365, LMR_HIST_DIV 7860 -> 7740, HIST_MUL 172
   -> 174, the rest within a step.
+  Head-to-head RESULT and STOP (pace routine 19 November): -1.00 +/-
+  3.90 after 9000 games (SPRT #133, LLR -1.62, [0, 5]), 0 time losses;
+  inside -3 to +6. Stopped: whatever more games show, the decisions it was
+  for are made: the two are equal within noise, so the 1.2 network is
+  wdl25-900 (the one re-tuned, and the one tested against main), and
+  length adds nothing measurable at WDL 0.25 (so no 1350 run at WDL 0.25;
+  the next GPU questions are 600-superbatch runs, Scout's plan B).
+  SPSA re-tune COMPLETE (run 3 on wdl25-900, 18 November; 4941 pairs per
+  chain): no setting moved by a step: EVAL_SCALE 120 -> 120, LMP_BASE 359
+  -> 365, LMR_HIST_DIV 7860 -> 7743, HIST_MAX 1705 -> 1715, HIST_MUL 172 ->
+  174, the rest by 0-3. Inside the prediction (scale 110-135; other
+  settings under a step). As for long900, the tuned values are not taken:
+  the re-tune says today's settings and the x1.2 scale already fit.
+  All merge checks of rule 5 are in: SPRT vs main +5.54 (#132), 40/60
+  calibration +74 +/- 22 over 1.0.0 the same night (main +78 two nights
+  apart: no gain visible against rated engines yet), v2 check passed,
+  re-tune done. Put to Ayman (Decisions needed, 19 November).
+  (9) wdl0 screens (Scout, 19 November; written before any game): wdl0's
+  eval is 29% smaller than Control2's and flatter in openings (Scout's
+  check); held-out loss 0.085230 (wdl25 0.082863): not broken, the result
+  term is simply absent. Two 400-game screens against wdl25 x1.2
+  (net-wdl25x12-main): net-wdl0x140-main (EVAL_SCALE 140, bench 868732)
+  and net-wdl0x120-main (120, bench 917562); the better goes into the
+  [0, 5] head-to-head (x140 unless x120 beats it by more than 40, the
+  rule used for wdl25). Prediction (Scout): the better one -6 to +6
+  against wdl25 x1.2, about 20% to pass.
   (8) wdl0 (Scout's next one-change question, 11 and 18 November):
   Control2's recipe at WDL 0.0 (training target the search score only),
   600 superbatches, seed 20261019, queued 18 November as 2026-11-18-01
@@ -1614,6 +1640,16 @@ set its margin from the p95 there (a candidate for 1.2).
 ## Decisions needed (dated; read by the phone summary)
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
+
+- 2026-11-19 (pace routine): merge wdl25-900 as main's network? It is
+  long900's recipe trained with WDL 0.25 (less weight on game results).
+  Checks, all in: beat main +5.5 +/- 3.8 in 9,400 games (#132); 40/60
+  calibration +74 over 1.0.0 the same night (main: +78, two nights apart,
+  so against rated engines no gain shows yet, as with long900); v2 check
+  passed; re-tune changed nothing (same as long900). Its direct match
+  with the 600-superbatch wdl25 was a tie (-1.0 +/- 3.9). The merge also
+  brings the eval scale x1.2 as a setting. Session's view: yes; it is
+  the 1.2 network. Yes = merge it; No = keep long900 for 1.2.
 
 - 2026-11-16 (pace routine): let training use any free hour (CLAUDE.md
   runner rule 18, commit 2a1f538)? Today a 7.5-hour training run can only
