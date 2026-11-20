@@ -1,0 +1,12 @@
+SPRT test #138, finished 2026-11-20 19:10 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/44760557677 (run id 44760557677)
+Continues run id 44758473867; the totals below include it.
+SPRT RESULT: PASSED - 'net-wdl25-900s2-main' is stronger than 'net-long900s2-main'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: net-wdl25-900s2-main (bench 908037) vs net-long900s2-main (bench 1073582), tc 8+0.08, bounds [0, 5]
+Games: 9400, Wins: 2336, Losses: 2124, Draws: 4940, Points: 4806.0 (51.13 %)
+Ptnml(0-2): [32, 1101, 2259, 1239, 69]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: 7.84 +/- 3.79, nElo: 14.53 +/- 7.02
+LLR: 4.68 (-2.94, 2.94) [0.00, 5.00]
