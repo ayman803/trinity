@@ -1721,6 +1721,12 @@ set its margin from the p95 there (a candidate for 1.2).
   (resumable training, short dry runs, Away's 10 minutes) and the
   approved 52f6e65405 (kb16.ps1 -Minutes) now go together; the first
   STARTED line with -Minutes will confirm it.
+  20 November: Ayman reinstalled the runner again (his message): this
+  brings the night sleep (rule 9, 18 November), Runner-Status with the
+  installed version and the real sleep/hibernate settings, and the
+  installer's stop on a failed update. Still waiting for an approval (no
+  hurry): kb16.ps1's "finish instead of pausing within 30 superbatches"
+  (63dc150).
 
 - 2026-11-14 (pace routine; for later, not yet a question): CCRL's first
   rating for 1.0.0 is 3527 +/- 42 after 100 games, above the goal (top
