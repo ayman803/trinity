@@ -8,6 +8,16 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-20 · Night-sleep should also cover nights with no jobs (advisor)
+Reinstalled 19 November 18:17 (night-sleep in place). That night the
+queue was empty and no job ran, so no job "ended" and the PC stayed awake
+all night (Ayman asked at 3 am whether anything was running). Extend the
+rule (CLAUDE.md runner rule 9's intent: "put the pc to sleep when Trinity
+is done for the night"): from 21:00, if the queue is empty or nothing
+fits before 06:55, and 30 minutes without input, sleep, whether or not a
+job ran that night. Same guards (no job running, no restart pending, no
+STOP, not by day). Needs a reinstall; write Ayman's steps when ready.
+
 ### 2026-11-18 · Sleep the PC when the night's work is done (Ayman, 18 November, 7:16 am)
 Ayman: "put the pc to sleep when Trinity is done for the night .. schedule
 it". Written into CLAUDE.md runner rule 9. Session, runner change (needs
