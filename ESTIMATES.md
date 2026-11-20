@@ -752,6 +752,16 @@ network, and the second week merged nothing):
   training): wdl25-900s2 vs long900s2 +3 to +12 self-play, about 40% to
   pass [0, 5] (as Scout's for wdl25-900); if both pass, the WDL lever is
   replicated as the length lever was; WDL 0.0 at 900 after both.
+  Test (20 November, Ayman: "the second-seed check ... is a free GitHub
+  test"; written before any game): wdl25-900s2 trained 17 November
+  (bench 777027); broken-run check: held-out loss 0.082697 (wdl25-900
+  0.082831, long900s2 0.081550): not broken. Branch net-wdl25-900s2-main
+  (today's main search with EVAL_SCALE 120, bench 908037) vs
+  net-long900s2-main (same search at x1.0, the s2 partner: same seed and
+  length, WDL 0.5), 400-game screen, then [0, 5] to 9000 games, 8+0.08.
+  Prediction as written on 15 November: +3 to +12, about 40% to pass.
+  Reading: a pass replicates the result-weight gain at a second seed
+  (wdl25-900 vs long900 was +5.54).
   TRAINED (check-in 17 November): 2026-11-14-01 in two parts under the
   resumable runner, 6:20 pm-1:40 am (to superbatch 881, PAUSED) and
   1:41-1:52 am (to 900): branch net-wdl25-900-20261116-1820, bench
