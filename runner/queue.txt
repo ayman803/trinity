@@ -114,3 +114,5 @@
 2026-11-17-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60
 2026-11-17-03 | pc | scripts/v2check.ps1 | -Ref net-wdl25-900-main
 2026-11-18-01 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Tag wdl0 -Wdl 0.0 -Resume
+2026-11-20-01 | pc | scripts/calibrate.ps1 | -Ref main
+2026-11-20-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0

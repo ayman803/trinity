@@ -829,6 +829,9 @@ network, and the second week merged nothing):
   #134), x120 +0.00 +/- 18.19 (SPRT #135), 400 games each, 0 time losses
   in both. By the rule fixed before the games, x140 goes into the
   head-to-head (continue_from 44552669275, 9000 more games, [0, 5]).
+  FAILED (check-in 20 November): -5.51 +/- 3.77 after 9400 games (SPRT
+  #134 + #136, LLR -4.97, [0, 5]), 0 time losses; at the bottom of the
+  -6 to +5 prediction. WDL 0.0 is worse than 0.25 at 600 superbatches.
   (8) wdl0 (Scout's next one-change question, 11 and 18 November):
   Control2's recipe at WDL 0.0 (training target the search score only),
   600 superbatches, seed 20261019, queued 18 November as 2026-11-18-01
@@ -1370,6 +1373,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-11-17 6:21 am PST: read up to "05:46 PAUSED 2026-11-15-01" (new runner with resumable training at work: wdl25-900 trained in two parts; wdl25-900s2 at 252/900, paused). 1.0.0 at 40/60 (2026-11-14-03, 1:52-3:45 am, idle): 3499; main's 40/60 of 15 November (3577) is +78 +/- 21 over it, 1.0.0 reference from 17 November (the two runs are two nights apart). 0 time losses for 1.0.0 in 480 games. No GitHub results in the last 24 hours. No approval pending (52f6e65 is in the log). Nothing queued (training is not the check-in's; wdl25-900s2 continues by itself).
 - 2026-11-18 6:21 am PST: read up to "22:37 DONE 2026-11-17-03" (wdl25-900s2 trained; wdl25-900 at 40/60 +74 +/- 22 over 1.0.0 the same night; v2 check passed; no disturbances). GitHub, last 24 hours: wdl25-900 vs main PASSED (+5.54, 9400). No approval pending. Nothing queued: the re-tune and the merge decision are the Session's and Ayman's.
 - 2026-11-19 6:21 am PST: read up to "13:22 DONE 2026-11-18-01" (wdl0 trained, 5.0 h; nothing ran overnight, the queue was empty after it). GitHub, last 24 hours: wdl25-900 vs wdl25 x1.2 -1.00 after 9000, undecided. No approval pending. Nothing queued: the Friday calibration is tomorrow's; network tests are the pace routine's.
+- 2026-11-20 6:17 am PST (run early by Ayman's "run early"): read up to "13:22 DONE 2026-11-18-01" (no runner job since; the queue was empty). GitHub, last 24 hours: wdl0 x1.4 vs wdl25 x1.2 FAILED (-5.51, 9400). wdl25-900 merged 19 November (Ayman). No approval pending. Friday rule (runner rule 16; main, now with wdl25-900, not calibrated at 10+0.1 this week): queued 2026-11-20-01 main, then 2026-11-20-02 release-1.0.0, 10+0.1 the same night.
 
 ## Lessons so far
 
