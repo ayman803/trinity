@@ -17,6 +17,7 @@ is done for the night"): from 21:00, if the queue is empty or nothing
 fits before 06:55, and 30 minutes without input, sleep, whether or not a
 job ran that night. Same guards (no job running, no restart pending, no
 STOP, not by day). Needs a reinstall; write Ayman's steps when ready.
+Done (2026-11-20, Session): runner.ps1 (commit 167dd2c): the night sleep no longer needs a job to have ended that night; all other guards unchanged (tested with simulated states). Ayman's steps are in ESTIMATES.md, Decisions needed (20 November), together with the approval for kb16.ps1 -MoreData (Scout's moredata-600).
 
 ### 2026-11-18 · Sleep the PC when the night's work is done (Ayman, 18 November, 7:16 am)
 Ayman: "put the pc to sleep when Trinity is done for the night .. schedule

@@ -166,6 +166,10 @@ network, and the second week merged nothing):
   2026-11-19: nothing running. No idea worth a test: Scout's 19 November
   file is about wdl0's screens; nothing new from forensics or the speed
   profile. GitHub time goes to the two wdl0 screens (network lane).
+  2026-11-20: nothing running. No idea worth a test: Scout's 20 November
+  file is about networks (moredata-600, the WDL lever closed); nothing
+  new from forensics or the speed profile. GitHub time goes to
+  wdl25-900s2 vs long900s2 (network lane).
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes
@@ -845,6 +849,23 @@ network, and the second week merged nothing):
   FAILED (check-in 20 November): -5.51 +/- 3.77 after 9400 games (SPRT
   #134 + #136, LLR -4.97, [0, 5]), 0 time losses; at the bottom of the
   -6 to +5 prediction. WDL 0.0 is worse than 0.25 at 600 superbatches.
+  Scout (20 November): with 0.5 at 0, 0.25 at +8.9 and 0.0 at about +3.4
+  (vs Control2), the curve peaks near 0.22, where main already is; no
+  further WDL runs.
+  (10) moredata-600 (Scout, Fable, 20 November; scout/2026-11-20.md):
+  WDL 0.25, 600 superbatches, seed 20261019 on big-1..4 plus the 17
+  October run's second-1/2.data (5.65 billion positions, interleaved),
+  partner wdl25 (600) x1.2. One change: the data. Why now: the 17 October
+  more-data run lost -10.85 at WDL 0.5 with fewer passes (10.7 vs 16.4),
+  and at WDL 0.25 passes no longer matter (#133), so what is left is the
+  benefit of 55% more distinct positions. Prediction (Scout, written
+  before training): -4 to +6, about 25% to pass [0, 5]; kept against
+  rated engines about 50%. Needs: kb16.ps1 -MoreData (commit 167dd2c,
+  waiting for Ayman's approval) and the second-<n>.data files still on
+  the PC (a -DryRun -MoreData job shows it first). Queue after the
+  approval: tools/net/kb16.ps1 | -KingBuckets 8 -DryRun -MoreData, then
+  tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Tag moredata600
+  -Wdl 0.25 -MoreData -Resume.
   (8) wdl0 (Scout's next one-change question, 11 and 18 November):
   Control2's recipe at WDL 0.0 (training target the search score only),
   600 superbatches, seed 20261019, queued 18 November as 2026-11-18-01
@@ -1003,7 +1024,9 @@ network, and the second week merged nothing):
   SPSA re-tune started (the 1.2 fallback); wdl25-900 and wdl25-900s2
   still waiting for the PC; merged 0. Updated 17 November: wdl25-900
   trained (resumable runner, first night), its test vs main started;
-  wdl25-900s2 at 252 of 900.
+  wdl25-900s2 at 252 of 900. Updated 20 November: wdl25-900 MERGED (19
+  November, Ayman); wdl0 FAILED vs wdl25 (-5.51); wdl25-900s2 trained,
+  its test vs long900s2 running. Merged this week: 1 (network).
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 
@@ -1670,6 +1693,18 @@ set its margin from the p95 there (a candidate for 1.2).
 ## Decisions needed (dated; read by the phone summary)
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
+
+- 2026-11-20 (pace routine): one approval and one reinstall, at the PC
+  when convenient? The approval brings kb16.ps1 -MoreData (Scout's
+  moredata-600, the next network test) and "finish instead of pausing
+  within 30 superbatches"; the reinstall makes the PC sleep also on
+  nights with no jobs (advisor, after the PC stayed awake all night on
+  19-20 November). Session's view: yes. Steps: (1) double-click "Trinity
+  Approve-Scripts" on the desktop; it lists 1 changed file,
+  tools/net/kb16.ps1, and "Risky changes: none found"; type Y, Enter;
+  (2) open C:\Trinity\runner, double-click Install-Runner.bat, Yes, type
+  pc, Enter to keep the key; it ends with "INSTALLED on 'pc'". Send a
+  screenshot of each. Yes = do the steps; No = moredata-600 waits.
 
 - 2026-11-19 (pace routine): merge wdl25-900 as main's network? It is
   long900's recipe trained with WDL 0.25 (less weight on game results).
