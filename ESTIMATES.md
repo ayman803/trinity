@@ -762,6 +762,9 @@ network, and the second week merged nothing):
   Prediction as written on 15 November: +3 to +12, about 40% to pass.
   Reading: a pass replicates the result-weight gain at a second seed
   (wdl25-900 vs long900 was +5.54).
+  Screen (20 November, 7:09 am Pacific): +0.00 +/- 17.71 after 400 games
+  (SPRT #137), 0 time losses: no large loss; continued to the full [0, 5]
+  test (continue_from 44758473867, 9000 more games).
   TRAINED (check-in 17 November): 2026-11-14-01 in two parts under the
   resumable runner, 6:20 pm-1:40 am (to superbatch 881, PAUSED) and
   1:41-1:52 am (to 900): branch net-wdl25-900-20261116-1820, bench
