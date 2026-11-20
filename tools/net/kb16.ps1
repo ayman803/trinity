@@ -41,7 +41,8 @@ param(
     [switch]$Resume,                  # continue this run (same -Tag) from its newest complete checkpoint, if there is one
     [int]$StopAt = 0,                 # end this job at this superbatch (one part of a longer run); 0 = -Superbatches
     [string]$From = "",               # start from the newest checkpoint of another run (its -Tag), e.g. control2
-    [int]$Minutes = 0,                # time this job has (the runner sets it for -Resume runs): train what fits, then pause (exit code 3)
+    [int]$Minutes = 0,
+    [switch]$MoreData,                # also the second Leela file's parts (second-<n>.data), interleaved as in newdata.ps1 (Scout, 20 November)                # time this job has (the runner sets it for -Resume runs): train what fits, then pause (exit code 3)
     [switch]$DryRun                   # 1 superbatch, save, check the file loads in the engine; publishes nothing
 )
 
@@ -135,6 +136,20 @@ try {
     # The same converted positions main's network was trained on (made by Wide-Network.bat).
     $files = @(1..4 | ForEach-Object { Join-Path $dataDir "big-$_.data" } | Where-Object { Test-Path -LiteralPath $_ })
     if ($files.Count -lt 4) { Stop-WithMessage "Expected the 4 converted parts big-1.data .. big-4.data in sprt\coder2\data (found $($files.Count))." }
+    if ($MoreData) {
+        # The 17 October more-data run's converted parts, read in the same
+        # alternating order (big-1, second-1, big-2, second-2, big-3, big-4),
+        # so the low-learning-rate end is not mostly one month.
+        $second = @(1..9 | ForEach-Object { Join-Path $dataDir "second-$_.data" } | Where-Object { Test-Path -LiteralPath $_ })
+        if ($second.Count -eq 0) { Stop-WithMessage "-MoreData: no second-<n>.data files in sprt\coder2\data (New-Data-Network.bat made them on 17 October)." }
+        $mixed = @()
+        for ($k = 0; $k -lt [Math]::Max($files.Count, $second.Count); $k++) {
+            if ($k -lt $files.Count) { $mixed += $files[$k] }
+            if ($k -lt $second.Count) { $mixed += $second[$k] }
+        }
+        $files = $mixed
+        Write-Host "Data files in training order: $(($files | ForEach-Object { Split-Path $_ -Leaf }) -join ', ')"
+    }
     if ($DryRun) { $files = @($files[0]) }
     $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot($script:Root))
     $freeGB = [Math]::Floor($drive.AvailableFreeSpace / 1GB)

@@ -585,7 +585,7 @@ function Set-Awake([bool]$On) {
 }
 
 # Sleep when the night's work is done (Ayman, 18 November; CLAUDE.md runner
-# rule 9): at night (21:00-06:55), after a job has ended, when no queued job
+# rule 9): at night (21:00-06:55), whether or not a job ran, when no queued job
 # can start and end before 06:55 (or the queue is empty), with no keyboard or
 # mouse use for 30 minutes (or nobody signed in), no restart pending, no
 # STOP switch and no other Trinity program running. Never during a job,
@@ -594,8 +594,10 @@ function Set-Awake([bool]$On) {
 # privilege first.
 $script:JobEndedTonight = $false
 $script:NothingFits = $false
+# (Advisor, 20 November: also on nights when no job ran at all; the PC
+# stayed awake all night on 19-20 November with an empty queue.)
 function Test-NightDone {
-    if (-not $script:JobEndedTonight -or -not $script:NothingFits) { return $false }
+    if (-not $script:NothingFits) { return $false }
     if (-not (Test-Evening)) { $script:JobEndedTonight = $false; return $false }
     if (Test-Path -LiteralPath (Join-Path $RunnerDir "STOP")) { return $false }
     if ((Test-RestartPending) -or (Test-Busy)) { return $false }
