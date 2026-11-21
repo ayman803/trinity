@@ -36,6 +36,19 @@ Notes on the two game files:
   (Valkand -0.3), +3.2 at move 29 (Valkand -1.0); won at move 54
   (+11.5). Trinity judged the kingside attack several moves earlier.
 
+- #6 Ayano - Trinity (Trinity Black): level game; both engines gave
+  Black a small edge (Trinity +0.3 to +0.5 for itself, moves 14-28),
+  traded down to a rook ending, draw by rook checks at move 65.
+- #24 StockDory - Trinity (Trinity Black): Trinity was worse for most of
+  the game and knew it, rating its own position more pessimistically
+  than StockDory did (about -1.2 to -2.5 at moves 39-60 against
+  StockDory's +0.8 to +1.45). At move 61-62 (Rcb6, Rxb2) Trinity found
+  counterplay ending in perpetual check and went to 0.00 at once, while
+  StockDory still showed about +0.6 for several moves: Trinity saw the
+  saving resource first. Draw at move 82. Forensics question: is
+  Trinity's eval of such positions too pessimistic (it scored -2.5 for
+  a position that turned out to be a draw)?
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
