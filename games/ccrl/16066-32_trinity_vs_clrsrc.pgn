@@ -1,0 +1,60 @@
+[Site "Hobnobbing With Royalty"]
+[Date "2026.11.21"]
+[White "Trinity 1.0.0"]
+[Black "clrsrc 1.4.0"]
+[Result "1/2-1/2"]
+
+1. Nf3 {(Book)} c5 {(Book)} 2. c4 {(Book)} Nc6 {(Book)}3. d4 {(Book)} cxd4
+{(Book)} 4. Nxd4 {(Book)} Nf6 {(Book)} 5. g3 {(Book)} e5 {(Book)}6. Nb5 {(Book)}
+d6 {(Book)} 7. Bg5 {(Book)} Be6 {(Book)} 8. Nd2 {(Book)} d5 {(Book)}9. cxd5
+{(cxd5) -0.90/27 17} Bxd5 {(Bxd5) 0.78/29 38}10. e4 {(e4) -0.69/28 25} Be6
+{(Be6) 0.99/28 39} 11. Bc4 {(Bc4) -0.63/26 23} Bb4 {(Bb4) 0.82/28 42}12. Bxe6
+{(Bxe6 fxe6 O-O O-O Rc1 Qa5 Nc3 Bxc3 bxc3 Qxa2 Ra1 Qb2 Rb1 Qxc3 Rb3 Qa5 Rxb7 Nd4
+Bxf6 Rxf6 Nc4 Qa6 Rc7 Nf3+ Kg2) -0.74/26 12} fxe6 {(fxe6 a3 Bxd2+ Qxd2 Qxd2+
+Bxd2 O-O Be3 Nxe4 Nc7 Rac8 Nxe6 Rf6 Ng5 Nd6 Ke2 Nd4+ Bxd4 exd4 Rhc1 Re8+ Kf1 d3
+Rd1 Nf7) 0.46/27 27} 13. O-O {(O-O) -0.90/29 18} O-O {(O-O) 0.88/28 38}14. Nb3
+{(Nb3 a6 Qxd8 Raxd8 a3 Rd3 Nc1 Rf3 Nc7 Nxe4 Nxe6 Re8 axb4 Rxe6 Be3 Ref6 Na2 Nd6
+Rac1 Nf5 Bc5 Rb3 Rb1 Ncd4 Kg2) -0.87/27 15} a6 {(a6) 0.62/29 33}15. a3 {(a3)
+-0.84/30 20} axb5 {(axb5) 0.48/33 50}16. Qxd8 {(Qxd8 Rfxd8 axb4 Nxb4 Rxa8 Rxa8
+Bxf6 gxf6 Nc5 Kf7 Nxb7 Nd3 Nd6+ Kg6 Nxb5 Rb8 Nc7 Kf7 Rb1 Rb3 f3 f5 exf5 exf5
+Rd1) -0.69/29 19} Rfxd8 {(Rfxd8) 0.41/34 67}17. axb4 {(axb4) -0.96/28 12} Nxb4
+{(Nxb4 Rxa8 Rxa8 Bxf6 gxf6 Nc5 Kf7 Nxb7 Rb8 Nc5 Rc8 Rc1 Na2 Ra1 Rxc5 Rxa2 Rc4 f3
+Rc1+ Kg2 Rc2+ Kh3 Rf2 Ra3 Rxb2) 0.42/33 25}18. Nc5 {(Nc5) -0.71/31 31} Rxa1
+{(Rxa1 Rxa1 Rc8 Bxf6 gxf6 Nxb7 Nd3 b4 Rc2 f3 h5 Nd6 h4 gxh4 Nxb4 Rd1 Rc3 Nxb5
+Rxf3 Rf1 Rxf1+ Kxf1 Nc6 Nd6 Nd8) 0.65/29 30}19. Rxa1 {(Rxa1 Rc8 Bxf6 gxf6 Nxb7
+Nd3 b4 Rc2 f3 Nxb4 Nd6 Rc3 Kg2 Nc2 Nxb5 Rb3 Rc1 Rb2 Kh3 Nd4 Nxd4 exd4 Rc7 h5
+Rd7) -1.04/28 12} Rc8 {(Rc8) 0.61/30 32}20. Bxf6 {(Bxf6) -0.73/29 12} gxf6
+{(gxf6) 0.55/29 24} 21. Nxb7 {(Nxb7) -0.73/28 10} Nd3 {(Nd3) 0.61/31 30}22. b4
+{(b4) -0.74/28 13} Rc2 {(Rc2 f3 Nxb4 Nd6 Rc3 Rf1 h5 Nxb5 Rb3 Nd6 h4 f4 Nd3 f5
+Kf8 fxe6 Ke7 Nf5+ Kxe6 Nxh4 Nc5 Ra1 Nxe4 Ra6+ Nd6) 0.46/28 20}23. f3 {(f3 Nxb4
+Nd6 Rc3 Rf1 Nc2 Nxb5 Rb3 Nd6 Rd3 Nb7 Nd4 Kg2 Nb3 Rb1 Kg7 Rb2 h5 Rc2 Nd4 Rf2 h4
+Nc5 Rc3 Na4) -0.73/26 12} Nxb4 {(Nxb4) 0.62/31 32}24. Nd6 {(Nd6) -0.65/30 14}
+Rc3 {(Rc3 Kg2 Rc2+ Kg1 Nc6 Ra8+ Kg7 Nxb5 Nd4 Nxd4 exd4 Ra7+ Kg6 Rd7 Rc1+ Kg2 e5
+h4 Rc2+ Kg1 h5 Re7 Rc3 Kf2 Re3) 0.44/26 29}25. Ra8+ {(Ra8+) -0.74/28 59} Kg7
+{(Kg7) 0.83/25 13} 26. Kg2 {(Kg2) -0.65/28 14} Nc2 {(Nc2) 0.39/27 45}27. Nxb5
+{(Nxb5 Rd3 Kf2 Rd2+ Kg1 Nd4 Nxd4 exd4 Ra7+ Kg6 h4 e5 Kf1 Rb2 Rd7 Rb3 Ke2 h5 Kf2
+Rc3 Re7 Rc2+ Kf1 Rc1+ Kf2) -0.65/29 54} Rb3 {(Rb3 Nc7 Ne1+ Kf2 Nxf3 Nxe6+ Kh6
+Rf8 Kg6 Nc5 Ra3 Nd7 Nxh2 Rxf6+ Kg7 Kg2 Ng4 Rc6 Ra2+ Kh3 Nf2+ Kh4 Nxe4 Nxe5 Ra7)
+0.14/25 36}28. Ra7+ {(Ra7+ Kg6 Nc7 Nd4 f4 Rb2+ Kf1 exf4 gxf4 f5 Nxe6 Nxe6 exf5+
+Kxf5 Rxh7 Ra2 Rh8 Nc7 Rh5+ Ke4 Re5+ Kd4 Re2 Ra3 Rd2+) -0.58/22 14} Kg6 {(Kg6)
+0.20/23 17} 29. Nc7 {(Nc7) -0.35/23 28} Nd4 {(Nd4) 0.00/28 21}30. f4 {(f4 Rb2+
+Kh3 exf4 gxf4 f5 Nxe6 Nxe6 exf5+ Kxf5 Rxh7 Nd4 Rd7 Rb3+ Kg2 Nf3 Ra7 Nh4+ Kf2 Kg4
+h3+ Kf5 Ra5+ Kf6 f5) -0.42/20 9} Rb2+ {(Rb2+) 0.00/27 20}31. Kh3 {(Kh3) -0.37/23
+11} Nf3 {(Nf3) 0.00/26 20} 32. Kg4 {(Kg4) -0.27/23 31} Nxh2+ {(Nxh2+) 0.00/31 27}
+33. Kh3 {(Kh3 Nf3 Kg4 Ng1 f5+ exf5+ exf5+ Kh6 Ra4 Rb8 Nd5 Rg8+ Kh4 Nf3+ Kh3 Rd8
+Nxf6 Kg5 Nxh7+ Kxf5 Ra7 Kg6 Re7 Ra8 Kg4) -0.21/19 30} Nf3 {(Nf3) 0.00/31 19}34.
+Kg4 {(Kg4 Ng1 f5+ exf5+ exf5+ Kh6 Ra4 Rb8 Nd5 Rg8+ Kh4 Nf3+ Kh3 Rd8 Nxf6 Kg5
+Nxh7+ Kxf5 Ra7 Kg6 Re7 Ra8 Kg4 Nd2 Nf8+) -0.24/18 9} Nh2+ {(Nh2+ Kh3 Nf3 Kg4
+Nh2+) 0.00/33 39}35. Kh3 {(Kh3) 0.01/34 23} Nf3 {(Nf3 Kg4 Ng1 f5+ exf5+ exf5+
+Kh6 Ra4 Rb8 Nd5 Rg8+ Kh4 Nf3+ Kh3 Rf8 Ra7 Kg5 g4 Ng1+ Kg3 Rb8 Rg7+ Kh6 Ra7 Kg5)
+0.00/30 23}36. Kg4 {(Kg4) 0.01/34 34} Ng1 {(Ng1 f5+ exf5+ exf5+ Kh6 Ra4 Rb8 Nd5
+Rg8+ Kh4 Nf3+ Kh3 Rf8 Ra7 Kg5 g4 Ng1+ Kg3 Rb8 Rg7+ Kh6 Ra7 Kg5) 0.00/25 8}37.
+f5+ {(f5+ exf5+ exf5+ Kh6 Ra4 Rb8 Nd5 Rg8+ Kh4 Nf3+ Kh3 Rd8 Nxf6 Kg5 Nxh7+ Kxf5
+Ra7 Kg6 Re7 Rc8 Kg4 Nd2 Re6+ Kxh7 Rxe5) -0.29/19 11} exf5+ {(exf5+) 0.00/25 16}
+38. exf5+ {(exf5+) -0.27/21 12} Kh6 {(Kh6 Ra4 Rb8 Nd5 Rg8+ Kh4 Nf3+ Kh3 Rd8 Nxf6
+Kg5 Nxh7+ Kxf5 Ra7 Nd2 g4+ Kg6 Rd7 Rxd7 Nf8+ Kf7 Nxd7 Nf3 Kg2 e4) 0.00/24 15}39.
+Ra4 {(Ra4) -0.21/23 12} Rb8 {(Rb8) 0.00/29 15}40. Nd5 {(Nd5) -0.23/22 7} Rg8+
+{(Rg8+ Kh4 Nf3+ Kh3 Ng5+ Kh4 Nf3+) 0.00/31 14}41. Kh4 {(Kh4) -0.17/21 9} Nf3+
+{(Nf3+) 0.00/31 10} 42. Kh3 {(Kh3) -0.22/24 13} Ng5+ {(Ng5+) 0.00/30 14}43. Kh4
+{(Kh4) -0.01/29 14} Nf3+ {(Nf3+) 0.00/32 12}44. Kh3 {(Kh3) -0.01/124 5} Ng5+
+{(Ng5+) 0.00/33 16} 45. Kh4 {(Kh4) -0.01/42 21} Nf3+ {(Nf3+) 0.00/42 9} 1/2-1/2

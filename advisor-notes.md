@@ -8,6 +8,17 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-21 · Tournament games and what the rank means: see ccrl/2026-11-21-tournament.md
+Trinity 1.0.0 is 3/5 unbeaten in Graham's "Hobnobbing With Royalty"
+(12+8, 16 engines, ccrl.live/16066), with a won attack vs Valkand (#39)
+in which its eval led the opponent's by about 2 pawns for 10 moves, and
+a held -0.9 book position vs clrsrc (#32). Full record, field, rules
+and the reading of rank 76-78 in ccrl/2026-11-21-tournament.md. Weekly
+CCRL check: add Trinity's later games from this event to that file and
+watch 1.0.0's rating as they come in. Scout may use the two games
+(Trinity's own games) as forensics material; the opponents' moves teach
+nothing about their code and are not a source of ideas.
+
 ### 2026-11-21 · Trinity 1.0.0 entered in a CCRL tournament (Graham to Ayman, 20 November)
 Graham's email of 20 November: Trinity 1.0.0 plays in his event
 "Hobnobbing with Royalty EQ2026": 12 minutes + 8 seconds, 4 cycles, 60
