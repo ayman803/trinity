@@ -49,6 +49,18 @@ Notes on the two game files:
   Trinity's eval of such positions too pessimistic (it scored -2.5 for
   a position that turned out to be a draw)?
 
+- #15 ngn - Trinity (Trinity Black): the book left Trinity about -1.0
+  (both engines agreed); it lost the b7 pawn at move 16, won b2 back at
+  move 29, and defended about 60 moves of a worse ending (rook, bishop
+  and knight against rook and two bishops) at -0.7 to -1.1 to a draw at
+  move 86. Forensics note: Trinity's eval often flicked to 0.00 at very
+  high depth (46-58: moves 45-46, 58-59, 62-63, 69-71, 75-76, 81-84)
+  and then back to about -0.7: repetition lines found and lost, worth a
+  look, harmless here.
+Summary of the five: in three of them (#15, #24, #32) the book or the
+game left Trinity worse and it held the draw; the one decisive game is
+a win (#39). No losses, no time losses, no crashes.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
