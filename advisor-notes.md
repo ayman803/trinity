@@ -8,6 +8,29 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-21 · Freeze 1.2 on 1 December (Ayman, 21 November, 7:27 am: "freeze 1 December")
+CCRL list of 21 November: Trinity 1.0.0 ranked 76-78 at 3522 +/- 26 (262
+games); rank 50 = 3573. Ayman: the next version to Graham is "the very
+best we have". Plan, replacing the 25-28 November target of the 14
+November note:
+- Until 30 November: network lane runs moredata-600 (queued) and the 1350
+  run (length lever, replicated twice), each with its test vs main as
+  soon as trained; whichever passes AND clears its checks (40/60
+  calibration, v2 check; merge on Ayman's OK) by 30 November goes in.
+  Search candidates only if a real idea exists. Nothing is held back
+  waiting for one more result: what main holds on 1 December is 1.2.
+- 1 December: freeze main as release 1.2 (tag only, as planned; no
+  release page until Ayman says). Then the release checks of the 14
+  November note: similarity checks and CREDITS (start now if not
+  done), same-night 40/60 calibration of the frozen build and 1.0.0, a
+  stability run at CCRL's conditions (40/15 scaled, hash 256 MB, Syzygy,
+  no pondering), Windows builds (general and AVX2), README saying it
+  supports Threads, a clean-machine test on the laptop.
+- About 8 December: package ready; Ayman writes to Graham himself.
+Rule 2 flag from 21 November: akimbo at 67% vs main; plan its
+replacement opponent before the freeze so the release calibration stays
+inside 25-75%.
+
 ### 2026-11-20 · Night-sleep should also cover nights with no jobs (advisor)
 Reinstalled 19 November 18:17 (night-sleep in place). That night the
 queue was empty and no job ran, so no job "ended" and the PC stayed awake
