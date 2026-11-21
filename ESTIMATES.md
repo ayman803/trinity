@@ -1257,6 +1257,29 @@ small: it ends with KB16-Seed2 unless Seed2 passes against main.
 
 ## Calibrations
 
+CCRL, weekly check of 21 November (ccrl/2026-11-21.md; list of 21
+November): "Trinity 1.0.0 64-bit" 3522 +/- 26 after 262 games (50.8%),
+now RANKED 76-78 on the best-versions list (a week ago: 3527 +/- 42, 100
+games, not ranked). The top-100 goal counts as met once this rating is
+settled (CLAUDE.md rule 1); 262 games is not yet settled. Rank 50: 3573
+(rofChade 3.1 4CPU); rank 45: 3579; rank 55: 3568; 14 of the 21 entries
+at ranks 40-60 are 4CPU entries. GOAL TRACKING (rule 1, an estimate):
+main's CCRL-scale estimate = 1.0.0's CCRL rating plus main's same-night
+gap over 1.0.0: at 40/60 (closer to CCRL's 40/15) +74 +/- 22 (wdl25-900,
+17 November) gives about 3596, which is 23 above rank 50; at 10+0.1, +113
++/- 9 (20 November) gives about 3635. Skeptic: the conversion assumes
+our gaps carry over to CCRL's scale one to one; for 1.0.0 our own
+estimate sat about 50 below CCRL's, so the scales may differ in stretch,
+not only in offset; and 1.0.0's anchor is still +/- 26. So: probably
+near or a little above rank 50 for main, not shown. CCRL's conditions
+(about.html): 40/15 equivalent, 256 or 512 MB hash (4CPU engines up to
+4x), 4-6 piece tablebases, generic book of at most 12 moves, pondering
+off. Our tests use 16 MB hash and 3-4-5 piece tables: the hash-size
+check (Planned) should use 256 MB. Next check: Saturday 28 November.
+PC work, 14-21 November (runner log, by the day a job ended): 1.0, 6.7,
+0, 20.7 (the 7.3-hour wdl25-900 part that began on the 16th counts on
+the 17th), 5.0, 0, 2.4, 2.3 hours; about 4.8 hours a day on average.
+
 CCRL ANCHOR (weekly check, 14 November; ccrl/2026-11-14.md): the CCRL
 40/15 list of 13 November rates "Trinity 1.0.0 64-bit" 3527 +/- 42 after
 100 games (21 wins, 9 losses, 70 draws, 56.0% against an average

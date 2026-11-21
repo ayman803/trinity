@@ -67,6 +67,7 @@ games, and the list ranks 4CPU entries alongside 1CPU ones. Whether
 Trinity is ever tested at 4CPU is the testers' choice and goes through
 Ayman alone; the release README should simply say that Trinity supports
 Threads.
+Done (2026-11-21, Session): first weekly check with the new items (ccrl/2026-11-21.md): 1.0.0 3522 +/- 26 (262 games), now ranked 76-78; rank 45 3579, rank 50 3573, rank 55 3568; 14 of 21 entries at ranks 40-60 are 4CPU. In the ESTIMATES.md Calibrations section next to our CCRL-scale estimate for main (1.0.0's rating plus the same-night gap): about 3596 at 40/60, about 3635 at 10+0.1, labelled as estimates with the scale caveat. PC hours per day for 14-21 November logged there too (about 4.8 on average).
 Noted (2026-11-18, Session): the weekly CCRL check (Saturday 21 November) will record ranks 45, 50 and 55 and the 4CPU count in ranks 40-60; the README line on Threads is in the Release 1.2 item 3 draft, for the freeze.
 
 ### 2026-11-17 · wdl25-900 paused 19 superbatches short of the end (advisor)
