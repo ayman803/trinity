@@ -8,6 +8,19 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-21 · Trinity 1.0.0 entered in a CCRL tournament (Graham to Ayman, 20 November)
+Graham's email of 20 November: Trinity 1.0.0 plays in his event
+"Hobnobbing with Royalty EQ2026": 12 minutes + 8 seconds, 4 cycles, 60
+rounds, 16 engines (Hobbes 4.0, Cinder 0.6.1, PZChessBot 8.0, Crownd 1.0,
+ZigQueen 6.6.0, Ayano 0.11.0, Heimdall 1.5.2, NGN 0.4.0, NARC Genesys
+5.1, StockDory Barracuda, Trinity 1.0.0, clrsrc 1.4.0, Erebus 2.2.7,
+Valkand 1.1, CeylonDemon 3.3, Ember 1.4.0); live at ccrl.live/16066.
+About 60 more games for 1.0.0, which feed its CCRL rating. Weekly CCRL
+check: note 1.0.0's game count and rating as these games are added; a
+move of more than about 20 is worth a line in ESTIMATES. Nothing to do
+otherwise; no contact with CCRL except by Ayman. The 1 December freeze
+is unaffected.
+
 ### 2026-11-21 · Freeze 1.2 on 1 December (Ayman, 21 November, 7:27 am: "freeze 1 December")
 CCRL list of 21 November: Trinity 1.0.0 ranked 76-78 at 3522 +/- 26 (262
 games); rank 50 = 3573. Ayman: the next version to Graham is "the very
