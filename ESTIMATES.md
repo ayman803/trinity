@@ -769,6 +769,10 @@ network, and the second week merged nothing):
   Screen (20 November, 7:09 am Pacific): +0.00 +/- 17.71 after 400 games
   (SPRT #137), 0 time losses: no large loss; continued to the full [0, 5]
   test (continue_from 44758473867, 9000 more games).
+  PASSED (20 November): +7.84 +/- 3.79 after 9400 games (SPRT #137 +
+  #138, LLR 4.68, [0, 5]), 0 time losses, illegal moves or crashes;
+  inside +3 to +12. The result-weight gain is replicated at a second
+  seed (wdl25-900 vs long900 +5.54), as the length gain was.
   TRAINED (check-in 17 November): 2026-11-14-01 in two parts under the
   resumable runner, 6:20 pm-1:40 am (to superbatch 881, PAUSED) and
   1:41-1:52 am (to 900): branch net-wdl25-900-20261116-1820, bench
@@ -1705,6 +1709,13 @@ set its margin from the p95 there (a candidate for 1.2).
   (2) open C:\Trinity\runner, double-click Install-Runner.bat, Yes, type
   pc, Enter to keep the key; it ends with "INSTALLED on 'pc'". Send a
   screenshot of each. Yes = do the steps; No = moredata-600 waits.
+  DONE 20 November, about 4:55 pm Pacific (screenshots): approved
+  034f5f1f3b (1 file, kb16.ps1, no risky lines); reinstalled (new
+  installer: Away, Sleep: Never). Queued 2026-11-20-03 (dry run with
+  -MoreData: shows whether second-<n>.data is still on the PC; short, so
+  it may run before 9 pm). moredata-600 itself is queued after Friday's
+  calibration pair has run (a resumable job started now would hold the
+  PC through the night and push the pair out).
 
 - 2026-11-19 (pace routine): merge wdl25-900 as main's network? It is
   long900's recipe trained with WDL 0.25 (less weight on game results).
