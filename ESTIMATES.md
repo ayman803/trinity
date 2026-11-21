@@ -170,6 +170,9 @@ network, and the second week merged nothing):
   file is about networks (moredata-600, the WDL lever closed); nothing
   new from forensics or the speed profile. GitHub time goes to
   wdl25-900s2 vs long900s2 (network lane).
+  2026-11-21: nothing running. No idea worth a test: no Scout file yet
+  this morning; nothing new from forensics or the speed profile. The
+  network lane's next test (moredata-600) trains on the PC first.
 - Network gate (Ayman, 8 November, replacing the 0.3% held-out-loss gate
   of 16-17 October): held-out loss is only a broken-run check (stop if
   clearly worse than main's network); every network otherwise goes
@@ -870,6 +873,8 @@ network, and the second week merged nothing):
   approval: tools/net/kb16.ps1 | -KingBuckets 8 -DryRun -MoreData, then
   tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Tag moredata600
   -Wdl 0.25 -MoreData -Resume.
+  21 November: the dry run passed on the PC (2026-11-20-03, the second
+  files are there); queued as 2026-11-21-01 after Friday's pair had run.
   (8) wdl0 (Scout's next one-change question, 11 and 18 November):
   Control2's recipe at WDL 0.0 (training target the search score only),
   600 superbatches, seed 20261019, queued 18 November as 2026-11-18-01
