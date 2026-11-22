@@ -1,0 +1,11 @@
+SPRT test #139, finished 2026-11-22 15:29 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/45037493926 (run id 45037493926)
+SPRT RESULT: NOT DECIDED YET - run it again with 'Continue from run' to add games
+Where: GitHub Actions, 5 of 5 jobs finished
+Test: net-moredata600-main (bench 895357) vs base-1122 (bench 948275), tc 8+0.08, bounds [0, 5]
+Games: 400, Wins: 97, Losses: 102, Draws: 201, Points: 197.5 (49.38 %)
+Ptnml(0-2): [2, 50, 100, 47, 1]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -4.34 +/- 17.78, nElo: -8.32 +/- 34.05
+LLR: -0.18 (-2.94, 2.94) [0.00, 5.00]
