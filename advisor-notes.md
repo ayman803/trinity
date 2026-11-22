@@ -8,6 +8,34 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-21 · URGENT for forensics: Trinity 1.0.0 badly misjudges a queen ending (live, Trinity - Hobbes 4.0, ccrl.live/16066)
+Ayman, 6:17 pm: "pass on to session now". Screenshots in games/ccrl
+(16066-trinity-vs-hobbes-*.jpg); the game file follows when it ends.
+Evals as shown on ccrl.live (White's side; Trinity is White):
+- move 16: Trinity -0.69, Hobbes -0.14
+- move 23: Trinity -2.22, Hobbes -0.41
+- move 32 (both engines give the SAME line: 32...Qxd3 33.Qxd3 c1=Q+
+  34.Kg2 Qxb2+ 35.Kg3 fxg4 36.hxg4, a queen ending, Black one pawn up):
+  Trinity -2.73, Hobbes -0.32
+- move 37 (Q+2 vs Q+3): Trinity -3.04, Hobbes -0.35
+- move 41: Trinity -3.24; Hobbes -0.31 with a main line in which White
+  regains e5 (42.Qa8+ Kh7 43.Qe4+ Qg6 44.Qxe5 Qxg4): level material.
+So 1.0.0's network calls a queen ending one pawn down (or level) about
+-3, where the opponent and general endgame knowledge say "drawish".
+Same direction as #24 (StockDory) and the opening of this game.
+Session, today if possible:
+1. Take the positions from the screenshots (and the PGN when it comes)
+   and run 1.0.0 AND current main (wdl25-900) on them: if main's evals
+   are sane (|eval| about 0.3-1 for Q+1 pawn up), the WDL work already
+   fixed it; log that. If not, it is a real network weakness.
+2. If main is also far too pessimistic: a forensics set of queen endings
+   (Q+k vs Q+k-1 pawns, from Trinity's own games and the tablebase
+   positions we have) with Syzygy truth, to measure the error and decide
+   whether training data needs more such endings. Predictions first.
+3. Check how the eval scale (EVAL_SCALE, the x1.2 scaling) affects such
+   positions: an over-scaled eval inflates exactly these numbers.
+No action that changes main without the usual tests.
+
 ### 2026-11-21 · Trinity's speed on Graham's machine: 1.22M nps (advisor, from a ccrl.live screenshot)
 Ayman's screenshot of ccrl.live/16066 at 5:52 pm Pacific (Trinity 1.0.0
 White vs Hobbes 4.0, after 10. g4): Trinity at depth 26, 14.4M nodes,
