@@ -109,6 +109,18 @@ Crownd 6/8, Hobbes 5.5/8, Cinder 5/8, Heimdall 5.5/9, Trinity 5/9
 CCRL 1CPU ratings: Hobbes 4.0 3612, Cinder 0.6.1 3608, Heimdall 1.5.2
 3570, ZigQueen 6.4.0 3566: Trinity is performing above its 3522.
 
+## Game 74 (22 November): Trinity - NARC Genesys 5.1, draw at move 67; score 5.5/10, unbeaten
+NARC won a pawn (move 21-26) and outplayed Trinity into a rook ending,
+rating its own side +4.6 to +5.2 from move 36 to the end. Trinity said
+-0.2 and then 0.00 from move 44 (depth 31-59) and was right: the game
+ended in a drawn 5-piece position (rook vs rook and pawn) at move 67.
+NARC's author said in the event chat that its network was trained only
+on self-play without tablebases and over-values extra material in drawn
+endings; this game shows it. Second game in a row where Trinity's
+endgame judgement was the accurate one (after #67), against two where
+it ran high (#46, #53). Fine material for the tablebase-truth
+measurement planned after the freeze.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
