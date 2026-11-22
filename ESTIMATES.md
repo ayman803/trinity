@@ -1728,14 +1728,21 @@ Qxb2+ 35.Kg3 fxg4 36.hxg4 (Q+3 vs Q+2; FEN 6k1/5p2/7p/4p3/6P1/3QP1K1/
   main 0.53 to 1.67, for the side a pawn up. With the side to move a
   pawn down and no checks, the search settles on lines ending in such a
   position and returns about 2.7.
-Reading: a real weakness of the network, not fixed by the WDL work
-(main is as pessimistic as 1.0.0, and its x1.2 scale makes the numbers
-larger still). In practice: when a pawn up it may steer into queen
-endings it rates as won (often drawn); when a pawn down it may avoid a
-drawish queen ending at a cost elsewhere. How often this costs points is
-not known.
-Plan, after the 1 December freeze (nothing here can be trained, tested
-and checked before it): (1) measure with tablebase truth: Q+P vs Q
+Reading (CORRECTED the same day, after Scout's check and the referee):
+first written as "a real weakness of the network, all versions"; that
+went beyond the evidence. Stockfish 16 as referee (the allowed forensics
+use; depth 32, 4 threads): after 32.Qc3 -1.19, the queen ending with
+Black to move -1.08, with White to move 0.00 (White's view). So Black
+really is better there, and Trinity's -2.7 overstates it by about 1.5
+pawns (Hobbes' -0.3 understates it). Scout (scout/2026-11-22.md): in 995
+queen endings from Trinity's own games, a typical one-pawn-down ending
+gets about -0.7 and was drawn 97% of the time, and when the search said
+-2.5 or worse the game was lost three times in four. So this is one
+position where the eval ran high, not a shown pattern (caveat: those
+games are at a fast clock). Main is no different from 1.0.0 here. The
+game's result goes next to this when its file arrives.
+Plan, after the 1 December freeze, and only if more cases appear (one
+sample is not a reason to change training): (1) measure with tablebase truth: Q+P vs Q
 positions (5 pieces) on the PC, network eval against Syzygy WDL (needs a
 small script and an approval; the tables cannot be fetched from the
 cloud); (2) if the error is large, a training-data question: more
