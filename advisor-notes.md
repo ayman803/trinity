@@ -8,6 +8,20 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-22 · Eval scale, not just pessimism: three more CCRL games (advisor)
+Games #46 (Hobbes, draw at move 142), #53 (PZChessBot), #60 (ZigQueen)
+added to ccrl/2026-11-21-tournament.md and games/ccrl. #46 confirms the
+queen-ending misjudgement (Trinity -3.06 for 28 moves, Hobbes +0.30,
+draw). #53 shows the same inflation the other way (Trinity +0.9 to +1.5
+where PZChessBot said +0.1 to +0.55; draw). Widen the 21 November
+forensics: measure 1.0.0 and main on the drawn positions of #24, #46
+and #53 (every 5th move after move 30), report the size of Trinity's
+eval against the opponent's and against the result, and test the
+hypothesis "eval scale too large / no shrink toward 0 in drawish
+endings". If main (WDL 0.25) already shrinks them, log it as a side
+benefit of the WDL change; if not, propose a candidate (eval-scale or a
+drawishness damping term) with a prediction, as a normal test.
+
 ### 2026-11-22 · Add an ARM64 (linux-aarch64, musl) build: 1.0.0 now, every release from 1.2 (Ayman, 22 November, 8:08 am: "yes, add ARM")
 GitHub issue #2 (Arzam18, for the Mobile Chess Engine Circuit, MCEC: an
 Android engine circuit on a phone): "Could you add linux-aarch64 build

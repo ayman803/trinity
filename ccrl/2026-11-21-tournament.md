@@ -70,6 +70,30 @@ a win (#39). No losses, no time losses, no crashes.
   Trinity's eval too pessimistic about its own side, or is it simply
   seeing more?). Screenshots in games/ccrl.
 
+## Games 46, 53, 60 (22 November): three draws; score 4.5/8 (56%), unbeaten
+PGN evals are each engine's own view (positive = good for the mover).
+- #46 Trinity - Hobbes, draw at move 142: the queen ending. Trinity
+  -3.06 from move 37 to 64 while Hobbes said +0.30 throughout; Trinity
+  then drifted -2.47, -1.88, -1.07, -0.87, -0.2, 0.00 as the checks went
+  on. Hobbes was right: a draw. Confirms the urgent note of 21 November.
+- #53 Trinity - PZChessBot, draw at move 79: the OPPOSITE direction.
+  Trinity +1.2 to +1.5 for its own side (moves 9-20) and +0.8 to +0.9
+  (moves 24-57) while PZChessBot rated White about +0.55 and later +0.11
+  to 0.00. Draw.
+- #60 Trinity - ZigQueen, draw by perpetual at move 53: both agreed
+  Black was better; Trinity held.
+Pattern across #24, #46, #53 (and the live -2.2 to -3.2 readings):
+Trinity's evals are larger IN SIZE than its opponents', in both
+directions, in positions that end drawn. That points less to "pessimism"
+and more to an over-scaled eval (centipawn scale too large), or to a
+network that does not shrink evals toward 0 in drawish endings.
+Practical effects: (1) CCRL draw adjudication needs both evals below
+0.20, so inflated evals make games run very long (#46: 142 moves);
+(2) any eval-based decisions in search (margins, time) work on an
+inflated scale; (3) resign adjudication could misfire if an opponent
+agreed. Main (wdl25-900, WDL 0.25) should be checked on these same
+positions: does it shrink drawish endings toward 0?
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
