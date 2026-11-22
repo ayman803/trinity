@@ -875,6 +875,9 @@ network, and the second week merged nothing):
   -Wdl 0.25 -MoreData -Resume.
   21 November: the dry run passed on the PC (2026-11-20-03, the second
   files are there); queued as 2026-11-21-01 after Friday's pair had run.
+  TRAINED (check-in 22 November): 2026-11-21-01, 11:02 pm-4:08 am (5.1 h,
+  one part, not disturbed), 5.6 billion positions, branch
+  net-moredata600-20261121-2303, bench 830524; the PC slept at 4:09 am.
   (8) wdl0 (Scout's next one-change question, 11 and 18 November):
   Control2's recipe at WDL 0.0 (training target the search score only),
   600 superbatches, seed 20261019, queued 18 November as 2026-11-18-01
@@ -1443,6 +1446,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-11-19 6:21 am PST: read up to "13:22 DONE 2026-11-18-01" (wdl0 trained, 5.0 h; nothing ran overnight, the queue was empty after it). GitHub, last 24 hours: wdl25-900 vs wdl25 x1.2 -1.00 after 9000, undecided. No approval pending. Nothing queued: the Friday calibration is tomorrow's; network tests are the pace routine's.
 - 2026-11-20 6:17 am PST (run early by Ayman's "run early"): read up to "13:22 DONE 2026-11-18-01" (no runner job since; the queue was empty). GitHub, last 24 hours: wdl0 x1.4 vs wdl25 x1.2 FAILED (-5.51, 9400). wdl25-900 merged 19 November (Ayman). No approval pending. Friday rule (runner rule 16; main, now with wdl25-900, not calibrated at 10+0.1 this week): queued 2026-11-20-01 main, then 2026-11-20-02 release-1.0.0, 10+0.1 the same night.
 - 2026-11-21 6:21 am PST: read up to "01:42 SLEEP" (the new night sleep worked: the PC went to sleep at 1:42 am when nothing else fitted). -MoreData dry run (2026-11-20-03, 5:29 pm): DRY RUN OK. Friday calibration, same night (PC idle): main with wdl25-900 (bench 948275) 3583 (2026-11-20-01, 9:02-11:24 pm; akimbo +123, Patricia +82, Bread +82, Prune +26), 1.0.0 3470 (2026-11-20-02): gap +113 +/- 9, against +107 for main with long900 (13-14 November): +6, inside the noise of two runs (+/- 13); wdl25-900's +5.5 self-play would be expected to show as about +2 to +4 here. Skeptic: akimbo now 67% (+123), still inside 25-75% but the next step up will push it out (rule 2). Time losses: main 2 in 4000, 1.0.0 4. GitHub, last 24 hours: wdl25-900s2 vs long900s2 PASSED (+7.84; logged by the Session). No approval pending (034f5f1 is in the log). Nothing queued. The weekly CCRL check is the pace routine's (from the "trinity" environment).
+- 2026-11-22 6:21 am PST: read up to "04:09 SLEEP" (moredata600 trained, 5.1 h; the PC also slept at 6:44 am on 21 November with nothing queued). No GitHub results in the last 24 hours. No approval pending. Nothing queued (its broken-run check and games are the pace routine's; the advisor's urgent queen-ending note of 21 November is for the pace routine).
 
 ## Lessons so far
 
