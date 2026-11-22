@@ -61,6 +61,15 @@ Summary of the five: in three of them (#15, #24, #32) the book or the
 game left Trinity worse and it held the draw; the one decisive game is
 a win (#39). No losses, no time losses, no crashes.
 
+- In progress, 21 November about 5:50 pm: Trinity (White) - Hobbes 4.0.
+  ccrl.live shows evals from White's side. Move 10 (g4): Trinity -0.62,
+  Hobbes -0.09; move 16 (Qe1): Trinity -0.69 at d22, Hobbes -0.14 at
+  d32. Speed: Trinity 1.22M and 1.20M nps, Hobbes about 0.5M. Again
+  Trinity rates its own position about half a pawn lower than its
+  opponent does (as in #24): a pattern to check in forensics (is
+  Trinity's eval too pessimistic about its own side, or is it simply
+  seeing more?). Screenshots in games/ccrl.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
