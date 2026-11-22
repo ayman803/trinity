@@ -1,0 +1,12 @@
+SPRT test #140, finished 2026-11-22 19:30 UTC
+Run: https://github.com/ayman803/trinity/actions/runs/45038718668 (run id 45038718668)
+Continues run id 45037493926; the totals below include it.
+SPRT RESULT: FAILED - 'net-moredata600-main' is not stronger than 'base-1122'
+Where: GitHub Actions, 5 of 5 jobs finished (plus an earlier run)
+Test: net-moredata600-main (bench 895357) vs base-1122 (bench 948275), tc 8+0.08, bounds [0, 5]
+Games: 9400, Wins: 2262, Losses: 2351, Draws: 4787, Points: 4655.5 (49.53 %)
+Ptnml(0-2): [70, 1150, 2321, 1117, 42]
+Games lost on time (either side): 0
+Illegal moves: 0; crashes or hangs: 0
+Elo: -3.29 +/- 3.77, nElo: -6.12 +/- 7.02
+LLR: -3.36 (-2.94, 2.94) [0.00, 5.00]
