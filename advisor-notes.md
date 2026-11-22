@@ -35,6 +35,7 @@ Session, today if possible:
 3. Check how the eval scale (EVAL_SCALE, the x1.2 scaling) affects such
    positions: an over-scaled eval inflates exactly these numbers.
 No action that changes main without the usual tests.
+Done (2026-11-22, Session): positions rebuilt from the screenshots (no PGN yet) and run through 1.0.0, long900 and main (wdl25-900): all three give about -2.4 to -2.7 after 32.Qc3 and in the queen ending after 36.hxg4 with Black to move, and about -0.2 to -0.3 with White to move (checks found). Static network evals of queen endings a pawn up: 0.35 to 1.95 pawns, main no better than 1.0.0 (and its x1.2 scale inflates them). So (1) not fixed by the WDL work: a real network weakness; (2) the tablebase measurement needs the PC (the tables cannot be fetched from the cloud: proxy 403), a small script and an approval; planned after the 1 December freeze, with the training-data question after it; (3) the scale: EVAL_SCALE 120 inflates these numbers; an endgame-only scale is a possible one-change test, also after the freeze. Details: ESTIMATES.md, "Queen endings".
 
 ### 2026-11-21 · Trinity's speed on Graham's machine: 1.22M nps (advisor, from a ccrl.live screenshot)
 Ayman's screenshot of ccrl.live/16066 at 5:52 pm Pacific (Trinity 1.0.0
@@ -51,6 +52,7 @@ about 1.35M, he is probably on v2 (about 20% slower, maybe 10-15 Elo):
 the 1.2 package README must then say plainly which file to use, and
 Ayman may choose to mention it to Graham himself. No contact otherwise.
 For scale, other engines seen live: Ayano 1.18M, Ember 564K, Hobbes 488K.
+Not done yet (2026-11-22, Session): no approved script measures nps in game conditions at 256 MB hash with the release files. Planned as part of the freeze checks (the stability run at CCRL's conditions, advisor's 1 December plan): it will log nps for the v3 (AVX2) and v2 release builds on the PC, and the 1.2 README will say which file to use.
 
 ### 2026-11-21 · Tournament games and what the rank means: see ccrl/2026-11-21-tournament.md
 Trinity 1.0.0 is 3/5 unbeaten in Graham's "Hobnobbing With Royalty"
@@ -98,6 +100,7 @@ November note:
 Rule 2 flag from 21 November: akimbo at 67% vs main; plan its
 replacement opponent before the freeze so the release calibration stays
 inside 25-75%.
+Noted (2026-11-22, Session): (a) the 1350 run is not queued: at WDL 0.25 length added nothing measurable (wdl25-900 vs wdl25 at 600: -1.0 +/- 3.9, SPRT #133); the length lever was replicated only at WDL 0.5. The network lane's freeze candidate is moredata-600 (trained last night), now in its test against main. (b) akimbo: a replacement opponent needs Ayman to download one engine; candidates should sit about 3560-3620 on CCRL's 1-CPU list (the weekly check of 21 November lists single-CPU entries at ranks 40-60: Chess System Tal 3.00, Devre 7.0, Minke 7.0.0, JustBot 0.5.0, Motor 0.9.0, ZigQueen 6.4.0, Deep Sjeng 3.6). Put to Ayman as a choice in the next routine once the advisor has picked one or two.
 
 ### 2026-11-20 · Night-sleep should also cover nights with no jobs (advisor)
 Reinstalled 19 November 18:17 (night-sleep in place). That night the

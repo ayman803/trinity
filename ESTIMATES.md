@@ -170,6 +170,9 @@ network, and the second week merged nothing):
   file is about networks (moredata-600, the WDL lever closed); nothing
   new from forensics or the speed profile. GitHub time goes to
   wdl25-900s2 vs long900s2 (network lane).
+  2026-11-22: nothing running. No idea worth a test yet: no Scout file
+  this morning; the queen-ending finding below is a network question.
+  GitHub time goes to moredata-600 vs main (network lane).
   2026-11-21: nothing running. No idea worth a test: no Scout file yet
   this morning; nothing new from forensics or the speed profile. The
   network lane's next test (moredata-600) trains on the PC first.
@@ -875,6 +878,17 @@ network, and the second week merged nothing):
   -Wdl 0.25 -MoreData -Resume.
   21 November: the dry run passed on the PC (2026-11-20-03, the second
   files are there); queued as 2026-11-21-01 after Friday's pair had run.
+  TRAINED 21-22 November (11:02 pm-4:08 am, 5.1 h; the PC slept after).
+  Broken-run check: held-out loss 0.082497 (wdl25 0.082863, wdl25-900
+  0.082831): not broken, and the lowest of the WDL 0.25 networks. Test
+  (pace routine 22 November, before any game): against MAIN, not wdl25
+  (the freeze plan needs a test vs main; wdl25 at 600 tied wdl25-900, so
+  the one change is still essentially the data): branch
+  net-moredata600-main (main's search, EVAL_SCALE 120, bench 895357) vs
+  base-1122 (= main, wdl25-900), 400-game screen, then [0, 5] to 9000.
+  Prediction as Scout's (written 20 November): -4 to +6, about 25% to
+  pass. A pass before 30 November: 40/60 calibration and v2 check, then
+  Ayman's OK, and it is the 1.2 network (advisor, freeze plan).
   TRAINED (check-in 22 November): 2026-11-21-01, 11:02 pm-4:08 am (5.1 h,
   one part, not disturbed), 5.6 billion positions, branch
   net-moredata600-20261121-2303, bench 830524; the PC slept at 4:09 am.
@@ -1695,6 +1709,37 @@ mid-exchange (a recapture pending), which the static eval cannot see; a
 cleaner version compares the quiescence score with the search. Next:
 measure the error at the depths where futility actually prunes (1-8) and
 set its margin from the p95 there (a candidate for 1.2).
+
+## Queen endings: 1.0.0 vs Hobbes (advisor note, 21 November; Session, 22 November)
+
+Game ccrl.live/16066 (Trinity 1.0.0 White vs Hobbes 4.0), from the
+screenshots. Position after 32.Qc3 (FEN 6k1/5p2/7p/3qpp2/6P1/2QPP2P/
+1Pp5/6K1 b) and after the expected 32...Qxd3 33.Qxd3 c1=Q+ 34.Kg2
+Qxb2+ 35.Kg3 fxg4 36.hxg4 (Q+3 vs Q+2; FEN 6k1/5p2/7p/4p3/6P1/3QP1K1/
+1q6/8 b), search to depth 22, White's view:
+- 1.0.0 -2.40 / -2.59; long900 -2.54 / -2.66; main (wdl25-900) -2.73 /
+  -2.73. The same ending with WHITE to move: -0.25 / -0.34 / -0.18 (the
+  search finds checks). Hobbes: about -0.3.
+- Static network evals of five queen endings a pawn up (Q+1 vs Q, Q+2
+  vs Q+1, Q+3 vs Q+2): 1.0.0 0.35 to 1.40 pawns, long900 0.15 to 1.95,
+  main 0.53 to 1.67, for the side a pawn up. With the side to move a
+  pawn down and no checks, the search settles on lines ending in such a
+  position and returns about 2.7.
+Reading: a real weakness of the network, not fixed by the WDL work
+(main is as pessimistic as 1.0.0, and its x1.2 scale makes the numbers
+larger still). In practice: when a pawn up it may steer into queen
+endings it rates as won (often drawn); when a pawn down it may avoid a
+drawish queen ending at a cost elsewhere. How often this costs points is
+not known.
+Plan, after the 1 December freeze (nothing here can be trained, tested
+and checked before it): (1) measure with tablebase truth: Q+P vs Q
+positions (5 pieces) on the PC, network eval against Syzygy WDL (needs a
+small script and an approval; the tables cannot be fetched from the
+cloud); (2) if the error is large, a training-data question: more
+queen-ending positions, or labels from the tables for 5-piece positions;
+(3) the scale check: EVAL_SCALE inflates exactly these evals; a re-tune
+found 120 best overall, but an endgame-only scale is a possible
+one-change test.
 
 ## Planned, not started
 
