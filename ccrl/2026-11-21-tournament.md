@@ -94,6 +94,21 @@ inflated scale; (3) resign adjudication could misfire if an opponent
 agreed. Main (wdl25-900, WDL 0.25) should be checked on these same
 positions: does it shrink drawish endings toward 0?
 
+## Game 67 (22 November): Trinity - Heimdall 1.5.2, draw at move 89; score 5/9, unbeaten
+Black (Heimdall) was slightly better from about move 23 by both
+engines' view (Heimdall +0.4 to +0.6 for itself). From move 60 Trinity
+evaluated the minor-piece ending as 0.00 throughout, while Heimdall kept
++0.5 to +0.6 for 30 moves. Trinity ended it with 88.Nd5+ exd5 89.Bxd5,
+leaving bishop against bishop and knight with no pawns: no mating
+material, a dead draw (Trinity depth 124, 0.00). Here Trinity's
+judgement was the more accurate one: a counter-example to the
+"Trinity overstates drawish positions" question of #46/#53.
+Tournament table after game 69 (advisor's tally): ZigQueen 7/9,
+Crownd 6/8, Hobbes 5.5/8, Cinder 5/8, Heimdall 5.5/9, Trinity 5/9
+(unbeaten, one of four), Ayano and ngn 5/9, PZChessBot 4.5/8. Opponents'
+CCRL 1CPU ratings: Hobbes 4.0 3612, Cinder 0.6.1 3608, Heimdall 1.5.2
+3570, ZigQueen 6.4.0 3566: Trinity is performing above its 3522.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
