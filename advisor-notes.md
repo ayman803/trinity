@@ -36,6 +36,16 @@ Session:
 Not now: a hand-tuned NEON path for ARM speed; only if Ayman later says
 mobile results matter.
 
+Done (Session, 22 November): 1. release.yml builds
+trinity-<version>-linux-aarch64-musl on GitHub's arm64 runner (static,
+same bench gate), commit 956f85b; no engine code changed. 2. New workflow
+release-add.yml built 1.0.0 from faef85c6 (tag checked): bench 780879 at
+1.05M nps, `id name Trinity 1.0.0`, searches to depth 16 and four games
+without a crash or illegal move; only then attached to v1.0.0 with one
+added line in the notes (run 45043557965). Logged in ESTIMATES (Release
+checks). 3. Ayman told with the link; nobody else comments on issue #2.
+4. In the Release 1.2 list (item 6).
+
 ### 2026-11-21 · URGENT for forensics: Trinity 1.0.0 badly misjudges a queen ending (live, Trinity - Hobbes 4.0, ccrl.live/16066)
 Ayman, 6:17 pm: "pass on to session now". Screenshots in games/ccrl
 (16066-trinity-vs-hobbes-*.jpg); the game file follows when it ends.

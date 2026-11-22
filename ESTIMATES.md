@@ -2096,6 +2096,10 @@ merged by then).
 4. Package plan and steps for Ayman (item 4): not started.
 5. At the freeze, on Ayman's word: same-night 40/60 of the release build
    and 1.0.0; a stability run at CCRL-like settings; the package.
+6. ARM (Ayman, 22 November): release.yml now builds a fifth file,
+   `trinity-1.2.0-linux-aarch64-musl` (static, GitHub's arm64 runner),
+   with the same bench gate as the others; check that it is on the draft
+   release before it is made public. 1.0.0's ARM file: see Release checks.
 
 ## Release checks
 
@@ -2190,6 +2194,26 @@ merged by then).
   shows `id name Trinity 1.0.0` and `id author Ayman Mikhail`. The
   `x86-64-v2` Windows file also gives bench 780879 on the PC, at 1.28M nps
   (about 21% slower than v3, as expected without AVX2).
+- Release 1.0.0 ARM file (advisor note and Ayman, 22 November 2026;
+  GitHub issue #2, for the Mobile Chess Engine Circuit):
+  `trinity-1.0.0-linux-aarch64-musl`, built by "Release add-on (ARM)"
+  (release-add.yml) on GitHub's arm64 Ubuntu runner from the 1.0.0 commit
+  faef85c6 (tag v1.0.0 checked), statically linked against musl, no
+  engine code changed. Check-only run 45043401880: bench 780879 (the same
+  as the x86 files, so identical play) at 1,049,266 nps on that runner;
+  `uci` answers `id name Trinity 1.0.0`; searches to depth 1, 8 and 16 on
+  four positions; four self-play games at 0.05 s a move (268, 119, 300 and
+  85 plies; one stopped at the 300-ply cap) with no crash and no illegal
+  move. The cloud cross-build under qemu had also given bench 780879.
+  Attached by run 45043557965 (attach = yes), which rebuilt the file and
+  passed the same checks first; the release notes got one added line, the
+  rest unchanged. The published file, downloaded afterwards: sha256
+  abca5081...9213 (the same as GitHub's digest), static, bench 780879
+  under qemu, `id name Trinity 1.0.0`.
+  Speed is on a GitHub server's ARM core, not a phone: a phone will be
+  slower, and the nps is not comparable with the PC's x86 figures above.
+  No hand-written NEON code (not now, per the note). From 1.2 on, the
+  same file is built by release.yml with the same bench gate.
 - CCRL 40/15 list of 9 October 2026 (best versions only): #100 is Houdini 6
   4CPU at 3455 (#99 3456, #101 3451, #102 3449). The goal line of about
   3455 stands. Trinity's 3449 (1 CPU, 10+0.1, our own calibration) would sit
