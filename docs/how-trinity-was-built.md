@@ -90,6 +90,6 @@ other engines, the same range unrelated engines show with each other.
   Fiekas.
 - Testing: fastchess, Stefan Pohl's UHO books, python-chess, and the
   engines on the CCRL list.
-- Rating: the CCRL testers, especially Graham Banks.
+- Rating: the CCRL testers.
 - Ideas: the Chess Programming Wiki and the open engine community, whose
   work made all of this possible.
