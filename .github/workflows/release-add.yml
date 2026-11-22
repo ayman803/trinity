@@ -1,0 +1,118 @@
+# Add one more build to an EXISTING GitHub release (Ayman, 22 November
+# 2026: a linux-aarch64 musl file for 1.0.0, GitHub issue #2). Built on
+# GitHub's arm64 Ubuntu runner from the release's own commit, statically
+# linked against musl (one file, no system libraries, so it also runs on
+# Android). It is attached only when every check passes: the release's
+# tag points at this commit, the bench equals the release's, `uci` answers
+# "id name Trinity <version>", searches at several depths finish, and a few
+# short games run to the end without a crash or an illegal move. With
+# attach other than "yes" it only checks (and keeps the file as an
+# artifact). Started by hand: Actions tab -> "Release add-on (ARM)".
+
+name: Release add-on (ARM)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version of the existing release (for example 1.0.0)"
+        required: true
+      commit:
+        description: "Full id of that release's commit (1.0.0: faef85c695d9a765e6cf576b39a580d3c604d761)"
+        required: true
+      bench:
+        description: "That release's bench node count (1.0.0: 780879)"
+        required: true
+      attach:
+        description: "yes = attach the file to the release after the checks; anything else = check only"
+        default: "no"
+
+permissions:
+  contents: write
+
+jobs:
+  arm64-musl:
+    runs-on: ubuntu-24.04-arm
+    env:
+      VERSION: ${{ inputs.version }}
+      COMMIT: ${{ inputs.commit }}
+      BENCH: ${{ inputs.bench }}
+      TARGET: aarch64-unknown-linux-musl
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit }}
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-unknown-linux-musl
+      - name: Check the commit, the version and the release's tag
+        run: |
+          [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]] || { echo "Commit must be the full 40-character id"; exit 1; }
+          [[ "$(git rev-parse HEAD)" == "$COMMIT" ]] || { echo "STOP: built $(git rev-parse HEAD), not $COMMIT"; exit 1; }
+          grep -q "^version = \"$VERSION\"" Cargo.toml || { echo "STOP: Cargo.toml does not say version $VERSION"; exit 1; }
+          tagged=$(git rev-parse "v$VERSION^{commit}")
+          [[ "$tagged" == "$COMMIT" ]] || { echo "STOP: tag v$VERSION is $tagged, not $COMMIT"; exit 1; }
+      - name: Build (static, musl)
+        env:
+          RUSTFLAGS: -C linker=rust-lld -C target-feature=+crt-static
+        run: |
+          cargo build --release --target "$TARGET"
+          out="trinity-$VERSION-linux-aarch64-musl"
+          cp "target/$TARGET/release/trinity" "$out"
+          file "$out"
+          file "$out" | grep -q "statically linked" || { echo "STOP: not statically linked"; exit 1; }
+      - name: "Check: bench and name"
+        run: |
+          out="./trinity-$VERSION-linux-aarch64-musl"
+          line=$($out bench | tail -1); echo "bench: $line"
+          nodes=$(echo "$line" | awk '{print $1}')
+          [[ "$nodes" == "$BENCH" ]] || { echo "STOP: bench $nodes differs from $BENCH"; exit 1; }
+          name=$(printf "uci\nquit\n" | $out | grep "^id name")
+          echo "$name"
+          [[ "$name" == "id name Trinity $VERSION" ]] || { echo "STOP: wrong name"; exit 1; }
+      - name: "Check: searches and a few games"
+        run: |
+          python3 -m pip install --quiet chess
+          cat > games.py <<'EOF'
+          import chess, chess.engine, sys
+          exe = sys.argv[1]
+          # Searches at several depths on a few positions.
+          for fen in [chess.STARTING_FEN,
+                      "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+                      "6k1/5p2/7p/4p3/6P1/3QP1K1/1q6/8 b - - 0 36",
+                      "8/8/4k3/8/8/4K3/4P3/8 w - - 0 1"]:
+              with chess.engine.SimpleEngine.popen_uci(exe) as eng:
+                  for depth in (1, 8, 16):
+                      info = eng.analyse(chess.Board(fen), chess.engine.Limit(depth=depth))
+                      print(f"depth {depth}: score {info['score']} for {fen}")
+          # Four short games, engine against itself (0.05 s a move), each to
+          # its end or 300 plies; python-chess refuses any illegal move.
+          for g in range(4):
+              board = chess.Board()
+              with chess.engine.SimpleEngine.popen_uci(exe) as a, chess.engine.SimpleEngine.popen_uci(exe) as b:
+                  a.configure({"Hash": 16}); b.configure({"Hash": 16})
+                  while not board.is_game_over(claim_draw=True) and board.ply() < 300:
+                      eng = a if (board.turn == chess.WHITE) == (g % 2 == 0) else b
+                      move = eng.play(board, chess.engine.Limit(time=0.05)).move
+                      if move not in board.legal_moves:
+                          sys.exit(f"STOP: illegal move {move} in game {g + 1}")
+                      board.push(move)
+              print(f"game {g + 1}: {board.ply()} plies, result {board.result(claim_draw=True)}")
+          print("searches and games OK")
+          EOF
+          python3 games.py "./trinity-$VERSION-linux-aarch64-musl"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trinity-${{ inputs.version }}-linux-aarch64-musl
+          path: trinity-${{ inputs.version }}-linux-aarch64-musl
+      - name: Attach to the release (only with attach = yes)
+        if: inputs.attach == 'yes'
+        run: |
+          out="trinity-$VERSION-linux-aarch64-musl"
+          gh release upload "v$VERSION" "$out"
+          gh release view "v$VERSION" --json body -q .body > notes.md
+          printf '\n\nAdded %s: `%s` for 64-bit ARM Linux and Android (statically linked with musl), built from the same commit; bench %s nodes, the same as the other files.\n' "$(date -u +'%-d %B %Y')" "$out" "$BENCH" >> notes.md
+          gh release edit "v$VERSION" --notes-file notes.md
+          gh release view "v$VERSION" --json assets -q '.assets[].name'

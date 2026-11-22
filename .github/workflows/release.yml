@@ -1,6 +1,7 @@
 # Publish a release of Trinity: Windows and Linux builds for modern
 # processors (x86-64-v3: AVX2, about 2013 onwards) and older ones
-# (x86-64-v2), attached to a GitHub release. Started by hand:
+# (x86-64-v2), and a static linux-aarch64 musl build for 64-bit ARM Linux
+# and Android (Ayman, 22 November 2026), attached to a GitHub release. Started by hand:
 # Actions tab -> "Release" -> "Run workflow" (on main), with the version
 # number that Cargo.toml already carries; for a frozen release, also its
 # measured commit (full id) and bench, which are then checked. The release is made as a draft (visible only
@@ -35,6 +36,7 @@ jobs:
           - { os: windows-latest, cpu: x86-64-v2, suffix: windows-x86-64-v2.exe }
           - { os: ubuntu-latest, cpu: x86-64-v3, suffix: linux-x86-64-v3 }
           - { os: ubuntu-latest, cpu: x86-64-v2, suffix: linux-x86-64-v2 }
+          - { os: ubuntu-24.04-arm, cpu: generic, target: aarch64-unknown-linux-musl, suffix: linux-aarch64-musl }
     env:
       VERSION: ${{ inputs.version }}
       COMMIT: ${{ inputs.commit }}
@@ -44,6 +46,8 @@ jobs:
         with:
           ref: ${{ inputs.commit || github.sha }}
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target || '' }}
       - name: Check this is the measured commit
         if: inputs.commit != ''
         shell: bash
@@ -59,10 +63,16 @@ jobs:
       - name: Build
         shell: bash
         env:
-          RUSTFLAGS: -C target-cpu=${{ matrix.cpu }}
+          TARGET: ${{ matrix.target || '' }}
         run: |
-          cargo build --release
-          exe=target/release/trinity; [ -f "$exe.exe" ] && exe="$exe.exe"
+          if [ -n "$TARGET" ]; then
+            # Static musl build (one file, no system libraries).
+            RUSTFLAGS="-C target-cpu=${{ matrix.cpu }} -C linker=rust-lld -C target-feature=+crt-static" cargo build --release --target "$TARGET"
+            exe="target/$TARGET/release/trinity"
+          else
+            RUSTFLAGS="-C target-cpu=${{ matrix.cpu }}" cargo build --release
+            exe=target/release/trinity; [ -f "$exe.exe" ] && exe="$exe.exe"
+          fi
           out="trinity-$VERSION-${{ matrix.suffix }}"
           cp "$exe" "$out"
           nodes=$(./$out bench | tail -1 | awk '{print $1}')
@@ -98,7 +108,7 @@ jobs:
           - Bench: BENCH nodes.
           - Checks against copying: a move-similarity test and a source comparison with several open-source engines, in ESTIMATES.md (section "Release checks").
 
-          Downloads: `x86-64-v3` needs a processor with AVX2 (most made since about 2013); `x86-64-v2` runs on older ones.
+          Downloads: `x86-64-v3` needs a processor with AVX2 (most made since about 2013); `x86-64-v2` runs on older ones; `linux-aarch64-musl` is for 64-bit ARM Linux and Android (one static file).
 
           The code is written by Claude (Anthropic's AI), directed and tested by Ayman Mikhail. Licence: GPL-3.0-or-later.
           EOF
