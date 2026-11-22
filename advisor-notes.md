@@ -8,6 +8,22 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-21 · Trinity's speed on Graham's machine: 1.22M nps (advisor, from a ccrl.live screenshot)
+Ayman's screenshot of ccrl.live/16066 at 5:52 pm Pacific (Trinity 1.0.0
+White vs Hobbes 4.0, after 10. g4): Trinity at depth 26, 14.4M nodes,
+1.22M nodes per second, on one physical core of Graham's Ryzen 5950X
+(image: games/ccrl/16066-trinity-vs-hobbes-speed.jpg). Ours, 12 October:
+bench 1.62M nps with the windows-x86-64-v3 (AVX2) release file and 1.28M
+with the x86-64-v2 file, on the PC. Game positions with a big hash run
+slower than bench, so 1.22M fits either "v3 with game overhead" or "v2".
+Session: measure Trinity 1.0.0's nps in game conditions on the PC (a few
+40/15-like games, hash 256 MB, v3 and v2 release files) to tell which
+build Graham is likely running. If the v3 game figure is clearly above
+about 1.35M, he is probably on v2 (about 20% slower, maybe 10-15 Elo):
+the 1.2 package README must then say plainly which file to use, and
+Ayman may choose to mention it to Graham himself. No contact otherwise.
+For scale, other engines seen live: Ayano 1.18M, Ember 564K, Hobbes 488K.
+
 ### 2026-11-21 · Tournament games and what the rank means: see ccrl/2026-11-21-tournament.md
 Trinity 1.0.0 is 3/5 unbeaten in Graham's "Hobnobbing With Royalty"
 (12+8, 16 engines, ccrl.live/16066), with a won attack vs Valkand (#39)
