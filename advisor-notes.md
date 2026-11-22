@@ -8,6 +8,34 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-22 · Add an ARM64 (linux-aarch64, musl) build: 1.0.0 now, every release from 1.2 (Ayman, 22 November, 8:08 am: "yes, add ARM")
+GitHub issue #2 (Arzam18, for the Mobile Chess Engine Circuit, MCEC: an
+Android engine circuit on a phone): "Could you add linux-aarch64 build
+that is linked against musl for arm64 linux and Android?" Ayman: yes.
+Session:
+1. release.yml: add a target aarch64-unknown-linux-musl, statically
+   linked (one file, no system libraries: that is what lets it run on
+   Android). Build on GitHub's arm64 Ubuntu runner if available to this
+   public repo, else cross-compile (cargo-zigbuild or cross) and run the
+   bench under qemu. Name: trinity-<version>-linux-aarch64-musl.
+   The engine already has non-x86 fallbacks (nnue.rs scalar path,
+   tt.rs prefetch), so no engine code should change; if any does, it
+   goes through the guard and a test like any engine change.
+2. Build it for release 1.0.0 from the exact 1.0.0 commit. Gate: bench
+   must equal 780879 (identical play), `uci` must answer `id name
+   Trinity 1.0.0`, and a short test (a few games or a 1000-node search
+   at several depths) without a crash. Add the file to the existing
+   v1.0.0 release only when the gate passes (an added platform, not a
+   new version; no other change to that release or its notes except
+   one line listing the new file). Log the bench and speed in ESTIMATES.
+3. Tell Ayman when it is up (the phone summary / evening email), with
+   the link, so he can post his own "it's up" comment on issue #2.
+   Nobody but Ayman comments on the issue.
+4. From 1.2 on, the aarch64-musl file is part of every release and of
+   the release checklist (same bench gate).
+Not now: a hand-tuned NEON path for ARM speed; only if Ayman later says
+mobile results matter.
+
 ### 2026-11-21 · URGENT for forensics: Trinity 1.0.0 badly misjudges a queen ending (live, Trinity - Hobbes 4.0, ccrl.live/16066)
 Ayman, 6:17 pm: "pass on to session now". Screenshots in games/ccrl
 (16066-trinity-vs-hobbes-*.jpg); the game file follows when it ends.
