@@ -889,6 +889,9 @@ network, and the second week merged nothing):
   Prediction as Scout's (written 20 November): -4 to +6, about 25% to
   pass. A pass before 30 November: 40/60 calibration and v2 check, then
   Ayman's OK, and it is the 1.2 network (advisor, freeze plan).
+  Screen (22 November, 7:29 am Pacific): -4.34 +/- 17.78 after 400 games
+  (SPRT #139), 0 time losses: no large loss; continued to the full test
+  (continue_from 45037493926, 9000 more games).
   TRAINED (check-in 22 November): 2026-11-21-01, 11:02 pm-4:08 am (5.1 h,
   one part, not disturbed), 5.6 billion positions, branch
   net-moredata600-20261121-2303, bench 830524; the PC slept at 4:09 am.
