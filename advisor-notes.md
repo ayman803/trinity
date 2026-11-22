@@ -8,6 +8,19 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-22 · Correction: 4 CPUs is worth about +20 to +30 on CCRL, not +80 to +100 (advisor)
+The 17 November note called multi-threading a big lever (+99.6 and +79.5
+for 4 threads vs 1 in our own games). The CCRL 40/15 list of 21 November
+rates many engines both ways: Stockfish 19 +21, Reckless 0.9.0 +23,
+Berserk 14 +27, Alexandria 9.0.0 +28, Obsidian 16.0 +31 (4CPU over 1CPU).
+Use +20 to +30 for any CCRL-scale estimate of a 4CPU Trinity. Also from
+that list: rank 50 = 3573 (rofChade 3.1 4CPU), and one-core engines hold
+ranked places down to about 3575 (Peras, CS Tal 3.00, Devre 7.0, Minke,
+JustBot): the top-50 target on one core is about 3575. Tournament
+opponents' 1CPU ratings: Hobbes 4.0 3612, Cinder 0.6.1 3608, PZChessBot
+7.1 3584, Heimdall 1.5.2 3570, ZigQueen 6.4.0 3566: Trinity's 5/9 there
+is a performance above its 3522.
+
 ### 2026-11-22 · Eval scale, not just pessimism: three more CCRL games (advisor)
 Games #46 (Hobbes, draw at move 142), #53 (PZChessBot), #60 (ZigQueen)
 added to ccrl/2026-11-21-tournament.md and games/ccrl. #46 confirms the
