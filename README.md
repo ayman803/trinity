@@ -29,6 +29,8 @@ is built into the binary. `trinity bench` prints `<nodes> nodes <nps> nps`.
 
 UCI options: `Hash`, `Threads`, `Move Overhead`, `SyzygyPath`.
 
+**How it was built:** [the story, with numbers](docs/how-trinity-was-built.md): written by Claude, directed and tested by a non-programmer; CCRL 40/15 rates 1.0.0 at 3522.
+
 ## What's inside
 
 - Bitboards, legal move generation, perft-tested.
