@@ -121,6 +121,24 @@ endgame judgement was the accurate one (after #67), against two where
 it ran high (#46, #53). Fine material for the tablebase-truth
 measurement planned after the freeze.
 
+## Games 81, 90, 99 (23 November): score 7.5/13, still unbeaten
+- #81 Trinity - Ember 1.4.0, WIN at move 50. Both engines agreed White
+  was better out of the book (Trinity +1.2, Ember -0.9); Trinity
+  castled long, won material on the d-file and pushed the e-pawn home.
+- #90 Erebus 2.2.7 - Trinity, draw at move 106. Rook ending in which
+  Trinity was a pawn DOWN (White f2/f3, f4, h3 against f5, g6 from move
+  47) yet rated its own side +0.84 to +1.01 for about 40 moves (depth
+  55-66), while Erebus said 0.00 throughout; a drawn ending, so Erebus
+  was right. Another case of Trinity's endgame eval running high, like
+  #46 and #53 (not checked with a referee engine yet).
+- #99 CeylonDemon 3.3 - Trinity, draw at move 183. CeylonDemon won a
+  pawn and pushed a passed a-pawn to a7; it rated itself +2.1 for 100
+  moves, Trinity -1.5, and Trinity held a fortress (two rooks each)
+  until both said 0.00. Trinity's judgement was the closer one.
+Endgame-eval tally for the tablebase-truth measurement after the
+freeze: ran high in #46, #53, #90; accurate where the opponent ran high
+in #67, #74, #99. Game files: games/ccrl/16066-81/90/99-*.pgn.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
