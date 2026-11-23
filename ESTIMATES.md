@@ -1871,6 +1871,12 @@ tablebase measurement after the freeze (Queen endings, above).
   losses per 480 games each, no crash; about 2 hours each. What it is
   for: a clean run of both versions at the tester's hash before the
   freeze, and a second same-night 40/60 gap for the goal estimate.
+  Added the same day: if Ayman's approval and reinstall are in before the
+  jobs start, the pair also plays Hobbes 4.0 (600 games each, about 2.5
+  hours each). The gap of main over 1.0.0 is then compared with 17
+  November on the four common opponents only. Prediction for Hobbes
+  (3612; before any game): main about 40% to 55%, 1.0.0 about 28% to
+  42%, both inside rule 2's 25-75%.
 - equal-passes data test (Scout, Fable, 7 November): long900's recipe and
   seed on the 5.65 billion positions of the more-data run at about 24.6
   passes (1390 superbatches, about 11.6 GPU hours). Needs resumable
@@ -1904,6 +1910,15 @@ tablebase measurement after the freeze (Queen endings, above).
   it to the calibration script and writes out the three steps for
   Ayman (download the engine's Windows file, one approval, one runner
   reinstall); No = release 1.2 is calibrated against the present four.
+  DECIDED 23 November, 9:23 am Pacific (Ayman: "yes add"): the advisor
+  added Hobbes 4.0 (3612) to scripts/calibrate.ps1 (commit 91fee56); the
+  Session added it to the similarity test's engine list
+  (scripts/similarity.ps1). Ayman's steps (given 23 November, 1:30 pm):
+  save hobbes-windows-avx2.exe from the Hobbes 4.0 release as
+  C:\Trinity\sprt\opponents\Hobbes.exe, one approval (2 changed files,
+  no risky lines), one runner reinstall. Counts as done when the next
+  STARTED line shows the new approved commit and the calibration summary
+  lists Hobbes.
 
 - 2026-11-20 (pace routine): one approval and one reinstall, at the PC
   when convenient? The approval brings kb16.ps1 -MoreData (Scout's

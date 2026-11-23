@@ -56,7 +56,7 @@ try {
     $rk = Get-LatestEngine "codedeliveryservice/Reckless" "Reckless" "(?i)windows.*\.(exe|zip)$"
     if ($rk) { $engines += "Reckless=$rk" }
     $opp = Join-Path $script:Work "opponents"
-    foreach ($o in @(@("akimbo", "akimbo-1.0.0.exe"), @("Patricia", "Patricia.exe"), @("Bread", "Bread.exe"), @("Prune", "Prune.exe"))) {
+    foreach ($o in @(@("akimbo", "akimbo-1.0.0.exe"), @("Patricia", "Patricia.exe"), @("Bread", "Bread.exe"), @("Prune", "Prune.exe"), @("Hobbes", "Hobbes.exe"))) {
         $f = Join-Path $opp $o[1]
         if (Test-Path -LiteralPath $f) { $engines += "$($o[0])=$f" }
     }

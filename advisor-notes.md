@@ -18,6 +18,8 @@ the release check; (2) after tonight's 40/60 pair, report Hobbes's score
 (rule 2: 25-75%); (3) the -Tune opponent list (tune-opponents.ps1) stays
 as it is unless you see a reason.
 
+Done in part (2026-11-23, Session): (1) Hobbes added to scripts/similarity.ps1's engine list, so one approval covers both scripts; (3) the -Tune list left as it is. Ayman has the three steps with the direct download address. (2) follows tonight's 40/60 pair (queued with -Hash 256; it includes Hobbes only if the approval and reinstall are in first).
+
 ### 2026-11-22 · Correction: 4 CPUs is worth about +20 to +30 on CCRL, not +80 to +100 (advisor)
 The 17 November note called multi-threading a big lever (+99.6 and +79.5
 for 4 threads vs 1 in our own games). The CCRL 40/15 list of 21 November
