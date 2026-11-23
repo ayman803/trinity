@@ -37,6 +37,8 @@ endings". If main (WDL 0.25) already shrinks them, log it as a side
 benefit of the WDL change; if not, propose a candidate (eval-scale or a
 drawishness damping term) with a prediction, as a normal test.
 
+Done (2026-11-23, Session; Scout measured it too, scout/2026-11-23.md): 1.0.0 and main run on the positions of all ten games to #74 (every 5th move from move 30) with Stockfish 16 as referee. Main does not shrink them: in #24, #46 and #53 the mean eval size is 1.67 (1.0.0), 1.76 (main), 0.23 (opponents), 0.46 (referee). About half of the gap to the referee is units (also there in the won game #39); the rest is real and sits in endings: in Trinity's own games an eval of 1.5 to 2.5 scored 0.75 in the middlegame and 0.61 with 12 pieces or fewer, while 4.0 and up is right in every phase. No candidate: a plain scale only changes the printed number, and shrinking the eval as pieces come off is a device known from other engines (originality rule; Scout says the same and asks for the "endgame-only scale" of the 21 November plan to be dropped, done). Not put to Ayman: no lost point is shown. Next evidence: the tablebase measurement after the freeze, on positions no search chose. Details: ESTIMATES.md, "Eval size in drawn positions" and "Queen endings" (the Hobbes game was drawn; referee check on 102 held-out queen endings).
+
 ### 2026-11-22 · Add an ARM64 (linux-aarch64, musl) build: 1.0.0 now, every release from 1.2 (Ayman, 22 November, 8:08 am: "yes, add ARM")
 GitHub issue #2 (Arzam18, for the Mobile Chess Engine Circuit, MCEC: an
 Android engine circuit on a phone): "Could you add linux-aarch64 build

@@ -170,6 +170,13 @@ network, and the second week merged nothing):
   file is about networks (moredata-600, the WDL lever closed); nothing
   new from forensics or the speed profile. GitHub time goes to
   wdl25-900s2 vs long900s2 (network lane).
+  2026-11-23: nothing running. No idea worth a test: the advisor's
+  eval-scale question was measured (Scout's file and the section "Eval
+  size in drawn positions"): the pattern is real in endings, but the
+  only fix that fits is known from other engines (originality rule), so
+  no candidate. Network lane: moredata-600 failed (-3.29); Scout has no
+  run to propose (data, length and the WDL weight are all used up at
+  1024 neurons), so nothing trains and no GitHub test runs today.
   2026-11-22: nothing running. No idea worth a test yet: no Scout file
   this morning; the queen-ending finding below is a network question.
   GitHub time goes to moredata-600 vs main (network lane).
@@ -1060,6 +1067,12 @@ network, and the second week merged nothing):
   wdl25-900s2 at 252 of 900. Updated 20 November: wdl25-900 MERGED (19
   November, Ayman); wdl0 FAILED vs wdl25 (-5.51); wdl25-900s2 trained,
   its test vs long900s2 running. Merged this week: 1 (network).
+  Updated 23 November: wdl25-900s2 PASSED vs long900s2 (+7.84, 20
+  November); moredata-600 FAILED vs main (-3.29 after 9400, 22
+  November). Week of 16 November in all: tested 4 networks (wdl25-900,
+  wdl0, wdl25-900s2, moredata-600), 0 search candidates; merged 1
+  (wdl25-900). Week of 23 November so far: tested 0, merged 0 (no idea
+  ready in either lane; dated lines under "Search lane status").
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 
@@ -1754,15 +1767,77 @@ gets about -0.7 and was drawn 97% of the time, and when the search said
 position where the eval ran high, not a shown pattern (caveat: those
 games are at a fast clock). Main is no different from 1.0.0 here. The
 game's result goes next to this when its file arrives.
+RESULT (23 November): the game (#46) was DRAWN at move 142. Trinity
+showed -3.06 from move 37 to 64 and came down only as Black's pawn moves
+were used up; Hobbes showed about +0.30 for itself throughout. So this
+was one of the positions that hold. Scout's check (b), run 23 November
+(referee Stockfish 16 as a scorer only, 4 s on 3 threads): of the 564
+held-out queen endings with the side to move a pawn down, main's search
+(depth 14) says -2.5 or worse in 102; 81 of those were lost, 21 drawn.
+Where the referee agrees (-1.5 or worse, 77 positions) 75 were lost.
+Where the referee says milder than -1.5 (25 positions) 19 were DRAWN
+and 6 lost. In the band the Hobbes game sat in (main -2.5 to -4.0, 36
+positions) 19 were drawn and 17 lost, and the referee's median there is
+only -1.0. Reading: at -5 or worse Trinity's number is right; between
+-2.5 and -4 about half of these endings are held, and a referee can
+tell which while Trinity's number cannot. An eval that runs high in a
+subset, not bad play (the games were held, not lost).
 Plan, after the 1 December freeze, and only if more cases appear (one
 sample is not a reason to change training): (1) measure with tablebase truth: Q+P vs Q
 positions (5 pieces) on the PC, network eval against Syzygy WDL (needs a
 small script and an approval; the tables cannot be fetched from the
 cloud); (2) if the error is large, a training-data question: more
-queen-ending positions, or labels from the tables for 5-piece positions;
-(3) the scale check: EVAL_SCALE inflates exactly these evals; a re-tune
-found 120 best overall, but an endgame-only scale is a possible
-one-change test.
+queen-ending positions, or labels from the tables for 5-piece positions.
+(3) DROPPED 23 November (Scout, and the Session agrees): an endgame-only
+scale, or any shrinking of the eval as pieces come off, is a device
+known from other engines, so the originality rule applies; it is not
+tested. Design note for (1) (Scout, 23 November): use positions no
+search has chosen (for example random legal positions of fixed material,
+rook and pawn against rook, queen and pawn against queen), searched to a
+small fixed depth without tablebases, then compared with the tablebase
+result per eval band. If positions called +1 to +2 score near 0.68 (the
+middlegame figure), the eval is fine inside the tree and the topic
+closes; under about 0.58, the eval really over-claims in endings, and
+only then is the originality question worth putting to Ayman.
+
+## Eval size in drawn positions (advisor note 22 November; Scout and Session, 23 November)
+
+Question: are Trinity's evals too large in positions that end drawn
+(games #24, #46, #53 of the CCRL tournament), and does main (WDL 0.25)
+shrink them? Scout's file of 23 November has the full tables; the
+Session measured the same thing separately, with a referee.
+- Tournament positions (every 5th move from move 30, Trinity to move,
+  all ten games to #74; 6 million nodes for 1.0.0 and main, Stockfish 16
+  as referee 8 s on 3 threads). In the 92 positions from drawn games the
+  mean size of the eval is: 1.0.0 0.99, main 1.04, opponents (their own
+  numbers in the game) 0.68, referee 0.25. In #24, #46 and #53 (44
+  positions): 1.0.0 1.67, main 1.76, opponents 0.23, referee 0.46. So
+  main does NOT shrink them (no side benefit of the WDL change), and
+  both run about 3 to 4 times the referee. Part of that is only units:
+  in the won game (#39) Trinity's numbers are about twice the referee's
+  too (+2.6 to +7.7 against +1.5 to +3.6). The rest, about 1.5 to 2
+  times more, is in the drawn endings.
+- It is not always Trinity that is off: in #15 Trinity and its opponent
+  agreed (-0.9) where the referee says -0.15; in #67 and #74 Trinity
+  said 0.00 and was right while the opponent ran high.
+- Trinity's own games (15,000 held-out positions, search of 40,000
+  nodes against the game's result; score of the side the eval favours):
+  an eval of 1.5 to 2.5 scored 0.75 with 22 or more pieces, 0.72 with 13
+  to 21, and 0.61 with 12 or fewer (77% drawn); 1.0 to 1.5 scored 0.65,
+  0.62 and 0.53; from 4.0 up it scored 0.94 to 0.97 in every phase.
+  1.0.0 gives the same within 0.03. This agrees with Scout's tables: the
+  same middling number means less with few pieces; big numbers are right
+  everywhere, so it is not a wrong overall scale.
+- Skeptic (Scout's limits, which stand): these are positions the games
+  reached, often because the defender had already seen the draw; they
+  say less about positions inside the search tree. No lost point is
+  shown: every tournament game with a high number was held.
+Outcome: no candidate. A plain scale changes only the printed number
+(every margin lives on the same scale); shrinking the eval as pieces
+come off is known from other engines and falls under the originality
+rule; more game-result weight in training does not move it (WDL 0 to
+0.5 leaves the score per band where it was). Next evidence: the
+tablebase measurement after the freeze (Queen endings, above).
 
 ## Planned, not started
 
@@ -1778,6 +1853,15 @@ one-change test.
   table. When the CCRL tester's hash setting is known, run one
   calibration at that setting (memory, hashfull, time use). A check, not
   an Elo test; no decision needed.
+  QUEUED 23 November (CCRL's setting is known since 21 November: 256 or
+  512 MB): 2026-11-23-01 main and 2026-11-23-02 release-1.0.0, 40/60, 60
+  rounds, -Hash 256 (the approved calibrate.ps1 takes it; one change
+  against the 17 November pair: the hash). Prediction, before any game:
+  gap of main over 1.0.0 +50 to +100 (it was +74 +/- 22 at 16 MB; one
+  night cannot show a hash effect smaller than about 30); 0 to 2 time
+  losses per 480 games each, no crash; about 2 hours each. What it is
+  for: a clean run of both versions at the tester's hash before the
+  freeze, and a second same-night 40/60 gap for the goal estimate.
 - equal-passes data test (Scout, Fable, 7 November): long900's recipe and
   seed on the 5.65 billion positions of the more-data run at about 24.6
   passes (1390 superbatches, about 11.6 GPU hours). Needs resumable
@@ -1798,6 +1882,19 @@ one-change test.
 ## Decisions needed (dated; read by the phone summary)
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
+
+- 2026-11-23 (pace routine): add one stronger engine to the calibration
+  opponents before the 1 December freeze? All four present opponents
+  are now rated below main (akimbo 3474, Patricia 3488, Bread 3522,
+  Prune 3543; main scores 54% to 67% against them), so the release
+  measurement has nothing above it to lean on. Candidates with CCRL
+  one-core ratings from the tournament (advisor and Scout): Hobbes 4.0
+  3612, Cinder 0.6.1 3608, PZChessBot 3584, Heimdall 1.5.2 3570.
+  Session's view: yes, Hobbes 4.0 (it already runs cleanly against
+  Trinity at CCRL); Cinder as the second choice. Yes = the Session adds
+  it to the calibration script and writes out the three steps for
+  Ayman (download the engine's Windows file, one approval, one runner
+  reinstall); No = release 1.2 is calibrated against the present four.
 
 - 2026-11-20 (pace routine): one approval and one reinstall, at the PC
   when convenient? The approval brings kb16.ps1 -MoreData (Scout's
