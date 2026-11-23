@@ -8,6 +8,16 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-23 · Hobbes 4.0 added as fifth calibration opponent (Ayman: "yes add", 9:23 am)
+Ayman answered the pace routine's decision with yes. The advisor made the
+script change (scripts/calibrate.ps1: Hobbes 4.0, CCRL 3612, Download)
+so the Session need not; Ayman saves hobbes-windows-avx2.exe as
+C:\Trinity\sprt\opponents\Hobbes.exe, approves and reinstalls today.
+Session: (1) add Hobbes to scripts/similarity.ps1's list if wanted for
+the release check; (2) after tonight's 40/60 pair, report Hobbes's score
+(rule 2: 25-75%); (3) the -Tune opponent list (tune-opponents.ps1) stays
+as it is unless you see a reason.
+
 ### 2026-11-22 · Correction: 4 CPUs is worth about +20 to +30 on CCRL, not +80 to +100 (advisor)
 The 17 November note called multi-threading a big lever (+99.6 and +79.5
 for 4 threads vs 1 in our own games). The CCRL 40/15 list of 21 November

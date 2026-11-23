@@ -38,7 +38,11 @@ $opponents = @(
     # Downloaded by hand (Windows release builds): see GUIDE.md.
     @{ Name = "Patricia"; Version = "5.1"; Rating = 3488; Download = $true },
     @{ Name = "Bread"; Version = "4.0.0"; Rating = 3522; Download = $true },
-    @{ Name = "Prune"; Version = "4.0.1"; Rating = 3543; Download = $true }
+    @{ Name = "Prune"; Version = "4.0.1"; Rating = 3543; Download = $true },
+    # Added 23 November (Ayman): the first opponent above main, CCRL 40/15
+    # 1 CPU, list of 21 November. Windows build hobbes-windows-avx2.exe from
+    # the Hobbes 4.0 release, saved as Hobbes.exe.
+    @{ Name = "Hobbes"; Version = "4.0"; Rating = 3612; Download = $true }
 )
 if ($Vs) { $opponents = @(@{ Name = $Vs; Version = ""; Rating = $null; Download = $true }) }
 # The goal line: #100 on the same list (Houdini 6, 4 CPUs).
