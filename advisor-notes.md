@@ -21,6 +21,8 @@ opponents' 1CPU ratings: Hobbes 4.0 3612, Cinder 0.6.1 3608, PZChessBot
 7.1 3584, Heimdall 1.5.2 3570, ZigQueen 6.4.0 3566: Trinity's 5/9 there
 is a performance above its 3522.
 
+Done (2026-11-23, Session): logged in ESTIMATES.md (Calibrations, under the 21 November CCRL check, and the multi-threading row of the plan table): +20 to +30 for 4CPU on the CCRL scale, top-50 line on one core about 3575.
+
 ### 2026-11-22 · Eval scale, not just pessimism: three more CCRL games (advisor)
 Games #46 (Hobbes, draw at move 142), #53 (PZChessBot), #60 (ZigQueen)
 added to ccrl/2026-11-21-tournament.md and games/ccrl. #46 confirms the

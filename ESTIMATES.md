@@ -1274,7 +1274,7 @@ small: it ends with KB16-Seed2 unless Seed2 passes against main.
 | 5. Drop contradictory labels (Leela > +3 pawns but lost, or < -3 but won) | +0 to +10 | +0 to +5 | ~35 min + conversion |
 | 6. Teacher-student distillation (large GPU net re-scores positions for the fast net) | +5 to +25 | +0 to +15 | several hours + re-scoring |
 | 7. Syzygy tablebases (3-4-5 piece) | small in self-play | +5 to +15 | engine work; library decision pending |
-| 8. Multi-threading: test 4 threads vs 1, fix scaling if weak | n/a (1 thread) | +60 to +100 on the 4-CPU list only | none; PC games at 4 threads |
+| 8. Multi-threading: test 4 threads vs 1, fix scaling if weak | n/a (1 thread) | +60 to +100 on the 4-CPU list only (CORRECTED 22 November, advisor: on CCRL 40/15 a 4CPU entry rates only about +20 to +30 over the same engine's 1CPU entry; our +99.6 is self-play at 10+0.1) | none; PC games at 4 threads |
 | 9. Time management for repeating 40/15 | small at 8+0.08 | +5 to +20 | none; 40/20 calibration |
 | 10. Second Leela file + longer 1024 (or wider) training | +15 to +40 | +10 to +25 | 3-4 days; needs ~200 GB free (PC has 93) |
 | 11. Batch of small search ideas, GitHub SPRT | +2 to +5 each | +10 to +15 for ten | none |
@@ -1300,6 +1300,14 @@ near or a little above rank 50 for main, not shown. CCRL's conditions
 4x), 4-6 piece tablebases, generic book of at most 12 moves, pondering
 off. Our tests use 16 MB hash and 3-4-5 piece tables: the hash-size
 check (Planned) should use 256 MB. Next check: Saturday 28 November.
+4 CPUs (advisor's correction, 22 November, from the same list): engines
+rated both ways gain +21 to +31 from 4CPU (Stockfish 19 +21, Reckless
+0.9.0 +23, Berserk 14 +27, Alexandria 9.0.0 +28, Obsidian 16.0 +31), not
+the +80 to +100 our own 4-thread games gave (self-play at a fast clock
+stretches it). Any CCRL-scale estimate of a 4CPU Trinity uses +20 to
++30. One-core engines hold ranked places down to about 3575, so the
+top-50 line on one core is about 3575: main's 40/60 estimate (about
+3596) is about 20 above it, inside the anchor's +/- 26.
 PC work, 14-21 November (runner log, by the day a job ended): 1.0, 6.7,
 0, 20.7 (the 7.3-hour wdl25-900 part that began on the 16th counts on
 the 17th), 5.0, 0, 2.4, 2.3 hours; about 4.8 hours a day on average.
