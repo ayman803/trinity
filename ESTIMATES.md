@@ -1817,6 +1817,15 @@ Session measured the same thing separately, with a referee.
   in the won game (#39) Trinity's numbers are about twice the referee's
   too (+2.6 to +7.7 against +1.5 to +3.6). The rest, about 1.5 to 2
   times more, is in the drawn endings.
+- Games #81, #90 and #99 (added by the advisor the same morning; 52
+  more positions, same method). #90 (drawn rook ending, Trinity a pawn
+  DOWN): Trinity +0.84 to +1.01 for itself in the game; fresh searches
+  give 1.0.0 +0.7 to +1.3 and main +0.6 to +1.1 over moves 50 to 90;
+  the referee and the opponent say 0.00 throughout. The clearest case
+  so far, and main is no better. #99 (drawn, two rooks each): Trinity
+  -1.5 falling to -0.7, main -1.0 falling to -0.4, opponent +1.9 for
+  itself, referee -0.1: both engines ran high, Trinity less. #81 (won):
+  Trinity's numbers are 1.7 times the referee's, the units again.
 - It is not always Trinity that is off: in #15 Trinity and its opponent
   agreed (-0.9) where the referee says -0.15; in #67 and #74 Trinity
   said 0.00 and was right while the opponent ran high.
