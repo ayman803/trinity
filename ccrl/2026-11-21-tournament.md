@@ -166,6 +166,18 @@ in #67, #74, #99. Game files: games/ccrl/16066-81/90/99-*.pgn.
   2.2M on Graham's machine.
 - Game 126 (Trinity's, between 117 and 135) not yet received.
 
+## Game 152 (24 November): clrsrc 1.4.0 - Trinity, draw at move 65; 9/18 (2 wins, 14 draws, 2 losses)
+Trinity (Black) came out of the book better: +0.8 to +1.2 by its own
+count, and clrsrc agreed (-0.7 to -0.9) for moves 9-17. The edge went
+in two moves: after 17...Rxa1 18.Rxa1 Rd6 Trinity fell from +1.06 to
++0.38, then +0.19 after 19.f3 Rd3, and the game was level from move 20.
+Candidate for forensics (referee engine): was 18...Rd6 (or 16...Rfxd8 /
+17...Rxa1) where the advantage was lost? From move 59 a rook-and-knight
+each with no pawns: dead draw. Trinity said 0.00 there throughout,
+clrsrc +0.1 to +0.24: Trinity the accurate one. Trinity searched only
+about 180K nodes/s in that ending (tablebase probing, likely).
+Ayman chose game 81 (Trinity - Ember, the win) for next week's post.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
