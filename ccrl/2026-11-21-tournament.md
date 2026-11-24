@@ -139,6 +139,21 @@ Endgame-eval tally for the tablebase-truth measurement after the
 freeze: ran high in #46, #53, #90; accurate where the opponent ran high
 in #67, #74, #99. Game files: games/ccrl/16066-81/90/99-*.pgn.
 
+## Games 108 and 117 (23 November): two losses; final score 7.5/15 (if 15 rounds)
+- #108 Cinder 0.6.1 (CCRL 3608) - Trinity, LOST at move 74. The book
+  line (Najdorf with h3/g4) left Trinity worse from the start: -1.1 at
+  its first own move, Cinder +0.6. A long squeeze; Trinity's evals were
+  consistently realistic (about -1.2 to -2.0 while Cinder said +0.7 to
+  +1.1), so no misjudgement stands out. Lost to a stronger engine on a
+  bad book position.
+- #117 crownd - Trinity, LOST at move 44. Equal (0.00 both) to move 15.
+  15...Bg6 (Trinity -0.01) allowed 16.Bxe4 and Trinity dropped to -0.6.
+  Then the key point: from 21...hxg4 to 25...Nf3+ Trinity rated its
+  kingside attack 0.00 to -0.19 (it expected a draw, probably by
+  perpetual check) while crownd said +1.5 to +2.9; the attack ran out
+  and crownd won. Candidate for forensics with the referee engine:
+  a search/horizon misjudgement (moves 20-25), not an endgame eval one.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
