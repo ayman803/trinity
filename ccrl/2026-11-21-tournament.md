@@ -154,6 +154,18 @@ in #67, #74, #99. Game files: games/ccrl/16066-81/90/99-*.pgn.
   and crownd won. Candidate for forensics with the referee engine:
   a search/horizon misjudgement (moves 20-25), not an endgame eval one.
 
+## Games 135 and 144 (24 November): two draws
+- #135 Trinity - ngn 0.4.0, draw at move 41 by repetition. Level from
+  the book (both about 0.00 throughout); Trinity's small edges (+0.4 to
+  +0.5 around moves 15-19) never became anything.
+- #144 Trinity - StockDory 0.4, draw at move 62. Sharp Sicilian
+  (6.Bc4, 7.f4, 10.g4); Trinity's pawn reached f7 and both rated it
+  0.00 from move 42; both sides queened (a8 and g1) into a dead-level
+  queen ending. Both engines' evals agreed almost all game: nothing
+  for forensics. Trinity searched 1.1-1.2M nodes/s against StockDory's
+  2.2M on Graham's machine.
+- Game 126 (Trinity's, between 117 and 135) not yet received.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
