@@ -1490,6 +1490,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-11-21 6:21 am PST: read up to "01:42 SLEEP" (the new night sleep worked: the PC went to sleep at 1:42 am when nothing else fitted). -MoreData dry run (2026-11-20-03, 5:29 pm): DRY RUN OK. Friday calibration, same night (PC idle): main with wdl25-900 (bench 948275) 3583 (2026-11-20-01, 9:02-11:24 pm; akimbo +123, Patricia +82, Bread +82, Prune +26), 1.0.0 3470 (2026-11-20-02): gap +113 +/- 9, against +107 for main with long900 (13-14 November): +6, inside the noise of two runs (+/- 13); wdl25-900's +5.5 self-play would be expected to show as about +2 to +4 here. Skeptic: akimbo now 67% (+123), still inside 25-75% but the next step up will push it out (rule 2). Time losses: main 2 in 4000, 1.0.0 4. GitHub, last 24 hours: wdl25-900s2 vs long900s2 PASSED (+7.84; logged by the Session). No approval pending (034f5f1 is in the log). Nothing queued. The weekly CCRL check is the pace routine's (from the "trinity" environment).
 - 2026-11-22 6:21 am PST: read up to "04:09 SLEEP" (moredata600 trained, 5.1 h; the PC also slept at 6:44 am on 21 November with nothing queued). No GitHub results in the last 24 hours. No approval pending. Nothing queued (its broken-run check and games are the pace routine's; the advisor's urgent queen-ending note of 21 November is for the pace routine).
 - 2026-11-23 6:21 am PST: read up to "06:08 SLEEP" (nothing queued, so no job ran; the PC slept at 11:01 pm and again at 6:08 am). GitHub, last 24 hours: moredata600 vs main FAILED (-3.29, 9400). No approval pending. Nothing queued: no planned PC work is waiting (the next network or search test is the pace routine's).
+- 2026-11-24 6:21 am PST: read up to "03:55 SLEEP". Hash-256 40/60 pair with Hobbes as fifth opponent (approval b1c2cef in the log): main +58 +/- 19 over 1.0.0 the same night on five opponents, about +62 on the four common ones (prediction +50 to +100); Hobbes: main 38%, 1.0.0 28%. 0 time losses. No GitHub results in the last 24 hours. No approval pending. Nothing queued.
 
 ## Lessons so far
 
@@ -1877,6 +1878,20 @@ tablebase measurement after the freeze (Queen endings, above).
   November on the four common opponents only. Prediction for Hobbes
   (3612; before any game): main about 40% to 55%, 1.0.0 about 28% to
   42%, both inside rule 2's 25-75%.
+  RESULTS (check-in 24 November; same night, PC idle, Hash 256, 600
+  games each with Hobbes): main (wdl25-900, bench 948275) 3558
+  (2026-11-23-01, 11:01 pm-1:26 am), 1.0.0 3500 (2026-11-23-02, 1:27-
+  3:55 am): gap +58 +/- 19 on all five opponents. On the four common
+  opponents only (as planned): main akimbo +95, Patricia +98, Bread +61,
+  Prune +6 (mean rating about 3572); 1.0.0 +3, +17, -6, -3 (about 3510):
+  gap about +62, inside +50 to +100 and close to 17 November's +74 +/-
+  22 at Hash 16: no hash effect visible at this resolution. Hobbes: main
+  38.3% (2 wins, 30 losses, 88 draws; -83), a little below the predicted
+  40-55%; 1.0.0 28.3% (0 wins, 52 losses; -161), at the low end of
+  28-42%. Both inside rule 2's 25-75%, so Hobbes stays. 0 time losses,
+  no crashes in either run. Skeptic: Hobbes pulls main's five-opponent
+  estimate down to 3558 from about 3572 on the four; estimates with and
+  without Hobbes must not be compared directly.
 - equal-passes data test (Scout, Fable, 7 November): long900's recipe and
   seed on the 5.65 billion positions of the more-data run at about 24.6
   passes (1390 superbatches, about 11.6 GPU hours). Needs resumable
