@@ -1919,6 +1919,12 @@ tablebase measurement after the freeze (Queen endings, above).
   no risky lines), one runner reinstall. Counts as done when the next
   STARTED line shows the new approved commit and the calibration summary
   lists Hobbes.
+  Steps done 23 November, about 4:40 pm Pacific (screenshots): reinstall
+  ("Calibration opponents copied for the runner: ... Hobbes.exe ...",
+  "Calibration opponent refreshed: Hobbes.exe", INSTALLED on 'pc') and
+  approval 034f5f1f3b -> b1c2cef8e3 (calibrate.ps1 and similarity.ps1,
+  no risky lines). The runner shows 2026-11-23-01 waiting for 9 pm. To
+  confirm in the log: "approved commit b1c2cef8e3" on its STARTED line.
 
 - 2026-11-20 (pace routine): one approval and one reinstall, at the PC
   when convenient? The approval brings kb16.ps1 -MoreData (Scout's
