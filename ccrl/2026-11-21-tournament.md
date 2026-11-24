@@ -139,7 +139,7 @@ Endgame-eval tally for the tablebase-truth measurement after the
 freeze: ran high in #46, #53, #90; accurate where the opponent ran high
 in #67, #74, #99. Game files: games/ccrl/16066-81/90/99-*.pgn.
 
-## Games 108 and 117 (23 November): two losses; final score 7.5/15 (if 15 rounds)
+## Games 108 and 117 (23 November): two losses; 7.5/15 so far (the event continues: game 144 vs StockDory 0.4 was live on 24 November)
 - #108 Cinder 0.6.1 (CCRL 3608) - Trinity, LOST at move 74. The book
   line (Najdorf with h3/g4) left Trinity worse from the start: -1.1 at
   its first own move, Cinder +0.6. A long squeeze; Trinity's evals were
