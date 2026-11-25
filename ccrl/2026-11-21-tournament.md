@@ -184,6 +184,21 @@ game). Trinity held small edges of +0.3 to +0.7 by its own count from
 moves 29-41 while Valkand said -0.15; nothing came of them, and the
 bishop-and-queen ending was drawn. Unremarkable; nothing for forensics.
 
+## Game 166 (25 November): Hobbes 4.0 (CCRL 3612) - Trinity, LOST at move 86; 9.5/20 (2 wins, 15 draws, 3 losses)
+A slow closed game (Four Knights with g3, then a kingside pawn advance by
+White). Out of the book Trinity rated itself +0.5 to +0.9 while Hobbes
+said about 0.00. From move 21 (21...Ng8, 22...g6, 23...Ngf6, a passive
+kingside regrouping) Trinity's own score fell: -0.4, -0.75, -1.55, while
+Hobbes still said only +0.4. From move 30 to 50 Trinity said -2 to -5
+while Hobbes said +0.4 to +1.1, and from move 53 Trinity -6 to -15
+against Hobbes +1.7 to +2.1. Trinity was right that it was losing (it
+lost a rook ending with Hobbes's passed a-pawn), but its evals were 4 to
+7 times larger than Hobbes's at every stage: the clearest example yet of
+Trinity's eval magnitude running high, here in a MIDDLEGAME, not only in
+endings (#46, #53, #90 were endings). For the tablebase-truth / eval-
+scale measurement after the freeze, and a forensics candidate: was the
+21-23 regrouping the mistake, or was the position already worse?
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
