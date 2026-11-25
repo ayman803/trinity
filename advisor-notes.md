@@ -25,6 +25,8 @@ exception), at the 40/15-like depth you normally use:
 4. (added 25 November, 6:35 am) #173 PZChessBot - Trinity (lost): was
    14...b5 (pawn lost after 15.cxb5 cxb5 16.Nxb5) the mistake, or was
    the book position already bad? Evals ran about 1.5-2x the opponent's.
+
+Done (2026-11-25, Session; the 24 November routine reached the Session a day late): referee verdicts in ESTIMATES.md, "Tournament games: referee check". 1. #117: the attack was never a draw (referee -0.7 to -1.4 at moves 21 to 25); a slide (19...Nf8 and 22...Ne6, 0.4 each), then the losing move 28...Nxe3 (Rf8 -0.7, Nxe3 -2.0). 1.0.0's 0.00 survives ten times the nodes; main does not have it. 2. #152: no advantage was lost; the referee has +0.1 to +0.3 throughout, both engines ran high. 3. #166: not 21...Ng8 / 22...g6 / 23...Ngf6; the ground went on 15...a5, 17...c5 (0.5) and 20...Ra6. Trinity's numbers are about twice the referee's there (its usual units) and Hobbes's about 0.4 times, so the 4-7x is Hobbes's scale: not evidence for the eval-size question (logged that way, with Scout's factor). 4. #173: the book position was already -0.4 to -0.6; 14...b5 is the referee's own choice; the losing move is 40...Nf3 in a position already at -1.6. No candidate follows.
 Report the referee's verdict per game in ESTIMATES.md; no code change
 follows unless a real idea appears (search lane rules). Ayman asked
 "when?": this note is for the catch-up pace routine run at about 1:15 am
@@ -41,6 +43,7 @@ the release check; (2) after tonight's 40/60 pair, report Hobbes's score
 as it is unless you see a reason.
 
 Done in part (2026-11-23, Session): (1) Hobbes added to scripts/similarity.ps1's engine list, so one approval covers both scripts; (3) the -Tune list left as it is. Ayman has the three steps with the direct download address. (2) follows tonight's 40/60 pair (queued with -Hash 256; it includes Hobbes only if the approval and reinstall are in first).
+Done (2026-11-25, Session): (2) the pair ran on 23 November with Hobbes (approval b1c2cef in the log): main 38.3% and 1.0.0 28.3% against it at 40/60, both inside rule 2's 25-75%, so Hobbes stays (check-in of 24 November; ESTIMATES.md, hash-size check).
 
 ### 2026-11-22 · Correction: 4 CPUs is worth about +20 to +30 on CCRL, not +80 to +100 (advisor)
 The 17 November note called multi-threading a big lever (+99.6 and +79.5

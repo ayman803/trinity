@@ -1083,6 +1083,9 @@ network, and the second week merged nothing):
   wdl0, wdl25-900s2, moredata-600), 0 search candidates; merged 1
   (wdl25-900). Week of 23 November so far: tested 0, merged 0 (no idea
   ready in either lane; dated lines under "Search lane status").
+  Updated 25 November: week of 23 November so far tested 0, merged 0.
+  PC: the hash-256 40/60 pair with Hobbes (23 November night). No test
+  is undecided.
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 
@@ -1859,6 +1862,78 @@ come off is known from other engines and falls under the originality
 rule; more game-result weight in training does not move it (WDL 0 to
 0.5 leaves the score per band where it was). Next evidence: the
 tablebase measurement after the freeze (Queen endings, above).
+
+## Tournament games: referee check (advisor note 24 November; Session, 25 November)
+
+Stockfish 16 as a scorer only (the forensics exception), on four
+tournament games of 1.0.0: every position of the critical stretch at 12
+to 20 s on 2 to 4 threads, the flagged moves again at 60 s with the
+referee's three best moves, and 1.0.0 and main re-searched at about the
+game's effort (24 million nodes) and at ten times that. Scores are from
+Trinity's side. Scout's file of 25 November covers the same games from
+Trinity's own numbers and agrees.
+- #117 crownd - Trinity (lost). No early blunder: a slide. 15...Bg6 was
+  fine (three moves within 0.01). 19...Nf8 cost 0.4 (referee: Nb6 -0.19,
+  Nf8 -0.6), 22...Ne6 another 0.4 (Qh4 -0.93, Ne6 -1.37). The attack was
+  never a draw: the referee has -0.7 to -1.4 through moves 21 to 25,
+  where 1.0.0 printed 0.00 (and crownd's +1.5 to +2.9 was too high the
+  other way). The decisive mistake is 28...Nxe3: Rf8 -0.74, Nxe3 -2.02.
+  1.0.0's 0.00 is a search misjudgement of its own: at 22...Ne6 it still
+  says -0.01 after ten times the nodes (depth 34). Main does not share
+  it (-1.0 to -1.9 on the same moves at the game's effort), but main
+  does play 28...Nxe3 at the game's effort and finds Rf8 only at ten
+  times: one search mistake that more time fixes.
+- #152 clrsrc - Trinity (drawn). There was no advantage to lose: the
+  referee has +0.1 to +0.3 from move 9 to 18 and 0.00 after, while
+  Trinity said +0.8 to +1.2 and clrsrc agreed with it. 17...Rxa1 and
+  18...Rd6 were each within 0.05 of the referee's best. Both engines'
+  numbers ran high; nothing was thrown away.
+- #166 Hobbes - Trinity (lost). The regrouping 21...Ng8, 22...g6,
+  23...Ngf6 was not the mistake (21...Ng8 cost nothing; 22...g6 is
+  within 0.2 of the best). The ground went earlier, on the queenside
+  pawn moves: 15...a5 (+0.25 to 0.00), 17...c5 (0.00 to -0.5; the
+  referee's f6, Ng5 or Ra7 all hold 0.00) and 20...Ra6 (another 0.25).
+  By move 24 the referee has -1.0 to -1.2, by move 40 -1.8, by move 54
+  -3.8. Main picks other moves at 15, 17 and 20 but is also at -0.6 by
+  move 20 by its own count. Eval size (the note's point 3): through
+  moves 24 to 66 Trinity's number is 1.3 to 2.5 times the referee's
+  (-1.4 against -1.1, -3.0 against -1.7, -7.1 against -3.8, -14 against
+  -6.2), the same factor of about 2 as in its won games, so units, and
+  Trinity was right that it was losing. Hobbes's number is about 0.4
+  times the referee's and stops near +2 while the referee goes to -6
+  and beyond: the "4 to 7 times" is Hobbes's own compressed scale
+  (Scout measured the same from the calibration games: Hobbes prints
+  about a quarter of Trinity's number in games it wins). So #166 is not
+  evidence for the eval-size question; the endgame finding of 23
+  November, which rests on game results, stands as written.
+- #173 PZChessBot - Trinity (lost). The book position was already
+  worse: the referee has -0.4 to -0.6 from Trinity's first own move.
+  14...b5 was not the mistake (it is the referee's own first choice;
+  -0.67 before, -0.64 after, and the pawn comes back in the line). A
+  slow slide to -1.2 by move 29 and -2.0 by move 39, then the losing
+  move 40...Nf3 (Be7 -1.6, Nf3 -3.0), followed by 41...Nxh2+ and
+  42...Qxd7. At that point both versions already rate the game -3.
+- Main's losses to Hobbes at 40/60 (23 November: 30 losses, 2 wins, 88
+  draws), referee 8 s at the first own move and 5, 10, 15, 20 and 30
+  moves later. 26 of the 30 losses were with Black. Referee's median:
+  -0.37 at the first own move, -0.46, -0.60, -1.08 (15 moves on), -1.20,
+  -1.96; 10 of 30 start at -0.5 or worse, 17 of 30 are at -1.0 or worse
+  15 moves after the book. Trinity's own medians run next to it (-0.69,
+  -0.81, -1.10, -1.54, -2.32, -3.25). The 10 losses to Prune are a
+  different shape: level after the book (-0.06) and still only -0.36
+  twenty moves on; they are lost later. Reading: against Hobbes the
+  points go in the 15 moves after the book, from positions that start a
+  little worse (Scout's section 3 says the same). Skeptic: these are
+  lost games only (the drawn games are not published), so a slide is
+  what selection alone would show; it is a place to look, not a
+  finding.
+Outcome: no candidate. Three of the four games are slow slides against
+stronger or equal engines, one from a bad book position; the two clear
+single mistakes (28...Nxe3, 40...Nf3) are ordinary search misses. The
+"0.00, then a collapse" lead from #117 was measured by Scout over
+26,000 positions and dropped. After the freeze, if a forensics night is
+wanted: main's first 15 moves after the book against Hobbes, with the
+drawn games kept as the control.
 
 ## Planned, not started
 
