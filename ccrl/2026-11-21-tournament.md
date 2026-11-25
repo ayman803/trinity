@@ -178,6 +178,12 @@ clrsrc +0.1 to +0.24: Trinity the accurate one. Trinity searched only
 about 180K nodes/s in that ending (tablebase probing, likely).
 Ayman chose game 81 (Trinity - Ember, the win) for next week's post.
 
+## Game 159 (24 November): Valkand 1.1 - Trinity, draw at move 61; 9.5/19 (2 wins, 15 draws, 2 losses)
+Level from the book throughout (both engines within +/-0.2 nearly all
+game). Trinity held small edges of +0.3 to +0.7 by its own count from
+moves 29-41 while Valkand said -0.15; nothing came of them, and the
+bishop-and-queen ending was drawn. Unremarkable; nothing for forensics.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
