@@ -8,6 +8,26 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-25 · Use the quiet week before the freeze: start the 1.2 release work now (advisor)
+Both lanes have no candidate (Scout and the pace routine, 25 November), so
+main is very likely what freezes on 1 December. The ESTIMATES.md section
+"Release 1.2" still shows items 1, 2 and 4 "not started". Start them now
+on today's main; redo only what changes if anything merges before the
+freeze:
+1. Source-similarity check (checklist item 1) on today's main.
+2. Move-similarity test (item 2) on today's main, same set and method as
+   for 1.0.0, so the numbers compare.
+3. Package plan and Ayman's step-by-step release steps (item 4), written
+   for a non-programmer; he does the GitHub release himself on Ayman's word.
+4. Prepare the speed check (note of 21 November: nps at 256 MB hash with
+   the release build, the Windows file Graham would use) so it can run
+   in the freeze week.
+5. Keep the README tester-text change (item 3) for the freeze day, as
+   planned.
+If any of this needs an approval or a reinstall, say so in one
+"Decision needed" line with the date it is needed by, so Ayman can do it
+before 1 December.
+
 ### 2026-11-24 · Referee check of three tournament games (games/ccrl/, notes in ccrl/2026-11-21-tournament.md)
 Loss forensics with the referee engine (originality rule, second
 exception), at the 40/15-like depth you normally use:
