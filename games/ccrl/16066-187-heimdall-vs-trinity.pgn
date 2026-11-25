@@ -1,0 +1,26 @@
+[Site "Hobnobbing With Royalty"]
+[Date "2026.11.25"]
+[White "Heimdall 1.5.2"]
+[Black "Trinity 1.0.0"]
+[Result "1/2-1/2"]
+
+1. d4 {(Book)} f5 {(Book)} 2. Bg5 {(Book)} h6 {(Book)}3. Bh4 {(Book)} g5
+{(Book)} 4. e4 {(Book)} Bg7 {(Book)} 5. Bg3 {(Book)} fxe4 {(Book)}6. h4 {(Book)}
+Nc6 {(Book)} 7. d5 {(Book)} Ne5 {(Book)} 8. Nd2 {(Book)} c6 {(Book)}9. Bxe5 {()
+0.50/38 62} Bxe5 {(Bxe5) -0.49/24 12}10. Nc4 {(Nc4 Bg7) 0.41/39 43} Bg7 {(Bg7)
+-0.65/27 26} 11. hxg5 {(hxg5) 0.02/39 44} Kf8 {(Kf8) -0.44/28 51}12. Qg4 {(Qg4
+hxg5 Qf5+ Nf6 Rxh8+ Bxh8 d6 b5 Ne5 exd6 Ng6+ Kf7 Nh3 Bg7 a4 bxa4 Rxa4 d5 Nxg5+
+Kg8 Be2 d6 Ne6 Qe8 Ngf4) 0.20/38 36} hxg5 {(hxg5 Rxh8 Bxh8 Nh3 d6 Qxg5 b5 dxc6
+bxc4 Bxc4 Nf6 Nf4 Bg7 O-O-O Rb8 Ng6+ Ke8 Ne5 Kf8 Ng6+) -0.01/23 12}13. Rxh8
+{(Rxh8 Bxh8) 0.00/40 45} Bxh8 {(Bxh8) 0.01/27 16}14. Qxe4 {(Qxe4 Nf6 Qg6 Qe8
+Qxg5 Nxd5 Ne5 Bf6 Qh6+ Bg7 Qg5 Bf6) 0.00/43 30} Nf6 {(Nf6) -0.01/29 18}15. Qg6
+{(Qg6 Qe8 Qxg5 Nxd5 Ne5 Bf6 Qh6+ Bg7 Qg5 Bf6) 0.00/44 21} Qe8 {(Qe8 Qxg5 Nxd5
+Ne5 Bf6 Qh6+ Bg7 Qg5 Bf6) -0.01/29 16}16. Qxg5 {(Qxg5 Nxd5 Ne5 Bf6 Qh6+ Bg7 Qg5
+Bf6) 0.00/47 31} Nxd5 {(Nxd5) 0.01/29 19}17. Ne5 {(Ne5 Bf6 Qh6+ Bg7 Qg5 d6 Ng6+
+Kf7 Bd3 Qg8 Kf1 Bf6 Qh5 Ke8 c4 Nb4 Nf4+ Kf8 Ng6+ Ke8) 0.00/41 22} Bf6 {(Bf6)
+-0.01/29 13}18. Qh6+ {(Qh6+ Bg7 Qg5 d6 Ng6+ Kf7 Bd3 Bf6 Qh5 Qg8 Kf1 Ke8 c4 Nb4
+Nf4+ Kd7 Qf5+ Ke8 Qh5+) 0.00/43 19} Bg7 {(Bg7 Qg5 Bf6) -0.01/29 11}19. Qg5 {(Qg5
+d6 Ng6+ Kf7 Bd3 Bf6 Qh5 Qg8 Kf1 Ke8 c4 Nb4 Nf4+ Kd7 Qf5+ Ke8 Qh5+) 0.00/43 22}
+Bf6 {(Bf6) 0.01/35 35}20. Qh6+ {(Qh6+ Bg7 Qg5 d6 Ng6+ Kf7 Bd3 Qg8 Kf1 Bf6 Qh5
+Ke8 c4 Nb4 Nf4+ Kd7 Qf5+ Ke8 Qh5+) 0.00/46 29} Bg7 {(Bg7) 0.01/43 33}21. Qg5
+{(Qg5 Bf6) 0.00/47 25} Bf6 {(Bf6) -0.01/34 29} 1/2-1/2

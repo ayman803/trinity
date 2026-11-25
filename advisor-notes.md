@@ -21,6 +21,9 @@ exception), at the 40/15-like depth you normally use:
    Was 21...Ng8 / 22...g6 / 23...Ngf6 the mistake? And log the eval
    ratios as middlegame evidence for the eval-scale measurement after
    the freeze (so far #46, #53, #90 were endings).
+4. (added 25 November, 6:35 am) #173 PZChessBot - Trinity (lost): was
+   14...b5 (pawn lost after 15.cxb5 cxb5 16.Nxb5) the mistake, or was
+   the book position already bad? Evals ran about 1.5-2x the opponent's.
 Report the referee's verdict per game in ESTIMATES.md; no code change
 follows unless a real idea appears (search lane rules). Ayman asked
 "when?": this note is for the catch-up pace routine run at about 1:15 am

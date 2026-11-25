@@ -199,6 +199,24 @@ endings (#46, #53, #90 were endings). For the tablebase-truth / eval-
 scale measurement after the freeze, and a forensics candidate: was the
 21-23 regrouping the mistake, or was the position already worse?
 
+## Games 173, 180, 187 (25 November): one loss, two draws; 10.5/23 (2 wins, 17 draws, 4 losses)
+- #173 PZChessBot v8.0 - Trinity, LOST at move 48. A Dutch (Stonewall
+  with ...g5) from the book; Trinity rated itself -0.6 at its first own
+  move. 14...b5 15.cxb5 cxb5 16.Nxb5 cost a pawn (Trinity -0.74 then
+  -1.37/-1.54), and White converted. Evals again larger than the
+  opponent's: Trinity -1.5 to -2 when PZChessBot said +0.8 to +1.3,
+  -5 to -9 when it said +4 to +6 (about 1.5-2x; smaller than #166's
+  4-7x). Referee question: was 14...b5 the mistake?
+- #180 ZigQueen 6.6.0 (CCRL 3566, an event leader) - Trinity, draw at
+  move 76. Trinity +0.4 to +0.9 by its own count out of the book, ZigQueen
+  -0.3 (both agreed Black was a little better); it ran down to a level
+  rook ending. A good result against one of the strongest in the field.
+- #187 Heimdall 1.5.2 - Trinity, draw at move 21 by repetition. A sharp
+  Dutch (1.d4 f5 2.Bg5); both 0.00 from move 13; the queen shuffled
+  between g5 and h6 against Black's bishop.
+Two of Trinity's four losses (#108 Cinder, #173 PZChessBot) began from
+book positions both engines rated clearly worse for Trinity.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.
