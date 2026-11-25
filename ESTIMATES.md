@@ -170,6 +170,16 @@ network, and the second week merged nothing):
   file is about networks (moredata-600, the WDL lever closed); nothing
   new from forensics or the speed profile. GitHub time goes to
   wdl25-900s2 vs long900s2 (network lane).
+  2026-11-25: nothing running. No idea worth a test: Scout's 25 November
+  file measured the one lead from the tournament losses ("0.00, then a
+  collapse", game #117) over 26,000 positions and dropped it (a draw
+  score is as dependable as any small score); the referee check of
+  games #117, #152, #166 and #173 (advisor's note, section "Tournament
+  games: referee check") shows slow slides and bad book positions, no
+  rule to change. Network lane: no run to propose (Scout). The 24
+  November routine was delivered a day late, so 24 November has no line
+  of its own; nothing ran or was missed that day (the hash-256 pair had
+  finished and nothing was undecided).
   2026-11-23: nothing running. No idea worth a test: the advisor's
   eval-scale question was measured (Scout's file and the section "Eval
   size in drawn positions"): the pattern is real in endings, but the
