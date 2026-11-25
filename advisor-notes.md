@@ -8,6 +8,24 @@ Decisions reserved for Ayman still go to him as "Decision needed".
 
 ## Open
 
+### 2026-11-24 · Referee check of three tournament games (games/ccrl/, notes in ccrl/2026-11-21-tournament.md)
+Loss forensics with the referee engine (originality rule, second
+exception), at the 40/15-like depth you normally use:
+1. #117 crownd - Trinity (lost): moves 20-25, Trinity rated its kingside
+   attack 0.00 while crownd said +1.5 to +2.9. Was the attack ever a
+   draw, and which move was the mistake?
+2. #152 clrsrc - Trinity (draw): Trinity's +1.06 fell to +0.38 after
+   18...Rd6, then +0.19. Where was the advantage lost?
+3. #166 Hobbes - Trinity (lost): from move 21 Trinity's evals ran 4-7x
+   larger than Hobbes's (Trinity -4 when Hobbes +1; -14 when Hobbes +2).
+   Was 21...Ng8 / 22...g6 / 23...Ngf6 the mistake? And log the eval
+   ratios as middlegame evidence for the eval-scale measurement after
+   the freeze (so far #46, #53, #90 were endings).
+Report the referee's verdict per game in ESTIMATES.md; no code change
+follows unless a real idea appears (search lane rules). Ayman asked
+"when?": this note is for the catch-up pace routine run at about 1:15 am
+on 25 November.
+
 ### 2026-11-23 · Hobbes 4.0 added as fifth calibration opponent (Ayman: "yes add", 9:23 am)
 Ayman answered the pace routine's decision with yes. The advisor made the
 script change (scripts/calibrate.ps1: Hobbes 4.0, CCRL 3612, Download)
