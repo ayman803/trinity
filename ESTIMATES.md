@@ -2315,8 +2315,12 @@ Reading:
 ## Release 1.2 (advisor note of 14 November; Ayman: "start release prep")
 
 Preparing is not offering: rule 6 holds (nothing goes to CCRL until
-1.0.0's rating has settled and Ayman says so). Target: freeze main about
-25-28 November, checks done by 2-5 December. The network is whatever
+1.0.0's rating has settled and Ayman says so). Plan (updated 25 November,
+Ayman: "no reason to wait - go"): items 1, 2, 4 and the speed check start
+NOW on today's main (no candidate in either lane); the freeze stays on
+1 December on Ayman's word (note of 21 November); redo only what changes
+if anything merges before then. Target: checks done by 2 December,
+release published and Graham emailed (by Ayman) about 3-8 December. The network is whatever
 main holds at the freeze (long900 now; wdl25-900 if it passes and is
 merged by then).
 1. Source-similarity check (checklist item 1): not started (15 November:
