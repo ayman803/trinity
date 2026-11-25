@@ -217,6 +217,17 @@ scale measurement after the freeze, and a forensics candidate: was the
 Two of Trinity's four losses (#108 Cinder, #173 PZChessBot) began from
 book positions both engines rated clearly worse for Trinity.
 
+## Correction (advisor, 25 November): engines print evals on different scales
+Scout measured it (scout/2026-11-25.md, section 2): in games the opponent
+WON, Hobbes prints about a quarter of Trinity's number, Patricia and Prune
+about half, Bread and akimbo a little more than Trinity. So the "4 to 7
+times Hobbes's" reading of #166 and the "1.5-2x" of #173 are mostly the
+opponents' own scales, not evidence that Trinity's evals run high; strike
+them from the eval-scale question. Trinity's -4 in #166 was right (a score
+of 3.5 or more is followed by a loss 95-97% of the time). The endgame
+finding of 23 November uses game results, not opponents' numbers, and
+stands. Compare evals across engines only after each engine's factor.
+
 ## Other points from the event chat (Graham)
 - Next Amateur Series (the 128th): an engine's latest version must be
   less than a year old; one engine per author. Trinity qualifies.

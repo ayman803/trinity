@@ -18,9 +18,10 @@ exception), at the 40/15-like depth you normally use:
    18...Rd6, then +0.19. Where was the advantage lost?
 3. #166 Hobbes - Trinity (lost): from move 21 Trinity's evals ran 4-7x
    larger than Hobbes's (Trinity -4 when Hobbes +1; -14 when Hobbes +2).
-   Was 21...Ng8 / 22...g6 / 23...Ngf6 the mistake? And log the eval
-   ratios as middlegame evidence for the eval-scale measurement after
-   the freeze (so far #46, #53, #90 were endings).
+   Was 21...Ng8 / 22...g6 / 23...Ngf6 the mistake? (Corrected 25
+   November after Scout's section 2: the eval ratio is Hobbes's own
+   scale, about 1/4.6 of Trinity's; it is NOT eval-scale evidence. Drop
+   that part.)
 4. (added 25 November, 6:35 am) #173 PZChessBot - Trinity (lost): was
    14...b5 (pawn lost after 15.cxb5 cxb5 16.Nxb5) the mistake, or was
    the book position already bad? Evals ran about 1.5-2x the opponent's.
