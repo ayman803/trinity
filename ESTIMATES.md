@@ -2014,6 +2014,10 @@ drawn games kept as the control.
   type Y, Enter. Send a screenshot of each. Yes = do both; No = the
   speed check runs by double-click instead (20-Speed-Check.bat) in the
   freeze week.
+  25 November, about 5 pm Pacific (screenshots): (1) DONE, table under
+  "Release checks". (2) reinstall DONE (INSTALLED on 'pc', 5:06 pm);
+  the approval is still to come (no screenshot yet). The speed check is
+  queued only once the approval is seen.
 
 - 2026-11-23 (pace routine): add one stronger engine to the calibration
   opponents before the 1 December freeze? All four present opponents
@@ -2347,8 +2351,9 @@ merged by then).
 2. Move-similarity test (item 2): cloud run DONE 25 November (main,
    1.0.0, Stockfish 18, Hobbes 4.0): no outlier; numbers under "Release
    checks". The full PC run with the same engines as for 1.0.0 (plus
-   Hobbes) is Ayman's one double-click, 13-Similarity-Test.bat (step A1
-   of release/RELEASE-1.2.md).
+   Hobbes) was run by Ayman the same day (13-Similarity-Test.bat): no
+   outlier, Trinity's highest match 81.4% (Stockfish), below eight
+   pairs of unrelated engines. Items 1 and 2 are done for today's main.
 3. CREDITS section in README.md (item 3): already there (code by
    Claude, bullet, the Leela-derived data in the Stockfish community's
    binpacks, Syzygy and shakmaty-syzygy, fastchess, UHO books). Still to
@@ -2533,6 +2538,33 @@ merged by then).
   about two minutes of this run. The caveat of October stands (the test
   separates poorly). The six-engine PC run is step A1 of
   release/RELEASE-1.2.md.
+- Release 1.2, move similarity on the PC (Ayman, 25 November, about 5 pm
+  Pacific; 13-Similarity-Test.bat, main 123325e = the same engine as
+  705bf8a, 1000 positions, 100 ms; the engines of the 1.0.0 run plus
+  Hobbes):
+
+  |           | Trinity | Stockfish | Reckless | akimbo | Patricia | Bread | Prune | Hobbes |
+  |---|---|---|---|---|---|---|---|---|
+  | Trinity   | -     | 81.4% | 77.9% | 79.3% | 77.6% | 81.3% | 79.9% | 80.4% |
+  | Stockfish | 81.4% | -     | 81.9% | 80.2% | 77.0% | 82.0% | 80.0% | 82.8% |
+  | Reckless  | 77.9% | 81.9% | -     | 80.7% | 75.1% | 81.1% | 80.4% | 82.0% |
+  | akimbo    | 79.3% | 80.2% | 80.7% | -     | 77.1% | 82.8% | 78.1% | 81.6% |
+  | Patricia  | 77.6% | 77.0% | 75.1% | 77.1% | -     | 77.3% | 75.8% | 77.9% |
+  | Bread     | 81.3% | 82.0% | 81.1% | 82.8% | 77.3% | -     | 81.0% | 83.8% |
+  | Prune     | 79.9% | 80.0% | 80.4% | 78.1% | 75.8% | 81.0% | -     | 81.4% |
+  | Hobbes    | 80.4% | 82.8% | 82.0% | 81.6% | 77.9% | 83.8% | 81.4% | -     |
+
+  Trinity's highest match is Stockfish at 81.4% (1.0.0: 81.0%), then
+  Bread 81.3% and Hobbes 80.4%. Eight pairs of unrelated engines match
+  each other more than that (Bread-Hobbes 83.8%, Stockfish-Hobbes and
+  akimbo-Bread 82.8%, Stockfish-Bread and Reckless-Hobbes 82.0%, and
+  more), and Trinity's average match with the seven (79.7%) is below
+  Stockfish's (80.8%), Bread's (81.3%) and Hobbes's (81.4%). No outlier:
+  Trinity is no closer to any engine than they are to each other.
+  Against the 1.0.0 run the changes are within 1 to 3 points either way
+  (Reckless 78.9 to 77.9, akimbo 79.6 to 79.3, Patricia 76.2 to 77.6,
+  Bread 80.1 to 81.3, Prune 77.1 to 79.9). Release checklist item 2:
+  done for today's main.
 - Release 1.0.0 ARM file (advisor note and Ayman, 22 November 2026;
   GitHub issue #2, for the Mobile Chess Engine Circuit):
   `trinity-1.0.0-linux-aarch64-musl`, built by "Release add-on (ARM)"
