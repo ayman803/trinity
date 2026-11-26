@@ -1,0 +1,31 @@
+[Site "Hobnobbing With Royalty"]
+[Date "2026.11.25"]
+[White "Ember 1.4.0"]
+[Black "Trinity 1.0.0"]
+[Result "1/2-1/2"]
+
+1. d4 {(Book)} Nf6 {(Book)} 2. c4 {(Book)} e6 {(Book)}3. Nf3 {(Book)} Bb4+
+{(Book)} 4. Nbd2 {(Book)} d6 {(Book)} 5. a3 {(Book)} Bxd2+ {(Book)}6. Bxd2
+{(Book)} a5 {(Book)} 7. Qc2 {(Book)} Qe7 {(Book)} 8. Rg1 {(Book)} e5 {(Book)}9.
+g4 {(g4) 1.12/24 46} e4 {(e4) -0.81/27 24}10. g5 {(g5) 1.39/22 17} Nh5 {(Nh5)
+-1.11/26 19} 11. Nh4 {(Nh4) 1.26/25 31} a4 {(a4) -1.15/26 19}12. Ng2 {(Ng2 O-O
+Ne3 f5 Nd5 Qf7 e3 Be6 Be2 Bxd5 cxd5 g6 h4 Rc8 f3 exf3 Bxf3 Nd7 O-O-O Nb6 Bxh5
+gxh5 Rdf1) 1.57/23 22} Nc6 {(Nc6) -1.47/26 23}13. Bc3 {(Bc3) 1.36/26 47} f5
+{(f5) -0.94/25 17}14. gxf6 {(gxf6 Nxf6 e3 Bd7 Nf4 Na5 O-O-O Nb3+ Kb1 O-O-O Be2
+Rhf8 Rg5 Kb8 Rdg1 g6 Qd1 Qf7 h4 Bf5 Ka2 b6 Qc2 h6) 0.85/25 60} Nxf6 {(Nxf6)
+-1.34/25 13}15. e3 {(e3 Bd7 Nf4 Na5 O-O-O Nb3+ Kb1 O-O-O Be2 g6 h4 Qf7 Rg5 Kb8
+Rdg1 Bf5 h5 Nxh5 Nxh5 gxh5 Bxh5 Bg6 Bxg6 hxg6) 0.89/22 20} g5 {(g5) 0.17/24 18}
+16. O-O-O {(O-O-O) 0.02/24 32} Bg4 {(Bg4) 0.01/27 10}17. Re1 {(Re1) 0.31/24 31}
+Rg8 {(Rg8) -0.04/26 16}18. h4 {(h4) 0.35/26 60} h6 {(h6 Kb1 O-O-O hxg5 hxg5 Qxa4
+Kb8 Qc2 Rdf8 Be2 Bxe2 Rxe2 d5 c5 Ng4 Ne1 Qe6 Ka2 Rh8 Rg2 Rh2 Rxh2 Nxh2 a4 g4)
+0.01/27 15} 19. hxg5 {(hxg5) 0.41/24 34} hxg5 {(hxg5) -0.32/27 17}20. Be2 {(Kb1)
+0.19/25 43} Bxe2 {(Bxe2) -0.01/28 18}21. Rxe2 {(Rxe2) 0.00/27 52} Kd7 {(Kd7)
+0.01/29 23} 22. Ne1 {(Ne1) 0.17/29 44} d5 {(d5) 0.01/29 22}23. f3 {(f3) 0.00/27
+44} Rae8 {(Rae8 Qxa4 Kc8 Qa8+ Nb8 Qa4 Qe6 fxe4 Qxe4 Bd2 g4 cxd5 Qxd5 Nd3 Nbd7
+Qa8+ Nb8 Qa4) -0.01/27 12}24. Qxa4 {(Qxa4 Kc8 Qa8+ Nb8 c5 Qd7 Reg2 Qb5 Qa5 Qc4
+Qb4 Qa6 Qa5) 0.00/25 44} Kc8 {(Kc8 Qa8+ Nb8 Qa4 Nc6) -0.01/28 15}25. Qa8+
+{(Qa8+) 0.00/26 32} Nb8 {(Nb8) 0.01/30 17}26. fxe4 {(fxe4) 0.16/26 21} Qxe4
+{(Qxe4) -0.01/30 21}27. c5 {(c5) 0.00/28 46} Re6 {(Re6 Qa4 Nc6 Qa8+ Nb8) 0.01/33
+26} 28. Qa4 {(Qa4) 0.00/29 24} Nc6 {(Nc6) 0.01/34 24}29. Qa8+ {(Qa8+ Nb8 Qa4)
+0.00/26 30} Nb8 {(Nb8) -0.01/44 59}30. Qa4 {(Qa4) 0.00/29 33} Nc6 {(Nc6)
+-0.01/35 32} 31. Qa8+ {(Qa8+ Nb8 Qa4) 0.00/27 12} Nb8 {(Nb8) 0.01/52 71} 1/2-1/2

@@ -217,6 +217,16 @@ scale measurement after the freeze, and a forensics candidate: was the
 Two of Trinity's four losses (#108 Cinder, #173 PZChessBot) began from
 book positions both engines rated clearly worse for Trinity.
 
+## Games 194 and 201 (25 November): two draws; 11.5/25 (2 wins, 19 draws, 4 losses)
+- #194 NARC Genesys 5.1 - Trinity, draw at move 31 by repetition. Level
+  from the book; NARC rated itself -0.8/-0.9 at moves 27-28 while
+  Trinity said 0.00, and Trinity was right (repetition next).
+- #201 Ember 1.4.0 - Trinity, draw at move 31 by repetition. The SAME
+  book line as #81 (Trinity's win with White), colours reversed: Trinity
+  as Black was -0.8 to -1.5 out of the book, defended, and was level by
+  move 15 (15...g5); repetition with queen checks on a8/a4. Ember could
+  not win the line Trinity won with.
+
 ## Correction (advisor, 25 November): engines print evals on different scales
 Scout measured it (scout/2026-11-25.md, section 2): in games the opponent
 WON, Hobbes prints about a quarter of Trinity's number, Patricia and Prune

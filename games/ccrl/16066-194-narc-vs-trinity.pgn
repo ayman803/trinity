@@ -1,0 +1,35 @@
+[Site "Hobnobbing With Royalty"]
+[Date "2026.11.25"]
+[White "NARC Genesys 5.1"]
+[Black "Trinity 1.0.0"]
+[Result "1/2-1/2"]
+
+1. d4 {(Book)} Nf6 {(Book)} 2. c4 {(Book)} e6 {(Book)}3. Nf3 {(Book)} d5
+{(Book)} 4. Nc3 {(Book)} Bb4 {(Book)} 5. Bg5 {(Book)} h6 {(Book)}6. Bh4 {(Book)}
+dxc4 {(Book)} 7. Qa4+ {(Book)} Nc6 {(Book)} 8. e3 {(Book)} Bd7 {(Book)}9. Qc2
+{(Qc2) -0.28/25 19} b5 {(b5) 0.20/26 18}10. Bxf6 {(Bxf6) -0.14/26 27} gxf6
+{(gxf6) 0.22/27 22}11. Be2 {(Be2 Ne7 O-O Nd5 a4 a6 e4 Nf4 g3 Bxc3 bxc3 Nxe2+
+Qxe2 O-O Qe3 Kg7 axb5 axb5 Rxa8 Qxa8 Qf4 Rg8 Qg4+ Kh7 Qf4) -0.16/26 27} Ne7
+{(Ne7) 0.34/27 18}12. O-O {(O-O Nd5 a4 a6 e4 Nxc3 bxc3 Be7 h3 Kf8 Qd2 h5 Qf4 Be8
+Rfb1 Kg7 Qg3+ Kf8 Qf4) 0.04/27 39} a5 {(a5) 0.24/28 18}13. b3 {(b3 cxb3 axb3 c6
+Ne4 Nd5 Ne1 f5 Nc5 Bxc5 Qxc5 Qe7 Qc1 b4 Nd3 Nc3 Re1 O-O Nc5 Ra7 Ba6 a4 bxa4 Rfa8
+Bd3) -0.10/28 57} cxb3 {(cxb3) -0.01/27 14}14. Qxb3 {(Qxb3) -0.07/27 74} Bxc3
+{(Bxc3 Qxc3 b4 Qb2 Bc6 Rfc1 O-O Rc5 Bd5 Nd2 f5 a3 Ng6 axb4 axb4 Rxa8 Qxa8 Qxb4
+Rb8 Qc3 Bxg2 Ra5 Qc6 Rc5 Qa8) -0.01/26 11}15. Qxc3 {(Qxc3) -0.13/26 15} b4 {(b4
+Qb2 Bc6 Nd2 O-O Rfc1 f5 Rc5 Bd5 a3 Ng6 axb4 axb4 Rxa8 Qxa8 Qxb4 Bxg2 Ra5 Qc6 Rc5
+Qa8) 0.08/27 26} 16. Qb2 {(Qc5) 0.00/25 53} Bc6 {(Bc6) 0.01/27 24}17. Rfc1
+{(Rfc1) -0.17/27 19} O-O {(O-O) 0.01/29 42}18. Rc5 {(Rc5) -0.24/26 17} Bd5 {(Bd5
+Nd2 f5 a3 Qd6 axb4 axb4 Rxa8 Rxa8 Qxb4 Ra2 Qc3 Qb6 Rb5 Qc6 Rc5 Qb6) -0.01/27 16}
+19. Nd2 {(Nd2) -0.10/28 20} f5 {(f5) -0.01/29 14}20. a3 {(a3) -0.25/28 16} Qd6
+{(Qd6) -0.01/30 25} 21. axb4 {(axb4) -0.19/26 18} axb4 {(axb4) -0.01/32 14}22.
+Rxa8 {(Rxa8) -0.19/26 14} Rxa8 {(Rxa8) -0.01/33 20}23. Qxb4 {(Qxb4 c6 Qb2 Ra2
+Qc1 Qd8 Rc2 Ra4 Qd1 Qa5 Bc4 Ng6 Nb3 Qa7 Bxd5 cxd5 g3 Ra3 Qb1 h5 Rb2 h4 Kg2 Kg7
+Nc5) -0.24/25 13} Ra2 {(Ra2) -0.01/33 16}24. Bf1 {(Bf1) -0.35/25 21} Qb6 {(Qb6)
+0.01/36 84}25. Rb5 {(Rb5) 0.00/33 16} Qd6 {(Qd6 Qc3 Qc6 Rc5 Qb6 Qc1 Qb2 Qxb2
+Rxb2 Nc4 Bxc4 Bxc4 f4 exf4 c6 g3 Rd2 Kg2 Rxd4 Be2 Kg7 Bf3 Rd7 Kf1 Rc7) -0.01/33
+9}26. Rc5 {(Rc5) 0.00/50 15} Kg7 {(Kg7 Qc3 Qb6 Qc1 Qb2 Qxb2 Rxb2 Rxc7 Rxd2 Rxe7
+Rd1 Rc7 Be4 Rc3 Bb7 Ra3 Bc6 Rb3 Bd5 Rc3 Bb7) 0.01/31 12}27. Nb1 {(Nb1 Ra7 Qb2
+Rb7 Qc1 c6 Nc3 Rb4 Ne2 Ng6 Ng3 Qd8 Nh5+ Kh7 Be2 Nh4 Nf4 Qb8 Bd3 Rb3 g3 Nf3+ Kg2
+Ng5+ Nxd5) -0.82/27 40} Ra1 {(Ra1) -0.01/36 20}28. Qb2 {(Qb2) -0.91/29 17} Ra2
+{(Ra2) -0.01/40 21} 29. Qb4 {(Qb4) 0.00/56 18} Ra1 {(Ra1) 0.01/39 50}30. Qb2
+{(Qb2) 0.00/63 20} Ra2 {(Ra2) -0.01/49 30} 31. Qb4 {(Qb4) 0.00/62 38} 1/2-1/2
