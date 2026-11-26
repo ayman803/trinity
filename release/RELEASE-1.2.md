@@ -24,6 +24,13 @@ frozen bench number before it is attached:
 The network is inside each file; nothing else is needed. Settings a
 tester sees: `Hash` (MB), `Threads`, `Move Overhead` (ms), `SyzygyPath`.
 
+Which file: the AVX2 file (`x86-64-v3`) on any processor from about 2013
+on. Measured on the PC on 25 November (one thread, Hash 256 MB): it
+searches 2.18 million positions per second, the older-processor file
+1.46 million, a third slower. The release page and README say so in one
+plain line. CCRL's tester already runs the AVX2 file of 1.0.0
+(ESTIMATES.md, Release 1.2, item 4b).
+
 ## What the Session does (no steps for Ayman)
 
 At the freeze, on Ayman's "freeze":

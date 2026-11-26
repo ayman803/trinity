@@ -170,6 +170,13 @@ network, and the second week merged nothing):
   file is about networks (moredata-600, the WDL lever closed); nothing
   new from forensics or the speed profile. GitHub time goes to
   wdl25-900s2 vs long900s2 (network lane).
+  2026-11-26: nothing running. No idea worth a test: no Scout file this
+  morning; the speed check found nothing to change in the AVX2 file
+  (the PC's own build is no faster than it). The older-processor file
+  is a third slower than the AVX2 one, but CCRL's tester runs the AVX2
+  file (Release 1.2, 4b), so speeding it up would move no rating: not a
+  candidate now. The week goes to the release checks before the 1
+  December freeze.
   2026-11-25: nothing running. No idea worth a test: Scout's 25 November
   file measured the one lead from the tournament losses ("0.00, then a
   collapse", game #117) over 26,000 positions and dropped it (a draw
@@ -1086,6 +1093,9 @@ network, and the second week merged nothing):
   Updated 25 November: week of 23 November so far tested 0, merged 0.
   PC: the hash-256 40/60 pair with Hobbes (23 November night). No test
   is undecided.
+  Updated 26 November: tested 0, merged 0. Release work: source
+  comparison, move similarity (cloud and PC) and the speed check done;
+  package plan written.
 
 ### Speed profile on game positions (28 October; owner with the advisor)
 
@@ -2403,6 +2413,30 @@ merged by then).
    the one to recommend (the older-processor file loses a third of the
    speed), and the PC is about 1.43x the CCRL tester's machine for 1.0.0
    (1.75M vs 1.22M nps).
+   WHICH FILE THE TESTER RUNS (pace routine 26 November; the question of
+   the advisor's note of 21 November): the AVX2 file. The 1.43x above
+   assumes that, and 1.22M also sits near the PC's figure for 1.0.0's
+   older-processor file (1.36M), so the PC figures alone cannot tell.
+   A yardstick settles it: in the live game of the screenshot Trinity
+   1.0.0 showed 1.22M nps and Hobbes 4.0 488K, a ratio of 2.50. Measured
+   here on one cloud machine, on the 16 positions of that game's moves 9
+   to 16 (Hash 256, 12 s each, engines taking turns; Hobbes only run, as
+   a yardstick): 1.0.0 built as the AVX2 file 1.17M, as the
+   older-processor file 0.88M, Hobbes 475K: ratios 2.47 and 1.86. The
+   tester's 2.50 matches the AVX2 file and is a third above the other.
+   His machine under tournament load gives almost exactly this cloud
+   machine's figures for both engines, so it is about 0.7 of the idle
+   PC per core, as the check-in wrote. Skeptic: one screenshot, another
+   processor type (the ratio could shift 10 to 15% between makers, not
+   33%), Hobbes's Linux file here and its Windows file there. Nothing to
+   tell the tester. For 1.2 the gap between the files is wider (the
+   older-processor file is a third slower, 1.0.0's was a fifth), so the
+   release page and README say plainly: use the AVX2 file on any
+   processor from about 2013 on (added to release/RELEASE-1.2.md).
+   Prediction miss noted: main's AVX2 figure was 2.18M against a
+   predicted 1.3M to 1.9M: game positions run faster than the bench
+   (1.0.0: 1.75M against a bench of 1.62M), and main is 25% faster than
+   1.0.0 on them.
 5. At the freeze, on Ayman's word: same-night 40/60 of the release build
    and 1.0.0; a stability run at CCRL-like settings; the package.
 6. ARM (Ayman, 22 November): release.yml now builds a fifth file,
