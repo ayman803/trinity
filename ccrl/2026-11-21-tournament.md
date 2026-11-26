@@ -244,6 +244,15 @@ earlier game with colours reversed.
   rook ending. Referee candidate (low priority): was there more than a
   draw around moves 23-27 (23.h6, 25.f5, 26.a4)?
 
+## Game 126 (24 November, received 26 November): Trinity - Ayano 0.11.0, draw at move 71
+Level throughout (a Benko-type book line; both within +/-0.35), down to
+a drawn rook ending. Nothing for forensics. With it the record is
+complete to game 228: 29 games, 14 points (3 wins, 22 draws, 4 losses).
+Standings after 230 of 240 games (26 November): Trinity 9th of 16
+(48.3%); leaders crownd 19.5/29, PZChessBot 19, Cinder 18.5, ZigQueen
+18.5/28; NGN 14.5/28 just above; Erebus, clrsrc, StockDory 13.5 just
+below. One game left: Trinity - crownd.
+
 ## Correction (advisor, 25 November): engines print evals on different scales
 Scout measured it (scout/2026-11-25.md, section 2): in games the opponent
 WON, Hobbes prints about a quarter of Trinity's number, Patricia and Prune
