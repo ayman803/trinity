@@ -1505,6 +1505,7 @@ was read in trinity-results (last runner log line covered), what was queued.
 - 2026-11-23 6:21 am PST: read up to "06:08 SLEEP" (nothing queued, so no job ran; the PC slept at 11:01 pm and again at 6:08 am). GitHub, last 24 hours: moredata600 vs main FAILED (-3.29, 9400). No approval pending. Nothing queued: no planned PC work is waiting (the next network or search test is the pace routine's).
 - 2026-11-24 6:21 am PST: read up to "03:55 SLEEP". Hash-256 40/60 pair with Hobbes as fifth opponent (approval b1c2cef in the log): main +58 +/- 19 over 1.0.0 the same night on five opponents, about +62 on the four common ones (prediction +50 to +100); Hobbes: main 38%, 1.0.0 28%. 0 time losses. No GitHub results in the last 24 hours. No approval pending. Nothing queued.
 - 2026-11-25 6:21 am PST: read up to "06:03 SLEEP" (no jobs since the 40/60 pair; the PC slept each night). No GitHub results in the last 24 hours. Pace alarm: no test is running or started on GitHub since 22 November, and the last "Search lane status" line is from 23 November; neither the pace routine nor Scout left a commit on 24 November (no scout/2026-11-24.md), so both may not have run. No approval pending. Nothing queued.
+- 2026-11-26 6:21 am PST: read up to "05:41 SLEEP" (speed check 2026-11-25-01: main AVX2 2.18M nps, above the 1.3-1.9M prediction; older-processor file 67%, just below 70-85%; 1.0.0 80% of main, inside). Approval 0d5c769 confirmed in the log. No GitHub results in the last 24 hours (the pace routine of 25 November logged "no candidate"). Nothing queued.
 
 ## Lessons so far
 
@@ -2393,6 +2394,15 @@ merged by then).
    to 95% of main's (main has the speed work of October). What it is
    for: which file to recommend to testers, and how the PC compares
    with the CCRL tester's machine (1.22M nps with 1.0.0).
+   RESULT (check-in 26 November; 2026-11-25-01, 7:53-8:01 pm, approved
+   commit 0d5c769 in the log): main's AVX2 file 2,181,780 nps (median of
+   12 positions; range 2.10M-2.31M): ABOVE the 1.3M-1.9M prediction.
+   Older-processor file 1,456,018 = 67%: just BELOW 70-85%. PC's own
+   build 2,182,532 = 100%: inside 98-106%. 1.0.0's published AVX2 file
+   1,750,242 = 80% of main: inside 75-95%. So for testers the AVX2 file is
+   the one to recommend (the older-processor file loses a third of the
+   speed), and the PC is about 1.43x the CCRL tester's machine for 1.0.0
+   (1.75M vs 1.22M nps).
 5. At the freeze, on Ayman's word: same-night 40/60 of the release build
    and 1.0.0; a stability run at CCRL-like settings; the package.
 6. ARM (Ayman, 22 November): release.yml now builds a fifth file,
