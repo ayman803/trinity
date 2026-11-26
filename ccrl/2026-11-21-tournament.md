@@ -227,6 +227,23 @@ book positions both engines rated clearly worse for Trinity.
   move 15 (15...g5); repetition with queen checks on a8/a4. Ember could
   not win the line Trinity won with.
 
+## Games 210, 219, 228 (26 November): a win and two draws; 13.5/28 (3 wins, 21 draws, 4 losses)
+The event is in its second cycle: each of these is the book line of an
+earlier game with colours reversed.
+- #210 Trinity - Erebus 2.2.7, draw at move 112 (line of #90). Level
+  throughout; a same-coloured bishop ending Trinity rated +0.14 to +0.36,
+  Erebus 0.00 to +0.20 for itself. Nothing in it.
+- #219 Trinity - CeylonDemon 3.3, WIN at move 43 (line of #99, which
+  CeylonDemon could not win in 183 moves). Trinity +1.1 out of the book,
+  centre break 12.d4, 22.dxe5 and 23.exd6 won a pawn with a passed
+  d-pawn; kingside pawns h4-g4-h5 and the queen decided it (+7.6 at the
+  end).
+- #228 Trinity - Cinder 0.6.1 (CCRL 3608), draw at move 71 (line of
+  #108, which Trinity lost as Black). Trinity rated itself +1.3 to +1.6
+  to move 24, then +0.44 after 27.fxe6 and level from move 31; a double
+  rook ending. Referee candidate (low priority): was there more than a
+  draw around moves 23-27 (23.h6, 25.f5, 26.a4)?
+
 ## Correction (advisor, 25 November): engines print evals on different scales
 Scout measured it (scout/2026-11-25.md, section 2): in games the opponent
 WON, Hobbes prints about a quarter of Trinity's number, Patricia and Prune
