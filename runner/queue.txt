@@ -121,3 +121,11 @@
 2026-11-23-01 | pc | scripts/calibrate.ps1 | -Ref main -TC 40/60 -Rounds 60 -Hash 256
 2026-11-23-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60 -Hash 256
 2026-11-25-01 | pc | scripts/speedcheck.ps1 | -Release 1.0.0
+2026-11-26-01 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 1000 -TC 10+0.1 -TestId tb-on-10s
+2026-11-26-02 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 1000 -TC 10+0.1 -TestId tb-on-10s
+2026-11-26-03 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 1000 -TC 10+0.1 -TestId tb-on-10s
+2026-11-26-04 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 1000 -TC 10+0.1 -TestId tb-on-10s
+2026-11-26-05 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-26-06 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-26-07 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-26-08 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060

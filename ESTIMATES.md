@@ -102,6 +102,8 @@ opponents); real uncertainty about +/- 50-100.
 | 2026-11-06 | no-checkext (Scout, Fable, 6 November): the check extension removed (the last first-commit rule never tested alone; not in the removal campaign or the ablation audit). Scout measured before predicting: 36% fewer nodes to depth 10 on the bench (633234 vs 982007), about one ply deeper at 300 ms on 60 game positions (median 15 vs 14), best moves differ in 15 of 60. Bench 633234. Base base-1106. GitHub only | self-play -12 to +10, about 30% to pass [-4, 1] (Scout: -12 to +12, 35%). Removals so far: +58, +60, -7, -3, -3. For it: a quarter more depth per move; against it: mating attacks and perpetual checks are what the extension sees | -3.24 +/- 6.56 after 3000 games (SPRT #109, [-4, 1], LLR -0.58), undecided, 0 time losses (check-in 7 November). After 6000 (check-in 8 November): -5.04 +/- 4.60 (SPRT #109 + #111, LLR -2.02, [-4, 1]), undecided, leaning towards a fail; 0 time losses. After 9000 (check-in 9 November): -4.21 +/- 3.76 (SPRT #114, LLR -2.43), undecided, close to a fail; 0 time losses. After 12000 (check-in 10 November): -3.65 +/- 3.25 (SPRT #117, LLR -2.72), undecided, at the edge of a fail. FAILED (check-in 11 November): -4.38 +/- 2.92 after 15000 (SPRT #121, LLR -4.25, [-4, 1]), 0 time losses: the check extension stays | - | predicted before any game |
 | 2026-11-09 | chk-noreduce (Scout, Fable, 9 November): a move that gives check is never reduced (today: one ply less reduction). Scout measured before predicting: bench +17.8% nodes (1156846); on 60 held-out positions at depth 10 the median node ratio is 1.00 (mean 1.12, check-rich positions up to 2.8x); depth at 300 ms unchanged (median 14); best move differs in 14 of 60. Base base-1109 (main with tm-floor2). GitHub | self-play -4 to +5, about 20% to pass [0, 5] (Scout's numbers, already scaled 0.6x). A pass gets a 40/60 night before merging (Scout: the value of following checks may grow with depth) | FAILED -5.10 +/- 3.70 after 9000 games (SPRT #118, LLR -4.61, [0, 5]), 0 time losses (check-in 10 November). Just below the -4 to +5 range: reducing checking moves is worth keeping | FAILED -5.10 +/- 3.70 after 9000 games (SPRT #118, LLR -4.61), 0 time losses. Below the -4 to +5 range: never reducing checking moves costs more than it finds; with no-checkext leaning negative, checks are already searched about right (Scout, 10 November: "the check extension is at its optimum") | predicted before any game |
 | 2026-11-10 | tm-nodefloor (Scout, Fable, 10 November): the time rule that shortens the think when the best move takes most of the nodes (node_scale below 1.0 above 76%) is floored at 1.0, as tm-floor2 did for stability. Scout measured: it shortens 70% of moves; flooring adds 12.6% mean move time at 10+0.1 (median +6.4%). Bench 982007 unchanged (time only). Base base-1110 (main with tm-floor2) | self-play +2 to +7, about 35% to pass [0, 5] (Scout's, already scaled; tm-control +6.8 and tm-floor2 +4.1 came from the same unspent-time leak). Merge conditions: 0 time losses, and a 40/10 test as for tm-floor2 | FAILED -2.82 +/- 3.61 after 9000 games (SPRT #122, LLR -3.02, [0, 5]), 0 time losses (check-in 11 November). Below the +2 to +7 range: this leak is closed | - | predicted before any game |
+| 2026-11-26 | tb-on-off (Scout, 26 November; a measurement, not a candidate): main with its 3-4-5-piece tablebases on against main without, self-play on the PC. Never measured alone (the 5 October row ends "TB-off calibration pending"); every merge test runs without tables and CCRL plays with them. Branch tb-on-test (9878d98, never merged): main plus tables on by default from the scripts' syzygy folder; it refuses to play if it cannot load them; bench 948275 unchanged. Base main (82ef3d8 engine). PC chunks with the approved sprt.ps1: 4 x 2000 games at 10+0.1 (TestId tb-on-10s), then 40/60 in chunks of 240 (TestId tb-on-4060), 1000 to 2000 games | Scout's, before any game: tables on against off at 10+0.1 -6 to +4, middle -1; at 40/60 -3 to +5; about 35% that they cost 2 or more at the fast clock. Session's own: 10+0.1 -2 to +4, middle +1 (lookups happen only with 5 or fewer pieces in reach, a small share of all nodes); 40/60 0 to +5 | queued 26 November (2026-11-26-01 to -08) | - | not the checklist's "measure with calibration" (CLAUDE.md, release checklist 4): a calibration pair resolves about +/- 13 and this question is about +/- 4, so the head-to-head comes first; self-play, so labelled as such (rule 3). If it shows a loss of 2 or more: look at the fixed cost of one lookup in Trinity's own code (the lock, the board copy); doing lookups only with enough depth left carries the originality flag and is Ayman's to allow (Scout) |
+| 2026-11-26 | tm-hump (Scout, 26 November): one multiplier on the planned think by move number: x0.6 up to move 14, x1.25 at moves 15 to 30, x0.85 at 31 to 40, unchanged after; same total over a 40-move period. Scout measured on Trinity's own positions what a doubling of search buys per 1,000 moves: 0.0 +/- 0.4 at moves 9-14 against 3.7 +/- 1.0 at 15-30 (from 800,000 nodes), while today's rule gives the first moves after the book the most time (10+0.1: 0.43 s at moves 1-10, 0.26 s at 21-30) or the same (40/60). Time only, bench unchanged | Scout's, before any game: self-play +1 to +5 at 8+0.08, 0 to +4 at 40/10; about 20% to pass [0, 5]. Merge conditions as for tm-floor2: both clocks, 0 time losses | NOT STARTED: waits for Ayman (Decisions needed, 26 November) | - | originality flag raised by the Session: giving different stages of the game different shares of the clock by a curve over the move number is a device the Session recognises from older engines' time managers (known to exist, nothing read); the shape and numbers here come only from Trinity's own positions and run opposite to what its opponents do. Precedent the other way: the 13 October time design already reads a table by move number fitted to Trinity's games. Ayman's rule, so Ayman's call |
 
 ## Test queue
 
@@ -170,6 +172,12 @@ network, and the second week merged nothing):
   file is about networks (moredata-600, the WDL lever closed); nothing
   new from forensics or the speed profile. GitHub time goes to
   wdl25-900s2 vs long900s2 (network lane).
+  2026-11-26, later (Scout's file came at 9:54 am, after the routine):
+  two ideas. tb-on-off (tables on against off) is a PC measurement and
+  is queued for tonight. tm-hump (move the thinking time from the first
+  moves after the book to moves 15-30) is a real candidate with its
+  prediction logged, not started: it waits for Ayman's word on the
+  originality rule (Decisions needed, 26 November).
   2026-11-26: nothing running. No idea worth a test: no Scout file this
   morning; the speed check found nothing to change in the AVX2 file
   (the PC's own build is no faster than it). The older-processor file
@@ -2009,6 +2017,26 @@ drawn games kept as the control.
 ## Decisions needed (dated; read by the phone summary)
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
+
+- 2026-11-26 (Session, from Scout's file of today): may tm-hump be
+  tested? Scout measured on Trinity's own games that extra thinking
+  finds almost nothing in the first six moves after the book and the
+  most at moves 15 to 30, while Trinity gives its first moves the most
+  time. The change moves time from the early moves to moves 15-30
+  (clock only; forecast +1 to +5 in self-play, about 20% to pass). Why
+  this needs you: sharing out the clock by a curve over the move number
+  is something the Session knows older engines' time managers did (it
+  only knows that it exists; nothing was read), and your originality
+  rule says to drop what is recognised as another engine's. Against
+  that: the shape and every number come from Trinity's own positions,
+  it is the opposite of what Hobbes, Prune and Patricia do in our games
+  (they think hardest right after the book), and the October time
+  design already used a table by move number from Trinity's games.
+  Session's view: yes, test it; it would merge only if it passes at
+  both clocks with no time losses, as tm-floor2 had to. With the freeze
+  on 1 December a yes today or tomorrow leaves time for both tests; a
+  later yes means it is tested for the release after 1.2. Yes = test
+  it; No = dropped and logged as dropped.
 
 - 2026-11-25 (Session, release work): two things at the PC, by Sunday
   29 November, so the freeze-week checks can run? (1) The similarity
