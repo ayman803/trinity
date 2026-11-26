@@ -28,6 +28,32 @@ fn main() {
     std::process::exit(code);
 }
 
+/// TEST BUILD ONLY (branch tb-on-test, never merged). The approved test
+/// script passes no SyzygyPath, so this build switches the tablebases on by
+/// itself: the folder `syzygy` three levels above the program, which is
+/// where the scripts keep it (<folder>\sprt\engines\<this file>, tables in
+/// <folder>\syzygy). It measures "tables on" against main's "tables off".
+/// If the tables cannot be loaded the engine refuses to play, so the test
+/// can never silently compare two equal engines. `bench` is not affected.
+fn default_tables() -> Result<(), String> {
+    let exe = std::env::current_exe().map_err(|e| format!("cannot find my own path: {e}"))?;
+    let dir = exe
+        .parent()
+        .and_then(|d| d.parent())
+        .and_then(|d| d.parent())
+        .map(|d| d.join("syzygy"))
+        .ok_or_else(|| "no folder three levels above the program".to_string())?;
+    if !dir.is_dir() {
+        return Err(format!("no tablebase folder at {}", dir.display()));
+    }
+    let n = tb::set_path(&dir.to_string_lossy())?;
+    if n == 0 || tb::max_pieces() < 5 {
+        return Err(format!("only {n} tables (up to {} pieces) in {}", tb::max_pieces(), dir.display()));
+    }
+    println!("info string tb-on-test: {n} tables loaded (up to {} pieces)", tb::max_pieces());
+    Ok(())
+}
+
 fn real_main() -> i32 {
     let args: Vec<String> = std::env::args().skip(1).collect();
     match args.first().map(String::as_str) {
@@ -100,7 +126,16 @@ fn real_main() -> i32 {
                 return 1;
             }
         }
-        _ => uci::Engine::new().run(),
+        _ => {
+            // TEST BUILD ONLY (branch tb-on-test, never merged; Scout, 26
+            // November): play with the tablebases on without being told.
+            if let Err(e) = default_tables() {
+                println!("info string tb-on-test: {e}");
+                eprintln!("tb-on-test: {e}");
+                return 1;
+            }
+            uci::Engine::new().run()
+        }
     }
     0
 }
