@@ -287,7 +287,7 @@ impl Searcher {
         self.killers = [[Move::NONE; 2]; MAX_PLY + 2];
     }
 
-    fn setup_time(&mut self, stm_time: Option<u64>) {
+    fn setup_time(&mut self, stm_time: Option<u64>, move_number: u16) {
         let l = &self.limits;
         self.soft_ms = u64::MAX;
         self.hard_ms = u64::MAX;
@@ -307,7 +307,25 @@ impl Searcher {
                 Some(mtg) => t / (mtg.clamp(1, 50) + 1) + inc_part,
                 None => t / 25 + inc_part,
             };
-            self.soft_ms = base.min(t / 2).max(1);
+            // Spend the clock where thinking pays (tm-hump, 26 November):
+            // on Trinity's own game positions a doubling of the search buys
+            // next to nothing in the first moves after the book, the most at
+            // moves 15 to 30 and about a third of that later. So the planned
+            // think is cut early and raised in the middlegame; over a
+            // 40-move period the total is the same. The hard limit is left
+            // alone, so an early move whose best choice keeps changing can
+            // still take its time, and a low clock keeps its own rule.
+            let percent = if self.low_clock {
+                100
+            } else {
+                match move_number {
+                    0..=14 => 60,
+                    15..=30 => 125,
+                    31..=40 => 85,
+                    _ => 100,
+                }
+            };
+            self.soft_ms = (base * percent / 100).min(t / 2).max(1);
             self.hard_ms = (base * 3).min(t * 3 / 5).max(1);
         }
     }
@@ -1011,7 +1029,7 @@ impl Searcher {
         #[cfg(feature = "tune")]
         init_lmr(&mut self.lmr);
         let stm_time = limits.time;
-        self.setup_time(stm_time);
+        self.setup_time(stm_time, root.fullmove);
         self.nodes = 0;
         self.unflushed = 0;
         self.keys.clear();
