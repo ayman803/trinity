@@ -19,6 +19,8 @@ $Limits = [ordered]@{
     # 27 October: SPRT chunks on the PC (about 1 hour each) and network
     # training (900 superbatches with 8 king buckets: about 7.5 hours).
     "scripts/sprt.ps1" = 2; "tools/net/kb16.ps1" = 9
+    # 25 November: the release speed check (about 10 minutes plus three builds).
+    "scripts/speedcheck.ps1" = 1
 }
 
 function Invoke-Git([string[]]$GitArgs) {

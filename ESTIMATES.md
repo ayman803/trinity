@@ -1999,6 +1999,22 @@ drawn games kept as the control.
 
 (Lines go here only when Ayman can answer yes or no; advisor, 4 November.)
 
+- 2026-11-25 (Session, release work): two things at the PC, by Sunday
+  29 November, so the freeze-week checks can run? (1) The similarity
+  test: open C:\Trinity, double-click 13-Similarity-Test.bat, leave the
+  PC alone about 20 minutes, send a screenshot of the table. (2) For the
+  speed check, one reinstall THEN one approval (this order: the
+  reinstall brings the new Approve-Scripts): open C:\Trinity\runner,
+  double-click Install-Runner.bat, Yes, type pc, Enter to keep the key,
+  it ends with "INSTALLED on 'pc'"; then double-click "Trinity
+  Approve-Scripts" on the desktop: it lists 1 changed file,
+  scripts/speedcheck.ps1, and 1 risky line marked [DOWNLOAD] (expected:
+  it fetches Trinity's own published 1.0.0 files from the release
+  page), and the time limits now include scripts/speedcheck.ps1 : 1;
+  type Y, Enter. Send a screenshot of each. Yes = do both; No = the
+  speed check runs by double-click instead (20-Speed-Check.bat) in the
+  freeze week.
+
 - 2026-11-23 (pace routine): add one stronger engine to the calibration
   opponents before the 1 December freeze? All four present opponents
   are now rated below main (akimbo 3474, Patricia 3488, Bread 3522,
@@ -2323,11 +2339,16 @@ if anything merges before then. Target: checks done by 2 December,
 release published and Graham emailed (by Ayman) about 3-8 December. The network is whatever
 main holds at the freeze (long900 now; wdl25-900 if it passes and is
 merged by then).
-1. Source-similarity check (checklist item 1): not started (15 November:
-   the day went to the network tests and the runner fixes). Needs the
-   other engines' public repositories added to the session (read only)
-   before a mechanical comparison; nothing learned from them may be used.
-2. Move-similarity test (item 2): not started.
+1. Source-similarity check (checklist item 1): DONE 25 November on
+   today's main (705bf8a, bench 948275) against six engines, by a
+   program now in the repository (release/source_similarity.py): no
+   copying; numbers under "Release checks". Repeat only if engine code
+   merges before the freeze.
+2. Move-similarity test (item 2): cloud run DONE 25 November (main,
+   1.0.0, Stockfish 18, Hobbes 4.0): no outlier; numbers under "Release
+   checks". The full PC run with the same engines as for 1.0.0 (plus
+   Hobbes) is Ayman's one double-click, 13-Similarity-Test.bat (step A1
+   of release/RELEASE-1.2.md).
 3. CREDITS section in README.md (item 3): already there (code by
    Claude, bullet, the Leela-derived data in the Stockfish community's
    binpacks, Syzygy and shakmaty-syzygy, fastchess, UHO books). Still to
@@ -2338,7 +2359,21 @@ merged by then).
    100" strength line, and "the engines on the CCRL list" in Testing),
    point "For testers" at 1.2, and add one line that Trinity supports
    Threads (advisor, 17 November). Drafted 18 November.
-4. Package plan and steps for Ayman (item 4): not started.
+4. Package plan and steps for Ayman (item 4): WRITTEN 25 November,
+   release/RELEASE-1.2.md (five files, what the Session does at the
+   freeze, and Ayman's steps A to F with what he will see).
+4b. Speed check (advisor's note of 21 November): PREPARED 25 November.
+   scripts/speedcheck.ps1 (and 20-Speed-Check.bat): the AVX2 (x86-64-v3)
+   and older-processor (x86-64-v2) builds and the PC's own build search
+   12 middlegame positions from Trinity's own games, one thread, Hash
+   256 MB, 8 s each, taking turns; median nps per build; with -Release
+   1.0.0 also the two published Windows files of 1.0.0 (the tester's
+   machine showed 1.22M nps with 1.0.0, so that gives the conversion).
+   Tested in the cloud (1 s per position; a GitHub-class server core:
+   v3 1.57M, v2 0.99M, own build 1.45M; not the PC's numbers). Runs
+   under the runner after one reinstall and one approval (Decisions
+   needed, 25 November); it must not be queued before both, or the
+   installed runner refuses the job.
 5. At the freeze, on Ayman's word: same-night 40/60 of the release build
    and 1.0.0; a stability run at CCRL-like settings; the package.
 6. ARM (Ayman, 22 November): release.yml now builds a fifth file,
@@ -2439,6 +2474,65 @@ merged by then).
   shows `id name Trinity 1.0.0` and `id author Ayman Mikhail`. The
   `x86-64-v2` Windows file also gives bench 780879 on the PC, at 1.28M nps
   (about 21% slower than v3, as expected without AVX2).
+- Release 1.2, source comparison (25 November 2026, today's main
+  705bf8a; release/source_similarity.py, the 11 October method: Rust, C
+  and C++ files, comments and string contents removed, windows of 25
+  tokens; share of Trinity's windows also found in the other engine).
+  The other engines' repositories were fetched and read by the program
+  only (originality rule, first exception); it prints percentages and
+  Trinity's own line numbers, nothing of theirs.
+
+  | Trinity (src and trainer, 51,028 tokens) vs | exact | names and numbers renamed |
+  |---|---|---|
+  | akimbo     | 0.34% | 1.21% |
+  | Viridithas | 0.31% | 1.21% |
+  | Reckless   | 0.38% | 1.13% |
+  | Patricia   | 0.21% | 0.37% |
+  | Stockfish  | 0.21% | 0.37% |
+  | Hobbes     | 0.43% | 1.44% |
+
+  The 0.21% that every engine shares, the C++ ones included, is one
+  thing: the list of bench positions in src/bench.rs, which with the
+  string contents removed is just a row of empty quotes and commas
+  (about 110 of Trinity's 51,000 windows). Without it the exact figures
+  are 0.0% to 0.22%, as on 11 October (0.0% to 0.2%). The other shared
+  runs, all on Trinity's side: the row of `option name ...` print lines
+  in uci.rs, the zeroed heap allocation in search.rs, the prefetch call
+  in tt.rs, the pattern line of the tune macro, the Display and Debug
+  lines for a move in types.rs, and "queen = rook | bishop" in
+  attacks.rs: boilerplate, the same kinds as in October. The same
+  program on 1.0.0's source gives slightly more (0.27% to 0.55% exact,
+  0.48% to 1.76% renamed), so the code written since then added nothing
+  shared; and main against 1.0.0 itself gives 75%, so the program does
+  see shared text when it is there. Yardstick, the other engines among
+  themselves: unrelated pairs 0.0% to 1.8% exact (Hobbes in Reckless
+  1.1%, akimbo in Hobbes 1.8%), and far more where repositories carry
+  the same third-party files (Reckless, Viridithas and Patricia: 7% to
+  34%), which says nothing about copying either. Svart's repository
+  still holds no source. Limits as before: this finds copied text, even
+  renamed, not ideas re-expressed in new code. Verdict: no copying.
+- Release 1.2, move similarity (cloud, 25 November; `trinity similarity
+  1000 100`, Linux; Stockfish 18 and Hobbes 4.0 as downloaded release
+  builds). Share of positions with the same move:
+
+  |              | main  | main again | 1.0.0 | Stockfish 18 | Hobbes 4.0 |
+  |---|---|---|---|---|---|
+  | main         | -     | 85.0% | 82.6% | 81.5% | 80.4% |
+  | main again   | 85.0% | -     | 82.0% | 79.3% | 77.8% |
+  | 1.0.0        | 82.6% | 82.0% | -     | 79.9% | 77.8% |
+  | Stockfish 18 | 81.5% | 79.3% | 79.9% | -     | 82.7% |
+  | Hobbes 4.0   | 80.4% | 77.8% | 77.8% | 82.7% | -     |
+
+  Main matches Stockfish 79.3% to 81.5% and Hobbes 77.8% to 80.4% (its
+  two runs differ by that much from timing alone); the two unrelated
+  engines match each other 82.7%, more than either matches Trinity, and
+  main matches itself 85.0%. No outlier. Against Stockfish main is 1 to
+  3 points closer than 1.1 was (77.4% to 78.3%): stronger engines agree
+  more often on the best move; it stays inside the 73% to 82% of
+  unrelated pairs. The speed-check test ran on the same machine for
+  about two minutes of this run. The caveat of October stands (the test
+  separates poorly). The six-engine PC run is step A1 of
+  release/RELEASE-1.2.md.
 - Release 1.0.0 ARM file (advisor note and Ayman, 22 November 2026;
   GitHub issue #2, for the Mobile Chess Engine Circuit):
   `trinity-1.0.0-linux-aarch64-musl`, built by "Release add-on (ARM)"

@@ -28,6 +28,8 @@ If any of this needs an approval or a reinstall, say so in one
 "Decision needed" line with the date it is needed by, so Ayman can do it
 before 1 December.
 
+Done (2026-11-25, Session): 1. Source comparison on today's main (705bf8a) against akimbo, Viridithas, Reckless, Patricia, Stockfish and Hobbes with a program now in the repository (release/source_similarity.py): 0.21% to 0.43% exact, of which 0.21% is the bench list of quoted strings; the rest is boilerplate on Trinity's side; lower than 1.0.0 by the same program. No copying. 2. Move similarity in the cloud (main, 1.0.0, Stockfish 18, Hobbes 4.0): main 79-82% with Stockfish and 78-80% with Hobbes, while those two match each other 82.7% and main itself 85.0%: no outlier. The six-engine PC run as for 1.0.0 is one double-click for Ayman. 3. release/RELEASE-1.2.md: the package (five files), the Session's part, and Ayman's steps A to F. 4. scripts/speedcheck.ps1 and 20-Speed-Check.bat written and tested in the cloud; in the runner's list. 5. README text kept for the freeze day. Decision needed (one line in ESTIMATES.md, by 29 November): the similarity double-click, and one reinstall then one approval for the speed check.
+
 ### 2026-11-24 · Referee check of three tournament games (games/ccrl/, notes in ccrl/2026-11-21-tournament.md)
 Loss forensics with the referee engine (originality rule, second
 exception), at the 40/15-like depth you normally use:
