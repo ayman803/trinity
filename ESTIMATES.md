@@ -2018,6 +2018,11 @@ drawn games kept as the control.
   "Release checks". (2) reinstall DONE (INSTALLED on 'pc', 5:06 pm);
   the approval is still to come (no screenshot yet). The speed check is
   queued only once the approval is seen.
+  Approval DONE 25 November, about 5:10 pm Pacific (screenshot):
+  b1c2cef8e3 -> 0d5c7699ac, 1 file (scripts/speedcheck.ps1), the one
+  expected [DOWNLOAD] line, limit 1 hour listed. Queued 2026-11-25-01
+  (scripts/speedcheck.ps1 -Release 1.0.0); to confirm in the log:
+  "approved commit 0d5c7699ac" on its STARTED line.
 
 - 2026-11-23 (pace routine): add one stronger engine to the calibration
   opponents before the 1 December freeze? All four present opponents
@@ -2379,6 +2384,15 @@ merged by then).
    under the runner after one reinstall and one approval (Decisions
    needed, 25 November); it must not be queued before both, or the
    installed runner refuses the job.
+   QUEUED 25 November after both (2026-11-25-01, -Release 1.0.0; a
+   short job, so it starts after 30 minutes without keyboard or mouse
+   use). Prediction, before the run (PC, Hash 256, game positions):
+   main's AVX2 file 1.3M to 1.9M nps; the older-processor file 70% to
+   85% of it (the bench gave 79% for 1.0.0 on the PC); the PC's own
+   build 98% to 106% of the AVX2 file; 1.0.0's published AVX2 file 75%
+   to 95% of main's (main has the speed work of October). What it is
+   for: which file to recommend to testers, and how the PC compares
+   with the CCRL tester's machine (1.22M nps with 1.0.0).
 5. At the freeze, on Ayman's word: same-night 40/60 of the release build
    and 1.0.0; a stability run at CCRL-like settings; the package.
 6. ARM (Ayman, 22 November): release.yml now builds a fifth file,

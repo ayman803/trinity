@@ -120,3 +120,4 @@
 2026-11-21-01 | pc | tools/net/kb16.ps1 | -KingBuckets 8 -Seed 20261019 -Tag moredata600 -Wdl 0.25 -MoreData -Resume
 2026-11-23-01 | pc | scripts/calibrate.ps1 | -Ref main -TC 40/60 -Rounds 60 -Hash 256
 2026-11-23-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0 -TC 40/60 -Rounds 60 -Hash 256
+2026-11-25-01 | pc | scripts/speedcheck.ps1 | -Release 1.0.0
