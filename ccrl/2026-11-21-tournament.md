@@ -253,6 +253,17 @@ Standings after 230 of 240 games (26 November): Trinity 9th of 16
 18.5/28; NGN 14.5/28 just above; Erebus, clrsrc, StockDory 13.5 just
 below. One game left: Trinity - crownd.
 
+## Game 237 (26 November): Trinity - crownd (the leader), draw at move 86; FINAL 14.5/30 (3 wins, 23 draws, 4 losses)
+Trinity's last game, with White against the tournament leader who beat
+her in round one (#117). Level from the book. Middlegame: queen and six
+pawns against two rooks and two knights; Trinity's pawns reached a6/b7
+but crownd's bishop on a7/b8 held b8. From move 39 to 63 crownd rated
+itself +0.5 to +0.86 while Trinity said 0.00 throughout; after the
+kingside opened (70.f5, 71.f6) Trinity's queen gave perpetual check
+(Qh4+/Qg3+/Qg4+) from move 78, and the game was drawn. Trinity's
+judgement was the accurate one. Final standings to be recorded when the
+event ends (9th of 16 after 230 games).
+
 ## Correction (advisor, 25 November): engines print evals on different scales
 Scout measured it (scout/2026-11-25.md, section 2): in games the opponent
 WON, Hobbes prints about a quarter of Trinity's number, Patricia and Prune
