@@ -131,3 +131,16 @@
 2026-11-26-08 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
 2026-11-27-01 | pc | scripts/calibrate.ps1 | -Ref main
 2026-11-27-02 | pc | scripts/calibrate.ps1 | -Ref release-1.0.0
+2026-11-27-03 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-04 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-05 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-06 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-07 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-08 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-09 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-10 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-11 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-12 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-13 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-14 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
+2026-11-27-15 | pc | scripts/sprt.ps1 | -Dev tb-on-test -Rounds 120 -TC 40/60 -TestId tb-on-4060
