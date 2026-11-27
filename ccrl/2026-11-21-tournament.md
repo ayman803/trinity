@@ -253,7 +253,7 @@ Standings after 230 of 240 games (26 November): Trinity 9th of 16
 18.5/28; NGN 14.5/28 just above; Erebus, clrsrc, StockDory 13.5 just
 below. One game left: Trinity - crownd.
 
-## Game 237 (26 November): Trinity - crownd (the leader), draw at move 86; FINAL 14.5/30 (3 wins, 23 draws, 4 losses)
+## Game 237 (26 November): Trinity - crownd (the leader), draw at move 86; 14.5/30 after two cycles (3 wins, 23 draws, 4 losses)
 Trinity's last game, with White against the tournament leader who beat
 her in round one (#117). Level from the book. Middlegame: queen and six
 pawns against two rooks and two knights; Trinity's pawns reached a6/b7
@@ -263,6 +263,24 @@ kingside opened (70.f5, 71.f6) Trinity's queen gave perpetual check
 (Qh4+/Qg3+/Qg4+) from move 78, and the game was drawn. Trinity's
 judgement was the accurate one. Final standings to be recorded when the
 event ends (9th of 16 after 230 games).
+
+## Correction (advisor, 27 November): the event did NOT end at 30 games
+I assumed a double round robin (240 games) without checking the Info
+tab; a third cycle is running. Games 246, 255, 264, 272 below.
+
+## Games 246, 255, 264, 272 (26-27 November): a win and three draws; 17/34 (4 wins, 26 draws, 4 losses)
+- #246 Ayano - Trinity, draw at move 94. Trinity +0.4 to +0.9 by its own
+  count from the book; a same-colour bishop ending held level.
+- #255 ngn - Trinity, WIN as Black at move 96. Trinity +0.7 to +1.4 from
+  move 10 (Najdorf, 13...O-O, 15...f5, 16...e4), a 50-move squeeze in a
+  two-rook ending, then the e-pawn ran through; finished with the
+  under-promotion 96...exd1=R+.
+- #264 StockDory - Trinity, draw at move 75. Trinity +1.0 to +1.9 by its
+  own count (moves 10-30); StockDory said -0.3 to -0.5; level by move 39,
+  a drawn rook ending.
+- #272 Trinity - clrsrc, draw at move 72. Trinity worse from the book
+  (-0.6 at its first move); clrsrc rated itself +1 to +2.7 for 40 moves;
+  Trinity defended a two-rook ending and held (repetition).
 
 ## Correction (advisor, 25 November): engines print evals on different scales
 Scout measured it (scout/2026-11-25.md, section 2): in games the opponent

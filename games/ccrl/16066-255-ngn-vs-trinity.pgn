@@ -1,0 +1,128 @@
+[Site "Hobnobbing With Royalty"]
+[Date "2026.11.27"]
+[White "ngn 0.4.0"]
+[Black "Trinity 1.0.0"]
+[Result "0-1"]
+
+1. e4 {(Book)} c5 {(Book)} 2. Nf3 {(Book)} d6 {(Book)}3. d4 {(Book)} cxd4
+{(Book)} 4. Nxd4 {(Book)} Nf6 {(Book)} 5. Nc3 {(Book)} a6 {(Book)}6. Bg5
+{(Book)} Nbd7 {(Book)} 7. f4 {(Book)} e5 {(Book)} 8. Nf3 {(Book)} Qc7 {(Book)}9.
+Bd3 {(Bd3) -0.40/23 25} h6 {(h6) 0.33/24 17}10. Bxf6 {(Bxf6) -0.52/24 34} Nxf6
+{(Nxf6) 0.72/26 16} 11. Qd2 {(Qd2) -0.26/26 35} Be7 {(Be7) 0.78/24 12}12. O-O-O
+{(O-O-O) -0.46/27 44} b5 {(b5) 0.89/27 25}13. Rhe1 {(Rhe1) -0.83/27 58} O-O
+{(O-O a3 Rb8 Nd5 Nxd5 exd5 f5 Bf1 e4 Nd4 Bf6 Nc6 Ra8 g4 fxg4 Rxe4 Bf5 Ree1 Rae8
+Bd3 Bxd3 Qxd3 Rxe1 Rxe1 Qf7) 1.02/25 18}14. Nd5 {(Nd5 Nxd5 exd5 Bb7 Bf5 exf4
+Qxf4 Rae8 Kb1 Bf6 Be4 Be5 Qh4 Qc5 c3 Bf6 Qf4 Bc8 g4 Be5 Nxe5 Rxe5 Rf1 g5 Qf3)
+-1.19/27 39} Nxd5 {(Nxd5) 1.04/27 21}15. exd5 {(exd5) -1.27/28 37} f5 {(f5)
+1.25/27 19}16. Bf1 {(Bf1) -1.03/28 51} e4 {(e4 Nd4 Bf6 Kb1 Bxd4 Qxd4 Bd7 c3 Rac8
+Re3 Qc5 Rg3 Qxd4 Rxd4 Kf7 h4 Kf6 h5 Be8 Rh3 a5 a3 Rc5 b4 axb4) 1.41/25 10}17.
+Nd4 {(Nd4) -1.17/29 45} Bf6 {(Bf6) 1.44/28 23}18. Kb1 {(Kb1) -1.08/28 33} Bxd4
+{(Bxd4) 1.41/27 21}19. Qxd4 {(Qxd4 Bd7 g3 a5 c3 Rac8 Be2 Qc5 Qxc5 Rxc5 h4 g6 a3
+Kg7 Rd4 h5 Kc2 Rfc8 Kd2 Be8 Rc1 Ra8 Ke3 Bf7 Kd2) -0.98/28 24} Bd7 {(Bd7) 1.30/30
+16} 20. c3 {(c3) -1.09/29 29} Rac8 {(Rac8) 1.31/33 58}21. Be2 {(Be2) -1.04/31
+34} a5 {(a5 g3 Kf7 Kc2 Qc5 Qxc5 Rxc5 h4 g6 Rd4 Ra8 Kd2 h5 a3 Rac8 Rc1 Kf6 Rh1
+Kg7 Ra1 Be8 Rc1 Kf7 Rh1 Ke7) 1.31/30 18}22. Rh1 {(Rh1) -1.00/26 37} Rfe8 {(Rfe8)
+1.31/30 19} 23. g3 {(g3) -1.04/30 28} Qc5 {(Qc5) 1.32/35 16}24. Qxc5 {(Qxc5 Rxc5
+Kc2 Kf7 Rd4 Kf6 Kd2 Rh8 h4 g6 a3 Rhc8 Rc1 R5c7 Ke3 h5 Kd2 Ra8 Rd1 Kg7 Rc1 Rc5
+Rc2 Rb8 Rc1) -1.04/33 21} Rxc5 {(Rxc5) 1.32/34 10}25. Kc2 {(Kc2) -1.04/34 23}
+Kf7 {(Kf7 h4 g6 Rd4 Kf6 Kd2 Rh8 a3 Rg8 Ke3 h5 Kd2 Rb8 Ra1 Ra8 Ke3 Rac8 Kd2 Be8
+Rc1 Rb8 Ke3 Rc7 Ra1 Ke7) 1.32/33 20}26. Rd4 {(Rd4) -1.04/35 20} g6 {(g6 Kd2 Rec8
+a3 Kf6 h4 h5 Rg1 Be8 Ra1 Rb8 Rd1 Ke7 Rc1 Ra8 Rc2 Bd7 Rc1 Rb8 Rc2 Rc7 Ke1 Rbc8
+Kd2 Rc5) 1.32/32 17} 27. Kd2 {(Kd2) -1.04/34 18} Rec8 {(Rec8) 1.32/32 64}28. h4
+{(h4) -1.04/37 20} h5 {(h5) 1.32/36 11}29. a3 {(a3 R5c7 Rc1 Ke7 Ke3 Be8 Kd2 Ra8
+Ra1 Bd7 Rg1 Rb8 Rb1 Rh8 Rc1 Kf6) -1.04/32 12} Kf6 {(Kf6) 1.33/36 10}30. Rc1
+{(Rc1) -1.04/36 17} Rb8 {(Rb8) 1.33/38 13}31. Ra1 {(Ra1) -1.04/36 18} Ke7 {(Ke7)
+1.33/38 9}32. Rc1 {(Rc1 Be8 Ra1 Rcc8 Rc1 Rc7 Rb1 Kf6) -1.04/33 23} Kd8 {(Kd8)
+1.33/36 10} 33. Ra1 {(Ra1) -1.04/36 19} Rc7 {(Rc7) 1.33/37 9}34. Ke3 {(Ke3)
+-1.04/38 16} Be8 {(Rbc8 Kd2 Ra7 Re1 Ke7 Bf1 Rb7 Ke3 Be8 Red1 Rc5 Kd2 Kf6 Ke1
+Rcc7 Be2 Ke7 Ra1 Kd8 Rc1 Ra7 Ra1 Rcb7 Rc1 Ra8) 1.33/37 66}35. Kd2 {(Kd2)
+-1.04/36 12} Rbb7 {(Rbb7 Ke1 Rc5 Kd2 Ke7 Rc1 Rc8 Ra1 Kf6 Ke1 Rbc7 Kd2 Rb8 Ke1
+Rc5 Kd2 Rbc8 Rc1 Ra8 Ke1 Rc7 Kd2 Ke7 Ke3 Rc5) 1.33/36 11}36. Ke3 {(Ke3 Rb8 Kd2
+Ra8 Ke1 Ke7 Kd2 Bd7 Rg1 Rb8 Rb1 Rh8 Rc1 Rhc8 Ke3 Be8 Kd2 Rb8 Rb1 Kf6) -1.04/36
+15} Ke7 {(Ke7) 1.33/37 9} 37. Kd2 {(Kd2) -1.04/38 15} Rb8 {(Rb8) 1.33/37 12}38.
+Rc1 {(Rc1) -1.04/38 11} Rc5 {(Rc5 Rd1 Ra8 Ra1 Kd8 Rc1 Rb8 Ke3 Rbc8 Kd2 Ra8 Ra1
+Rc7 Rc1 Rac8 Ke1 Ra7 Kd2 Ke7 Ke3 Rac7 Rc2 Rc5 Rc1 Bf7) 1.33/34 11}39. b3 {(b3
+Kf6 Ra1 Rcc8 Rc1 Rc7 Ra1 Bf7 Rc1 Ra7 Kc2 Be8 Kb2 Rc7 Kc2 Rbc8 Kd2) -1.04/34 14}
+Rc7 {(Rc7) 1.40/35 13} 40. Ra1 {(Ra1) -1.04/34 12} Kd8 {(Kd8) 1.38/33 19}41. Rc1
+{(Rc1) -1.04/35 13} Ra8 {(Ra8 Ke3 Rac8 Kd2 Ke7 Rc2 Bd7 Rc1 Kd8 Rc2 Ke8 Rc1 Ke7
+Rc2 Kd8 Rc1 Be8 Rc2 Rb7 Rc1 Rc5 Ra1 Bd7 Rc1 Rb8) 1.22/30 10}42. Rd1 {(Rd1 Rcc8
+Rb1 Bd7 Rd1 Rab8 Rc1 Be8 Ra1 Ke7 Rd1 Kf6 Ra1 Rc7 Rb1 Rcc8 Kc2 Rb7 Kd2 Bd7 Rc1
+Rbb8 Rc2 Rc5) -1.04/34 14} Bd7 {(Bd7) 1.18/34 15}43. Ra1 {(Ra1) -1.04/36 14}
+Rac8 {(Rac8) 1.16/34 9} 44. Rc1 {(Rc1) -1.04/36 12} Be8 {(Be8) 1.16/35 8}45. Rc2
+{(Rc2 Rb8 Ra2 Bf7 Ra1 Rcc8 Rd1 Be8 Rb1 Ra8 Rc1) -1.04/30 13} Ke7 {(Ke7 Rc1 Bd7
+Rc2 Ke8 Rc1 Kd8 Rc2 Be8 Rc1 Rb8 Rc2 Ke7 Rc1 Bd7 Rc2 Kd8 Rc1 Rc5 Ra1 Be8 Rc1 Rbc8
+Bf1 Ra8) 1.16/33 16} 46. Rc1 {(Rc1) -1.04/36 13} Bd7 {(Bd7) 1.16/36 8}47. Rc2
+{(Rc2) -1.04/37 14} Ke8 {(Ke8) 1.15/36 11}48. Rc1 {(Rc1 Kd8 Rc2 Be8 Rc1 Ra7 Ra1
+Rb8 Rb1 Ke7 Ra1 Rc8 Rb1 Rac7 Rc1 Rb8 Ra1 Kf6 Rb1 Rcc8 Kc2 Rb7 Kd2 Bd7 Rc1)
+-1.04/33 10} Kd8 {(Kd8) 1.15/37 15}49. Rc2 {(Rc2) -1.04/36 11} Rb8 {(Rb8)
+1.15/35 10} 50. Rb2 {(Rb2) -1.04/35 11} Rcc8 {(Rcc8) 1.15/37 10}51. Rb1 {(Rb1
+Ra8 Rd1 Be8 Rb1 Bd7 Rd1 Be8 Rb1 Bd7) -1.04/33 11} Rb7 {(Rb7) 1.15/37 11}52. Rc1
+{(Rc1) -1.04/37 14} Be8 {(Be8 Rd1 Rcc7 Rc1 Rc5 Rd1 Rbc7 Rc1 Rc8 Bf1 R5c7 Be2 Ke7
+Rc2 Rb8 Rc1 Kf7 Ke3 Rbc8 Kd2 Kf6 Rc2 Rb8 Rc1 Kg7) 1.15/34 9}53. Ra1 {(Ra1 Rbb8
+Rc1 Rc7) -1.04/33 10} Rbc7 {(Rbc7 Rc1 Ke7 Rc2 Rb8 Rc1 Kd8 Bf1 Rc5 Be2 Rb7 Ra1
+Rc8 Rc1 Rcc7 Kd1 Ra7 Bf1 Rc5 Be2 Rac7 Kd2 Rc8 Bf1 Ra8) 1.15/32 20}54. Rc1 {(Rc1)
+-1.04/35 10} Rb8 {(Rb8 Ra1 Rbb7 Rc1 Rc5 Rb1 Rbc7 Rc1 Rf7 Rd1 Ra7 Rc1 Ra8 Ke3
+Rac8 Kd2 Rb8 Rb1 Ra8 Rc1 Ra7 Re1 Ke7 Rb1 Rc8) 1.14/32 10}55. Rc2 {(Rc2) -1.04/34
+8} Rcc8 {(Rcc8) 1.14/36 11}56. Rb2 {(Rb2 Rc5 Rb1 Rbc8 Rc1 Ra8 Rc2 Rb8) -1.04/33
+9} Rc5 {(Rc5 Rb1 Ra8 Rc1 Rac8 Bf1 Rb8 Be2 Rb7 Rb1 Rcc7 Rc1 Bd7 Rd1 Rc5 Rc1 Ke7
+Rb1 Rc8 Rc1 Kf6 Ke3 Rbc7 Kd2 Be8) 1.14/35 13}57. Rb1 {(Rb1) -1.04/35 10} Ra8
+{(Ra8) 1.14/35 10}58. Ra1 {(Ra1 Rcc8 Rb1 Bd7 Rd1 Be8 Rb1 Bd7 Rd1 Be8 Rb1)
+-1.04/33 9} Ra7 {(Ra7) 1.14/35 12}59. Rb1 {(Rb1) -1.04/35 10} Rcc7 {(Rcc7 Rc1
+Rab7 Ke3 Rc5 Kd2 Ke7 Rb1 Rc8 Rc1 Rbc7 Rc2 Rb8 Ke3 Rc5 Kd2 Rb7 Rc1 Ra7 Rb1 Rcc7
+Ra1 Rcb7 Rc1 Bf7) 1.14/33 17}60. Ra1 {(Ra1) -1.04/34 10} Rab7 {(Rab7) 1.15/33
+10}61. Rb1 {(Rb1) -1.04/36 10} Ke7 {(Ke7 Rd1 Rc5 Ra1 Kd8 Rb1 Rbc7 Rc1 Rc8 Bf1
+Rb8 Be2 Rcc8 Rc2 Ke7 Rc1 Kf8 Ke3 Rc5 Kd2 Ke7 Ke3 Rb7 Kd2 Kf6) 1.14/32 7}62. Re1
+{(Re1 Kf8 Rb1 Rc8 Ra1 Rbc7 Rc1 Ke7 Bd1 Kd8 Be2 Rb8 Rc2 Bf7 Kc1 Rbc8 Kb2 Be8 Rc1
+Rb8 Rdd1 Rcc8 Ra1 Rb7 Rd4) -1.04/32 8} Kf6 {(Kf6 Rb1 Rb8 Rc1 Kf7 Ke3 Rbc8 Kd2
+Ke7 Rc2 Rb8 Rc1 Kf8 Ke3 Rc5 Kd2 Ke7 Rb1 Rb7 Rc1 Kd8 Ke3 Bf7 Rdd1 Rb8) 1.13/30 7}
+63. Rb1 {(Rb1) -1.04/34 10} Rb8 {(Rb8) 1.13/33 8}64. Ra1 {(Ra1) -1.04/33 8} Kg7
+{(Kg7) 1.13/36 12}65. Rb1 {(Rb1) -1.04/35 9} Kg8 {(Kg8 Rc1 Kf8 Ke3 Rbc8 Kd2 Ke7
+Rc2 Rb7 Rc1 Rcb8 Rc2 Bf7 Rc1 Ra8 Rc2 Kf6 Rc1 Rbb8 Rb1 Ke7 Rb2 Kd8 Rb1 Be8)
+1.13/33 10}66. Rc1 {(Rc1 Kf8 Rb1 Rcc8 Rb2 Ke7 Rb1) -1.04/29 12} Kf8 {(Kf8)
+1.13/34 11} 67. Rb1 {(Rb1) -1.04/33 8} Rbc8 {(Rbc8) 1.13/33 26}68. Rc1 {(Rc1)
+-1.04/33 10} Ke7 {(Ke7 Rc2 Ra7 Rc1 Rb8 Ke3 Rc7 Kd2 Bf7 Rb1 Kd8 Ra1 Rbb7 Rd1 Rb6
+Rb1 Be8 Rb2 Rc8 Rb1 Rcb8 Ra1 Ra8 Rc1 Rb7) 0.93/32 8}69. Bd1 {(Bd1 Kd8 Be2 Rb8
+Rc2 Bf7 Kc1 Rbc8 Kb2 Be8 Rc1 Rb8 Rdd1 Rcc8 Ra1 Rb7 Rd4 Rcb8 Kc1 Ra7 Kd2 Ke7 Kc2
+Kf6 Kd2) -1.04/36 9} Rc5 {(Rc5) 0.96/32 7}70. Be2 {(Be2 Rb8 Rd1 Bd7 Ra1)
+-1.04/32 9} Kd8 {(Kd8 Bf1 Rb8 Rd1 Rc7 Rc1 Bd7 Be2 Rc5 Rc2 Ke7 Rc1 Ke8 Rb1 Kd8
+Re1 Rb6 Rc1 Rb7 Rd1 Ke7 Rc1 Kf6 Rh1 Rcc7) 0.95/33 11}71. b4 {(b4 R5c7 c4 bxc4
+Rdxc4 Rxc4 Bxc4 Ra8 b5 Kc7 Be2+ Kb7 Ke3 Rc8 Rxc8 Kxc8 a4 Kb7 Kd4 Bf7 Kc4 Kb6 Bd1
+Kc7 Kd4) -0.42/27 11} axb4 {(axb4 axb4 R5c7 c4 Ra7 c5 Rb8 Rc3 Kc7 Ke3 Rba8 Rd1
+Ra2 Rb1 R8a7 Rcb3 Rc2 R1b2 Rc1 Rb1 Rxb1 Rxb1 Ra3+ Kd4 Ra2) 0.79/29 7}72. axb4
+{(axb4) -0.44/27 12} R5c7 {(R5c7) 1.94/31 15}73. c4 {(c4) -0.21/27 11} bxc4
+{(bxc4 Rdxc4 Rxc4 Bxc4 Ba4 Rc3 Rb8 b5 Rb7 b6 Rxb6 Ra3 Bd7 Ra7 Rb8 Kc3 Rc8 Kd4
+Rc7 Ra8+ Ke7 Ba6 Be8 Bc4 Rb7) 1.72/31 8}74. Rdxc4 {(Rdxc4 Rxc4 Bxc4 Ra8 Rc2 Ra4
+Kc3 Kc7 Ra2 Kb7 Rxa4 Bxa4 Kd2 Kb6 Ke3 Bb5 Bb3 Ka6 Kd2 Kb7 Ke3 Kc7 Kd2 Be8 Ke3)
+-0.92/27 9} Rxc4 {(Rxc4) 1.52/32 6}75. Bxc4 {(Bxc4) -1.00/28 11} Ba4 {(Ba4)
+1.52/34 7} 76. Rc3 {(Rc3) -1.15/29 11} Rb8 {(Rb8) 1.52/36 10}77. Ra3 {(Ra3 Bb5
+Bb3 Kc7 Ra7+ Kb6 Re7) -1.44/26 11} Bb5 {(Bb5 Bb3 Kc7 Ra7+ Kb6 Re7 Ra8 Re6 Kc7
+Re7+ Kc8 Re6 Kd7 Kc2 Ra1 Rxg6 e3 Re6 e2 Kd2 Rg1 Bc2 Kc7 Re3 Kb6) 2.54/27 6}78.
+Bb3 {(Bb3 Kc7 Ra7+ Kb6) -1.70/24 10} Kc7 {(Kc7) 2.89/29 8}79. Ra7+ {(Ra7+)
+-1.25/26 9} Kb6 {(Kb6 Re7 Ra8 Re6 Kc7 Re7+ Kc8 Re6 Kd7 Kc3 Ra1 Rxg6 e3 Re6 e2
+Kd2 Ra3 Bc2 Ra2 Kc3 Kc7 Re7+ Kb6 Re6 Ra3+) 2.64/29 10}80. Re7 {(Re7) -1.72/27 9}
+Ra8 {(Ra8 Re6 Kc7 Re7+ Kc8 Re6 Kd7 Kc3 Ra1 Rxg6 e3 Re6 e2 Kd2 Ra3 Bc2 Ra2 Kc1
+Kc7 Re7+ Kb6 Re6 Bc4 Re8 Ra3) 3.10/28 6}81. Re6 {(Re6 Kc7 Re7+ Kc8 Re6 Ra3 Kc2
+Ra1 Rxg6 e3 Re6 e2 Kd2 Rg1 Bc2 Kc7 Re7+ Kb8) -1.58/24 9} Kc7 {(Kc7 Re7+ Kb8 Re6
+Ra3 Kc2 Ra1 Rxd6 e3 Re6 e2 Kd2 Kc7 Re7+ Kd6 Re6+ Kd7 Re5 Rf1 Rxe2 Bxe2 Ba4+ Ke7
+Kxe2 Rb1) 2.76/27 6}82. Re7+ {(Re7+) -1.79/26 11} Kb8 {(Kb8 Re6 Ra3 Kc2 Ra1 Rxg6
+e3 Rg8+ Kc7 Rg7+ Kd8 Rg8+ Ke7 Rg6 e2 Re6+ Kd7 Kd2 Ra3 Bc2 Ra2 Kc3 Kd8 Bb1 Ra1)
+2.77/28 7}83. Re6 {(Re6 Ra3 Kc2 Ra1 Rxg6 e3 Re6) -1.91/27 9} Ra3 {(Ra3) 2.79/33
+10} 84. Kc2 {(Kc2) -1.51/26 10} Ra1 {(Ra1) 2.97/33 8}85. Rxg6 {(Rxg6 e3 Re6 e2
+Kd2 Rb1 Bc2 Rb2 Kc1 Ra2 Bb3 Ra7 Kd2 Ra3) -2.65/26 11} e3 {(e3 Rg8+ Kc7 Rg7+ Kd8
+Rg8+ Kd7 Rg7+ Ke8 Rg6 e2 Re6+ Kf7 Kd2 Ra3 Bc2 Rxg3 Bxf5 Bd7 Kxe2 Bxe6 dxe6+ Kf6
+e7 Kxe7) 2.91/28 10}86. Rg8+ {(Rg8+) -2.24/27 9} Kc7 {(Kc7 Rg7+ Kd8 Rg8+ Kd7
+Rg7+ Ke8 Rg6 e2 Re6+ Kf7 Kd2 Ra3 Bc2 Rxg3 Bxf5 Bd7 Kxe2 Bxe6 Bxe6+ Ke7 Bf5 Rb3
+Kf2 Rxb4) 3.12/26 9} 87. Rg7+ {(Rg7+) -2.44/28 6} Kd8 {(Kd8) 3.12/30 7}88. Rg8+
+{(Rg8+) -2.65/27 8} Kd7 {(Kd7 Rg7+ Ke8 Rg6 e2 Re6+ Kf7 Kd2 Ra3 Bc2 Rxg3 Bxf5 Bd7
+Kxe2 Bxe6 Bxe6+ Ke7 Kf2 Rb3 Bf5 Rxb4 Ke3 Rb3+ Ke4 Kf6) 3.12/30 7}89. Rg7+
+{(Rg7+) -2.65/31 7} Ke8 {(Ke8) 3.12/32 7}90. Rg6 {(Rg6) -2.86/27 9} e2 {(e2)
+3.12/33 8} 91. Re6+ {(Re6+) -2.86/29 7} Kf7 {(Kf7) 3.12/35 9}92. Kd2 {(Kd2)
+-3.47/27 7} Ra3 {(Ra3 Bc2 Rxg3 Bxf5 Bd7 Kxe2 Bxe6 Bxe6+ Ke7 Bf5 Rb3 Be6 Rxb4 Ke3
+Rb3+ Kf2 Rb2+ Kf3 Rh2 Kg3 Rd2 Kf3 Kf6 Kg3 Rb2) 3.27/32 6}93. Kc2 {(Kc2) -3.69/27
+10} Kf8 {(Kf8 Rf6+ Ke7 Re6+ Kd8 Rxd6+ Bd7 Kd2 Rxb3 Kxe2 Rxg3 Rh6 Rg4 Ke3 Rxh4
+Rh7 Kc7 b5 Rh3+ Kd4 Rb3 Rxh5 Rxb5 Rh6 Ra5) 3.70/26 9}94. Kb2 {(Kb2 Ra7 Kc1 Rg7
+Bd1 exd1=Q+ Kxd1 Rxg3 Rxd6 Kg7 Kc2 Rf3) -6.08/23 10} Ra7 {(Ra7 Kc1 Rg7 Kd2 Rxg3
+Ba4 Bxa4 Kxe2 Kg7 Rxd6 Bb5+ Kf2 Rd3 Kg2 Rd4 Rb6 Rd2+ Kg3 Rxd5 Kh2 Rd2+ Kg3 Be2
+Rb7+ Kf6) 7.22/23 6} 95. Kc1 {(Kc1) -5.94/24 10} Rg7 {(Rg7) 7.26/24 7}96. Bd1
+{(Kd2) -6.37/24 9} exd1=R+ {(exd1=R+ Kxd1 Rxg3 Rxd6 Kf7 Rb6 Rd3+ Kc2 Rxd5 Rb7+
+Ke6 Rb6+ Kd7 Rb7+ Kc6 Rf7 Kd6 Rf6+ Ke7 Rb6 Bd3+ Kc3 Be2 Rb8 Rd3+) 7.26/23 13} 0-1
