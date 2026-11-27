@@ -266,7 +266,9 @@ event ends (9th of 16 after 230 games).
 
 ## Correction (advisor, 27 November): the event did NOT end at 30 games
 I assumed a double round robin (240 games) without checking the Info
-tab; a third cycle is running. Games 246, 255, 264, 272 below.
+tab; a third cycle is running. Graham's forum post (pasted by Ayman 27 Nov):
+4 cycles, 60 rounds, 480 games; each engine plays 60. Trinity: 34 played, 26 left.
+12+8 on a Ryzen 5950x, 256 MB hash, 5-piece tablebases, 1 CPU. Games 246, 255, 264, 272 below.
 
 ## Games 246, 255, 264, 272 (26-27 November): a win and three draws; 17/34 (4 wins, 26 draws, 4 losses)
 - #246 Ayano - Trinity, draw at move 94. Trinity +0.4 to +0.9 by its own
@@ -274,7 +276,8 @@ tab; a third cycle is running. Games 246, 255, 264, 272 below.
 - #255 ngn - Trinity, WIN as Black at move 96. Trinity +0.7 to +1.4 from
   move 10 (Najdorf, 13...O-O, 15...f5, 16...e4), a 50-move squeeze in a
   two-rook ending, then the e-pawn ran through; finished with the
-  under-promotion 96...exd1=R+.
+  under-promotion 96...exd1=R+ (makes no difference: the new piece is
+  taken at once by Kxd1, and =Q+ scores the same; ngn's own line expected =Q+).
 - #264 StockDory - Trinity, draw at move 75. Trinity +1.0 to +1.9 by its
   own count (moves 10-30); StockDory said -0.3 to -0.5; level by move 39,
   a drawn rook ending.
